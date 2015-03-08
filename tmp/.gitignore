@@ -1,0 +1,7 @@
+# This folder serves as a temporary place where tests and mail will put their stuff.
+# The content of this folder can be deleted many times while testing.
+
+# Ignore everything in this directory
+*
+# Except this file
+!.gitignore
