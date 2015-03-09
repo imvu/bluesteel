@@ -17,8 +17,8 @@ def get_test_list():
     test_list.append((['pip'], ['python', 's/internal/test-pip-installed.py']))
     test_list.append((['requirements'], ['python', 's/internal/test-pip-requirements.py']))
     test_list.append((['database'], ['python', 's/internal/test-db.py']))
-    # test_list.append((['app', 'httpcommon'], ['python', 'manage.py', 'test', 'app/util/httpcommon/tests/', '--settings=rowpow.settings.testing']))
-    # test_list.append((['pylint'], ['pylint', '--rcfile=s/internal/pylint-config-file.py', '--generated-members=objects', '--msg-template={path}:{line}: [{msg_id}({symbol}), {obj}] {msg}', 'app/presenter']))
+    test_list.append((['app', 'gitrepo'], ['python', 'manage.py', 'test', 'app/service/gitrepo/tests/', '--settings=stronghold.settings.testing']))
+    test_list.append((['pylint'], ['pylint', '--rcfile=s/internal/pylint-config-file.py', '--generated-members=objects', '--msg-template={path}:{line}: [{msg_id}({symbol}), {obj}] {msg}', 'app/service/gitrepo']))
     return test_list
 
 def main(args=sys.argv):
