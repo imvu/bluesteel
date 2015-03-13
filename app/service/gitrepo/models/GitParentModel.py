@@ -7,6 +7,7 @@ class GitParentEntry(models.Model):
     project = models.ForeignKey('gitrepo.GitProjectEntry', related_name='git_parent_project')
     parent = models.ForeignKey('gitrepo.GitHashEntry', related_name='git_parent_hash')
     son = models.ForeignKey('gitrepo.GitHashEntry', related_name='git_son_hash')
+    order = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True, editable=False)
 

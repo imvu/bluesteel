@@ -116,6 +116,8 @@ STATIC_URL = '/static/'
 # MEDIA_ROOT = os.path.abspath(os.path.join(BASE_DIR, '..', 'uploaded_images'))
 # MEDIA_URL = '/uploaded_images/'
 
+TMP_ROOT = os.path.abspath(os.path.join(BASE_DIR, '..', 'tmp'))
+
 EMAIL_USE_TLS = False
 EMAIL_HOST = 'smtp.corp.imvu.com'
 EMAIL_PORT = 25

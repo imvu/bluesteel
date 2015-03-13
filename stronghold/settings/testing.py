@@ -110,6 +110,8 @@ STATIC_URL = '/static/'
 # MEDIA_ROOT = os.path.abspath(os.path.join(BASE_DIR, '..', 'tmp', 'test-media'))
 # MEDIA_URL = '/tmp/test-media/'
 
+TMP_ROOT = os.path.abspath(os.path.join(BASE_DIR, '..', 'tmp', 'test'))
+
 EMAIL_USE_TLS = False
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 25

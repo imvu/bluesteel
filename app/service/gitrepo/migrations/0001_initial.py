@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
+import django.utils.timezone
 
 
 class Migration(migrations.Migration):
@@ -63,6 +64,7 @@ class Migration(migrations.Migration):
             name='GitParentEntry',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('order', models.IntegerField(default=0)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
                 ('parent', models.ForeignKey(related_name='git_parent_hash', to='gitrepo.GitHashEntry')),
@@ -78,6 +80,7 @@ class Migration(migrations.Migration):
                 ('url', models.URLField(max_length=255)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
+                ('fetched_at', models.DateTimeField(default=django.utils.timezone.now, auto_now_add=True)),
             ],
             options={
             },

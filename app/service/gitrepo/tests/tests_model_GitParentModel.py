@@ -38,8 +38,19 @@ class GitParentTestCase(TestCase):
             project=self.git_project1,
             parent=self.git_hash1,
             son=self.git_hash2,
+            order=5
         )
 
         self.assertEqual('http://test/', entry.project.url)
         self.assertEqual('0000100001000010000100001000010000100001', entry.parent.git_hash)
         self.assertEqual('0000200002000020000200002000020000200002', entry.son.git_hash)
+        self.assertEqual(5, entry.order)
+
+    def test_create_git_parent_default(self):
+        entry = GitParentEntry.objects.create(
+            project=self.git_project1,
+            parent=self.git_hash1,
+            son=self.git_hash2,
+        )
+
+        self.assertEqual(0, entry.order)
