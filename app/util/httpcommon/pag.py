@@ -1,0 +1,85 @@
+""" Common code for pagination """
+
+from django.core.paginator import Paginator
+
+def is_pagination_out_of_bounds(element_list, items_per_page, page_index):
+    """ Checks if pagination info is out of bounds """
+    items_per_page = int(items_per_page)
+    page_index = int(page_index)
+
+    if len(element_list) == 0:
+        return True
+
+    if items_per_page < 1:
+        return True
+
+    pager = Paginator(element_list, items_per_page)
+
+    if (page_index < 1) or (page_index > pager.num_pages):
+        return True
+    return False
+
+def get_empty_navigation_obj():
+    """ Returns a default-empty navigation object """
+    pagination_obj = {}
+    pagination_obj['next'] = ''
+    pagination_obj['prev'] = ''
+    pagination_obj['pages'] = []
+    return pagination_obj
+
+def get_navigation_links(element_list, items_per_page, page_index, page_link_count, url):
+    """ Returns a list of pages to navigate from current page """
+    items_per_page = int(items_per_page)
+    page_index = int(page_index)
+    page_link_count = int(page_link_count)
+
+    pagination_obj = get_empty_navigation_obj()
+
+    if is_pagination_out_of_bounds(element_list, items_per_page, page_index):
+        return pagination_obj
+
+    pager = Paginator(element_list, items_per_page)
+    half_range = int(page_link_count / 2)
+    page_index_start = 0
+    page_index_end = 0
+    if (page_index - half_range) < 1:
+        page_index_start = 1
+        page_index_end = page_index_start + min((page_link_count - 1), pager.num_pages)
+    elif page_index + half_range > pager.num_pages:
+        page_index_start = max(1, pager.num_pages - (page_link_count - 1))
+        page_index_end = pager.num_pages
+    else:
+        page_index_start = page_index - half_range
+        page_index_end = page_index + half_range
+
+    page_range = pager.page_range[page_index_start - 1:page_index_end]
+
+    page_info_list = []
+    for index in page_range:
+        page_info = {}
+        page_info['index'] = index
+        if index == page_index:
+            page_info['url'] = ''
+        else:
+            page_info['url'] = append_pag_info(url, items_per_page, index, page_link_count)
+        page_info_list.append(page_info)
+
+    current_page = pager.page(page_index)
+
+    if current_page.has_previous():
+        pagination_obj['prev'] = append_pag_info(
+            url,
+            items_per_page,
+            current_page.previous_page_number(),
+            page_link_count
+        )
+
+    if current_page.has_next():
+        pagination_obj['next'] = append_pag_info(url, items_per_page, current_page.next_page_number(), page_link_count)
+
+    pagination_obj['pages'] = page_info_list
+
+    return pagination_obj
+
+def append_pag_info(url, items_per_page, page_index, dot_count):
+    return '{0}page/{1}/{2}/dots/{3}/'.format(url, items_per_page, page_index, dot_count)

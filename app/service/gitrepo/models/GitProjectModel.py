@@ -6,6 +6,7 @@ from django.utils import timezone
 class GitProjectEntry(models.Model):
     """ Git Project """
     url = models.URLField(max_length=255)
+    name = models.CharField(max_length=50, default='default-name')
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True, editable=False)
     fetched_at = models.DateTimeField(auto_now_add=True, default=timezone.now)

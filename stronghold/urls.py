@@ -16,6 +16,9 @@ urlpatterns = patterns(
     url(r'^admin/',
         include(admin.site.urls)),
 
+    url(r'^git/',
+        include('app.service.gitrepo.urls')),
+
     # url(r'^$',
     #     RedirectView.as_view(url='/<url_here>/')),
 )

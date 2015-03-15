@@ -43,6 +43,8 @@ class Migration(migrations.Migration):
                 ('content', models.TextField(default=b'')),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
+                ('git_commit_parent', models.ForeignKey(related_name='git_diff_commit_parent', to='gitrepo.GitCommitEntry')),
+                ('git_commit_son', models.ForeignKey(related_name='git_diff_commit_son', to='gitrepo.GitCommitEntry')),
             ],
             options={
             },
@@ -78,6 +80,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('url', models.URLField(max_length=255)),
+                ('name', models.CharField(default=b'default-name', max_length=50)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
                 ('fetched_at', models.DateTimeField(default=django.utils.timezone.now, auto_now_add=True)),
