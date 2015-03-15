@@ -275,8 +275,34 @@ class GitFeedViewsTestCase(TestCase):
         resp_obj = json.loads(resp.content)
 
         self.assertEqual(400, resp_obj['status'])
+        self.assertEqual('Diffs not correct', resp_obj['message'])
         self.assertEqual(0, GitHashEntry.objects.all().count())
         self.assertEqual(0, GitCommitEntry.objects.all().count())
         self.assertEqual(0, GitBranchEntry.objects.all().count())
 
+    def test_incorrect_branch(self):
+        commit_time = str(timezone.now().isoformat())
+        commit1 = self.create_commit(1, [], 'user1', 'user1@test.com', commit_time, commit_time)
 
+        branch1 = self.create_branch('master', 2)
+
+        post_data = {}
+        post_data['commits'] = []
+        post_data['commits'].append(commit1)
+        post_data['branches'] = []
+        post_data['branches'].append(branch1)
+        post_data['diffs'] = []
+
+        resp = self.client.post(
+            '/git/feed/commit/project/{0}/'.format(self.git_project1.id),
+            data = json.dumps(post_data),
+            content_type='application/json')
+
+        res.check_cross_origin_headers(self, resp)
+        resp_obj = json.loads(resp.content)
+
+        self.assertEqual(400, resp_obj['status'])
+        self.assertEqual('Branches not correct', resp_obj['message'])
+        self.assertEqual(0, GitHashEntry.objects.all().count())
+        self.assertEqual(0, GitCommitEntry.objects.all().count())
+        self.assertEqual(0, GitBranchEntry.objects.all().count())
