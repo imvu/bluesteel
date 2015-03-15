@@ -8,6 +8,7 @@ from app.service.gitrepo.models.GitUserModel import GitUserEntry
 from app.service.gitrepo.models.GitCommitModel import GitCommitEntry
 from app.service.gitrepo.models.GitParentModel import GitParentEntry
 from app.service.gitrepo.models.GitDiffModel import GitDiffEntry
+from app.service.gitrepo.models.GitBranchModel import GitBranchEntry
 from app.service.gitrepo import GitSchemas
 
 
@@ -16,23 +17,34 @@ def are_commits_unique(commit_list):
     unique_hash = []
     for commit in commit_list:
         if commit['commit_hash'] in unique_hash:
-            return False
+            return (False, unique_hash)
         else:
             unique_hash.append(commit['commit_hash'])
-    return True
+    return (True, unique_hash)
 
-def are_parent_hashes_correct(commit_list):
+def are_parent_hashes_correct(hash_list, commit_list):
     """ Returns true if all parents are correct """
-    unique_hash = []
-    for commit in commit_list:
-        unique_hash.append(commit['commit_hash'])
-
     for commit in commit_list:
         for parent in commit['commit_parents']:
-            if parent not in unique_hash:
+            if parent not in hash_list:
                 return False
     return True
 
+def are_diffs_correct(hash_list, diffs_list):
+    """ Returns true if all diffs are correct """
+    for diff in diffs_list:
+        if diff['commit_hash_son'] not in hash_list:
+            return False
+        if diff['commit_hash_parent'] not in hash_list:
+            return False
+    return True
+
+def are_branches_correct(hash_list, branch_list):
+    """ Returns true if all branches are correct """
+    for branch in branch_list:
+        if branch['commit_hash'] not in hash_list:
+            return False
+    return True
 
 def insert_commits(commit_list, project):
     """ Inserts all the commits into the db """
@@ -85,6 +97,22 @@ def insert_diffs(diffs_list, project):
             content=diff['diff']
         )
 
+def insert_branches(branch_list, project):
+    """ Inserts all the parents into the db """
+    for branch in branch_list:
+        hash_entry = GitHashEntry.objects.filter(git_hash=branch['commit_hash']).first()
+        try:
+            branch_entry = GitBranchEntry.objects.get(name=branch['branch_name'])
+        except GitBranchEntry.DoesNotExist:
+            GitBranchEntry.objects.create(
+                project=project,
+                name=branch['branch_name'],
+                commit_hash=hash_entry
+            )
+        else:
+            branch_entry.commit_hash = hash_entry
+
+
 def post_commits(request, project_id):
     """ Insert new commits to a given git project """
     if request.method == 'POST':
@@ -100,15 +128,23 @@ def post_commits(request, project_id):
         if not obj_validated:
             return res.get_schema_failed(val_resp_obj)
 
-        if not are_commits_unique(val_resp_obj['commits']):
+        unique, unique_hash_list = are_commits_unique(val_resp_obj['commits'])
+        if not unique:
             return res.get_response(400, 'Commits not unique', {})
 
-        if not are_parent_hashes_correct(val_resp_obj['commits']):
+        if not are_parent_hashes_correct(unique_hash_list, val_resp_obj['commits']):
             return res.get_response(400, 'Parents not correct', {})
+
+        if not are_diffs_correct(unique_hash_list, val_resp_obj['diffs']):
+            return res.get_response(400, 'Diffs not correct', {})
+
+        if not are_branches_correct(unique_hash_list, val_resp_obj['branches']):
+            return res.get_response(400, 'Branches not correct', {})
 
         insert_commits(val_resp_obj['commits'], project_entry)
         insert_parents(val_resp_obj['commits'], project_entry)
         insert_diffs(val_resp_obj['diffs'], project_entry)
+        insert_branches(val_resp_obj['branches'], project_entry)
 
         return res.get_response(200, 'Commits added correctly', {})
     else:

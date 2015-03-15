@@ -10,6 +10,7 @@ from app.service.gitrepo.models.GitHashModel import GitHashEntry
 from app.service.gitrepo.models.GitCommitModel import GitCommitEntry
 from app.service.gitrepo.models.GitParentModel import GitParentEntry
 from app.service.gitrepo.models.GitDiffModel import GitDiffEntry
+from app.service.gitrepo.models.GitBranchModel import GitBranchEntry
 from app.util.httpcommon import res
 from datetime import timedelta
 import json
@@ -75,6 +76,11 @@ class GitFeedViewsTestCase(TestCase):
         self.assertEqual(200, resp_obj['status'])
         self.assertEqual(1, GitHashEntry.objects.all().count())
         self.assertEqual(1, GitCommitEntry.objects.all().count())
+        self.assertEqual(1, GitBranchEntry.objects.all().count())
+
+        branch_entry = GitBranchEntry.objects.all().first()
+        self.assertEqual('0000100001000010000100001000010000100001', branch_entry.commit_hash.git_hash)
+        self.assertEqual('master', branch_entry.name)
 
 
     def test_feed_simple_commit_already_present(self):
@@ -115,6 +121,11 @@ class GitFeedViewsTestCase(TestCase):
         self.assertEqual(200, resp_obj['status'])
         self.assertEqual(1, GitHashEntry.objects.all().count())
         self.assertEqual(1, GitCommitEntry.objects.all().count())
+        self.assertEqual(1, GitBranchEntry.objects.all().count())
+
+        branch_entry = GitBranchEntry.objects.all().first()
+        self.assertEqual('0000100001000010000100001000010000100001', branch_entry.commit_hash.git_hash)
+        self.assertEqual('master', branch_entry.name)
 
 
     def test_feed_fail_because_commits_are_not_unique(self):
@@ -148,6 +159,8 @@ class GitFeedViewsTestCase(TestCase):
         self.assertEqual('Commits not unique', resp_obj['message'])
         self.assertEqual(0, GitHashEntry.objects.all().count())
         self.assertEqual(0, GitCommitEntry.objects.all().count())
+        self.assertEqual(0, GitBranchEntry.objects.all().count())
+
 
     def test_two_commits_one_parent(self):
         commit_time = str(timezone.now().isoformat())
@@ -178,10 +191,15 @@ class GitFeedViewsTestCase(TestCase):
         self.assertEqual(2, GitHashEntry.objects.all().count())
         self.assertEqual(2, GitCommitEntry.objects.all().count())
         self.assertEqual(1, GitParentEntry.objects.all().count())
+        self.assertEqual(1, GitBranchEntry.objects.all().count())
 
         parent_entry = GitParentEntry.objects.all().first()
         self.assertEqual('0000200002000020000200002000020000200002', parent_entry.parent.git_hash)
         self.assertEqual('0000100001000010000100001000010000100001', parent_entry.son.git_hash)
+
+        branch_entry = GitBranchEntry.objects.all().first()
+        self.assertEqual('0000100001000010000100001000010000100001', branch_entry.commit_hash.git_hash)
+        self.assertEqual('master', branch_entry.name)
 
     def test_two_commits_one_diff(self):
         commit_time = str(timezone.now().isoformat())
@@ -215,9 +233,50 @@ class GitFeedViewsTestCase(TestCase):
         self.assertEqual(200, resp_obj['status'])
         self.assertEqual(2, GitHashEntry.objects.all().count())
         self.assertEqual(2, GitCommitEntry.objects.all().count())
+        self.assertEqual(1, GitBranchEntry.objects.all().count())
 
         diff_entry = GitDiffEntry.objects.all().first()
         self.assertEqual(self.git_project1, diff_entry.project)
         self.assertEqual('0000100001000010000100001000010000100001', diff_entry.git_commit_son.commit_hash.git_hash)
         self.assertEqual('0000200002000020000200002000020000200002', diff_entry.git_commit_parent.commit_hash.git_hash)
         self.assertEqual('diff-1-2', diff_entry.content)
+
+        branch_entry = GitBranchEntry.objects.all().first()
+        self.assertEqual('0000100001000010000100001000010000100001', branch_entry.commit_hash.git_hash)
+        self.assertEqual('master', branch_entry.name)
+
+    def test_incorrect_diff(self):
+        commit_time = str(timezone.now().isoformat())
+        commit1 = self.create_commit(1, [], 'user1', 'user1@test.com', commit_time, commit_time)
+        commit2 = self.create_commit(2, [], 'user1', 'user1@test.com', commit_time, commit_time)
+
+        branch1 = self.create_branch('master', 1)
+
+        diff1 = {}
+        diff1['commit_hash_son'] = '0000300003000030000300003000030000300003'
+        diff1['commit_hash_parent'] = commit2['commit_hash']
+        diff1['diff'] = 'diff-3-2'
+
+        post_data = {}
+        post_data['commits'] = []
+        post_data['commits'].append(commit1)
+        post_data['commits'].append(commit2)
+        post_data['branches'] = []
+        post_data['branches'].append(branch1)
+        post_data['diffs'] = []
+        post_data['diffs'].append(diff1)
+
+        resp = self.client.post(
+            '/git/feed/commit/project/{0}/'.format(self.git_project1.id),
+            data = json.dumps(post_data),
+            content_type='application/json')
+
+        res.check_cross_origin_headers(self, resp)
+        resp_obj = json.loads(resp.content)
+
+        self.assertEqual(400, resp_obj['status'])
+        self.assertEqual(0, GitHashEntry.objects.all().count())
+        self.assertEqual(0, GitCommitEntry.objects.all().count())
+        self.assertEqual(0, GitBranchEntry.objects.all().count())
+
+
