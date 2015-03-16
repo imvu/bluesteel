@@ -9,7 +9,7 @@ from app.service.gitrepo.models.GitCommitModel import GitCommitEntry
 from app.service.gitrepo.models.GitParentModel import GitParentEntry
 from app.service.gitrepo.models.GitDiffModel import GitDiffEntry
 from app.service.gitrepo.models.GitBranchModel import GitBranchEntry
-from app.service.gitrepo import GitSchemas
+from app.service.gitfeeder.views import GitFeederSchemas
 
 
 def are_commits_unique(commit_list):
@@ -124,7 +124,7 @@ def post_commits(request, project_id):
         if not json_valid:
             return res.get_json_parser_failed({})
 
-        (obj_validated, val_resp_obj) = val.validate_obj_schema(post_info, GitSchemas.GIT_FEEDER_SCHEMA)
+        (obj_validated, val_resp_obj) = val.validate_obj_schema(post_info, GitFeederSchemas.GIT_FEEDER_SCHEMA)
         if not obj_validated:
             return res.get_schema_failed(val_resp_obj)
 

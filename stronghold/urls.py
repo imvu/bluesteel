@@ -17,7 +17,7 @@ urlpatterns = patterns(
         include(admin.site.urls)),
 
     url(r'^git/',
-        include('app.service.gitrepo.urls')),
+        include('app.service.gitfeeder.urls')),
 
     # url(r'^$',
     #     RedirectView.as_view(url='/<url_here>/')),

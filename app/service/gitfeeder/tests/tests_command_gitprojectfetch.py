@@ -6,7 +6,7 @@ from django.conf import settings
 from django.core.management import call_command
 from django.utils import timezone
 from django.utils.six import StringIO
-from app.service.gitrepo.management.commands.gitprojectfetch import Command as fetchCom
+from app.service.gitfeeder.management.commands.gitprojectfetch import Command as fetchCom
 from app.service.gitrepo.models.GitProjectModel import GitProjectEntry
 from datetime import timedelta
 import os

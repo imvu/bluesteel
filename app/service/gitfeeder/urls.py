@@ -1,4 +1,4 @@
-""" GitRepo Urls file """
+""" GitFeeder Urls file """
 
 from django.conf.urls import patterns, url
 
@@ -6,5 +6,5 @@ from django.conf.urls import patterns, url
 urlpatterns = patterns(
     '',
     url(r'^feed/commit/project/(?P<project_id>\d+)/$',
-        'app.service.gitrepo.views.ViewsGitFeed.post_commits'),
+        'app.service.gitfeeder.views.ViewsGitFeed.post_commits'),
 )
