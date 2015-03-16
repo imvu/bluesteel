@@ -11,4 +11,4 @@ class GitBranchEntry(models.Model):
     updated_at = models.DateTimeField(auto_now=True, editable=False)
 
     def __unicode__(self):
-        return u'Branch:{0}, name:{1}'.format(self.commit_hahs.git_hash, self.name)
+        return u'Branch:{0}, name:{1}'.format(self.commit_hash.git_hash, self.name)

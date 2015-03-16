@@ -1,0 +1,18 @@
+""" Git Branch Trail model """
+
+from django.db import models
+
+class GitBranchTrailEntry(models.Model):
+    """ Git Branch Trail """
+    project = models.ForeignKey('gitrepo.GitProjectEntry', related_name='git_trail_project')
+    branch = models.ForeignKey('gitrepo.GitBranchEntry', related_name='git_trail_branch')
+    commit = models.ForeignKey('gitrepo.GitCommitEntry', related_name='git_trail_commit')
+    created_at = models.DateTimeField(auto_now_add=True, editable=False)
+    updated_at = models.DateTimeField(auto_now=True, editable=False)
+
+    def __unicode__(self):
+        return u'Trail - project:{0}, name:{1}, commit:{2}'.format(
+            self.project.id,
+            self.branch.name,
+            self.commit_hash.git_hash
+        )
