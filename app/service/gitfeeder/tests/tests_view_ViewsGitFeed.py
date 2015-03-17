@@ -52,7 +52,7 @@ class GitFeedViewsTestCase(TestCase):
     def create_branch(self, name, commit_hash_num, trail):
         branch = {}
         branch['branch_name'] = name
-        branch['commit_hash'] = '{0:05d}'.format(commit_hash_num) * 8
+        branch['commit_hash'] = self.hash_string(commit_hash_num)
         branch['trail'] = trail
         return branch
 
