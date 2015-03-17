@@ -35,9 +35,12 @@ class GitFeedViewsTestCase(TestCase):
     def tearDown(self):
         pass
 
+    def hash_string(self, commit_hash_num):
+        return '{0:05d}'.format(commit_hash_num) * 8
+
     def create_commit(self, commit_hash_num, parents, author_name, email, create_date, commit_date):
         commit = {}
-        commit['commit_hash'] = '{0:05d}'.format(commit_hash_num) * 8
+        commit['commit_hash'] = self.hash_string(commit_hash_num)
         commit['commit_parents'] = parents
         commit['date_creation'] = create_date
         commit['date_commit'] = commit_date
@@ -46,17 +49,18 @@ class GitFeedViewsTestCase(TestCase):
         commit['user']['email'] = email
         return commit
 
-    def create_branch(self, name, commit_hash_num):
+    def create_branch(self, name, commit_hash_num, trail):
         branch = {}
         branch['branch_name'] = name
         branch['commit_hash'] = '{0:05d}'.format(commit_hash_num) * 8
+        branch['trail'] = trail
         return branch
 
     def test_feed_simple_commit(self):
         commit_time = str(timezone.now().isoformat())
         commit1 = self.create_commit(1, [], 'user1', 'user1@test.com', commit_time, commit_time)
 
-        branch1 = self.create_branch('master', 1)
+        branch1 = self.create_branch('master', 1, [self.hash_string(1)])
 
         post_data = {}
         post_data['commits'] = []
@@ -101,7 +105,7 @@ class GitFeedViewsTestCase(TestCase):
         commit_time = str(timezone.now().isoformat())
         commit1 = self.create_commit(1, [], 'user1', 'user1@test.com', commit_time, commit_time)
 
-        branch1 = self.create_branch('master', 1)
+        branch1 = self.create_branch('master', 1, [self.hash_string(1)])
 
         post_data = {}
         post_data['commits'] = []
@@ -135,7 +139,7 @@ class GitFeedViewsTestCase(TestCase):
         commit3 = self.create_commit(2, [], 'user1', 'user1@test.com', commit_time, commit_time)
         commit4 = self.create_commit(3, [], 'user1', 'user1@test.com', commit_time, commit_time)
 
-        branch1 = self.create_branch('master', 1)
+        branch1 = self.create_branch('master', 1, [self.hash_string(1)])
 
         post_data = {}
         post_data['commits'] = []
@@ -169,7 +173,7 @@ class GitFeedViewsTestCase(TestCase):
 
         commit1['commit_parents'].append(commit2['commit_hash'])
 
-        branch1 = self.create_branch('master', 1)
+        branch1 = self.create_branch('master', 1, [self.hash_string(1)])
 
         post_data = {}
         post_data['commits'] = []
@@ -206,7 +210,7 @@ class GitFeedViewsTestCase(TestCase):
         commit1 = self.create_commit(1, [], 'user1', 'user1@test.com', commit_time, commit_time)
         commit2 = self.create_commit(2, [], 'user1', 'user1@test.com', commit_time, commit_time)
 
-        branch1 = self.create_branch('master', 1)
+        branch1 = self.create_branch('master', 1, [self.hash_string(1)])
 
         diff1 = {}
         diff1['commit_hash_son'] = commit1['commit_hash']
@@ -250,7 +254,7 @@ class GitFeedViewsTestCase(TestCase):
         commit1 = self.create_commit(1, [], 'user1', 'user1@test.com', commit_time, commit_time)
         commit2 = self.create_commit(2, [], 'user1', 'user1@test.com', commit_time, commit_time)
 
-        branch1 = self.create_branch('master', 1)
+        branch1 = self.create_branch('master', 1, [self.hash_string(1)])
 
         diff1 = {}
         diff1['commit_hash_son'] = '0000300003000030000300003000030000300003'
@@ -284,7 +288,7 @@ class GitFeedViewsTestCase(TestCase):
         commit_time = str(timezone.now().isoformat())
         commit1 = self.create_commit(1, [], 'user1', 'user1@test.com', commit_time, commit_time)
 
-        branch1 = self.create_branch('master', 2)
+        branch1 = self.create_branch('master', 2, [self.hash_string(2)])
 
         post_data = {}
         post_data['commits'] = []

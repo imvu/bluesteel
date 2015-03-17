@@ -70,6 +70,14 @@ GIT_FEEDER_SCHEMA = {
                             'minLength' : 1
                         }
                     },
+                    'trail' : {
+                        'type' : 'array',
+                        'minItems' : 1,
+                        'items' : {
+                            'type' : 'string',
+                            'pattern': '^[0-9a-f]{40}$'
+                        }
+                    }
                 }
             }
         },
