@@ -32,7 +32,22 @@ class GitBranchTestCase(TestCase):
         entry = GitBranchEntry.objects.create(
             project=self.git_project1,
             commit_hash=self.git_hash1,
+            name='branch-1'
         )
 
         self.assertEqual('http://test/', entry.project.url)
+        self.assertEqual('branch-1', entry.name)
         self.assertEqual('0000100001000010000100001000010000100001', entry.commit_hash.git_hash)
+
+    def test_branch_as_object(self):
+        entry = GitBranchEntry.objects.create(
+            project=self.git_project1,
+            commit_hash=self.git_hash1,
+            name='branch-1'
+        )
+
+        obj = entry.as_object()
+
+        self.assertEqual(self.git_project1.id, obj['project'])
+        self.assertEqual('branch-1', obj['name'])
+        self.assertEqual('0000100001000010000100001000010000100001', obj['commit_hash'])

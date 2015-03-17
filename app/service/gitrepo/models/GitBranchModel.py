@@ -12,3 +12,11 @@ class GitBranchEntry(models.Model):
 
     def __unicode__(self):
         return u'Branch:{0}, name:{1}'.format(self.commit_hash.git_hash, self.name)
+
+    def as_object(self):
+        """ Returns the entry as an object """
+        obj = {}
+        obj['project'] = self.project.id
+        obj['name'] = self.name
+        obj['commit_hash'] = self.commit_hash.git_hash
+        return obj

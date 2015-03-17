@@ -66,7 +66,7 @@ class GitFeedViewsTestCase(TestCase):
         post_data['diffs'] = []
 
         resp = self.client.post(
-            '/git/feed/commit/project/{0}/'.format(self.git_project1.id),
+            '/gitfeeder/feed/commit/project/{0}/'.format(self.git_project1.id),
             data = json.dumps(post_data),
             content_type='application/json')
 
@@ -111,7 +111,7 @@ class GitFeedViewsTestCase(TestCase):
         post_data['diffs'] = []
 
         resp = self.client.post(
-            '/git/feed/commit/project/{0}/'.format(self.git_project1.id),
+            '/gitfeeder/feed/commit/project/{0}/'.format(self.git_project1.id),
             data = json.dumps(post_data),
             content_type='application/json')
 
@@ -148,7 +148,7 @@ class GitFeedViewsTestCase(TestCase):
         post_data['diffs'] = []
 
         resp = self.client.post(
-            '/git/feed/commit/project/{0}/'.format(self.git_project1.id),
+            '/gitfeeder/feed/commit/project/{0}/'.format(self.git_project1.id),
             data = json.dumps(post_data),
             content_type='application/json')
 
@@ -180,7 +180,7 @@ class GitFeedViewsTestCase(TestCase):
         post_data['diffs'] = []
 
         resp = self.client.post(
-            '/git/feed/commit/project/{0}/'.format(self.git_project1.id),
+            '/gitfeeder/feed/commit/project/{0}/'.format(self.git_project1.id),
             data = json.dumps(post_data),
             content_type='application/json')
 
@@ -223,7 +223,7 @@ class GitFeedViewsTestCase(TestCase):
         post_data['diffs'].append(diff1)
 
         resp = self.client.post(
-            '/git/feed/commit/project/{0}/'.format(self.git_project1.id),
+            '/gitfeeder/feed/commit/project/{0}/'.format(self.git_project1.id),
             data = json.dumps(post_data),
             content_type='application/json')
 
@@ -267,7 +267,7 @@ class GitFeedViewsTestCase(TestCase):
         post_data['diffs'].append(diff1)
 
         resp = self.client.post(
-            '/git/feed/commit/project/{0}/'.format(self.git_project1.id),
+            '/gitfeeder/feed/commit/project/{0}/'.format(self.git_project1.id),
             data = json.dumps(post_data),
             content_type='application/json')
 
@@ -294,7 +294,7 @@ class GitFeedViewsTestCase(TestCase):
         post_data['diffs'] = []
 
         resp = self.client.post(
-            '/git/feed/commit/project/{0}/'.format(self.git_project1.id),
+            '/gitfeeder/feed/commit/project/{0}/'.format(self.git_project1.id),
             data = json.dumps(post_data),
             content_type='application/json')
 
