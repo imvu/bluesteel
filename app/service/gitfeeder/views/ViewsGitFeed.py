@@ -9,6 +9,7 @@ from app.service.gitrepo.models.GitCommitModel import GitCommitEntry
 from app.service.gitrepo.models.GitParentModel import GitParentEntry
 from app.service.gitrepo.models.GitDiffModel import GitDiffEntry
 from app.service.gitrepo.models.GitBranchModel import GitBranchEntry
+from app.service.gitrepo.models.GitBranchTrailModel import GitBranchTrailEntry
 from app.service.gitfeeder.views import GitFeederSchemas
 
 
@@ -26,8 +27,15 @@ def are_parent_hashes_correct(hash_list, commit_list):
     """ Returns true if all parents are correct """
     for commit in commit_list:
         for parent in commit['commit_parents']:
-            if parent not in hash_list:
-                return False
+            if parent in hash_list:
+                continue
+            else:
+                try:
+                    GitHashEntry.objects.filter(git_hash=parent)
+                except GitHashEntry.DoesNotExist:
+                    return False
+                else:
+                    continue
     return True
 
 def are_diffs_correct(hash_list, diffs_list):
@@ -98,19 +106,29 @@ def insert_diffs(diffs_list, project):
         )
 
 def insert_branches(branch_list, project):
-    """ Inserts all the parents into the db """
+    """ Inserts all the branches into the db """
     for branch in branch_list:
         hash_entry = GitHashEntry.objects.filter(git_hash=branch['commit_hash']).first()
         try:
             branch_entry = GitBranchEntry.objects.get(name=branch['branch_name'])
         except GitBranchEntry.DoesNotExist:
-            GitBranchEntry.objects.create(
+            branch_entry = GitBranchEntry.objects.create(
                 project=project,
                 name=branch['branch_name'],
                 commit_hash=hash_entry
             )
         else:
             branch_entry.commit_hash = hash_entry
+
+        GitBranchTrailEntry.objects.filter(branch=branch_entry).delete()
+
+        for git_hash in branch['trail']:
+            commit_entry = GitCommitEntry.objects.filter(commit_hash__git_hash=git_hash).first()
+            GitBranchTrailEntry.objects.create(
+                project=project,
+                branch=branch_entry,
+                commit=commit_entry
+            )
 
 
 def post_commits(request, project_id):
