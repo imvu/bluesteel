@@ -3,7 +3,6 @@
 from app.util.httpcommon import res
 from app.util.httpcommon import val
 from app.service.gitrepo.models.GitProjectModel import GitProjectEntry
-from app.service.gitrepo.models.GitHashModel import GitHashEntry
 from app.service.gitrepo.models.GitUserModel import GitUserEntry
 from app.service.gitrepo.models.GitCommitModel import GitCommitEntry
 from app.service.gitrepo.models.GitParentModel import GitParentEntry
@@ -31,8 +30,8 @@ def are_parent_hashes_correct(hash_list, commit_list):
                 continue
             else:
                 try:
-                    GitHashEntry.objects.filter(git_hash=parent)
-                except GitHashEntry.DoesNotExist:
+                    GitCommitEntry.objects.filter(commit_hash=parent)
+                except GitCommitEntry.DoesNotExist:
                     return False
                 else:
                     continue
@@ -57,22 +56,19 @@ def are_branches_correct(hash_list, branch_list):
 def insert_commits(commit_list, project):
     """ Inserts all the commits into the db """
     for commit in commit_list:
-        git_hash, hash_created = GitHashEntry.objects.get_or_create(
-            project=project,
-            git_hash=commit['commit_hash']
-        )
+        try:
+            GitCommitEntry.objects.get(commit_hash=commit['commit_hash'])
+        except GitCommitEntry.DoesNotExist:
+            git_user, user_created = GitUserEntry.objects.get_or_create(
+                project=project,
+                name=commit['user']['name'],
+                email=commit['user']['email']
+                )
+            del user_created
 
-        git_user, user_created = GitUserEntry.objects.get_or_create(
-            project=project,
-            name=commit['user']['name'],
-            email=commit['user']['email']
-            )
-        del user_created
-
-        if hash_created:
             GitCommitEntry.objects.create(
                 project=project,
-                commit_hash=git_hash,
+                commit_hash=commit['commit_hash'],
                 git_user=git_user,
                 commit_created_at=commit['date_creation'],
                 commit_pushed_at=commit['date_commit']
@@ -82,8 +78,8 @@ def insert_parents(commit_list, project):
     """ Inserts all the parents into the db """
     for commit in commit_list:
         for index, parent in enumerate(commit['commit_parents']):
-            hash_parent = GitHashEntry.objects.filter(git_hash=parent).first()
-            hash_son = GitHashEntry.objects.filter(git_hash=commit['commit_hash']).first()
+            hash_parent = GitCommitEntry.objects.filter(commit_hash=parent).first()
+            hash_son = GitCommitEntry.objects.filter(commit_hash=commit['commit_hash']).first()
 
             GitParentEntry.objects.create(
                 project=project,
@@ -95,35 +91,35 @@ def insert_parents(commit_list, project):
 def insert_diffs(diffs_list, project):
     """ Inserts all the parents into the db """
     for diff in diffs_list:
-        commit_son = GitCommitEntry.objects.filter(commit_hash__git_hash=diff['commit_hash_son']).first()
-        commit_parent = GitCommitEntry.objects.filter(commit_hash__git_hash=diff['commit_hash_parent']).first()
+        commit_son = GitCommitEntry.objects.filter(commit_hash=diff['commit_hash_son']).first()
+        commit_parent = GitCommitEntry.objects.filter(commit_hash=diff['commit_hash_parent']).first()
 
         GitDiffEntry.objects.create(
             project=project,
-            git_commit_son=commit_son,
-            git_commit_parent=commit_parent,
+            commit_son=commit_son,
+            commit_parent=commit_parent,
             content=diff['diff']
         )
 
 def insert_branches(branch_list, project):
     """ Inserts all the branches into the db """
     for branch in branch_list:
-        hash_entry = GitHashEntry.objects.filter(git_hash=branch['commit_hash']).first()
+        commit_entry = GitCommitEntry.objects.filter(commit_hash=branch['commit_hash']).first()
         try:
             branch_entry = GitBranchEntry.objects.get(name=branch['branch_name'])
         except GitBranchEntry.DoesNotExist:
             branch_entry = GitBranchEntry.objects.create(
                 project=project,
                 name=branch['branch_name'],
-                commit_hash=hash_entry
+                commit=commit_entry
             )
         else:
-            branch_entry.commit_hash = hash_entry
+            branch_entry.commit = commit_entry
 
         GitBranchTrailEntry.objects.filter(branch=branch_entry).delete()
 
         for git_hash in branch['trail']:
-            commit_entry = GitCommitEntry.objects.filter(commit_hash__git_hash=git_hash).first()
+            commit_entry = GitCommitEntry.objects.filter(commit_hash=git_hash).first()
             GitBranchTrailEntry.objects.create(
                 project=project,
                 branch=branch_entry,

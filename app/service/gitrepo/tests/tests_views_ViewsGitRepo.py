@@ -7,7 +7,8 @@ from django.utils import timezone
 from app.util.httpcommon import res
 from app.service.gitrepo.models.GitProjectModel import GitProjectEntry
 from app.service.gitrepo.models.GitBranchModel import GitBranchEntry
-from app.service.gitrepo.models.GitHashModel import GitHashEntry
+from app.service.gitrepo.models.GitCommitModel import GitCommitEntry
+from app.service.gitrepo.models.GitUserModel import GitUserEntry
 from datetime import timedelta
 import json
 
@@ -20,35 +21,50 @@ class ViewsGitRepoTestCase(TestCase):
         self.git_project1 = GitProjectEntry.objects.create(url='http://test/a/')
         self.git_project2 = GitProjectEntry.objects.create(url='http://test/b/')
 
-        self.git_hash1 = GitHashEntry.objects.create(
+        self.git_user1 = GitUserEntry.objects.create(
             project=self.git_project1,
-            git_hash='0000100001000010000100001000010000100001'
+            name='user1',
+            email='user1@test.com'
         )
 
-        self.git_hash2 = GitHashEntry.objects.create(
+        self.git_commit1 = GitCommitEntry.objects.create(
+            project=self.git_project1,
+            commit_hash='0000100001000010000100001000010000100001',
+            git_user=self.git_user1,
+            commit_created_at=timezone.now(),
+            commit_pushed_at=timezone.now(),
+        )
+
+        self.git_commit2 = GitCommitEntry.objects.create(
             project=self.git_project2,
-            git_hash='0000200002000020000200002000020000200002'
+            commit_hash='0000200002000020000200002000020000200002',
+            git_user=self.git_user1,
+            commit_created_at=timezone.now(),
+            commit_pushed_at=timezone.now(),
         )
 
-        self.git_hash3 = GitHashEntry.objects.create(
+        self.git_commit3 = GitCommitEntry.objects.create(
             project=self.git_project1,
-            git_hash='0000300003000030000300003000030000300003'
+            commit_hash='0000300003000030000300003000030000300003',
+            git_user=self.git_user1,
+            commit_created_at=timezone.now(),
+            commit_pushed_at=timezone.now(),
         )
 
         self.git_branch1 = GitBranchEntry.objects.create(
             project=self.git_project1,
             name='branch-1',
-            commit_hash=self.git_hash1)
+            commit=self.git_commit1)
 
         self.git_branch2 = GitBranchEntry.objects.create(
             project=self.git_project2,
             name='branch-2',
-            commit_hash=self.git_hash2)
+            commit=self.git_commit2)
 
         self.git_branch3 = GitBranchEntry.objects.create(
             project=self.git_project1,
             name='branch-3',
-            commit_hash=self.git_hash3)
+            commit=self.git_commit3)
 
     def tearDown(self):
         pass

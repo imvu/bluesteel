@@ -14,5 +14,5 @@ class GitBranchTrailEntry(models.Model):
         return u'Trail - project:{0}, name:{1}, commit:{2}'.format(
             self.project.id,
             self.branch.name,
-            self.commit_hash.git_hash
+            self.commit.commit_hash
         )

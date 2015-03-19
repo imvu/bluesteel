@@ -5,7 +5,8 @@ from django.test import Client
 from django.conf import settings
 from django.utils import timezone
 from app.service.gitrepo.models.GitProjectModel import GitProjectEntry
-from app.service.gitrepo.models.GitHashModel import GitHashEntry
+from app.service.gitrepo.models.GitUserModel import GitUserEntry
+from app.service.gitrepo.models.GitCommitModel import GitCommitEntry
 from app.service.gitrepo.models.GitBranchModel import GitBranchEntry
 from datetime import timedelta
 import os
@@ -20,9 +21,18 @@ class GitBranchTestCase(TestCase):
     def setUp(self):
         self.git_project1 = GitProjectEntry.objects.create(url='http://test/')
 
-        self.git_hash1 = GitHashEntry.objects.create(
+        self.git_user1 = GitUserEntry.objects.create(
             project=self.git_project1,
-            git_hash='0000100001000010000100001000010000100001'
+            name='user1',
+            email='user1@test.com'
+        )
+
+        self.git_commit1 = GitCommitEntry.objects.create(
+            project=self.git_project1,
+            commit_hash='0000100001000010000100001000010000100001',
+            git_user=self.git_user1,
+            commit_created_at=timezone.now(),
+            commit_pushed_at=timezone.now(),
         )
 
     def tearDown(self):
@@ -31,18 +41,18 @@ class GitBranchTestCase(TestCase):
     def test_create_git_branch_entry(self):
         entry = GitBranchEntry.objects.create(
             project=self.git_project1,
-            commit_hash=self.git_hash1,
+            commit=self.git_commit1,
             name='branch-1'
         )
 
         self.assertEqual('http://test/', entry.project.url)
         self.assertEqual('branch-1', entry.name)
-        self.assertEqual('0000100001000010000100001000010000100001', entry.commit_hash.git_hash)
+        self.assertEqual('0000100001000010000100001000010000100001', entry.commit.commit_hash)
 
     def test_branch_as_object(self):
         entry = GitBranchEntry.objects.create(
             project=self.git_project1,
-            commit_hash=self.git_hash1,
+            commit=self.git_commit1,
             name='branch-1'
         )
 

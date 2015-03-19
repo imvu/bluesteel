@@ -6,7 +6,6 @@ from django.conf import settings
 from django.utils import timezone
 from app.service.gitrepo.models.GitProjectModel import GitProjectEntry
 from app.service.gitrepo.models.GitUserModel import GitUserEntry
-from app.service.gitrepo.models.GitHashModel import GitHashEntry
 from app.service.gitrepo.models.GitCommitModel import GitCommitEntry
 from app.service.gitrepo.models.GitParentModel import GitParentEntry
 from app.service.gitrepo.models.GitDiffModel import GitDiffEntry
@@ -79,24 +78,18 @@ class GitFeedViewsTestCase(TestCase):
         resp_obj = json.loads(resp.content)
 
         self.assertEqual(200, resp_obj['status'])
-        self.assertEqual(1, GitHashEntry.objects.all().count())
         self.assertEqual(1, GitCommitEntry.objects.all().count())
         self.assertEqual(1, GitBranchEntry.objects.all().count())
 
         branch_entry = GitBranchEntry.objects.all().first()
-        self.assertEqual('0000100001000010000100001000010000100001', branch_entry.commit_hash.git_hash)
+        self.assertEqual('0000100001000010000100001000010000100001', branch_entry.commit.commit_hash)
         self.assertEqual('master', branch_entry.name)
 
 
     def test_feed_simple_commit_already_present(self):
-        git_hash1 = GitHashEntry.objects.create(
-            project=self.git_project1,
-            git_hash='0000100001000010000100001000010000100001'
-        )
-
         git_commit1 = GitCommitEntry.objects.create(
             project=self.git_project1,
-            commit_hash=git_hash1,
+            commit_hash='0000100001000010000100001000010000100001',
             git_user=self.git_user1,
             commit_created_at=timezone.now(),
             commit_pushed_at=timezone.now()
@@ -124,12 +117,11 @@ class GitFeedViewsTestCase(TestCase):
         resp_obj = json.loads(resp.content)
 
         self.assertEqual(200, resp_obj['status'])
-        self.assertEqual(1, GitHashEntry.objects.all().count())
         self.assertEqual(1, GitCommitEntry.objects.all().count())
         self.assertEqual(1, GitBranchEntry.objects.all().count())
 
         branch_entry = GitBranchEntry.objects.all().first()
-        self.assertEqual('0000100001000010000100001000010000100001', branch_entry.commit_hash.git_hash)
+        self.assertEqual('0000100001000010000100001000010000100001', branch_entry.commit.commit_hash)
         self.assertEqual('master', branch_entry.name)
 
 
@@ -162,7 +154,6 @@ class GitFeedViewsTestCase(TestCase):
 
         self.assertEqual(400, resp_obj['status'])
         self.assertEqual('Commits not unique', resp_obj['message'])
-        self.assertEqual(0, GitHashEntry.objects.all().count())
         self.assertEqual(0, GitCommitEntry.objects.all().count())
         self.assertEqual(0, GitBranchEntry.objects.all().count())
 
@@ -193,17 +184,16 @@ class GitFeedViewsTestCase(TestCase):
         resp_obj = json.loads(resp.content)
 
         self.assertEqual(200, resp_obj['status'])
-        self.assertEqual(2, GitHashEntry.objects.all().count())
         self.assertEqual(2, GitCommitEntry.objects.all().count())
         self.assertEqual(1, GitParentEntry.objects.all().count())
         self.assertEqual(1, GitBranchEntry.objects.all().count())
 
         parent_entry = GitParentEntry.objects.all().first()
-        self.assertEqual('0000200002000020000200002000020000200002', parent_entry.parent.git_hash)
-        self.assertEqual('0000100001000010000100001000010000100001', parent_entry.son.git_hash)
+        self.assertEqual('0000200002000020000200002000020000200002', parent_entry.parent.commit_hash)
+        self.assertEqual('0000100001000010000100001000010000100001', parent_entry.son.commit_hash)
 
         branch_entry = GitBranchEntry.objects.all().first()
-        self.assertEqual('0000100001000010000100001000010000100001', branch_entry.commit_hash.git_hash)
+        self.assertEqual('0000100001000010000100001000010000100001', branch_entry.commit.commit_hash)
         self.assertEqual('master', branch_entry.name)
 
     def test_two_commits_one_diff(self):
@@ -236,18 +226,17 @@ class GitFeedViewsTestCase(TestCase):
         resp_obj = json.loads(resp.content)
 
         self.assertEqual(200, resp_obj['status'])
-        self.assertEqual(2, GitHashEntry.objects.all().count())
         self.assertEqual(2, GitCommitEntry.objects.all().count())
         self.assertEqual(1, GitBranchEntry.objects.all().count())
 
         diff_entry = GitDiffEntry.objects.all().first()
         self.assertEqual(self.git_project1, diff_entry.project)
-        self.assertEqual('0000100001000010000100001000010000100001', diff_entry.git_commit_son.commit_hash.git_hash)
-        self.assertEqual('0000200002000020000200002000020000200002', diff_entry.git_commit_parent.commit_hash.git_hash)
+        self.assertEqual('0000100001000010000100001000010000100001', diff_entry.commit_son.commit_hash)
+        self.assertEqual('0000200002000020000200002000020000200002', diff_entry.commit_parent.commit_hash)
         self.assertEqual('diff-1-2', diff_entry.content)
 
         branch_entry = GitBranchEntry.objects.all().first()
-        self.assertEqual('0000100001000010000100001000010000100001', branch_entry.commit_hash.git_hash)
+        self.assertEqual('0000100001000010000100001000010000100001', branch_entry.commit.commit_hash)
         self.assertEqual('master', branch_entry.name)
 
     def test_incorrect_diff(self):
@@ -281,7 +270,6 @@ class GitFeedViewsTestCase(TestCase):
 
         self.assertEqual(400, resp_obj['status'])
         self.assertEqual('Diffs not correct', resp_obj['message'])
-        self.assertEqual(0, GitHashEntry.objects.all().count())
         self.assertEqual(0, GitCommitEntry.objects.all().count())
         self.assertEqual(0, GitBranchEntry.objects.all().count())
 
@@ -308,7 +296,6 @@ class GitFeedViewsTestCase(TestCase):
 
         self.assertEqual(400, resp_obj['status'])
         self.assertEqual('Branches not correct', resp_obj['message'])
-        self.assertEqual(0, GitHashEntry.objects.all().count())
         self.assertEqual(0, GitCommitEntry.objects.all().count())
         self.assertEqual(0, GitBranchEntry.objects.all().count())
 
@@ -339,28 +326,23 @@ class GitFeedViewsTestCase(TestCase):
         resp_obj = json.loads(resp.content)
 
         self.assertEqual(200, resp_obj['status'])
-        self.assertEqual(3, GitHashEntry.objects.all().count())
         self.assertEqual(3, GitCommitEntry.objects.all().count())
         self.assertEqual(2, GitParentEntry.objects.all().count())
         self.assertEqual(1, GitBranchEntry.objects.all().count())
         self.assertEqual(3, GitBranchTrailEntry.objects.all().count())
 
-        self.assertIsNotNone(GitHashEntry.objects.filter(git_hash='0000100001000010000100001000010000100001').first())
-        self.assertIsNotNone(GitHashEntry.objects.filter(git_hash='0000200002000020000200002000020000200002').first())
-        self.assertIsNotNone(GitHashEntry.objects.filter(git_hash='0000300003000030000300003000030000300003').first())
+        self.assertIsNotNone(GitCommitEntry.objects.filter(commit_hash='0000100001000010000100001000010000100001').first())
+        self.assertIsNotNone(GitCommitEntry.objects.filter(commit_hash='0000200002000020000200002000020000200002').first())
+        self.assertIsNotNone(GitCommitEntry.objects.filter(commit_hash='0000300003000030000300003000030000300003').first())
 
-        self.assertIsNotNone(GitCommitEntry.objects.filter(commit_hash__git_hash='0000100001000010000100001000010000100001').first())
-        self.assertIsNotNone(GitCommitEntry.objects.filter(commit_hash__git_hash='0000200002000020000200002000020000200002').first())
-        self.assertIsNotNone(GitCommitEntry.objects.filter(commit_hash__git_hash='0000300003000030000300003000030000300003').first())
-
-        self.assertIsNotNone(GitParentEntry.objects.filter(parent__git_hash='0000100001000010000100001000010000100001').first())
-        self.assertIsNotNone(GitParentEntry.objects.filter(parent__git_hash='0000200002000020000200002000020000200002').first())
+        self.assertIsNotNone(GitParentEntry.objects.filter(parent__commit_hash='0000100001000010000100001000010000100001').first())
+        self.assertIsNotNone(GitParentEntry.objects.filter(parent__commit_hash='0000200002000020000200002000020000200002').first())
 
         self.assertIsNotNone(GitBranchEntry.objects.filter(name='master').first())
 
-        self.assertIsNotNone(GitBranchTrailEntry.objects.filter(commit__commit_hash__git_hash='0000100001000010000100001000010000100001').first())
-        self.assertIsNotNone(GitBranchTrailEntry.objects.filter(commit__commit_hash__git_hash='0000200002000020000200002000020000200002').first())
-        self.assertIsNotNone(GitBranchTrailEntry.objects.filter(commit__commit_hash__git_hash='0000300003000030000300003000030000300003').first())
+        self.assertIsNotNone(GitBranchTrailEntry.objects.filter(commit__commit_hash='0000100001000010000100001000010000100001').first())
+        self.assertIsNotNone(GitBranchTrailEntry.objects.filter(commit__commit_hash='0000200002000020000200002000020000200002').first())
+        self.assertIsNotNone(GitBranchTrailEntry.objects.filter(commit__commit_hash='0000300003000030000300003000030000300003').first())
 
     def test_feed_two_times(self):
         commit_time = str(timezone.now().isoformat())
@@ -414,35 +396,28 @@ class GitFeedViewsTestCase(TestCase):
         resp_obj = json.loads(resp.content)
         self.assertEqual(200, resp_obj['status'])
 
-        self.assertEqual(5, GitHashEntry.objects.all().count())
         self.assertEqual(5, GitCommitEntry.objects.all().count())
         self.assertEqual(4, GitParentEntry.objects.all().count())
         self.assertEqual(2, GitBranchEntry.objects.all().count())
         self.assertEqual(6, GitBranchTrailEntry.objects.all().count())
 
-        self.assertIsNotNone(GitHashEntry.objects.filter(git_hash='0000100001000010000100001000010000100001').first())
-        self.assertIsNotNone(GitHashEntry.objects.filter(git_hash='0000200002000020000200002000020000200002').first())
-        self.assertIsNotNone(GitHashEntry.objects.filter(git_hash='0000300003000030000300003000030000300003').first())
-        self.assertIsNotNone(GitHashEntry.objects.filter(git_hash='0000400004000040000400004000040000400004').first())
-        self.assertIsNotNone(GitHashEntry.objects.filter(git_hash='0000500005000050000500005000050000500005').first())
+        self.assertIsNotNone(GitCommitEntry.objects.filter(commit_hash='0000100001000010000100001000010000100001').first())
+        self.assertIsNotNone(GitCommitEntry.objects.filter(commit_hash='0000200002000020000200002000020000200002').first())
+        self.assertIsNotNone(GitCommitEntry.objects.filter(commit_hash='0000300003000030000300003000030000300003').first())
+        self.assertIsNotNone(GitCommitEntry.objects.filter(commit_hash='0000400004000040000400004000040000400004').first())
+        self.assertIsNotNone(GitCommitEntry.objects.filter(commit_hash='0000500005000050000500005000050000500005').first())
 
-        self.assertIsNotNone(GitCommitEntry.objects.filter(commit_hash__git_hash='0000100001000010000100001000010000100001').first())
-        self.assertIsNotNone(GitCommitEntry.objects.filter(commit_hash__git_hash='0000200002000020000200002000020000200002').first())
-        self.assertIsNotNone(GitCommitEntry.objects.filter(commit_hash__git_hash='0000300003000030000300003000030000300003').first())
-        self.assertIsNotNone(GitCommitEntry.objects.filter(commit_hash__git_hash='0000400004000040000400004000040000400004').first())
-        self.assertIsNotNone(GitCommitEntry.objects.filter(commit_hash__git_hash='0000500005000050000500005000050000500005').first())
-
-        self.assertIsNotNone(GitParentEntry.objects.filter(parent__git_hash='0000100001000010000100001000010000100001', son__git_hash='0000200002000020000200002000020000200002').first())
-        self.assertIsNotNone(GitParentEntry.objects.filter(parent__git_hash='0000100001000010000100001000010000100001', son__git_hash='0000300003000030000300003000030000300003').first())
-        self.assertIsNotNone(GitParentEntry.objects.filter(parent__git_hash='0000200002000020000200002000020000200002', son__git_hash='0000400004000040000400004000040000400004').first())
-        self.assertIsNotNone(GitParentEntry.objects.filter(parent__git_hash='0000300003000030000300003000030000300003', son__git_hash='0000500005000050000500005000050000500005').first())
+        self.assertIsNotNone(GitParentEntry.objects.filter(parent__commit_hash='0000100001000010000100001000010000100001', son__commit_hash='0000200002000020000200002000020000200002').first())
+        self.assertIsNotNone(GitParentEntry.objects.filter(parent__commit_hash='0000100001000010000100001000010000100001', son__commit_hash='0000300003000030000300003000030000300003').first())
+        self.assertIsNotNone(GitParentEntry.objects.filter(parent__commit_hash='0000200002000020000200002000020000200002', son__commit_hash='0000400004000040000400004000040000400004').first())
+        self.assertIsNotNone(GitParentEntry.objects.filter(parent__commit_hash='0000300003000030000300003000030000300003', son__commit_hash='0000500005000050000500005000050000500005').first())
 
         self.assertIsNotNone(GitBranchEntry.objects.filter(name='master').first())
         self.assertIsNotNone(GitBranchEntry.objects.filter(name='branch-1').first())
 
-        self.assertIsNotNone(GitBranchTrailEntry.objects.filter(commit__commit_hash__git_hash='0000100001000010000100001000010000100001', branch__name='master').first())
-        self.assertIsNotNone(GitBranchTrailEntry.objects.filter(commit__commit_hash__git_hash='0000200002000020000200002000020000200002', branch__name='master').first())
-        self.assertIsNotNone(GitBranchTrailEntry.objects.filter(commit__commit_hash__git_hash='0000400004000040000400004000040000400004', branch__name='master').first())
-        self.assertIsNotNone(GitBranchTrailEntry.objects.filter(commit__commit_hash__git_hash='0000100001000010000100001000010000100001', branch__name='branch-1').first())
-        self.assertIsNotNone(GitBranchTrailEntry.objects.filter(commit__commit_hash__git_hash='0000300003000030000300003000030000300003', branch__name='branch-1').first())
-        self.assertIsNotNone(GitBranchTrailEntry.objects.filter(commit__commit_hash__git_hash='0000500005000050000500005000050000500005', branch__name='branch-1').first())
+        self.assertIsNotNone(GitBranchTrailEntry.objects.filter(commit__commit_hash='0000100001000010000100001000010000100001', branch__name='master').first())
+        self.assertIsNotNone(GitBranchTrailEntry.objects.filter(commit__commit_hash='0000200002000020000200002000020000200002', branch__name='master').first())
+        self.assertIsNotNone(GitBranchTrailEntry.objects.filter(commit__commit_hash='0000400004000040000400004000040000400004', branch__name='master').first())
+        self.assertIsNotNone(GitBranchTrailEntry.objects.filter(commit__commit_hash='0000100001000010000100001000010000100001', branch__name='branch-1').first())
+        self.assertIsNotNone(GitBranchTrailEntry.objects.filter(commit__commit_hash='0000300003000030000300003000030000300003', branch__name='branch-1').first())
+        self.assertIsNotNone(GitBranchTrailEntry.objects.filter(commit__commit_hash='0000500005000050000500005000050000500005', branch__name='branch-1').first())
