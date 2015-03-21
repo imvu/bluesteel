@@ -9,6 +9,7 @@ from app.service.gitrepo.models.GitParentModel import GitParentEntry
 from app.service.gitrepo.models.GitDiffModel import GitDiffEntry
 from app.service.gitrepo.models.GitBranchModel import GitBranchEntry
 from app.service.gitrepo.models.GitBranchTrailModel import GitBranchTrailEntry
+from app.service.gitrepo.models.GitBranchMergeTargetModel import GitBranchMergeTargetEntry
 from app.service.gitfeeder.views import GitFeederSchemas
 
 
@@ -98,7 +99,7 @@ def insert_diffs(diffs_list, project):
             project=project,
             commit_son=commit_son,
             commit_parent=commit_parent,
-            content=diff['diff']
+            content=diff['content']
         )
 
 def insert_branches(branch_list, project):
@@ -115,6 +116,7 @@ def insert_branches(branch_list, project):
             )
         else:
             branch_entry.commit = commit_entry
+            branch_entry.save()
 
         GitBranchTrailEntry.objects.filter(branch=branch_entry).delete()
 
@@ -125,6 +127,56 @@ def insert_branches(branch_list, project):
                 branch=branch_entry,
                 commit=commit_entry
             )
+
+def update_branch_merge_target(branch_list, project):
+    """ Updates all the branch merge targets into the db """
+    for branch in branch_list:
+
+        branch_entry = GitBranchEntry.objects.get(
+            commit__commit_hash=branch['commit_hash'],
+            name=branch['branch_name'],
+            project=project
+        )
+
+        target_entry = GitBranchEntry.objects.get(
+            name=branch['merge_target']['target_branch_name'],
+            project=project
+        )
+
+        son_entry = GitCommitEntry.objects.get(
+            project=project,
+            commit_hash=branch['merge_target']['diff']['commit_hash_son']
+            )
+
+        parent_entry = GitCommitEntry.objects.get(
+            project=project,
+            commit_hash=branch['merge_target']['diff']['commit_hash_parent']
+            )
+
+        diff_entry = GitDiffEntry.objects.create(
+            project=project,
+            commit_son=son_entry,
+            commit_parent=parent_entry,
+            content=branch['merge_target']['diff']['content']
+            )
+
+        try:
+            merge_target_entry = GitBranchMergeTargetEntry.objects.get(
+                project=project,
+                current_branch__name=branch['branch_name']
+            )
+        except GitBranchMergeTargetEntry.DoesNotExist:
+            branch_entry = GitBranchMergeTargetEntry.objects.create(
+                project=project,
+                current_branch=branch_entry,
+                target_branch=target_entry,
+                diff=diff_entry,
+            )
+        else:
+            merge_target_entry.current_branch = branch_entry
+            merge_target_entry.target_branch = target_entry
+            merge_target_entry.diff = diff_entry
+            merge_target_entry.save()
 
 
 def post_commits(request, project_id):
@@ -159,6 +211,7 @@ def post_commits(request, project_id):
         insert_parents(val_resp_obj['commits'], project_entry)
         insert_diffs(val_resp_obj['diffs'], project_entry)
         insert_branches(val_resp_obj['branches'], project_entry)
+        update_branch_merge_target(val_resp_obj['branches'], project_entry)
 
         return res.get_response(200, 'Commits added correctly', {})
     else:

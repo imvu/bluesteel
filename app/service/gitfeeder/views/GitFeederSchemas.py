@@ -57,7 +57,7 @@ GIT_FEEDER_SCHEMA = {
             'items' : {
                 'type' : 'object',
                 'additionalProperties': False,
-                'required': ['commit_hash', 'branch_name'],
+                'required': ['commit_hash', 'branch_name', 'merge_target'],
                 'properties' : {
                     'commit_hash' : {
                         'type' : 'string',
@@ -77,6 +77,36 @@ GIT_FEEDER_SCHEMA = {
                             'type' : 'string',
                             'pattern': '^[0-9a-f]{40}$'
                         }
+                    },
+                    'merge_target' : {
+                        'type' : 'object',
+                        'additionalProperties': False,
+                        'required': ['target_branch_name', 'diff'],
+                        'properties' : {
+                            'target_branch_name' : {
+                                'type' : 'string',
+                                'minLength' : 1
+                            },
+                            'diff' : {
+                                'type' : 'object',
+                                'additionalProperties': False,
+                                'required': ['commit_hash_son', 'commit_hash_parent', 'content'],
+                                'properties' : {
+                                    'commit_hash_son' : {
+                                        'type' : 'string',
+                                        'pattern': '^[0-9a-f]{40}$'
+                                    },
+                                    'commit_hash_parent' : {
+                                        'type' : 'string',
+                                        'pattern': '^[0-9a-f]{40}$'
+                                    },
+                                    'content' : {
+                                        'type' : 'string',
+                                    },
+                                }
+                            },
+
+                        }
                     }
                 }
             }
@@ -86,7 +116,7 @@ GIT_FEEDER_SCHEMA = {
             'items' : {
                 'type' : 'object',
                 'additionalProperties': False,
-                'required': ['commit_hash_son', 'commit_hash_parent', 'diff'],
+                'required': ['commit_hash_son', 'commit_hash_parent', 'content'],
                 'properties' : {
                     'commit_hash_son' : {
                         'type' : 'string',
@@ -96,7 +126,7 @@ GIT_FEEDER_SCHEMA = {
                         'type' : 'string',
                         'pattern': '^[0-9a-f]{40}$'
                     },
-                    'diff' : {
+                    'content' : {
                         'type' : 'string',
                     },
                 }
