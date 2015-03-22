@@ -45,11 +45,6 @@ class GitFeedViewsDiffTestCase(TestCase):
 
         branch1 = FeederTestHelper.create_branch('master', 1, [FeederTestHelper.hash_string(1)], merge_target)
 
-        diff1 = {}
-        diff1['commit_hash_son'] = commit1['commit_hash']
-        diff1['commit_hash_parent'] = commit2['commit_hash']
-        diff1['content'] = 'diff-1-2'
-
         post_data = {}
         post_data['commits'] = []
         post_data['commits'].append(commit1)
@@ -57,7 +52,8 @@ class GitFeedViewsDiffTestCase(TestCase):
         post_data['branches'] = []
         post_data['branches'].append(branch1)
         post_data['diffs'] = []
-        post_data['diffs'].append(diff1)
+        post_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(1), FeederTestHelper.hash_string(1), 'diff-1'))
+        post_data['diffs'].append(FeederTestHelper.create_diff(commit2['commit_hash'], commit1['commit_hash'], 'diff-2-1'))
 
         resp = self.client.post(
             '/gitfeeder/feed/commit/project/{0}/'.format(self.git_project1.id),
@@ -70,12 +66,22 @@ class GitFeedViewsDiffTestCase(TestCase):
         self.assertEqual(200, resp_obj['status'])
         self.assertEqual(2, GitCommitEntry.objects.all().count())
         self.assertEqual(1, GitBranchEntry.objects.all().count())
+        self.assertEqual(3, GitDiffEntry.objects.all().count())
 
-        diff_entry = GitDiffEntry.objects.all().first()
-        self.assertEqual(self.git_project1, diff_entry.project)
-        self.assertEqual('0000100001000010000100001000010000100001', diff_entry.commit_son.commit_hash)
-        self.assertEqual('0000200002000020000200002000020000200002', diff_entry.commit_parent.commit_hash)
-        self.assertEqual('diff-1-2', diff_entry.content)
+        diff_entry1 = GitDiffEntry.objects.filter(
+            project=self.git_project1,
+            commit_son__commit_hash='0000100001000010000100001000010000100001',
+            commit_parent__commit_hash='0000100001000010000100001000010000100001'
+        ).first()
+        self.assertEqual('diff-1', diff_entry1.content)
+
+        diff_entry2 = GitDiffEntry.objects.filter(
+            project=self.git_project1,
+            commit_son__commit_hash='0000200002000020000200002000020000200002',
+            commit_parent__commit_hash='0000100001000010000100001000010000100001'
+        ).first()
+        self.assertEqual('diff-2-1', diff_entry2.content)
+
 
         branch_entry = GitBranchEntry.objects.all().first()
         self.assertEqual('0000100001000010000100001000010000100001', branch_entry.commit.commit_hash)
@@ -90,11 +96,6 @@ class GitFeedViewsDiffTestCase(TestCase):
 
         branch1 = FeederTestHelper.create_branch('master', 1, [FeederTestHelper.hash_string(1)], merge_target)
 
-        diff1 = {}
-        diff1['commit_hash_son'] = '0000300003000030000300003000030000300003'
-        diff1['commit_hash_parent'] = commit2['commit_hash']
-        diff1['content'] = 'diff-3-2'
-
         post_data = {}
         post_data['commits'] = []
         post_data['commits'].append(commit1)
@@ -102,7 +103,8 @@ class GitFeedViewsDiffTestCase(TestCase):
         post_data['branches'] = []
         post_data['branches'].append(branch1)
         post_data['diffs'] = []
-        post_data['diffs'].append(diff1)
+        post_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(1), FeederTestHelper.hash_string(1), 'diff-1'))
+        post_data['diffs'].append(FeederTestHelper.create_diff('0000300003000030000300003000030000300003', commit2['commit_hash'], 'diff-3-2'))
 
         resp = self.client.post(
             '/gitfeeder/feed/commit/project/{0}/'.format(self.git_project1.id),

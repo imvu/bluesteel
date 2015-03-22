@@ -50,6 +50,7 @@ class GitFeedViewsBranchTestCase(TestCase):
         post_data['branches'] = []
         post_data['branches'].append(branch1)
         post_data['diffs'] = []
+        post_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(1), FeederTestHelper.hash_string(1), 'diff-1'))
 
         resp = self.client.post(
             '/gitfeeder/feed/commit/project/{0}/'.format(self.git_project1.id),
@@ -79,7 +80,6 @@ class GitFeedViewsBranchTestCase(TestCase):
             commit=commit_entry
             )
 
-
         commit_time = str(timezone.now().isoformat())
         commit1 = FeederTestHelper.create_commit(2, [FeederTestHelper.hash_string(1)], 'user1', 'user1@test.com', commit_time, commit_time)
 
@@ -93,6 +93,7 @@ class GitFeedViewsBranchTestCase(TestCase):
         post_data['branches'] = []
         post_data['branches'].append(branch1)
         post_data['diffs'] = []
+        post_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(2), FeederTestHelper.hash_string(1), 'diff-2-1'))
 
         resp = self.client.post(
             '/gitfeeder/feed/commit/project/{0}/'.format(self.git_project1.id),
@@ -106,7 +107,7 @@ class GitFeedViewsBranchTestCase(TestCase):
         self.assertEqual(2, GitCommitEntry.objects.all().count())
         self.assertEqual(1, GitBranchEntry.objects.all().count())
         self.assertEqual(1, GitParentEntry.objects.all().count())
-        self.assertEqual(1, GitDiffEntry.objects.all().count())
+        self.assertEqual(2, GitDiffEntry.objects.all().count())
         self.assertEqual(2, GitBranchTrailEntry.objects.all().count())
         self.assertEqual(1, GitBranchMergeTargetEntry.objects.all().count())
 
@@ -157,6 +158,9 @@ class GitFeedViewsBranchTestCase(TestCase):
         post_data['branches'] = []
         post_data['branches'].append(branch1)
         post_data['diffs'] = []
+        post_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(1), FeederTestHelper.hash_string(1), 'diff-1'))
+        post_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(2), FeederTestHelper.hash_string(1), 'diff-2-1'))
+        post_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(3), FeederTestHelper.hash_string(2), 'diff-3-2'))
 
         resp = self.client.post(
             '/gitfeeder/feed/commit/project/{0}/'.format(self.git_project1.id),

@@ -38,13 +38,30 @@ def are_parent_hashes_correct(hash_list, commit_list):
                     continue
     return True
 
-def are_diffs_correct(hash_list, diffs_list):
+def are_diffs_correct(hash_list, diffs_list, project):
     """ Returns true if all diffs are correct """
+    if len(diffs_list) < len(hash_list):
+        return False
+
     for diff in diffs_list:
         if diff['commit_hash_son'] not in hash_list:
-            return False
+            commit_son_entry = GitCommitEntry.objects.filter(
+                project=project,
+                commit_hash=diff['commit_hash_son'],
+            ).first()
+
+            if commit_son_entry == None:
+                return False
+
         if diff['commit_hash_parent'] not in hash_list:
-            return False
+            commit_parent_entry = GitCommitEntry.objects.filter(
+                project=project,
+                commit_hash=diff['commit_hash_parent'],
+            ).first()
+
+            if commit_parent_entry == None:
+                return False
+
     return True
 
 def are_branches_correct(hash_list, branch_list):
@@ -201,7 +218,7 @@ def post_commits(request, project_id):
         if not are_parent_hashes_correct(unique_hash_list, val_resp_obj['commits']):
             return res.get_response(400, 'Parents not correct', {})
 
-        if not are_diffs_correct(unique_hash_list, val_resp_obj['diffs']):
+        if not are_diffs_correct(unique_hash_list, val_resp_obj['diffs'], project_entry):
             return res.get_response(400, 'Diffs not correct', {})
 
         if not are_branches_correct(unique_hash_list, val_resp_obj['branches']):
