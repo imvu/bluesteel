@@ -31,7 +31,7 @@ def are_parent_hashes_correct(hash_list, commit_list):
                 continue
             else:
                 try:
-                    GitCommitEntry.objects.filter(commit_hash=parent)
+                    GitCommitEntry.objects.get(commit_hash=parent)
                 except GitCommitEntry.DoesNotExist:
                     return False
                 else:
@@ -105,7 +105,7 @@ def insert_diffs(diffs_list, project):
 def insert_branches(branch_list, project):
     """ Inserts all the branches into the db """
     for branch in branch_list:
-        commit_entry = GitCommitEntry.objects.filter(commit_hash=branch['commit_hash']).first()
+        commit_entry = GitCommitEntry.objects.get(commit_hash=branch['commit_hash'])
         try:
             branch_entry = GitBranchEntry.objects.get(name=branch['branch_name'])
         except GitBranchEntry.DoesNotExist:

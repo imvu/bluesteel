@@ -184,6 +184,35 @@ class GitFeedViewsCommitTestCase(TestCase):
         self.assertEqual('0000100001000010000100001000010000100001', branch_entry.commit.commit_hash)
         self.assertEqual('master', branch_entry.name)
 
+    def test_feed_fails_because_bad_constructed_parent(self):
+        commit_time = str(timezone.now().isoformat())
+        commit1 = FeederTestHelper.create_commit(1, [], 'user1', 'user1@test.com', commit_time, commit_time)
+        commit2 = FeederTestHelper.create_commit(2, [FeederTestHelper.hash_string(3)], 'user1', 'user1@test.com', commit_time, commit_time)
+
+        merge_target = FeederTestHelper.create_merge_target('master', FeederTestHelper.hash_string(2), FeederTestHelper.hash_string(2), 'merge-target-content')
+
+        branch1 = FeederTestHelper.create_branch('master', 2, [FeederTestHelper.hash_string(2), FeederTestHelper.hash_string(1)], merge_target)
+
+        post_data = {}
+        post_data['commits'] = []
+        post_data['commits'].append(commit1)
+        post_data['commits'].append(commit2)
+        post_data['branches'] = []
+        post_data['branches'].append(branch1)
+        post_data['diffs'] = []
+
+        resp = self.client.post(
+            '/gitfeeder/feed/commit/project/{0}/'.format(self.git_project1.id),
+            data = json.dumps(post_data),
+            content_type='application/json')
+
+        res.check_cross_origin_headers(self, resp)
+        resp_obj = json.loads(resp.content)
+
+        self.assertEqual(400, resp_obj['status'])
+        self.assertEqual('Parents not correct', resp_obj['message'])
+
+
     def test_feed_two_times(self):
         commit_time = str(timezone.now().isoformat())
         commit1 = FeederTestHelper.create_commit(1, [], 'user1', 'user1@test.com', commit_time, commit_time)
