@@ -64,11 +64,42 @@ def are_diffs_correct(hash_list, diffs_list, project):
 
     return True
 
-def are_branches_correct(hash_list, branch_list):
+def are_branches_correct(hash_list, branch_list, project):
     """ Returns true if all branches are correct """
     for branch in branch_list:
         if branch['commit_hash'] not in hash_list:
             return False
+
+        for trail_hash in branch['trail']:
+            if trail_hash not in hash_list:
+                commit_trail_entry = GitCommitEntry.objects.filter(
+                    project=project,
+                    commit_hash=trail_hash,
+                ).first()
+
+                if commit_trail_entry == None:
+                    return False
+
+        if branch['merge_target']['diff']['commit_hash_son'] not in hash_list:
+            commit_son_entry = GitCommitEntry.objects.filter(
+                project=project,
+                commit_hash=branch['diff']['commit_hash_son'],
+            ).first()
+
+            if commit_son_entry == None:
+                print 'commit_son_entry'
+                return False
+
+        if branch['merge_target']['diff']['commit_hash_parent'] not in hash_list:
+            commit_parent_entry = GitCommitEntry.objects.filter(
+                project=project,
+                commit_hash=branch['merge_target']['diff']['commit_hash_parent'],
+            ).first()
+
+            if commit_parent_entry == None:
+                print 'commit_parent_entry'
+                return False
+
     return True
 
 def insert_commits(commit_list, project):
@@ -221,7 +252,7 @@ def post_commits(request, project_id):
         if not are_diffs_correct(unique_hash_list, val_resp_obj['diffs'], project_entry):
             return res.get_response(400, 'Diffs not correct', {})
 
-        if not are_branches_correct(unique_hash_list, val_resp_obj['branches']):
+        if not are_branches_correct(unique_hash_list, val_resp_obj['branches'], project_entry):
             return res.get_response(400, 'Branches not correct', {})
 
         insert_commits(val_resp_obj['commits'], project_entry)
