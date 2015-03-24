@@ -3,6 +3,7 @@
 from app.util.httpcommon import res
 from app.service.gitrepo.models.GitProjectModel import GitProjectEntry
 from app.service.gitrepo.models.GitBranchModel import GitBranchEntry
+from app.service.gitrepo.models.GitBranchMergeTargetModel import GitBranchMergeTargetEntry
 
 
 def get_branch_list(request, project_id):
@@ -16,8 +17,18 @@ def get_branch_list(request, project_id):
 
         branches = []
         for entry in branch_entries:
-            branches.append(entry.as_object())
+            obj = entry.as_object()
+            merge_target_entry = GitBranchMergeTargetEntry.objects.filter(
+                project=project_entry,
+                current_branch=entry
+            ).first()
+
+            if merge_target_entry != None:
+                obj['target_branch_name'] = merge_target_entry.target_branch.name
+
+            branches.append(obj)
 
         return res.get_response(200, '', branches)
     else:
         return res.get_only_get_allowed({})
+

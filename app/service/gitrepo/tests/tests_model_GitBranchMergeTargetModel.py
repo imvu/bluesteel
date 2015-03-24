@@ -80,3 +80,4 @@ class GitBranchMergeTargetTestCase(TestCase):
         self.assertEqual('branch1', entry.current_branch.name)
         self.assertEqual('branch2', entry.target_branch.name)
         self.assertEqual('content-text', entry.diff.content)
+        self.assertEqual(False, entry.invalidated)
