@@ -171,8 +171,6 @@ class GitFeedViewsBranchTestCase(TestCase):
         res.check_cross_origin_headers(self, resp)
         resp_obj = json.loads(resp.content)
 
-        print resp.content
-
         self.assertEqual(200, resp_obj['status'])
         self.assertEqual(3, GitCommitEntry.objects.all().count())
         self.assertEqual(2, GitParentEntry.objects.all().count())
