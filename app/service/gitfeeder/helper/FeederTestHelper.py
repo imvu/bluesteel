@@ -6,13 +6,16 @@ def hash_string(commit_hash_num):
 def create_commit(commit_hash_num, parents, author_name, email, create_date, commit_date):
     """ Creates a commit object representation """
     commit = {}
-    commit['commit_hash'] = hash_string(commit_hash_num)
-    commit['commit_parents'] = parents
-    commit['date_creation'] = create_date
-    commit['date_commit'] = commit_date
-    commit['user'] = {}
-    commit['user']['name'] = author_name
-    commit['user']['email'] = email
+    commit['hash'] = hash_string(commit_hash_num)
+    commit['parent_hashes'] = parents
+    commit['author'] = {}
+    commit['author']['name'] = author_name
+    commit['author']['email'] = email
+    commit['author']['date'] = create_date
+    commit['committer'] = {}
+    commit['committer']['name'] = author_name
+    commit['committer']['email'] = email
+    commit['committer']['date'] = commit_date
     return commit
 
 def create_diff(commit_hash_son, commit_hash_parent, content):

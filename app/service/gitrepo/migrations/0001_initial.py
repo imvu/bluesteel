@@ -24,6 +24,19 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.CreateModel(
+            name='GitBranchMergeTargetEntry',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('invalidated', models.BooleanField(default=False)),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('updated_at', models.DateTimeField(auto_now=True)),
+                ('current_branch', models.ForeignKey(related_name='git_merge_current_branch', to='gitrepo.GitBranchEntry')),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
             name='GitBranchTrailEntry',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -40,8 +53,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('commit_hash', models.CharField(default=b'0000000000000000000000000000000000000000', max_length=40)),
-                ('commit_created_at', models.DateTimeField()),
-                ('commit_pushed_at', models.DateTimeField()),
+                ('author_date', models.DateTimeField()),
+                ('committer_date', models.DateTimeField()),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
             ],
@@ -124,8 +137,14 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='gitcommitentry',
-            name='git_user',
-            field=models.ForeignKey(related_name='git_commit_user', to='gitrepo.GitUserEntry'),
+            name='author',
+            field=models.ForeignKey(related_name='git_commit_author', to='gitrepo.GitUserEntry'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='gitcommitentry',
+            name='committer',
+            field=models.ForeignKey(related_name='git_commit_committer', to='gitrepo.GitUserEntry'),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -144,6 +163,24 @@ class Migration(migrations.Migration):
             model_name='gitbranchtrailentry',
             name='project',
             field=models.ForeignKey(related_name='git_trail_project', to='gitrepo.GitProjectEntry'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='gitbranchmergetargetentry',
+            name='diff',
+            field=models.ForeignKey(related_name='git_merge_diff', to='gitrepo.GitDiffEntry', null=True),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='gitbranchmergetargetentry',
+            name='project',
+            field=models.ForeignKey(related_name='git_merge_project', to='gitrepo.GitProjectEntry'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='gitbranchmergetargetentry',
+            name='target_branch',
+            field=models.ForeignKey(related_name='git_merge_target_branch', to='gitrepo.GitBranchEntry'),
             preserve_default=True,
         ),
         migrations.AddField(

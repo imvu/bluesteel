@@ -12,23 +12,23 @@ GIT_FEEDER_SCHEMA = {
             'items' : {
                 'type' : 'object',
                 'additionalProperties': False,
-                'required': ['commit_hash', 'commit_parents', 'user', 'date_creation', 'date_commit'],
+                'required': ['hash', 'parent_hashes', 'author', 'committer'],
                 'properties' : {
-                    'commit_hash' : {
+                    'hash' : {
                         'type' : 'string',
                         'pattern': '^[0-9a-f]{40}$'
                     },
-                    'commit_parents' : {
+                    'parent_hashes' : {
                         'type' : 'array',
                         'items' : {
                             'type' : 'string',
                             'pattern': '^[0-9a-f]{40}$'
                         }
                     },
-                    'user' : {
+                    'author' : {
                         'type' : 'object',
                         'additionalProperties': False,
-                        'required': ['name', 'email'],
+                        'required': ['name', 'email', 'date'],
                         'properties' : {
                             'name' : {
                                 'minLength' : 1,
@@ -38,15 +38,30 @@ GIT_FEEDER_SCHEMA = {
                                 'type' : 'string',
                                 'format' : 'email'
                             },
+                            'date' : {
+                                'type' : 'string',
+                                'format' : 'date-time'
+                            },
                         }
                     },
-                    'date_creation' : {
-                        'type' : 'string',
-                        'format' : 'date-time'
-                    },
-                    'date_commit' : {
-                        'type' : 'string',
-                        'format' : 'date-time'
+                    'committer' : {
+                        'type' : 'object',
+                        'additionalProperties': False,
+                        'required': ['name', 'email', 'date'],
+                        'properties' : {
+                            'name' : {
+                                'minLength' : 1,
+                                'maxLength' : 50,
+                            },
+                            'email' : {
+                                'type' : 'string',
+                                'format' : 'email'
+                            },
+                            'date' : {
+                                'type' : 'string',
+                                'format' : 'date-time'
+                            },
+                        }
                     },
                 }
             }

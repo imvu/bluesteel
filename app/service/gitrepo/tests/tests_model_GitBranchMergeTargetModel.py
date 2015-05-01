@@ -32,17 +32,19 @@ class GitBranchMergeTargetTestCase(TestCase):
         self.git_commit1 = GitCommitEntry.objects.create(
             project=self.git_project1,
             commit_hash='0000100001000010000100001000010000100001',
-            git_user=self.git_user1,
-            commit_created_at=timezone.now(),
-            commit_pushed_at=timezone.now(),
+            author=self.git_user1,
+            author_date=timezone.now(),
+            committer=self.git_user1,
+            committer_date=timezone.now()
         )
 
         self.git_commit2 = GitCommitEntry.objects.create(
             project=self.git_project1,
             commit_hash='0000200002000020000200002000020000200002',
-            git_user=self.git_user1,
-            commit_created_at=timezone.now(),
-            commit_pushed_at=timezone.now(),
+            author=self.git_user1,
+            author_date=timezone.now(),
+            committer=self.git_user1,
+            committer_date=timezone.now()
         )
 
         self.git_branch1 = GitBranchEntry.objects.create(

@@ -69,9 +69,10 @@ class GitFeedViewsBranchTestCase(TestCase):
         commit_entry = GitCommitEntry.objects.create(
             project=self.git_project1,
             commit_hash=FeederTestHelper.hash_string(1),
-            git_user=self.git_user1,
-            commit_created_at=timezone.now(),
-            commit_pushed_at=timezone.now()
+            author=self.git_user1,
+            author_date=timezone.now(),
+            committer=self.git_user1,
+            committer_date=timezone.now()
             )
 
         branch_entry = GitBranchEntry.objects.create(
@@ -169,6 +170,8 @@ class GitFeedViewsBranchTestCase(TestCase):
 
         res.check_cross_origin_headers(self, resp)
         resp_obj = json.loads(resp.content)
+
+        print resp.content
 
         self.assertEqual(200, resp_obj['status'])
         self.assertEqual(3, GitCommitEntry.objects.all().count())

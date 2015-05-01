@@ -17,16 +17,16 @@ def are_commits_unique(commit_list):
     """ Returns true if all commit hashes are unique """
     unique_hash = []
     for commit in commit_list:
-        if commit['commit_hash'] in unique_hash:
+        if commit['hash'] in unique_hash:
             return (False, unique_hash)
         else:
-            unique_hash.append(commit['commit_hash'])
+            unique_hash.append(commit['hash'])
     return (True, unique_hash)
 
 def are_parent_hashes_correct(hash_list, commit_list):
     """ Returns true if all parents are correct """
     for commit in commit_list:
-        for parent in commit['commit_parents']:
+        for parent in commit['parent_hashes']:
             if parent in hash_list:
                 continue
             else:
@@ -106,29 +106,37 @@ def insert_commits(commit_list, project):
     """ Inserts all the commits into the db """
     for commit in commit_list:
         try:
-            GitCommitEntry.objects.get(commit_hash=commit['commit_hash'])
+            GitCommitEntry.objects.get(commit_hash=commit['hash'])
         except GitCommitEntry.DoesNotExist:
-            git_user, user_created = GitUserEntry.objects.get_or_create(
+            author, author_created = GitUserEntry.objects.get_or_create(
                 project=project,
-                name=commit['user']['name'],
-                email=commit['user']['email']
+                name=commit['author']['name'],
+                email=commit['author']['email']
                 )
-            del user_created
+            committer, committer_created = GitUserEntry.objects.get_or_create(
+                project=project,
+                name=commit['committer']['name'],
+                email=commit['committer']['email']
+                )
+
+            del author_created
+            del committer_created
 
             GitCommitEntry.objects.create(
                 project=project,
-                commit_hash=commit['commit_hash'],
-                git_user=git_user,
-                commit_created_at=commit['date_creation'],
-                commit_pushed_at=commit['date_commit']
+                commit_hash=commit['hash'],
+                author=author,
+                author_date=commit['author']['date'],
+                committer=committer,
+                committer_date=commit['committer']['date']
             )
 
 def insert_parents(commit_list, project):
     """ Inserts all the parents into the db """
     for commit in commit_list:
-        for index, parent in enumerate(commit['commit_parents']):
+        for index, parent in enumerate(commit['parent_hashes']):
             hash_parent = GitCommitEntry.objects.filter(commit_hash=parent).first()
-            hash_son = GitCommitEntry.objects.filter(commit_hash=commit['commit_hash']).first()
+            hash_son = GitCommitEntry.objects.filter(commit_hash=commit['hash']).first()
 
             GitParentEntry.objects.create(
                 project=project,

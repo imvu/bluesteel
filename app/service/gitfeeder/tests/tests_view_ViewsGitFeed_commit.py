@@ -73,10 +73,10 @@ class GitFeedViewsCommitTestCase(TestCase):
         git_commit1 = GitCommitEntry.objects.create(
             project=self.git_project1,
             commit_hash='0000100001000010000100001000010000100001',
-            git_user=self.git_user1,
-            commit_created_at=timezone.now(),
-            commit_pushed_at=timezone.now()
-
+            author=self.git_user1,
+            author_date=timezone.now(),
+            committer=self.git_user1,
+            committer_date=timezone.now()
         )
 
         commit_time = str(timezone.now().isoformat())
@@ -154,7 +154,7 @@ class GitFeedViewsCommitTestCase(TestCase):
         commit1 = FeederTestHelper.create_commit(1, [], 'user1', 'user1@test.com', commit_time, commit_time)
         commit2 = FeederTestHelper.create_commit(2, [], 'user1', 'user1@test.com', commit_time, commit_time)
 
-        commit1['commit_parents'].append(commit2['commit_hash'])
+        commit1['parent_hashes'].append(commit2['hash'])
 
         merge_target = FeederTestHelper.create_merge_target('master', FeederTestHelper.hash_string(1), FeederTestHelper.hash_string(1), 'merge-target-content')
 
