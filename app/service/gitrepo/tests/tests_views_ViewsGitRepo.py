@@ -101,6 +101,7 @@ class ViewsGitRepoTestCase(TestCase):
             project=self.git_project1,
             current_branch=self.git_branch3,
             target_branch=self.git_branch1,
+            fork_point=self.git_commit1,
             diff=diff_entry
         )
 

@@ -100,6 +100,10 @@ def are_branches_correct(hash_list, branch_list, project):
                 print 'commit_parent_entry'
                 return False
 
+        if branch['merge_target']['fork_point'] != branch['merge_target']['diff']['commit_hash_parent']:
+            print 'fork_point is not the same as commit_hash_parent'
+            return False
+
     return True
 
 def insert_commits(commit_list, project):
@@ -195,8 +199,13 @@ def update_branch_merge_target(branch_list, project):
         )
 
         target_entry = GitBranchEntry.objects.get(
-            name=branch['merge_target']['target_branch_name'],
+            name=branch['merge_target']['name'],
             project=project
+        )
+
+        fork_point_entry = GitCommitEntry.objects.get(
+            project=project,
+            commit_hash=branch['merge_target']['fork_point']
         )
 
         son_entry = GitCommitEntry.objects.get(
@@ -226,11 +235,13 @@ def update_branch_merge_target(branch_list, project):
                 project=project,
                 current_branch=branch_entry,
                 target_branch=target_entry,
+                fork_point=fork_point_entry,
                 diff=diff_entry,
             )
         else:
             merge_target_entry.current_branch = branch_entry
             merge_target_entry.target_branch = target_entry
+            merge_target_entry.fork_point = fork_point_entry
             merge_target_entry.diff = diff_entry
             merge_target_entry.save()
 

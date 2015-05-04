@@ -19,10 +19,11 @@ class GitFetcher(object):
     branches_data = []
     diff_list = []
     unique_commmits = []
+    branch_list = []
+    feed_data = {}
 
     def fetch_git_project(self, project_info):
         """ Returns an object with the repository information """
-        ppi = pprint.PrettyPrinter(depth=6)
 
         steps = [
             self.step_fetch_git_project,
@@ -37,16 +38,25 @@ class GitFetcher(object):
             self.step_get_diff_for_all_commits,
             self.step_create_branch_trails,
             self.step_create_unique_list_commits,
+            self.step_create_branch_list,
         ]
 
         for step in steps:
             if not step(project_info):
                 return False
 
-        ppi.pprint(self.unique_commmits)
-        ppi.pprint(self.branches_data)
-        ppi.pprint(self.diff_list)
-        ppi.pprint(self.report_stack)
+        ppi = pprint.PrettyPrinter(depth=6)
+        # ppi.pprint(self.unique_commmits)
+        ppi.pprint(self.branch_list)
+        # ppi.pprint(self.diff_list)
+        # ppi.pprint(self.report_stack)
+
+        # Pack all the feed data
+        self.feed_data['feed_data'] = {}
+        self.feed_data['feed_data']['commits'] = self.unique_commmits
+        self.feed_data['feed_data']['branches'] = self.branch_list
+        self.feed_data['feed_data']['diffs'] = self.diff_list
+        self.feed_data['reports'] = self.report_stack
         return True
 
     def step_fetch_git_project(self, project_info):
@@ -212,6 +222,17 @@ class GitFetcher(object):
                     hash_dict[commit['hash']] = commit['hash']
         return True
 
+    def step_create_branch_list(self, project_info):
+        """ Create branch list from branches_data """
+        del project_info
+        for branch in self.branches_data:
+            branch_data = {}
+            branch_data['commit_hash'] = branch['hash']
+            branch_data['branch_name'] = branch['name']
+            branch_data['merge_target'] = branch['merge_target']
+            branch_data['trail'] = branch['trail']
+            self.branch_list.append(branch_data)
+        return True
 
     @staticmethod
     def get_archive_folder_path(project_info):

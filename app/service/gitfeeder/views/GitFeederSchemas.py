@@ -27,7 +27,7 @@ GIT_FEEDER_SCHEMA = {
                                 'type' : 'array',
                                 'items' : {
                                     'type' : 'string',
-                                    'pattern': '^[0-9a-f]{40}$'
+                                    'pattern': '(^[0-9a-f]{40}$)|(^$)'
                                 }
                             },
                             'author' : {
@@ -77,7 +77,7 @@ GIT_FEEDER_SCHEMA = {
                     'items' : {
                         'type' : 'object',
                         'additionalProperties': False,
-                        'required': ['commit_hash', 'branch_name', 'merge_target'],
+                        'required': ['commit_hash', 'branch_name', 'trail', 'merge_target'],
                         'properties' : {
                             'commit_hash' : {
                                 'type' : 'string',
@@ -101,11 +101,19 @@ GIT_FEEDER_SCHEMA = {
                             'merge_target' : {
                                 'type' : 'object',
                                 'additionalProperties': False,
-                                'required': ['target_branch_name', 'diff'],
+                                'required': ['name', 'hash', 'diff', 'fork_point'],
                                 'properties' : {
-                                    'target_branch_name' : {
+                                    'name' : {
                                         'type' : 'string',
                                         'minLength' : 1
+                                    },
+                                    'hash' : {
+                                        'type' : 'string',
+                                        'pattern': '^[0-9a-f]{40}$'
+                                    },
+                                    'fork_point' : {
+                                        'type' : 'string',
+                                        'pattern': '^[0-9a-f]{40}$'
                                     },
                                     'diff' : {
                                         'type' : 'object',

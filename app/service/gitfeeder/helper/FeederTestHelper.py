@@ -38,7 +38,9 @@ def create_branch(name, commit_hash_num, trail, merge_target):
 def create_merge_target(target_name, commit_son, commit_parent, content):
     """ Creates a merge target object representation """
     target_merge = {}
-    target_merge['target_branch_name'] = target_name
+    target_merge['name'] = target_name
+    target_merge['hash'] = commit_son
+    target_merge['fork_point'] = commit_parent
     target_merge['diff'] = {}
     target_merge['diff']['commit_hash_son'] = commit_son
     target_merge['diff']['commit_hash_parent'] = commit_parent

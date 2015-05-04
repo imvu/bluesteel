@@ -7,6 +7,7 @@ class GitBranchMergeTargetEntry(models.Model):
     project = models.ForeignKey('gitrepo.GitProjectEntry', related_name='git_merge_project')
     current_branch = models.ForeignKey('gitrepo.GitBranchEntry', related_name='git_merge_current_branch')
     target_branch = models.ForeignKey('gitrepo.GitBranchEntry', related_name='git_merge_target_branch')
+    fork_point = models.ForeignKey('gitrepo.GitCommitEntry', related_name='git_merge_target_fork')
     diff = models.ForeignKey('gitrepo.GitDiffEntry', null=True, related_name='git_merge_diff')
     invalidated = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)

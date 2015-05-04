@@ -173,6 +173,12 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='gitbranchmergetargetentry',
+            name='fork_point',
+            field=models.ForeignKey(related_name='git_merge_target_fork', to='gitrepo.GitCommitEntry'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='gitbranchmergetargetentry',
             name='project',
             field=models.ForeignKey(related_name='git_merge_project', to='gitrepo.GitProjectEntry'),
             preserve_default=True,

@@ -75,11 +75,13 @@ class GitBranchMergeTargetTestCase(TestCase):
             project=self.git_project1,
             current_branch=self.git_branch1,
             target_branch=self.git_branch2,
+            fork_point=self.git_commit2,
             diff=self.git_diff1,
         )
 
         self.assertEqual('http://test/', entry.project.url)
         self.assertEqual('branch1', entry.current_branch.name)
         self.assertEqual('branch2', entry.target_branch.name)
+        self.assertEqual('0000200002000020000200002000020000200002', entry.fork_point.commit_hash)
         self.assertEqual('content-text', entry.diff.content)
         self.assertEqual(False, entry.invalidated)

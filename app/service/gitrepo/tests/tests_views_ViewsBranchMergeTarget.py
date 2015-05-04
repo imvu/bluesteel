@@ -82,6 +82,7 @@ class ViewsGitMergeTargetTestCase(TestCase):
             project=self.git_project1,
             current_branch=self.git_branch1,
             target_branch=self.git_branch1,
+            fork_point=self.git_commit3,
             diff=self.git_diff1
         )
 
