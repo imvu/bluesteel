@@ -44,3 +44,27 @@ def create_merge_target(target_name, commit_son, commit_parent, content):
     target_merge['diff']['commit_hash_parent'] = commit_parent
     target_merge['diff']['content'] = content
     return target_merge
+
+def create_feed_data_and_report(feed_data, reports):
+    obj = {}
+    obj['feed_data'] = feed_data
+    obj['reports'] = reports
+    return obj
+
+def get_default_report():
+    """ Returns a default correct report """
+    reports = []
+
+    report = {}
+    report['commands'] = []
+    report['status'] = True
+
+    command = {}
+    command['command'] = []
+    command['err'] = ''
+    command['out'] = ''
+    command['status'] = 'OK'
+
+    report['commands'].append(command)
+    reports.append(report)
+    return reports

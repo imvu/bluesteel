@@ -24,6 +24,7 @@ def get_test_list():
     test_list.append((['pylint'], ['pylint', '--rcfile=s/internal/pylint-config-file.py', '--generated-members=objects', '--msg-template={path}:{line}: [{msg_id}({symbol}), {obj}] {msg}', 'app/service/gitrepo']))
     test_list.append((['pylint'], ['pylint', '--rcfile=s/internal/pylint-config-file.py', '--generated-members=objects', '--msg-template={path}:{line}: [{msg_id}({symbol}), {obj}] {msg}', 'app/service/gitfeeder']))
     test_list.append((['pylint'], ['pylint', '--rcfile=s/internal/pylint-config-file.py', '--generated-members=objects', '--msg-template={path}:{line}: [{msg_id}({symbol}), {obj}] {msg}', 'app/util/httpcommon']))
+    test_list.append((['pylint'], ['pylint', '--rcfile=s/internal/pylint-config-file.py', '--generated-members=objects', '--msg-template={path}:{line}: [{msg_id}({symbol}), {obj}] {msg}', 'app/service/strongholdworker']))
     return test_list
 
 def main(args=sys.argv):

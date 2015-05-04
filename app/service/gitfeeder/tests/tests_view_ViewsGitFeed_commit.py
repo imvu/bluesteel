@@ -44,13 +44,18 @@ class GitFeedViewsCommitTestCase(TestCase):
 
         branch1 = FeederTestHelper.create_branch('master', 1, [FeederTestHelper.hash_string(1)], merge_target)
 
-        post_data = {}
-        post_data['commits'] = []
-        post_data['commits'].append(commit1)
-        post_data['branches'] = []
-        post_data['branches'].append(branch1)
-        post_data['diffs'] = []
-        post_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(1), FeederTestHelper.hash_string(1), 'diff-1'))
+        feed_data = {}
+        feed_data['commits'] = []
+        feed_data['commits'].append(commit1)
+        feed_data['branches'] = []
+        feed_data['branches'].append(branch1)
+        feed_data['diffs'] = []
+        feed_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(1), FeederTestHelper.hash_string(1), 'diff-1'))
+
+        post_data = FeederTestHelper.create_feed_data_and_report(
+            feed_data,
+            FeederTestHelper.get_default_report()
+        )
 
         resp = self.client.post(
             '/gitfeeder/feed/commit/project/{0}/'.format(self.git_project1.id),
@@ -86,13 +91,18 @@ class GitFeedViewsCommitTestCase(TestCase):
 
         branch1 = FeederTestHelper.create_branch('master', 1, [FeederTestHelper.hash_string(1)], merge_target)
 
-        post_data = {}
-        post_data['commits'] = []
-        post_data['commits'].append(commit1)
-        post_data['branches'] = []
-        post_data['branches'].append(branch1)
-        post_data['diffs'] = []
-        post_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(1), FeederTestHelper.hash_string(1), 'diff-1'))
+        feed_data = {}
+        feed_data['commits'] = []
+        feed_data['commits'].append(commit1)
+        feed_data['branches'] = []
+        feed_data['branches'].append(branch1)
+        feed_data['diffs'] = []
+        feed_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(1), FeederTestHelper.hash_string(1), 'diff-1'))
+
+        post_data = FeederTestHelper.create_feed_data_and_report(
+            feed_data,
+            FeederTestHelper.get_default_report()
+        )
 
         resp = self.client.post(
             '/gitfeeder/feed/commit/project/{0}/'.format(self.git_project1.id),
@@ -122,18 +132,23 @@ class GitFeedViewsCommitTestCase(TestCase):
 
         branch1 = FeederTestHelper.create_branch('master', 1, [FeederTestHelper.hash_string(1)], merge_target)
 
-        post_data = {}
-        post_data['commits'] = []
-        post_data['commits'].append(commit1)
-        post_data['commits'].append(commit2)
-        post_data['commits'].append(commit3)
-        post_data['commits'].append(commit4)
-        post_data['branches'] = []
-        post_data['branches'].append(branch1)
-        post_data['diffs'] = []
-        post_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(1), FeederTestHelper.hash_string(1), 'diff-1'))
-        post_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(2), FeederTestHelper.hash_string(1), 'diff-2-1'))
-        post_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(3), FeederTestHelper.hash_string(2), 'diff-3-2'))
+        feed_data = {}
+        feed_data['commits'] = []
+        feed_data['commits'].append(commit1)
+        feed_data['commits'].append(commit2)
+        feed_data['commits'].append(commit3)
+        feed_data['commits'].append(commit4)
+        feed_data['branches'] = []
+        feed_data['branches'].append(branch1)
+        feed_data['diffs'] = []
+        feed_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(1), FeederTestHelper.hash_string(1), 'diff-1'))
+        feed_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(2), FeederTestHelper.hash_string(1), 'diff-2-1'))
+        feed_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(3), FeederTestHelper.hash_string(2), 'diff-3-2'))
+
+        post_data = FeederTestHelper.create_feed_data_and_report(
+            feed_data,
+            FeederTestHelper.get_default_report()
+        )
 
         resp = self.client.post(
             '/gitfeeder/feed/commit/project/{0}/'.format(self.git_project1.id),
@@ -160,15 +175,20 @@ class GitFeedViewsCommitTestCase(TestCase):
 
         branch1 = FeederTestHelper.create_branch('master', 1, [FeederTestHelper.hash_string(1)], merge_target)
 
-        post_data = {}
-        post_data['commits'] = []
-        post_data['commits'].append(commit1)
-        post_data['commits'].append(commit2)
-        post_data['branches'] = []
-        post_data['branches'].append(branch1)
-        post_data['diffs'] = []
-        post_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(1), FeederTestHelper.hash_string(1), 'diff-1'))
-        post_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(2), FeederTestHelper.hash_string(1), 'diff-2-1'))
+        feed_data = {}
+        feed_data['commits'] = []
+        feed_data['commits'].append(commit1)
+        feed_data['commits'].append(commit2)
+        feed_data['branches'] = []
+        feed_data['branches'].append(branch1)
+        feed_data['diffs'] = []
+        feed_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(1), FeederTestHelper.hash_string(1), 'diff-1'))
+        feed_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(2), FeederTestHelper.hash_string(1), 'diff-2-1'))
+
+        post_data = FeederTestHelper.create_feed_data_and_report(
+            feed_data,
+            FeederTestHelper.get_default_report()
+        )
 
         resp = self.client.post(
             '/gitfeeder/feed/commit/project/{0}/'.format(self.git_project1.id),
@@ -200,15 +220,20 @@ class GitFeedViewsCommitTestCase(TestCase):
 
         branch1 = FeederTestHelper.create_branch('master', 2, [FeederTestHelper.hash_string(2), FeederTestHelper.hash_string(1)], merge_target)
 
-        post_data = {}
-        post_data['commits'] = []
-        post_data['commits'].append(commit1)
-        post_data['commits'].append(commit2)
-        post_data['branches'] = []
-        post_data['branches'].append(branch1)
-        post_data['diffs'] = []
-        post_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(1), FeederTestHelper.hash_string(1), 'diff-1'))
-        post_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(2), FeederTestHelper.hash_string(1), 'diff-2-1'))
+        feed_data = {}
+        feed_data['commits'] = []
+        feed_data['commits'].append(commit1)
+        feed_data['commits'].append(commit2)
+        feed_data['branches'] = []
+        feed_data['branches'].append(branch1)
+        feed_data['diffs'] = []
+        feed_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(1), FeederTestHelper.hash_string(1), 'diff-1'))
+        feed_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(2), FeederTestHelper.hash_string(1), 'diff-2-1'))
+
+        post_data = FeederTestHelper.create_feed_data_and_report(
+            feed_data,
+            FeederTestHelper.get_default_report()
+        )
 
         resp = self.client.post(
             '/gitfeeder/feed/commit/project/{0}/'.format(self.git_project1.id),
@@ -234,18 +259,23 @@ class GitFeedViewsCommitTestCase(TestCase):
         branch1 = FeederTestHelper.create_branch('master', 2, [FeederTestHelper.hash_string(2), FeederTestHelper.hash_string(1)], merge_target1)
         branch2 = FeederTestHelper.create_branch('branch-1', 3, [FeederTestHelper.hash_string(3), FeederTestHelper.hash_string(1)], merge_target2)
 
-        post_data = {}
-        post_data['commits'] = []
-        post_data['commits'].append(commit1)
-        post_data['commits'].append(commit2)
-        post_data['commits'].append(commit3)
-        post_data['branches'] = []
-        post_data['branches'].append(branch1)
-        post_data['branches'].append(branch2)
-        post_data['diffs'] = []
-        post_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(1), FeederTestHelper.hash_string(1), 'diff-1'))
-        post_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(2), FeederTestHelper.hash_string(1), 'diff-2-1'))
-        post_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(3), FeederTestHelper.hash_string(2), 'diff-3-2'))
+        feed_data = {}
+        feed_data['commits'] = []
+        feed_data['commits'].append(commit1)
+        feed_data['commits'].append(commit2)
+        feed_data['commits'].append(commit3)
+        feed_data['branches'] = []
+        feed_data['branches'].append(branch1)
+        feed_data['branches'].append(branch2)
+        feed_data['diffs'] = []
+        feed_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(1), FeederTestHelper.hash_string(1), 'diff-1'))
+        feed_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(2), FeederTestHelper.hash_string(1), 'diff-2-1'))
+        feed_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(3), FeederTestHelper.hash_string(2), 'diff-3-2'))
+
+        post_data = FeederTestHelper.create_feed_data_and_report(
+            feed_data,
+            FeederTestHelper.get_default_report()
+        )
 
         resp = self.client.post(
             '/gitfeeder/feed/commit/project/{0}/'.format(self.git_project1.id),
@@ -265,16 +295,21 @@ class GitFeedViewsCommitTestCase(TestCase):
         branch1 = FeederTestHelper.create_branch('master', 4, [FeederTestHelper.hash_string(4), FeederTestHelper.hash_string(2), FeederTestHelper.hash_string(1)], merge_target3)
         branch2 = FeederTestHelper.create_branch('branch-1', 5, [FeederTestHelper.hash_string(5), FeederTestHelper.hash_string(3), FeederTestHelper.hash_string(1)], merge_target4)
 
-        post_data = {}
-        post_data['commits'] = []
-        post_data['commits'].append(commit4)
-        post_data['commits'].append(commit5)
-        post_data['branches'] = []
-        post_data['branches'].append(branch1)
-        post_data['branches'].append(branch2)
-        post_data['diffs'] = []
-        post_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(4), FeederTestHelper.hash_string(3), 'diff-4-3'))
-        post_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(5), FeederTestHelper.hash_string(4), 'diff-5-4'))
+        feed_data = {}
+        feed_data['commits'] = []
+        feed_data['commits'].append(commit4)
+        feed_data['commits'].append(commit5)
+        feed_data['branches'] = []
+        feed_data['branches'].append(branch1)
+        feed_data['branches'].append(branch2)
+        feed_data['diffs'] = []
+        feed_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(4), FeederTestHelper.hash_string(3), 'diff-4-3'))
+        feed_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(5), FeederTestHelper.hash_string(4), 'diff-5-4'))
+
+        post_data = FeederTestHelper.create_feed_data_and_report(
+            feed_data,
+            FeederTestHelper.get_default_report()
+        )
 
         resp = self.client.post(
             '/gitfeeder/feed/commit/project/{0}/'.format(self.git_project1.id),

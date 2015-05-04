@@ -45,15 +45,20 @@ class GitFeedViewsDiffTestCase(TestCase):
 
 
     def test_two_commits_one_diff(self):
-        post_data = {}
-        post_data['commits'] = []
-        post_data['commits'].append(self.commit1)
-        post_data['commits'].append(self.commit2)
-        post_data['branches'] = []
-        post_data['branches'].append(self.branch1)
-        post_data['diffs'] = []
-        post_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(1), FeederTestHelper.hash_string(1), 'diff-1'))
-        post_data['diffs'].append(FeederTestHelper.create_diff(self.commit2['hash'], self.commit1['hash'], 'diff-2-1'))
+        feed_data = {}
+        feed_data['commits'] = []
+        feed_data['commits'].append(self.commit1)
+        feed_data['commits'].append(self.commit2)
+        feed_data['branches'] = []
+        feed_data['branches'].append(self.branch1)
+        feed_data['diffs'] = []
+        feed_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(1), FeederTestHelper.hash_string(1), 'diff-1'))
+        feed_data['diffs'].append(FeederTestHelper.create_diff(self.commit2['hash'], self.commit1['hash'], 'diff-2-1'))
+
+        post_data = FeederTestHelper.create_feed_data_and_report(
+            feed_data,
+            FeederTestHelper.get_default_report()
+        )
 
         resp = self.client.post(
             '/gitfeeder/feed/commit/project/{0}/'.format(self.git_project1.id),
@@ -88,15 +93,20 @@ class GitFeedViewsDiffTestCase(TestCase):
         self.assertEqual('master', branch_entry.name)
 
     def test_incorrect_diff_because_son_not_present(self):
-        post_data = {}
-        post_data['commits'] = []
-        post_data['commits'].append(self.commit1)
-        post_data['commits'].append(self.commit2)
-        post_data['branches'] = []
-        post_data['branches'].append(self.branch1)
-        post_data['diffs'] = []
-        post_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(1), FeederTestHelper.hash_string(1), 'diff-1'))
-        post_data['diffs'].append(FeederTestHelper.create_diff('0000300003000030000300003000030000300003', self.commit2['hash'], 'diff-3-2'))
+        feed_data = {}
+        feed_data['commits'] = []
+        feed_data['commits'].append(self.commit1)
+        feed_data['commits'].append(self.commit2)
+        feed_data['branches'] = []
+        feed_data['branches'].append(self.branch1)
+        feed_data['diffs'] = []
+        feed_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(1), FeederTestHelper.hash_string(1), 'diff-1'))
+        feed_data['diffs'].append(FeederTestHelper.create_diff('0000300003000030000300003000030000300003', self.commit2['hash'], 'diff-3-2'))
+
+        post_data = FeederTestHelper.create_feed_data_and_report(
+            feed_data,
+            FeederTestHelper.get_default_report()
+        )
 
         resp = self.client.post(
             '/gitfeeder/feed/commit/project/{0}/'.format(self.git_project1.id),
@@ -112,15 +122,20 @@ class GitFeedViewsDiffTestCase(TestCase):
         self.assertEqual(0, GitBranchEntry.objects.all().count())
 
     def test_incorrect_diff_because_parent_not_present(self):
-        post_data = {}
-        post_data['commits'] = []
-        post_data['commits'].append(self.commit1)
-        post_data['commits'].append(self.commit2)
-        post_data['branches'] = []
-        post_data['branches'].append(self.branch1)
-        post_data['diffs'] = []
-        post_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(1), FeederTestHelper.hash_string(1), 'diff-1'))
-        post_data['diffs'].append(FeederTestHelper.create_diff('0000200002000020000200002000020000200002', FeederTestHelper.hash_string(0), 'diff-3-2'))
+        feed_data = {}
+        feed_data['commits'] = []
+        feed_data['commits'].append(self.commit1)
+        feed_data['commits'].append(self.commit2)
+        feed_data['branches'] = []
+        feed_data['branches'].append(self.branch1)
+        feed_data['diffs'] = []
+        feed_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(1), FeederTestHelper.hash_string(1), 'diff-1'))
+        feed_data['diffs'].append(FeederTestHelper.create_diff('0000200002000020000200002000020000200002', FeederTestHelper.hash_string(0), 'diff-3-2'))
+
+        post_data = FeederTestHelper.create_feed_data_and_report(
+            feed_data,
+            FeederTestHelper.get_default_report()
+        )
 
         resp = self.client.post(
             '/gitfeeder/feed/commit/project/{0}/'.format(self.git_project1.id),
@@ -136,14 +151,19 @@ class GitFeedViewsDiffTestCase(TestCase):
         self.assertEqual(0, GitBranchEntry.objects.all().count())
 
     def test_incorrect_diff_because_not_diff_present(self):
-        post_data = {}
-        post_data['commits'] = []
-        post_data['commits'].append(self.commit1)
-        post_data['commits'].append(self.commit2)
-        post_data['branches'] = []
-        post_data['branches'].append(self.branch1)
-        post_data['diffs'] = []
-        post_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(1), FeederTestHelper.hash_string(1), 'diff-1'))
+        feed_data = {}
+        feed_data['commits'] = []
+        feed_data['commits'].append(self.commit1)
+        feed_data['commits'].append(self.commit2)
+        feed_data['branches'] = []
+        feed_data['branches'].append(self.branch1)
+        feed_data['diffs'] = []
+        feed_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(1), FeederTestHelper.hash_string(1), 'diff-1'))
+
+        post_data = FeederTestHelper.create_feed_data_and_report(
+            feed_data,
+            FeederTestHelper.get_default_report()
+        )
 
         resp = self.client.post(
             '/gitfeeder/feed/commit/project/{0}/'.format(self.git_project1.id),

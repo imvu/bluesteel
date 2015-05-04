@@ -250,24 +250,28 @@ def post_commits(request, project_id):
         if not obj_validated:
             return res.get_schema_failed(val_resp_obj)
 
-        unique, unique_hash_list = are_commits_unique(val_resp_obj['commits'])
+        commits = val_resp_obj['feed_data']['commits']
+        diffs = val_resp_obj['feed_data']['diffs']
+        branches = val_resp_obj['feed_data']['branches']
+
+        unique, unique_hash_list = are_commits_unique(commits)
         if not unique:
             return res.get_response(400, 'Commits not unique', {})
 
-        if not are_parent_hashes_correct(unique_hash_list, val_resp_obj['commits']):
+        if not are_parent_hashes_correct(unique_hash_list, commits):
             return res.get_response(400, 'Parents not correct', {})
 
-        if not are_diffs_correct(unique_hash_list, val_resp_obj['diffs'], project_entry):
+        if not are_diffs_correct(unique_hash_list, diffs, project_entry):
             return res.get_response(400, 'Diffs not correct', {})
 
-        if not are_branches_correct(unique_hash_list, val_resp_obj['branches'], project_entry):
+        if not are_branches_correct(unique_hash_list, branches, project_entry):
             return res.get_response(400, 'Branches not correct', {})
 
-        insert_commits(val_resp_obj['commits'], project_entry)
-        insert_parents(val_resp_obj['commits'], project_entry)
-        insert_diffs(val_resp_obj['diffs'], project_entry)
-        insert_branches(val_resp_obj['branches'], project_entry)
-        update_branch_merge_target(val_resp_obj['branches'], project_entry)
+        insert_commits(commits, project_entry)
+        insert_parents(commits, project_entry)
+        insert_diffs(diffs, project_entry)
+        insert_branches(branches, project_entry)
+        update_branch_merge_target(branches, project_entry)
 
         return res.get_response(200, 'Commits added correctly', {})
     else:
