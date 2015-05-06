@@ -45,12 +45,6 @@ class GitFetcher(object):
             if not step(project_info):
                 return False
 
-        ppi = pprint.PrettyPrinter(depth=6)
-        # ppi.pprint(self.unique_commmits)
-        ppi.pprint(self.branch_list)
-        # ppi.pprint(self.diff_list)
-        # ppi.pprint(self.report_stack)
-
         # Pack all the feed data
         self.feed_data['feed_data'] = {}
         self.feed_data['feed_data']['commits'] = self.unique_commmits
@@ -298,6 +292,9 @@ class GitFetcher(object):
             file_stderr = open(err_file_path, 'w')
 
             report = {}
+            report['out'] = ''
+            report['err'] = ''
+            report['exc'] = ''
 
             try:
                 subprocess.check_call(
@@ -306,9 +303,10 @@ class GitFetcher(object):
                     stderr=file_stderr,
                     cwd=project_cwd
                 )
-            except subprocess.CalledProcessError:
+            except subprocess.CalledProcessError as exc:
                 reports['status'] = False
-                report['status'] = 'ERROR'
+                report['status'] = 'ERR'
+                report['exc'] = str(exc)
             else:
                 report['status'] = 'OK'
 
@@ -679,9 +677,11 @@ def main():
     obj['git']['fetch']['commands'].append(['git', 'submodule', 'update', '--init', '--recursive'])
 
     fetcher = GitFetcher()
-    ret = fetcher.fetch_git_project(obj)
+    fetcher.fetch_git_project(obj)
 
-    print ret
+    ppi = pprint.PrettyPrinter(depth=6)
+    ppi.pprint(fetcher.feed_data)
+
 
 if __name__ == '__main__':
     main()

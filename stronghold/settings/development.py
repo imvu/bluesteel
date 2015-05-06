@@ -41,7 +41,9 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'app.service.gitrepo',
     'app.service.gitfeeder',
+    'app.service.strongholdworker',
     'app.util.httpcommon',
+    'app.util.commandrepo',
 )
 
 MIDDLEWARE_CLASSES = (
