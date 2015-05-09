@@ -114,17 +114,16 @@ class GitFetcherTestCase(TestCase):
         self.assertTrue(os.path.exists(os.path.join(settings.TMP_ROOT, 'gitfetcher', 'proj-28-0123ABC', 'log', 'git_clone_stdout.txt')))
         self.assertTrue(os.path.exists(os.path.join(settings.TMP_ROOT, 'gitfetcher', 'proj-28-0123ABC', 'log', 'git_clone_stderr.txt')))
 
-        self.assertEqual(True, reports['status'])
         self.assertEqual(2, len(reports['commands']))
 
         self.assertEqual('OK', reports['commands'][0]['status'])
         self.assertEqual(['git', 'clone', 'https://llorensmarti@bitbucket.org/llorensmarti/test-repo.git'], reports['commands'][0]['command'])
-        self.assertEqual('', reports['commands'][0]['err'])
+        self.assertEqual('', reports['commands'][0]['error'])
         self.assertEqual('', reports['commands'][0]['out'])
 
         self.assertEqual('OK', reports['commands'][1]['status'])
         self.assertEqual(['git', 'submodule', 'update', '--init', '--recursive'], reports['commands'][1]['command'])
-        self.assertEqual('', reports['commands'][1]['err'])
+        self.assertEqual('', reports['commands'][1]['error'])
         self.assertEqual('', reports['commands'][1]['out'])
 
 
@@ -145,32 +144,31 @@ class GitFetcherTestCase(TestCase):
         self.assertTrue(os.path.exists(os.path.join(settings.TMP_ROOT, 'gitfetcher', 'proj-28-0123ABC', 'log', 'git_clone_stdout.txt')))
         self.assertTrue(os.path.exists(os.path.join(settings.TMP_ROOT, 'gitfetcher', 'proj-28-0123ABC', 'log', 'git_clone_stderr.txt')))
 
-        self.assertEqual(True, reports['status'])
         self.assertEqual(5, len(reports['commands']))
 
         self.assertEqual('OK', reports['commands'][0]['status'])
         self.assertEqual(['git', 'reset', '--hard', 'origin/master'], reports['commands'][0]['command'])
-        self.assertEqual('', reports['commands'][0]['err'])
+        self.assertEqual('', reports['commands'][0]['error'])
         self.assertEqual('', reports['commands'][0]['out'])
 
         self.assertEqual('OK', reports['commands'][1]['status'])
         self.assertEqual(['git', 'clean', '-f', '-d', '-q'], reports['commands'][1]['command'])
-        self.assertEqual('', reports['commands'][1]['err'])
+        self.assertEqual('', reports['commands'][1]['error'])
         self.assertEqual('', reports['commands'][1]['out'])
 
         self.assertEqual('OK', reports['commands'][2]['status'])
         self.assertEqual(['git', 'pull', '-r', 'origin', 'master'], reports['commands'][2]['command'])
-        self.assertEqual('', reports['commands'][2]['err'])
+        self.assertEqual('', reports['commands'][2]['error'])
         self.assertEqual('', reports['commands'][2]['out'])
 
         self.assertEqual('OK', reports['commands'][3]['status'])
         self.assertEqual(['git', 'checkout', 'master'], reports['commands'][3]['command'])
-        self.assertEqual('', reports['commands'][3]['err'])
+        self.assertEqual('', reports['commands'][3]['error'])
         self.assertEqual('', reports['commands'][3]['out'])
 
         self.assertEqual('OK', reports['commands'][4]['status'])
         self.assertEqual(['git','submodule','update', '--init', '--recursive'], reports['commands'][4]['command'])
-        self.assertEqual('', reports['commands'][4]['err'])
+        self.assertEqual('', reports['commands'][4]['error'])
         self.assertEqual('', reports['commands'][4]['out'])
 
     @mock.patch('app.service.strongholdworker.download.GitFetcher.subprocess')
@@ -186,12 +184,11 @@ class GitFetcherTestCase(TestCase):
         self.assertTrue(os.path.exists(os.path.join(settings.TMP_ROOT, 'gitfetcher', 'proj-28-0123ABC', 'log', 'git_clone_stdout.txt')))
         self.assertTrue(os.path.exists(os.path.join(settings.TMP_ROOT, 'gitfetcher', 'proj-28-0123ABC', 'log', 'git_clone_stderr.txt')))
 
-        self.assertEqual(True, reports['status'])
         self.assertEqual(1, len(reports['commands']))
 
         self.assertEqual('OK', reports['commands'][0]['status'])
         self.assertEqual(['git', 'branch'], reports['commands'][0]['command'])
-        self.assertEqual('', reports['commands'][0]['err'])
+        self.assertEqual('', reports['commands'][0]['error'])
         self.assertEqual('', reports['commands'][0]['out'])
 
 
@@ -200,13 +197,13 @@ class GitFetcherTestCase(TestCase):
         report1['status'] = 'OK'
         report1['command'] = ['git', 'branch']
         report1['out'] = ' * master\n branch-1\n\n'
-        report1['err'] = ''
+        report1['error'] = ''
 
         report2 = {}
         report2['status'] = 'OK'
         report2['command'] = ['git', 'status']
         report2['out'] = 'Hey!!!'
-        report2['err'] = ''
+        report2['error'] = ''
 
         obj = {}
         obj['status'] = True
@@ -225,7 +222,7 @@ class GitFetcherTestCase(TestCase):
         report1['status'] = 'ERROR'
         report1['command'] = ['git', 'branch']
         report1['out'] = ''
-        report1['err'] = 'Some error'
+        report1['error'] = 'Some error'
 
         obj = {}
         obj['status'] = False
@@ -252,22 +249,21 @@ class GitFetcherTestCase(TestCase):
         self.assertTrue(os.path.exists(os.path.join(settings.TMP_ROOT, 'gitfetcher', 'proj-28-0123ABC', 'log', 'git_clone_stdout.txt')))
         self.assertTrue(os.path.exists(os.path.join(settings.TMP_ROOT, 'gitfetcher', 'proj-28-0123ABC', 'log', 'git_clone_stderr.txt')))
 
-        self.assertEqual(True, reports['status'])
         self.assertEqual(3, len(reports['commands']))
 
         self.assertEqual('OK', reports['commands'][0]['status'])
         self.assertEqual(['git', 'rev-parse', 'master'], reports['commands'][0]['command'])
-        self.assertEqual('', reports['commands'][0]['err'])
+        self.assertEqual('', reports['commands'][0]['error'])
         self.assertEqual('', reports['commands'][0]['out'])
 
         self.assertEqual('OK', reports['commands'][1]['status'])
         self.assertEqual(['git', 'rev-parse', 'branch-1'], reports['commands'][1]['command'])
-        self.assertEqual('', reports['commands'][1]['err'])
+        self.assertEqual('', reports['commands'][1]['error'])
         self.assertEqual('', reports['commands'][1]['out'])
 
         self.assertEqual('OK', reports['commands'][2]['status'])
         self.assertEqual(['git', 'rev-parse', 'branch-2'], reports['commands'][2]['command'])
-        self.assertEqual('', reports['commands'][2]['err'])
+        self.assertEqual('', reports['commands'][2]['error'])
         self.assertEqual('', reports['commands'][2]['out'])
 
     def test_extract_branch_names_and_hashes_correct(self):
@@ -275,13 +271,13 @@ class GitFetcherTestCase(TestCase):
         report1['status'] = 'OK'
         report1['command'] = ['git', 'rev-parse', 'master']
         report1['out'] = '0000100001000010000100001000010000100001'
-        report1['err'] = ''
+        report1['error'] = ''
 
         report2 = {}
         report2['status'] = 'OK'
         report2['command'] = ['git', 'rev-parse', 'branch-1']
         report2['out'] = '0000200002000020000200002000020000200002'
-        report2['err'] = ''
+        report2['error'] = ''
 
         obj = {}
         obj['status'] = True
@@ -330,27 +326,26 @@ class GitFetcherTestCase(TestCase):
         self.assertTrue(os.path.exists(os.path.join(settings.TMP_ROOT, 'gitfetcher', 'proj-28-0123ABC', 'log', 'git_clone_stdout.txt')))
         self.assertTrue(os.path.exists(os.path.join(settings.TMP_ROOT, 'gitfetcher', 'proj-28-0123ABC', 'log', 'git_clone_stderr.txt')))
 
-        self.assertEqual(True, reports['status'])
         self.assertEqual(4, len(reports['commands']))
 
         self.assertEqual('OK', reports['commands'][0]['status'])
         self.assertEqual(['git', 'reset', '--hard'], reports['commands'][0]['command'])
-        self.assertEqual('', reports['commands'][0]['err'])
+        self.assertEqual('', reports['commands'][0]['error'])
         self.assertEqual('', reports['commands'][0]['out'])
 
         self.assertEqual('OK', reports['commands'][1]['status'])
         self.assertEqual(['git', 'clean', '-f', '-d', '-q'], reports['commands'][1]['command'])
-        self.assertEqual('', reports['commands'][1]['err'])
+        self.assertEqual('', reports['commands'][1]['error'])
         self.assertEqual('', reports['commands'][1]['out'])
 
         self.assertEqual('OK', reports['commands'][2]['status'])
         self.assertEqual(['git', 'checkout', 'branch-1'], reports['commands'][2]['command'])
-        self.assertEqual('', reports['commands'][2]['err'])
+        self.assertEqual('', reports['commands'][2]['error'])
         self.assertEqual('', reports['commands'][2]['out'])
 
         self.assertEqual('OK', reports['commands'][3]['status'])
         self.assertEqual(['git', 'log', '--first-parent', '--date=iso', pretty_string], reports['commands'][3]['command'])
-        self.assertEqual('', reports['commands'][3]['err'])
+        self.assertEqual('', reports['commands'][3]['error'])
         self.assertEqual('', reports['commands'][3]['out'])
 
     def test_extract_and_format_commits_from_report(self):
@@ -358,7 +353,7 @@ class GitFetcherTestCase(TestCase):
         report1['status'] = 'OK'
         report1['command'] = ['git', 'rev-parse', 'master']
         report1['out'] = '0000100001000010000100001000010000100001'
-        report1['err'] = ''
+        report1['error'] = ''
 
         report2 = {}
         report2['status'] = 'OK'
@@ -390,7 +385,7 @@ class GitFetcherTestCase(TestCase):
                     "date":"2015-03-08T23:13:33-07:00"\
                 }\
             },'
-        report2['err'] = ''
+        report2['error'] = ''
 
         obj = {}
         obj['status'] = True
@@ -522,12 +517,11 @@ class GitFetcherTestCase(TestCase):
         self.assertTrue(os.path.exists(os.path.join(settings.TMP_ROOT, 'gitfetcher', 'proj-28-0123ABC', 'log', 'git_clone_stdout.txt')))
         self.assertTrue(os.path.exists(os.path.join(settings.TMP_ROOT, 'gitfetcher', 'proj-28-0123ABC', 'log', 'git_clone_stderr.txt')))
 
-        self.assertEqual(True, reports['status'])
         self.assertEqual(1, len(reports['commands']))
 
         self.assertEqual('OK', reports['commands'][0]['status'])
         self.assertEqual(['git', 'merge-base', branch1['hash'], branch2['hash']], reports['commands'][0]['command'])
-        self.assertEqual('', reports['commands'][0]['err'])
+        self.assertEqual('', reports['commands'][0]['error'])
         self.assertEqual('', reports['commands'][0]['out'])
 
     def test_get_merge_target_from_branch_list_found_in_known(self):
@@ -715,12 +709,11 @@ class GitFetcherTestCase(TestCase):
         self.assertTrue(os.path.exists(os.path.join(settings.TMP_ROOT, 'gitfetcher', 'proj-28-0123ABC', 'log', 'git_clone_stdout.txt')))
         self.assertTrue(os.path.exists(os.path.join(settings.TMP_ROOT, 'gitfetcher', 'proj-28-0123ABC', 'log', 'git_clone_stderr.txt')))
 
-        self.assertEqual(True, reports['status'])
         self.assertEqual(1, len(reports['commands']))
 
         self.assertEqual('OK', reports['commands'][0]['status'])
         self.assertEqual(['git', 'diff', commit_1, commit_2], reports['commands'][0]['command'])
-        self.assertEqual('', reports['commands'][0]['err'])
+        self.assertEqual('', reports['commands'][0]['error'])
         self.assertEqual('', reports['commands'][0]['out'])
 
     def test_extract_diff_from_report(self):
@@ -728,13 +721,13 @@ class GitFetcherTestCase(TestCase):
         report1['status'] = 'OK'
         report1['command'] = ['git', 'rev-parse', 'master']
         report1['out'] = '0000100001000010000100001000010000100001'
-        report1['err'] = ''
+        report1['error'] = ''
 
         report2 = {}
         report2['status'] = 'OK'
         report2['command'] = ['git', 'diff', '...']
         report2['out'] = 'diff-long-long-text'
-        report2['err'] = ''
+        report2['error'] = ''
 
         obj = {}
         obj['status'] = True

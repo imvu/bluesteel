@@ -62,7 +62,7 @@ class GitFetcher(object):
             report = self.commands_fetch_git_project(project_info)
 
         self.report_stack.append(report)
-        if not report['status']:
+        if not GitFetcher.is_report_ok(report):
             return False
         return True
 
@@ -70,7 +70,7 @@ class GitFetcher(object):
         """ Fetch remote branches using project_info """
         remote_branches_report = self.commands_get_remote_branch_names(project_info)
         self.report_stack.append(remote_branches_report)
-        if not remote_branches_report['status']:
+        if not GitFetcher.is_report_ok(remote_branches_report):
             return False
 
         self.remote_branch_names = self.extract_remote_branch_names_from_reports(remote_branches_report)
@@ -80,7 +80,7 @@ class GitFetcher(object):
         """ Transform remote to local branches """
         remote_to_local_reports = self.checkout_remote_branches_to_local(project_info, self.remote_branch_names)
         self.report_stack.append(remote_to_local_reports)
-        if not remote_to_local_reports['status']:
+        if not GitFetcher.is_report_ok(remote_to_local_reports):
             return False
         return True
 
@@ -88,7 +88,7 @@ class GitFetcher(object):
         """ Get all local branch names """
         branch_names_report = self.commands_get_branch_names(project_info)
         self.report_stack.append(branch_names_report)
-        if not branch_names_report['status']:
+        if not GitFetcher.is_report_ok(branch_names_report):
             return False
 
         self.branch_names = self.extract_branch_names_from_report(branch_names_report)
@@ -98,7 +98,7 @@ class GitFetcher(object):
         """ Get the branch names and hashes per every name """
         names_and_hashes_report = self.commands_get_branch_names_and_hashes(project_info, self.branch_names)
         self.report_stack.append(names_and_hashes_report)
-        if not names_and_hashes_report['status']:
+        if not GitFetcher.is_report_ok(names_and_hashes_report):
             return False
 
         self.branch_names_and_hashes = self.extract_branch_names_hashes_from_report(names_and_hashes_report)
@@ -112,7 +112,7 @@ class GitFetcher(object):
 
             com_reports = self.commands_get_commits_from_branch(project_info, branch_name)
             self.report_stack.append(com_reports)
-            if not com_reports['status']:
+            if not GitFetcher.is_report_ok(com_reports):
                 return False
 
             commits = self.extract_and_format_commits_from_report(com_reports)
@@ -154,7 +154,7 @@ class GitFetcher(object):
             )
 
             self.report_stack.append(diff_target_report)
-            if not diff_target_report['status']:
+            if not GitFetcher.is_report_ok(diff_target_report):
                 return False
 
             diff_content_target = self.extract_diff_from_report(diff_target_report)
@@ -184,7 +184,7 @@ class GitFetcher(object):
 
                 # Report check
                 self.report_stack.append(diff_report)
-                if not diff_report['status']:
+                if not GitFetcher.is_report_ok(diff_report):
                     return False
 
                 diff_content = self.extract_diff_from_report(diff_report)
@@ -226,6 +226,15 @@ class GitFetcher(object):
             branch_data['merge_target'] = branch['merge_target']
             branch_data['trail'] = branch['trail']
             self.branch_list.append(branch_data)
+        return True
+
+    @staticmethod
+    def is_report_ok(report):
+        """ Returns true if all reports status are 'OK' """
+        for command_set in report:
+            for command in command_set:
+                if command['status'] != 'OK':
+                    return False
         return True
 
     @staticmethod
@@ -283,7 +292,6 @@ class GitFetcher(object):
     def execute_command_list(self, command_list, project_directory, project_cwd, out_file_path, err_file_path):
         """ Executes a list of commands, if the command fails it returns inmediately """
         reports = {}
-        reports['status'] = True
         reports['commands'] = []
 
         for command in command_list:
@@ -293,8 +301,8 @@ class GitFetcher(object):
 
             report = {}
             report['out'] = ''
-            report['err'] = ''
-            report['exc'] = ''
+            report['error'] = ''
+            report['status'] = 'OK'
 
             try:
                 subprocess.check_call(
@@ -304,11 +312,8 @@ class GitFetcher(object):
                     cwd=project_cwd
                 )
             except subprocess.CalledProcessError as exc:
-                reports['status'] = False
-                report['status'] = 'ERR'
-                report['exc'] = str(exc)
-            else:
-                report['status'] = 'OK'
+                report['status'] = 'ERROR'
+                report['exception'] = str(exc)
 
             file_stdout.close()
             file_stderr.close()
@@ -318,14 +323,14 @@ class GitFetcher(object):
 
             report['command'] = command
             report['out'] = file_stdout.read()
-            report['err'] = file_stderr.read()
+            report['error'] = file_stderr.read()
 
             reports['commands'].append(report)
 
             file_stdout.close()
             file_stderr.close()
 
-            if not reports['status']:
+            if report['status'] == 'ERROR':
                 break
 
         return reports

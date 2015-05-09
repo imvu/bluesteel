@@ -59,11 +59,10 @@ def get_default_report():
 
     report = {}
     report['commands'] = []
-    report['status'] = True
 
     command = {}
     command['command'] = []
-    command['err'] = ''
+    command['error'] = ''
     command['out'] = ''
     command['status'] = 'OK'
 

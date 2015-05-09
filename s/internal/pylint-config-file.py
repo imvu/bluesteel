@@ -308,7 +308,7 @@ max-attributes=7
 min-public-methods=0
 
 # Maximum number of public methods for a class (see R0904).
-max-public-methods=40
+max-public-methods=50
 
 
 [IMPORTS]

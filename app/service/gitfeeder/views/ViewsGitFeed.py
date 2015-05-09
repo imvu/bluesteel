@@ -10,7 +10,11 @@ from app.service.gitrepo.models.GitDiffModel import GitDiffEntry
 from app.service.gitrepo.models.GitBranchModel import GitBranchEntry
 from app.service.gitrepo.models.GitBranchTrailModel import GitBranchTrailEntry
 from app.service.gitrepo.models.GitBranchMergeTargetModel import GitBranchMergeTargetEntry
+from app.util.commandrepo.models.CommandReportModel import CommandReportEntry
+from app.util.commandrepo.models.CommandSetModel import CommandSetEntry
+from app.util.commandrepo.models.CommandModel import CommandEntry
 from app.service.gitfeeder.views import GitFeederSchemas
+import json
 
 
 def are_commits_unique(commit_list):
@@ -245,6 +249,23 @@ def update_branch_merge_target(branch_list, project):
             merge_target_entry.diff = diff_entry
             merge_target_entry.save()
 
+def insert_reports(reports):
+    """ Inserts all the commands into the db """
+    report_entry = CommandReportEntry.objects.create()
+
+    for command_set in reports:
+        set_entry = CommandSetEntry.objects.create(report=report_entry)
+
+        for command in command_set['commands']:
+            comm_entry = CommandEntry.objects.create(
+                command_set=set_entry,
+                command=json.dumps(command['command']),
+                out=command['out'],
+                error=command['error']
+            )
+            comm_entry.set_status_from_str(command['status'])
+
+
 
 def post_commits(request, project_id):
     """ Insert new commits to a given git project """
@@ -260,6 +281,11 @@ def post_commits(request, project_id):
         (obj_validated, val_resp_obj) = val.validate_obj_schema(post_info, GitFeederSchemas.GIT_FEEDER_SCHEMA)
         if not obj_validated:
             return res.get_schema_failed(val_resp_obj)
+
+        insert_reports(val_resp_obj['reports'])
+
+        if 'feed_data' not in val_resp_obj:
+            return res.get_response(200, 'Only reports added', {})
 
         commits = val_resp_obj['feed_data']['commits']
         diffs = val_resp_obj['feed_data']['diffs']
