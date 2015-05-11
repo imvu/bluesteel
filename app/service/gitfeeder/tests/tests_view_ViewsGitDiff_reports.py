@@ -73,29 +73,29 @@ class GitFeedViewsReportsTestCase(TestCase):
         self.assertEqual(200, resp_obj['status'])
         self.assertEqual('Only reports added', resp_obj['message'])
 
+        reports_entry = CommandReportEntry.objects.all()
+        self.assertEqual(1, len(reports_entry))
+
+        sets_entry = CommandSetEntry.objects.all()
+        self.assertEqual(1, len(sets_entry))
+
+        self.assertEqual(reports_entry[0], sets_entry[0].report)
+
         comm_entry = CommandEntry.objects.all().first()
         self.assertEqual('["command1", "arg1", "arg2"]', comm_entry.command)
         self.assertEqual('error-text-1', comm_entry.error)
         self.assertEqual('out-text-1', comm_entry.out)
         self.assertEqual(CommandEntry.OK, comm_entry.status)
 
-    def test_report_error(self):
-        reports = []
+        self.assertEqual(sets_entry[0], comm_entry.command_set)
 
-        report = {}
-        report['commands'] = []
 
-        command = {}
-        command['command'] = ['command1', 'arg1', 'arg2', 'arg3']
-        command['error'] = 'error-text-2'
-        command['out'] = 'out-text-2'
-        command['status'] = 'ERROR'
-
-        report['commands'].append(command)
-        reports.append(report)
+    def test_many_reports(self):
+        report_1 = FeederTestHelper.get_default_report()
+        report_2 = FeederTestHelper.get_default_report()
 
         obj = {}
-        obj['reports'] = reports
+        obj['reports'] = report_1
 
         resp = self.client.post(
             '/gitfeeder/feed/commit/project/{0}/'.format(self.git_project1.id),
@@ -108,11 +108,24 @@ class GitFeedViewsReportsTestCase(TestCase):
         self.assertEqual(200, resp_obj['status'])
         self.assertEqual('Only reports added', resp_obj['message'])
 
-        comm_entry = CommandEntry.objects.all().first()
-        self.assertEqual('["command1", "arg1", "arg2", "arg3"]', comm_entry.command)
-        self.assertEqual('error-text-2', comm_entry.error)
-        self.assertEqual('out-text-2', comm_entry.out)
-        self.assertEqual(CommandEntry.ERROR, comm_entry.status)
+        obj['reports'] = report_2
 
+        resp = self.client.post(
+            '/gitfeeder/feed/commit/project/{0}/'.format(self.git_project1.id),
+            data = json.dumps(obj),
+            content_type='application/json')
 
+        res.check_cross_origin_headers(self, resp)
+        resp_obj = json.loads(resp.content)
 
+        self.assertEqual(200, resp_obj['status'])
+        self.assertEqual('Only reports added', resp_obj['message'])
+
+        reports_entry = CommandReportEntry.objects.all()
+        self.assertEqual(2, len(reports_entry))
+
+        sets_entry = CommandSetEntry.objects.all()
+        self.assertEqual(2, len(sets_entry))
+
+        commands_entry = CommandEntry.objects.all()
+        self.assertEqual(2, len(commands_entry))
