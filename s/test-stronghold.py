@@ -22,11 +22,13 @@ def get_test_list():
     test_list.append((['app', 'strongholdworker'], ['python', 'manage.py', 'test', 'app/service/strongholdworker/tests/', '--settings=stronghold.settings.testing']))
     test_list.append((['app', 'httpcommon'], ['python', 'manage.py', 'test', 'app/util/httpcommon/tests/', '--settings=stronghold.settings.testing']))
     test_list.append((['app', 'commandrepo'], ['python', 'manage.py', 'test', 'app/util/commandrepo/tests/', '--settings=stronghold.settings.testing']))
+    test_list.append((['app', 'bluesteel'], ['python', 'manage.py', 'test', 'app/service/bluesteel/tests/', '--settings=stronghold.settings.testing']))
     test_list.append((['pylint'], ['pylint', '--rcfile=s/internal/pylint-config-file.py', '--generated-members=objects', '--msg-template={path}:{line}: [{msg_id}({symbol}), {obj}] {msg}', 'app/service/gitrepo']))
     test_list.append((['pylint'], ['pylint', '--rcfile=s/internal/pylint-config-file.py', '--generated-members=objects', '--msg-template={path}:{line}: [{msg_id}({symbol}), {obj}] {msg}', 'app/service/gitfeeder']))
     test_list.append((['pylint'], ['pylint', '--rcfile=s/internal/pylint-config-file.py', '--generated-members=objects', '--msg-template={path}:{line}: [{msg_id}({symbol}), {obj}] {msg}', 'app/service/strongholdworker']))
     test_list.append((['pylint'], ['pylint', '--rcfile=s/internal/pylint-config-file.py', '--generated-members=objects', '--msg-template={path}:{line}: [{msg_id}({symbol}), {obj}] {msg}', 'app/util/httpcommon']))
     test_list.append((['pylint'], ['pylint', '--rcfile=s/internal/pylint-config-file.py', '--generated-members=objects', '--msg-template={path}:{line}: [{msg_id}({symbol}), {obj}] {msg}', 'app/util/commandrepo']))
+    test_list.append((['pylint'], ['pylint', '--rcfile=s/internal/pylint-config-file.py', '--generated-members=objects', '--msg-template={path}:{line}: [{msg_id}({symbol}), {obj}] {msg}', 'app/service/bluesteel']))
     return test_list
 
 def main(args=sys.argv):

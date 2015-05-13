@@ -42,6 +42,7 @@ INSTALLED_APPS = (
     'app.service.gitrepo',
     'app.service.gitfeeder',
     'app.service.strongholdworker',
+    'app.service.bluesteel',
     'app.util.httpcommon',
     'app.util.commandrepo',
 )
