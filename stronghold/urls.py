@@ -16,6 +16,9 @@ urlpatterns = patterns(
     url(r'^admin/',
         include(admin.site.urls)),
 
+    url(r'^main/',
+        include('app.presenter.urls')),
+
     url(r'^gitfeeder/',
         include('app.service.gitfeeder.urls')),
 
