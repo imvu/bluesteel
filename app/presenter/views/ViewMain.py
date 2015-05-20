@@ -1,7 +1,6 @@
 """ Presenter views, main page functions """
 
 from django.http import HttpResponse
-from django.conf import settings
 from django.template import RequestContext, loader
 
 def get_main(request):

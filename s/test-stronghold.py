@@ -24,9 +24,11 @@ def get_test_list():
     packs.append(get_packed_app_info(['app', 'gitrepo'],            'app/service/gitrepo',))
     packs.append(get_packed_app_info(['app', 'gitfeeder'],          'app/service/gitfeeder',))
     packs.append(get_packed_app_info(['app', 'strongholdworker'],   'app/service/strongholdworker',))
+    packs.append(get_packed_app_info(['app', 'bluesteel'],          'app/service/bluesteel',))
     packs.append(get_packed_app_info(['app', 'httpcommon'],         'app/util/httpcommon',))
     packs.append(get_packed_app_info(['app', 'commandrepo'],        'app/util/commandrepo',))
-    packs.append(get_packed_app_info(['app', 'bluesteel'],          'app/service/bluesteel',))
+    packs.append(get_packed_app_info(['app', 'fontawesome'],        'app/util/fontawesome',))
+    packs.append(get_packed_app_info(['app', 'presenter'],          'app/presenter',))
 
     test_list = []
     test_list.append((['pip'], ['python', 's/internal/test-pip-installed.py']))

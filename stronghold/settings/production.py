@@ -45,6 +45,7 @@ INSTALLED_APPS = (
     'app.service.bluesteel',
     'app.util.httpcommon',
     'app.util.commandrepo',
+    'app.util.fontawesome',
     'app.presenter',
 )
 
