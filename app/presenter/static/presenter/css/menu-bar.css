@@ -1,0 +1,34 @@
+div.menu_bar_container
+{
+    height: 30px;
+    background: steelblue;
+}
+
+div.menu_item_container
+{
+    width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+li.menu_item
+{
+    color: white;
+    background: transparent;
+    display: inline-block;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+a.menu_item_link
+{
+    font-family: arial, sans-serif;
+    color: white;
+    text-decoration: none;
+    line-height: 30px;
+}
+
+a.menu_item_link:hover
+{
+    color: #E0E0E0;
+}

@@ -1,0 +1,15 @@
+button.add_button
+{
+    font-size: 17px;
+    line-height: 20px;
+    font-family: arial, sans-serif;
+    border-radius: 5px;
+    border-style: none;
+    background: steelblue;
+    color: white;
+}
+
+button.add_button:hover
+{
+    background: #6B9BC3;
+}

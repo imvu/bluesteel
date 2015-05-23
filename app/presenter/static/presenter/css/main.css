@@ -2,3 +2,14 @@ div.credits
 {
     color: steelblue;
 }
+
+li.pure-menu-item
+{
+    color: red;
+}
+
+div.menu-container
+{
+    background: steelblue;
+    height:35px;
+}
