@@ -3,6 +3,7 @@
 from django.test import TestCase
 from django.http import HttpResponse
 from app.util.httpcommon import pag
+from app.util.httpcommon.Page import Page
 import json
 
 
@@ -17,27 +18,32 @@ class ViewPagTestCase(TestCase):
         pass
 
     def test_pagination_out_of_bounds_elements_zero(self):
-        self.assertEqual(True, pag.is_pagination_out_of_bounds([], 3, 1))
+        page = Page(3, 1)
+        self.assertEqual(True, pag.is_pagination_out_of_bounds([], page))
 
     def test_pagination_out_of_bounds_items_per_page_zero(self):
-        self.assertEqual(True, pag.is_pagination_out_of_bounds([1,2,3,4], 0, 1))
+        page = Page(0, 1)
+        self.assertEqual(True, pag.is_pagination_out_of_bounds([1,2,3,4], page))
 
     def test_pagination_out_of_bounds_page_index_zero(self):
-        self.assertEqual(True, pag.is_pagination_out_of_bounds([1,2,3,4], 3, 0))
+        page = Page(3, 0)
+        self.assertEqual(True, pag.is_pagination_out_of_bounds([1,2,3,4], page))
 
     def test_pagination_out_of_bounds_page_index_greater_than_pages(self):
-        self.assertEqual(True, pag.is_pagination_out_of_bounds([1,2,3,4], 3, 25))
+        page = Page(3, 25)
+        self.assertEqual(True, pag.is_pagination_out_of_bounds([1,2,3,4], page))
 
     def test_pagination_out_of_bounds_correct(self):
-        self.assertEqual(False, pag.is_pagination_out_of_bounds([1,2,3,4], 3, 1))
+        page = Page(3, 1)
+        self.assertEqual(False, pag.is_pagination_out_of_bounds([1,2,3,4], page))
 
     def test_pagination_normal_range(self):
         element_list = range(15)
+        page = Page(2, 3)
 
         page_link_list = pag.get_navigation_links(
             element_list=element_list,
-            items_per_page=2,
-            page_index=3,
+            page=page,
             page_link_count=3,
             url='/view/main/'
         )
@@ -53,11 +59,11 @@ class ViewPagTestCase(TestCase):
 
     def test_pagination_range_clamped_on_zero(self):
         element_list = range(15)
+        page = Page(1, 1)
 
         page_link_list = pag.get_navigation_links(
             element_list=element_list,
-            items_per_page=1,
-            page_index=1,
+            page=page,
             page_link_count=3,
             url='/view/main/'
         )
@@ -73,11 +79,11 @@ class ViewPagTestCase(TestCase):
 
     def test_pagination_range_clamped_on_max_pages(self):
         element_list = range(6)
+        page = Page(1, 6)
 
         page_link_list = pag.get_navigation_links(
             element_list=element_list,
-            items_per_page=1,
-            page_index=6,
+            page=page,
             page_link_count=3,
             url='/view/main/'
         )
@@ -93,11 +99,11 @@ class ViewPagTestCase(TestCase):
 
     def test_pagination_range_out_of_bounds_zero(self):
         element_list = range(15)
+        page = Page(1, 0)
 
         page_link_list = pag.get_navigation_links(
             element_list=element_list,
-            items_per_page=1,
-            page_index=0,
+            page=page,
             page_link_count=3,
             url='/view/main/'
         )
@@ -108,11 +114,11 @@ class ViewPagTestCase(TestCase):
 
     def test_pagination_range_out_of_bounds_max(self):
         element_list = range(6)
+        page = Page(1, 8)
 
         page_link_list = pag.get_navigation_links(
             element_list=element_list,
-            items_per_page=1,
-            page_index=8,
+            page=page,
             page_link_count=3,
             url='/view/main/'
         )
@@ -123,11 +129,11 @@ class ViewPagTestCase(TestCase):
 
     def test_pagination_page_link_count_greater_than_len_items(self):
         element_list = range(3)
+        page = Page(1, 1)
 
         page_link_list = pag.get_navigation_links(
             element_list=element_list,
-            items_per_page=1,
-            page_index=1,
+            page=page,
             page_link_count=5,
             url='/view/main/'
         )
