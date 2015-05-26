@@ -29,10 +29,18 @@
             <i class="fa fa-plus"></i>
             Add project
         </button>
+
         <ul class="project_list">
-            <li class="project_item">News</li>
-            <li class="project_item">Sports</li>
-            <li class="project_item">Finance</li>
+            {% for layout in layout_list %}
+            <li class="project_item">
+                <div>{{layout.name}}</div>
+                <ul>
+                {% for project in layout.projects %}
+                    <li>{{project.name}}</li>
+                {% endfor %}
+                </ul>
+            </li>
+            {% endfor %}
         </ul>
     </div>
 
