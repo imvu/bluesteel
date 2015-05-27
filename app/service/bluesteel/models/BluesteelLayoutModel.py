@@ -18,7 +18,7 @@ class BluesteelLayoutEntry(models.Model):
 
     def as_object(self):
         """ Returns a layout entry as an object """
-        project_entries = BluesteelProjectEntry.objects.all().filter(layout_id=self.id)
+        project_entries = BluesteelProjectEntry.objects.all().filter(layout_id=self.id).order_by('id')
 
         projects = []
         for entry in project_entries:

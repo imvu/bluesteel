@@ -1,6 +1,7 @@
 """ BlueSteelProject model """
 
 from django.db import models
+from app.service.bluesteel.models.BluesteelCommandSetModel import BluesteelCommandSetEntry
 
 class BluesteelProjectEntry(models.Model):
     """ BlueSteel Project """
@@ -27,4 +28,13 @@ class BluesteelProjectEntry(models.Model):
         obj['git_project'] = {}
         obj['git_project']['name'] = self.git_project.name
         obj['git_project']['id'] = self.git_project.id
+        obj['command_sets'] = []
+
+        comm_set_entries = BluesteelCommandSetEntry.objects.all().filter(
+            bluesteel_project=self.id
+        ).order_by('command_set_type')
+
+        for comm_set in comm_set_entries:
+            obj['command_sets'].append(comm_set.as_object())
+
         return obj
