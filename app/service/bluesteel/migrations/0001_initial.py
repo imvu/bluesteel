@@ -69,4 +69,10 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(related_name='bluesteel_project', to='bluesteel.BluesteelProjectEntry'),
             preserve_default=True,
         ),
+        migrations.AddField(
+            model_name='bluesteelcommandentry',
+            name='bluesteel_command_set',
+            field=models.ForeignKey(related_name='bluesteel_command_set', to='bluesteel.BluesteelCommandSetEntry'),
+            preserve_default=True,
+        ),
     ]

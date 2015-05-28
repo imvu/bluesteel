@@ -8,7 +8,6 @@ class BluesteelCommandEntry(models.Model):
     bluesteel_command_set = models.ForeignKey(
         'bluesteel.BluesteelCommandSetEntry',
         related_name='bluesteel_command_set',
-        null=True
     )
     order = models.IntegerField(default=0)
     command = models.CharField(default='', max_length=255)
