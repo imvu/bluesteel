@@ -13,4 +13,8 @@ def get_main(request):
 
     data = {}
     data['layout_list'] = layout_list
+    data['menu'] = []
+    data['menu'].append({'name':'Main', 'link':'/main/view/'})
+    data['menu'].append({'name':'Layout', 'link':'/main/layout/edit/0/'})
+
     return res.get_template_data(request, 'presenter/main.html', data)

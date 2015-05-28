@@ -16,9 +16,9 @@
     <div class="menu_bar_container">
         <div class="menu_item_container">
             <menu>
-                <li class="menu_item"><a href="#" class="menu_item_link">News</a></li>
-                <li class="menu_item"><a href="#" class="menu_item_link">Sports</a></li>
-                <li class="menu_item"><a href="#" class="menu_item_link">Finance</a></li>
+                {% for menu_item in menu %}
+                <li class="menu_item"><a href="{{menu_item.link}}" class="menu_item_link">{{menu_item.name}}</a></li>
+                {% endfor %}
             </menu>
         </div>
     </div>
