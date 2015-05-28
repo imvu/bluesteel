@@ -1,53 +1,25 @@
+{% extends "presenter/base.html" %}
+
 {% load staticfiles %}
 
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+{% block data_body %}
+<div class="container_small">
+    <button class="add_button">
+        <i class="fa fa-plus"></i>
+        Add project
+    </button>
 
-    <link rel="stylesheet" type="text/css" href="{% static 'fontawesome/css/font-awesome.css' %}" />
-    <link rel="stylesheet" type="text/css" href="{% static 'presenter/css/main.css' %}" />
-    <link rel="stylesheet" type="text/css" href="{% static 'presenter/css/menu-bar.css' %}" />
-    <link rel="stylesheet" type="text/css" href="{% static 'presenter/css/projects.css' %}" />
-    <link rel="stylesheet" type="text/css" href="{% static 'presenter/css/buttons.css' %}" />
-</head>
-
-
-<body style="margin-top: 0px" bgcolor="#F0F0F0">
-    <div class="menu_bar_container">
-        <div class="menu_item_container">
-            <menu>
-                <li class="menu_item"><a href="#" class="menu_item_link">News</a></li>
-                <li class="menu_item"><a href="#" class="menu_item_link">Sports</a></li>
-                <li class="menu_item"><a href="#" class="menu_item_link">Finance</a></li>
-            </menu>
-        </div>
-    </div>
-
-
-
-    <div class="project_item_container">
-        <button class="add_button">
-            <i class="fa fa-plus"></i>
-            Add project
-        </button>
-
-        <ul class="project_list">
-            {% for layout in layout_list %}
-            <li class="project_item">
-                <div>{{layout.name}}</div>
-                <ul>
-                {% for project in layout.projects %}
-                    <li>{{project.name}}</li>
-                {% endfor %}
-                </ul>
-            </li>
+    <ul class="project_list">
+        {% for layout in layout_list %}
+        <li class="project_item">
+            <div>{{layout.name}}</div>
+            <ul>
+            {% for project in layout.projects %}
+                <li>{{project.name}}</li>
             {% endfor %}
-        </ul>
-    </div>
-
-    <footer>
-        <div>
-            <div class="credits"><i class="fa fa-camera-retro fa-1x"></i> fa-camera-retro</div>
-            <div class="credits">BlueSteel, created by <a class="author_name" href="https://twitter.com/LlorensMarti">@LlorensMarti</a>, 2014-15</div>
-        </div>
-    </footer>
-</body>
+            </ul>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

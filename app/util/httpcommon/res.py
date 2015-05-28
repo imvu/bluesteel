@@ -1,6 +1,7 @@
 """ Common code for response """
 
 from django.http import HttpResponse
+from django.template import RequestContext, loader
 import json
 
 def add_cross_origin_properties(http_request):
@@ -41,3 +42,9 @@ def get_json_parser_failed(data):
 
 def get_schema_failed(data):
     return get_response(406, 'Schema failed.', data)
+
+def get_template_data(request, template, data):
+    template = loader.get_template(template)
+    context = RequestContext(request, data)
+    response = HttpResponse(template.render(context))
+    return response

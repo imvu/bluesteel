@@ -1,9 +1,8 @@
 """ Presenter views, main page functions """
 
-from django.http import HttpResponse
-from django.template import RequestContext, loader
 from app.service.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
 from app.util.httpcommon.Page import Page
+from app.util.httpcommon import res
 
 LAYOUT_ITEMS_PER_PAGE = 3
 
@@ -14,12 +13,4 @@ def get_main(request):
 
     data = {}
     data['layout_list'] = layout_list
-
-    template = loader.get_template('presenter/main.html')
-    context = RequestContext(
-        request,
-        data,
-    )
-
-    response = HttpResponse(template.render(context))
-    return response
+    return res.get_template_data(request, 'presenter/main.html', data)
