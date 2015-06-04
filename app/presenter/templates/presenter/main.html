@@ -4,7 +4,9 @@
 
 {% block data_body %}
 <div class="container_small">
-    <button class="add_button">
+    <button class="add_button"
+            onclick="create_new_layout(this, '{{create_layout.url}}');"
+    >
         <i class="fa fa-plus"></i>
         Add project
     </button>

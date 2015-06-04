@@ -10,4 +10,7 @@ urlpatterns = patterns(
 
     url(r'^layout/edit/(?P<layout_id>\d+)/$',
         'app.presenter.views.ViewLayout.get_layout_editable'),
+
+    url(r'^layout/create/$',
+        'app.presenter.views.ViewLayout.post_create_new_layout'),
 )

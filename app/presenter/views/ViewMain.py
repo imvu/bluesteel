@@ -16,5 +16,7 @@ def get_main(request):
     data['menu'] = []
     data['menu'].append({'name':'Main', 'link':'/main/view/'})
     data['menu'].append({'name':'Layout', 'link':'/main/layout/edit/0/'})
+    data['create_layout'] = {}
+    data['create_layout']['url'] = '/main/layout/create/'
 
     return res.get_template_data(request, 'presenter/main.html', data)
