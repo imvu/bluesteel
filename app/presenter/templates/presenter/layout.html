@@ -4,5 +4,18 @@
 
 {% block data_body %}
 <div class="container_med">
+    <div class="round_white_container">
+        <div class="title">LAYOUT: {{layout.name}}</div>
+        {% for project in layout.projects %}
+            <div class="title">PROJECT: {{project.name}}</div>
+            <div class="title">ARCHIVE: {{project.archive}}</div>
+            {% for command_set in project.command_sets %}
+                <div class="title">{{command_set.type}}</div>
+                {% for command in command_set.commands %}
+                    <div class="command">{{command.command}}</div>
+                {% endfor %}
+            {% endfor %}
+        {% endfor %}
+    </div>
 </div>
 {% endblock %}

@@ -9,7 +9,10 @@ def get_layout_editable(request, layout_id):
         layout = BluesteelLayoutEntry.objects.all().filter(id=layout_id).first()
 
         data = {}
-        data['layout'] = layout
+        data['layout'] = layout.as_object()
+        data['menu'] = []
+        data['menu'].append({'name':'Main', 'link':'/main/view/'})
+        data['menu'].append({'name':'Layout', 'link':'/main/layout/edit/0/'})
         return res.get_template_data(request, 'presenter/layout.html', data)
     else:
         return res.get_template_data(request, 'presenter/not_found.html', {})
