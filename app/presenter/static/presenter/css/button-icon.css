@@ -1,0 +1,18 @@
+button.btn_icon
+{
+    vertical-align: middle;
+    line-height: 25px;
+    border-style: none;
+    outline: none;
+}
+
+button.default {
+    background: transparent;
+    color: lightgray;
+    transition: color 0.3s;
+}
+
+button.default:hover {
+    color: #969696;
+    outline: none;
+}

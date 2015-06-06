@@ -1,0 +1,34 @@
+button.btn_rect
+{
+    min-width: 150px;
+    padding: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+    font-size: 17px;
+    line-height: 20px;
+    font-family: arial, sans-serif;
+    border-radius: 5px;
+    border-style: none;
+}
+
+button.primary
+{
+    background: steelblue;
+    color: white;
+}
+
+button.primary:hover
+{
+    background: #6B9BC3;
+}
+
+button.danger
+{
+    background: darkred;
+    color: white;
+}
+
+button.danger:hover
+{
+    background: red;
+}
