@@ -11,9 +11,14 @@
             <div class="title">ARCHIVE: {{project.archive}}</div>
             {% for command_set in project.command_sets %}
                 <div class="title">{{command_set.type}}</div>
-                {% for command in command_set.commands %}
-                    <div class="command">{{command.command}}</div>
-                {% endfor %}
+                <ul class="no_dots_list">
+                    {% for command in command_set.commands %}
+                    <li>
+                        <input class="command_input" type="text" name="fname" value="{{command.command}}" maxlength="255"></input>
+                        <button class="remove_command"><i class="fa fa-times-circle fa-2x"></i></button>
+                    </li>
+                    {% endfor %}
+                </ul>
             {% endfor %}
         {% endfor %}
     </div>

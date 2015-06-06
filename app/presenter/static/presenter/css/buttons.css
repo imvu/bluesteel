@@ -13,3 +13,19 @@ button.add_button:hover
 {
     background: #6B9BC3;
 }
+
+button.remove_command
+{
+    vertical-align: middle;
+    line-height: 25px;
+    border-style: none;
+    background: transparent;
+    color: lightgray;
+    transition: color 0.3s;
+    outline: none;
+}
+
+button.remove_command:hover {
+    color: #969696;
+    outline: none;
+}
