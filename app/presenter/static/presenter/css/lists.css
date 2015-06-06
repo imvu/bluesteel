@@ -3,11 +3,15 @@ ul.no_dots
     list-style: none;
 }
 
+ul.no_indent
+{
+    margin: 0px;
+    padding: 0px;
+}
+
 ul.horizontal_list
 {
     text-align: center;
-    margin: 0px;
-    padding: 0px;
 }
 
 li.horizontal
