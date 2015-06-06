@@ -24,8 +24,8 @@ div.container_large
 
 div.round_white_container
 {
-    min-height: 50px;
-    border-radius: 5px;
+    min-height: 25px;
+    border-radius: 10px;
     background: white;
     margin-top: 10px;
     margin-bottom: 10px;

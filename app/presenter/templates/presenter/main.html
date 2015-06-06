@@ -4,22 +4,28 @@
 
 {% block data_body %}
 <div class="container_small">
-    <button class="btn_rect primary"
-            onclick="create_new_layout(this, '{{create_layout.url}}');"
-    >
-        <i class="fa fa-plus"></i>
-        Add project
-    </button>
-
     <ul class="project_list">
-        {% for layout in layout_list %}
-        <li class="project_item">
-            <div>{{layout.name}}</div>
-            <ul>
-            {% for project in layout.projects %}
-                <li>{{project.name}}</li>
-            {% endfor %}
+        <div class="round_white_container">
+            <ul class="horizontal_list">
+                <li class="horizontal">
+                    <button class="btn_rect primary"
+                            onclick="create_new_layout(this, '{{create_layout.url}}');"
+                    >
+                        Add project
+                    </button>
+                </li>
             </ul>
+        </div>
+        {% for layout in layout_list %}
+        <li>
+            <div class="round_white_container">
+                <div>{{layout.name}}</div>
+                <ul>
+                {% for project in layout.projects %}
+                    <li>{{project.name}}</li>
+                {% endfor %}
+                </ul>
+            </div>
         </li>
         {% endfor %}
     </ul>
