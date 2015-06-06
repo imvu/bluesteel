@@ -15,19 +15,19 @@
                     {% for command in command_set.commands %}
                     <li>
                         <input class="command_input" type="text" name="fname" value="{{command.command}}" maxlength="255"></input>
-                        <button class="btn_icon default"><i class="fa fa-times-circle fa-2x"></i></button>
+                        <button class="btn_icon icon_gray"><i class="fa fa-times-circle fa-2x"></i></button>
                     </li>
                     {% endfor %}
                 </ul>
                 <ul class="no_dots horizontal_list">
                     <li class="horizontal">
-                        <button class="btn_icon default"><i class="fa fa-plus-circle fa-2x"></i></button>
+                        <button class="btn_icon icon_gray"><i class="fa fa-plus-circle fa-2x"></i></button>
                     </li>
                 </ul>
             {% endfor %}
         {% endfor %}
     </div>
-    <div>
+    <div class="round_white_container">
         <ul class="no_dots horizontal_list">
             <li class="horizontal"><button class="btn_rect primary">Save</button></li>
             <li class="horizontal"><button class="btn_rect danger">Delete</button></li>

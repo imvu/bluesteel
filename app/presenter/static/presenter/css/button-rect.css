@@ -9,6 +9,7 @@ button.btn_rect
     font-family: arial, sans-serif;
     border-radius: 5px;
     border-style: none;
+    outline: none;
 }
 
 button.primary

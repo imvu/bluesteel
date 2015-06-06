@@ -6,13 +6,13 @@ button.btn_icon
     outline: none;
 }
 
-button.default {
+button.icon_gray {
     background: transparent;
     color: lightgray;
     transition: color 0.3s;
 }
 
-button.default:hover {
+button.icon_gray:hover {
     color: #969696;
     outline: none;
 }
