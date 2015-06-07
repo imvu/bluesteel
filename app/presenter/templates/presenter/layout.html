@@ -6,7 +6,9 @@
 <div class="container_med">
     <div class="round_white_container">
         <div class="title">LAYOUT: {{layout.name}}</div>
-        {% for project in layout.projects %}
+    </div>
+    {% for project in layout.projects %}
+        <div class="round_white_container">
             <div class="title">PROJECT: {{project.name}}</div>
             <div class="title">ARCHIVE: {{project.archive}}</div>
             {% for command_set in project.command_sets %}
@@ -25,8 +27,8 @@
                     </li>
                 </ul>
             {% endfor %}
-        {% endfor %}
-    </div>
+        </div>
+    {% endfor %}
     <div class="round_white_container">
         <ul class="no_dots no_indent horizontal_list">
             <li class="horizontal"><button class="btn_rect primary">Save</button></li>
