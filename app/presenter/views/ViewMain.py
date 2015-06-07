@@ -5,7 +5,7 @@ from app.service.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEnt
 from app.util.httpcommon.Page import Page
 from app.util.httpcommon import res
 
-LAYOUT_ITEMS_PER_PAGE = 3
+LAYOUT_ITEMS_PER_PAGE = 30
 
 def add_url_to_each_layout(layout_list):
     for layout in layout_list:
