@@ -1,5 +1,6 @@
 """ Presenter views, layout page functions """
 
+from app.presenter.views import ViewHelper
 from app.service.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
 from app.util.httpcommon import res
 
@@ -23,10 +24,8 @@ def post_create_new_layout(request):
         new_layout = BluesteelLayoutEntry.objects.create_new_default_layout()
 
         data = {}
-        data['layout'] = {}
-        data['layout']['id'] = new_layout.id
-        data['layout']['name'] = new_layout.name
-        data['layout']['url'] = '/main/layout/edit/{0}/'.format(new_layout.id)
+        data['layout'] = new_layout.as_object()
+        data['layout']['url'] = ViewHelper.create_edit_url_from_layout_id(data['layout']['id'])
 
         return res.get_response(200, 'New layout created', data)
     else:

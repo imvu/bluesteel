@@ -26,6 +26,7 @@ class BluesteelLayoutEntry(models.Model):
 
         obj = {}
         obj['name'] = self.name
+        obj['id'] = self.id
         obj['projects'] = projects
         return obj
 

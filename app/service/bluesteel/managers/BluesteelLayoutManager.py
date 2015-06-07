@@ -52,7 +52,7 @@ class BluesteelLayoutManager(models.Manager):
 
     def get_paginated_layouts_as_objects(self, page):
         """ Returns paginated list of layouts """
-        layout_entries = self.all()
+        layout_entries = self.all().order_by('-created_at')
 
         pager = Paginator(layout_entries, page.items_per_page)
         current_page = pager.page(page.page_index)
