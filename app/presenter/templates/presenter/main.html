@@ -5,7 +5,7 @@
 {% block data_body %}
 <div class="container_small">
     <ul class="no_dots no_indent">
-        <div class="round_white_container">
+        <div class="card white_card">
             <ul class="no_dots no_indent horizontal_list">
                 <li class="horizontal">
                     <button class="btn_rect primary"
@@ -18,7 +18,7 @@
         </div>
         {% for layout in layout_list %}
         <li>
-            <div class="round_white_container">
+            <div class="card white_card">
                 <div>{{layout.name}}</div>
                 <ul>
                 {% for project in layout.projects %}

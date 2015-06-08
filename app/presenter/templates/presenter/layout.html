@@ -4,7 +4,7 @@
 
 {% block data_body %}
 <div class="container_med">
-    <div class="round_white_container">
+    <div class="upper_card white_card">
         <div class="title">LAYOUT</div>
         <ul class="no_dots">
             <li>
@@ -13,7 +13,7 @@
         </ul>
     </div>
     {% for project in layout.projects %}
-        <div class="round_white_container">
+        <div class="middle_card white_card">
             <div class="title">PROJECT</div>
             <ul class="no_dots">
                 <li>
@@ -40,12 +40,12 @@
             {% endfor %}
         </div>
     {% endfor %}
-    <div class="round_white_container">
+    <div class="middle_card white_card">
         <ul class="no_dots no_indent horizontal_list">
             <li class="horizontal"><button class="btn_round light">Add Project</button></li>
         </ul>
     </div>
-    <div class="round_white_container">
+    <div class="lower_card white_card">
         <ul class="no_dots no_indent horizontal_list">
             <li class="horizontal"><button class="btn_rect primary">Save</button></li>
             <li class="horizontal"><button class="btn_rect danger">Delete</button></li>
