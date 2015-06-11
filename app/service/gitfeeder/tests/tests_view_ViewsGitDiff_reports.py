@@ -12,9 +12,10 @@ from app.service.gitrepo.models.GitDiffModel import GitDiffEntry
 from app.service.gitrepo.models.GitBranchModel import GitBranchEntry
 from app.service.gitrepo.models.GitBranchTrailModel import GitBranchTrailEntry
 from app.service.gitfeeder.helper import FeederTestHelper
-from app.util.commandrepo.models.CommandReportModel import CommandReportEntry
+from app.util.commandrepo.models.CommandGroupModel import CommandGroupEntry
 from app.util.commandrepo.models.CommandSetModel import CommandSetEntry
 from app.util.commandrepo.models.CommandModel import CommandEntry
+from app.util.commandrepo.models.CommandResultModel import CommandResultEntry
 from app.util.httpcommon import res
 from datetime import timedelta
 import json
@@ -52,9 +53,10 @@ class GitFeedViewsReportsTestCase(TestCase):
 
         command = {}
         command['command'] = ['command1', 'arg1', 'arg2']
-        command['error'] = 'error-text-1'
-        command['out'] = 'out-text-1'
-        command['status'] = 'OK'
+        command['result'] = {}
+        command['result']['error'] = 'error-text-1'
+        command['result']['out'] = 'out-text-1'
+        command['result']['status'] = 0
 
         report['commands'].append(command)
         reports.append(report)
@@ -73,19 +75,22 @@ class GitFeedViewsReportsTestCase(TestCase):
         self.assertEqual(200, resp_obj['status'])
         self.assertEqual('Only reports added', resp_obj['message'])
 
-        reports_entry = CommandReportEntry.objects.all()
+        reports_entry = CommandGroupEntry.objects.all()
         self.assertEqual(1, len(reports_entry))
 
         sets_entry = CommandSetEntry.objects.all()
         self.assertEqual(1, len(sets_entry))
 
-        self.assertEqual(reports_entry[0], sets_entry[0].report)
+        self.assertEqual(reports_entry[0], sets_entry[0].group)
 
         comm_entry = CommandEntry.objects.all().first()
         self.assertEqual('["command1", "arg1", "arg2"]', comm_entry.command)
-        self.assertEqual('error-text-1', comm_entry.error)
-        self.assertEqual('out-text-1', comm_entry.out)
-        self.assertEqual(CommandEntry.OK, comm_entry.status)
+
+        comm_result_entry = CommandResultEntry.objects.all().first()
+
+        self.assertEqual('error-text-1', comm_result_entry.error)
+        self.assertEqual('out-text-1', comm_result_entry.out)
+        self.assertEqual(0, comm_result_entry.status)
 
         self.assertEqual(sets_entry[0], comm_entry.command_set)
 
@@ -121,7 +126,7 @@ class GitFeedViewsReportsTestCase(TestCase):
         self.assertEqual(200, resp_obj['status'])
         self.assertEqual('Only reports added', resp_obj['message'])
 
-        reports_entry = CommandReportEntry.objects.all()
+        reports_entry = CommandGroupEntry.objects.all()
         self.assertEqual(2, len(reports_entry))
 
         sets_entry = CommandSetEntry.objects.all()

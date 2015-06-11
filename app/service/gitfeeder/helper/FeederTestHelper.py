@@ -61,10 +61,11 @@ def get_default_report():
     report['commands'] = []
 
     command = {}
-    command['command'] = []
-    command['error'] = ''
-    command['out'] = ''
-    command['status'] = 'OK'
+    command['command'] = ['command1', 'arg1', 'arg2']
+    command['result'] = {}
+    command['result']['error'] = 'default-error'
+    command['result']['out'] = 'default-out'
+    command['result']['status'] = 0
 
     report['commands'].append(command)
     reports.append(report)

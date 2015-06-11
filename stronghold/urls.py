@@ -19,9 +19,6 @@ urlpatterns = patterns(
     url(r'^main/',
         include('app.presenter.urls')),
 
-    url(r'^bluesteel/',
-        include('app.service.bluesteel.urls')),
-
     url(r'^gitfeeder/',
         include('app.service.gitfeeder.urls')),
 

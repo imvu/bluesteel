@@ -176,7 +176,7 @@ GIT_FEEDER_SCHEMA = {
                         'items' : {
                             'type' : 'object',
                             'additionalProperties' : False,
-                            'required' : ['command', 'out', 'error', 'status'],
+                            'required' : ['command'],
                             'properties' : {
                                 'command' : {
                                     'type' : 'array',
@@ -184,15 +184,21 @@ GIT_FEEDER_SCHEMA = {
                                         'type' : 'string'
                                     }
                                 },
-                                'out' : {
-                                    'type' : 'string'
-                                },
-                                'error' : {
-                                    'type' : 'string'
-                                },
-                                'status' : {
-                                    'type' : 'string',
-                                    'enum' : ['OK', 'ERROR']
+                                'result' : {
+                                    'type' : 'object',
+                                    'additionalProperties' : False,
+                                    'required' : ['out', 'error', 'status'],
+                                    'properties' : {
+                                        'out' : {
+                                            'type' : 'string'
+                                        },
+                                        'error' : {
+                                            'type' : 'string'
+                                        },
+                                        'status' : {
+                                            'type' : 'number'
+                                        }
+                                    }
                                 }
                             }
                         },

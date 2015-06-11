@@ -15,10 +15,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('command', models.TextField(default=b'')),
-                ('out', models.TextField(default=b'')),
-                ('error', models.TextField(default=b'')),
-                ('exception', models.TextField(default=b'')),
-                ('status', models.IntegerField(default=0, choices=[(0, b'Ok'), (1, b'Error'), (2, b'Exception')])),
+                ('order', models.IntegerField(default=0)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
             ],
@@ -27,11 +24,26 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.CreateModel(
-            name='CommandReportEntry',
+            name='CommandGroupEntry',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='CommandResultEntry',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('out', models.TextField(default=b'')),
+                ('error', models.TextField(default=b'')),
+                ('status', models.IntegerField(default=0)),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('updated_at', models.DateTimeField(auto_now=True)),
+                ('command', models.OneToOneField(to='commandrepo.CommandEntry')),
             ],
             options={
             },
@@ -41,10 +53,11 @@ class Migration(migrations.Migration):
             name='CommandSetEntry',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.TextField(default=b'')),
                 ('order', models.IntegerField(default=0)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
-                ('report', models.ForeignKey(related_name='command_repo', to='commandrepo.CommandReportEntry')),
+                ('group', models.ForeignKey(related_name='command_group', to='commandrepo.CommandGroupEntry')),
             ],
             options={
             },
