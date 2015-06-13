@@ -9,7 +9,7 @@ input.command_input[type="text"] {
     font-size: 15px;
     color: gray;
     text-decoration: none;
-    line-height: 25px;
+    line-height: 15px;
     font-style: bold;
     transition: border 0.3s;
 }
