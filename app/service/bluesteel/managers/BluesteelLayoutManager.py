@@ -2,10 +2,11 @@
 
 from django.db import models
 from django.core.paginator import Paginator
-from app.service.bluesteel.models.BluesteelCommandModel import BluesteelCommandEntry
-from app.service.bluesteel.models.BluesteelCommandSetModel import BluesteelCommandSetEntry
 from app.service.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
 from app.service.gitrepo.models.GitProjectModel import GitProjectEntry
+from app.util.commandrepo.models.CommandModel import CommandEntry
+from app.util.commandrepo.models.CommandSetModel import CommandSetEntry
+from app.util.commandrepo.models.CommandGroupModel import CommandGroupEntry
 
 # pylint: disable=R0904
 
@@ -18,28 +19,32 @@ class BluesteelLayoutManager(models.Manager):
     @staticmethod
     def create_command(command_set, order, command):
         """ Creates a default command """
-        BluesteelCommandEntry.objects.create(
-            bluesteel_command_set=command_set,
+        command = CommandEntry.objects.create(
+            command_set=command_set,
             order=order,
             command=command
         )
+        return command
 
     @staticmethod
-    def create_default_command_set_clone(project):
+    def create_default_command_set_clone(group, order):
         """ Creates a default command set with CLONE type"""
-        command_set_clone = BluesteelCommandSetEntry.objects.create(
-            bluesteel_project=project,
-            command_set_type=BluesteelCommandSetEntry.CLONE,
+        command_set_clone = CommandSetEntry.objects.create(
+            group=group,
+            name='CLONE',
+            order=order,
         )
 
         BluesteelLayoutManager.create_command(command_set_clone, 0, 'git clone http://www.test.com')
+        return command_set_clone
 
     @staticmethod
-    def create_default_command_set_fetch(project):
+    def create_default_command_set_fetch(group, order):
         """ Creates a default command set with FETCH type """
-        command_set_fetch = BluesteelCommandSetEntry.objects.create(
-            bluesteel_project=project,
-            command_set_type=BluesteelCommandSetEntry.FETCH,
+        command_set_fetch = CommandSetEntry.objects.create(
+            group=group,
+            name='FETCH',
+            order=order,
         )
 
         BluesteelLayoutManager.create_command(command_set_fetch, 0, 'git checkout master')
@@ -49,6 +54,29 @@ class BluesteelLayoutManager(models.Manager):
         BluesteelLayoutManager.create_command(command_set_fetch, 4, 'git checkout master')
         BluesteelLayoutManager.create_command(command_set_fetch, 5, 'git submodule sync')
         BluesteelLayoutManager.create_command(command_set_fetch, 6, 'git submodule update --init --recursive')
+        return command_set_fetch
+
+    @staticmethod
+    def create_default_command_set_pull(group, order):
+        """ Creates a default command set with PULL type"""
+        command_set_pull = CommandSetEntry.objects.create(
+            group=group,
+            name='PULL',
+            order=order,
+        )
+
+        BluesteelLayoutManager.create_command(command_set_pull, 0, 'git pull -r')
+        return command_set_pull
+
+    @staticmethod
+    def create_default_command_group():
+        """ Creates a group of sets of commands """
+        group = CommandGroupEntry.objects.create()
+        BluesteelLayoutManager.create_default_command_set_clone(group, 0)
+        BluesteelLayoutManager.create_default_command_set_fetch(group, 1)
+        BluesteelLayoutManager.create_default_command_set_pull(group, 2)
+        return group
+
 
     def get_paginated_layouts_as_objects(self, page):
         """ Returns paginated list of layouts """
@@ -65,17 +93,20 @@ class BluesteelLayoutManager(models.Manager):
 
     def create_new_default_layout(self):
         """ Create a new default layout with git project and return the ID of it """
-        new_layout = self.create(name='default-name')
+        new_layout = self.create(
+            name='default-name',
+            archive='archive-1'
+        )
 
         new_git_project = GitProjectEntry.objects.create(url='http://www.test.com')
 
-        new_project = BluesteelProjectEntry.objects.create(
+        command_group = BluesteelLayoutManager.create_default_command_group()
+
+        BluesteelProjectEntry.objects.create(
             layout=new_layout,
-            archive='default-archive',
             name='project-name',
+            command_group=command_group,
             git_project=new_git_project
         )
 
-        BluesteelLayoutManager.create_default_command_set_clone(new_project)
-        BluesteelLayoutManager.create_default_command_set_fetch(new_project)
         return new_layout

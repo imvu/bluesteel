@@ -17,7 +17,7 @@ class CommandGroupEntry(models.Model):
         obj = {}
         obj['command_sets'] = []
 
-        sets_list = CommandSetEntry.objects.all().filter(report_id=self.id).order_by('order')
+        sets_list = CommandSetEntry.objects.all().filter(group_id=self.id).order_by('order')
 
         for entry in sets_list:
             obj['command_sets'].append(entry.as_object())

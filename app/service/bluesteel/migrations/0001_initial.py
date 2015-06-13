@@ -8,6 +8,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('gitrepo', '0001_initial'),
+        ('commandrepo', '0001_initial'),
     ]
 
     operations = [
@@ -41,6 +42,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(default=b'', max_length=50)),
+                ('archive', models.CharField(default=b'', max_length=50)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
             ],
@@ -52,10 +54,10 @@ class Migration(migrations.Migration):
             name='BluesteelProjectEntry',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('archive', models.CharField(default=b'', max_length=50)),
                 ('name', models.CharField(default=b'', max_length=50)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
+                ('command_group', models.ForeignKey(related_name='bluesteel_command_group', to='commandrepo.CommandGroupEntry')),
                 ('git_project', models.ForeignKey(related_name='bluesteel_git_project', to='gitrepo.GitProjectEntry')),
                 ('layout', models.ForeignKey(related_name='bluesteel_layout', to='bluesteel.BluesteelLayoutEntry')),
             ],
