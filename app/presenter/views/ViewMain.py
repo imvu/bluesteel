@@ -22,6 +22,7 @@ def get_main(request):
     data['menu'] = []
     data['menu'].append({'name':'Main', 'link':'/main/view/'})
     data['menu'].append({'name':'Layout', 'link':'/main/layout/edit/0/'})
+    data['menu'].append({'name':'Worker', 'link':'/bluesteelworker/download/'})
     data['create_layout'] = {}
     data['create_layout']['url'] = '/main/layout/create/'
 
