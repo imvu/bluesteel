@@ -2,6 +2,7 @@
 
 from django.db import models
 from django.utils import timezone
+from app.service.gitrepo.models.GitBranchModel import GitBranchEntry
 
 class GitProjectEntry(models.Model):
     """ Git Project """
@@ -13,3 +14,17 @@ class GitProjectEntry(models.Model):
 
     def __unicode__(self):
         return u'GitProject {0} url:{1}'.format(self.id, self.url)
+
+    def as_object(self):
+        """ Return a GirProject as an object """
+        branch_entries = GitBranchEntry.objects.all().filter(project=self.id).order_by('id')
+
+        branches = []
+        for branch in branch_entries:
+            branches.append(branch.as_object())
+
+        obj = {}
+        obj['url'] = self.url
+        obj['name'] = self.name
+        obj['branches'] = branches
+        return obj

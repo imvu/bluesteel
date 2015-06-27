@@ -244,16 +244,19 @@ class GitFetcher(object):
 
     @staticmethod
     def get_archive_folder_path(project_info):
+        current = project_info['git']['project']['current_working_directory']
         folder = project_info['git']['project']['tmp_directory']
         archive = project_info['git']['project']['archive']
-        return os.path.join(folder, archive)
+        return os.path.join(current, folder, archive)
 
     @staticmethod
     def get_git_project_folder_path(project_info):
+        """ Returns the git project folder path """
+        current = project_info['git']['project']['current_working_directory']
         folder = project_info['git']['project']['tmp_directory']
         archive = project_info['git']['project']['archive']
         git_name = project_info['git']['project']['name']
-        return os.path.join(folder, archive, 'project', git_name)
+        return os.path.join(current, folder, archive, 'project', git_name)
 
     def is_project_folder_present(self, project_info):
         """ Checks if the folder structure exists """
