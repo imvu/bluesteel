@@ -7,7 +7,7 @@ import platform
 def main():
     ret = 0
     try:
-        ret = subprocess.check_call(['./manage.py', 'syncdb', '--settings=stronghold.settings.testing'])
+        ret = subprocess.check_call(['./manage.py', 'migrate', '--settings=stronghold.settings.testing'])
     except subprocess.CalledProcessError, e:
         print 'Database not configured properly!'
         print '    - Try: Install PostgresSQL or SQLlite'
