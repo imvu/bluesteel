@@ -251,12 +251,22 @@ class GitFetcher(object):
 
     @staticmethod
     def get_git_project_folder_path(project_info):
-        """ Returns the git project folder path """
+        """ Returns path for the git project """
         current = project_info['git']['project']['current_working_directory']
         folder = project_info['git']['project']['tmp_directory']
         archive = project_info['git']['project']['archive']
         git_name = project_info['git']['project']['name']
         return os.path.join(current, folder, archive, 'project', git_name)
+
+    @staticmethod
+    def get_cwd_of_first_git_project_found_in(directory):
+        """ Searches for the first .git folder on the project path and returns its location """
+        for root, dirs, files in os.walk(directory):
+            del files
+            for dir_to_check in dirs:
+                if dir_to_check == '.git':
+                    return root
+        return None
 
     def is_project_folder_present(self, project_info):
         """ Checks if the folder structure exists """
@@ -268,8 +278,14 @@ class GitFetcher(object):
     def is_git_project_folder_present(self, project_info):
         """ Checks if the folder structure exists """
         folder_path = self.get_archive_folder_path(project_info)
-        if not os.path.exists(os.path.join(folder_path, 'project')):
+        project_path = os.path.join(folder_path, 'project')
+        if not os.path.exists(project_path):
             return False
+
+        project_path = GitFetcher.get_cwd_of_first_git_project_found_in(project_path)
+        if project_path == None:
+            return False
+
         return True
 
     def is_log_project_folder_present(self, project_info):
@@ -317,7 +333,7 @@ class GitFetcher(object):
                     command,
                     stdout=file_stdout,
                     stderr=file_stderr,
-                    cwd=project_cwd
+                    cwd=os.path.normpath(project_cwd)
                 )
             except subprocess.CalledProcessError as exc:
                 report['status'] = 'ERROR'
@@ -346,9 +362,11 @@ class GitFetcher(object):
     def commands_clone_git_project(self, project_info):
         """ clone a git repo """
         folder_path = self.get_archive_folder_path(project_info)
-        project_cwd = os.path.join(folder_path, 'project')
+        project_cwd = self.get_git_project_folder_path(project_info)
         stdout_path = os.path.join(folder_path, 'log', 'git_clone_stdout.txt')
         stderr_path = os.path.join(folder_path, 'log', 'git_clone_stderr.txt')
+
+        os.makedirs(project_cwd)
 
         reports = self.execute_command_list(
             project_info['git']['clone']['commands'],
@@ -363,6 +381,7 @@ class GitFetcher(object):
         """ fetch a git repo """
         folder_path = self.get_archive_folder_path(project_info)
         project_cwd = self.get_git_project_folder_path(project_info)
+        project_cwd = GitFetcher.get_cwd_of_first_git_project_found_in(project_cwd)
         stdout_path = os.path.join(folder_path, 'log', 'git_clone_stdout.txt')
         stderr_path = os.path.join(folder_path, 'log', 'git_clone_stderr.txt')
 
@@ -379,13 +398,14 @@ class GitFetcher(object):
         """ Returns all remote branches names """
         folder_path = self.get_archive_folder_path(project_info)
         project_cwd = self.get_git_project_folder_path(project_info)
+        project_cwd = GitFetcher.get_cwd_of_first_git_project_found_in(project_cwd)
         stdout_path = os.path.join(folder_path, 'log', 'git_clone_stdout.txt')
         stderr_path = os.path.join(folder_path, 'log', 'git_clone_stderr.txt')
 
-        command = ['git', 'branch', '-r']
+        command = [u'git', u'branch', u'-r']
         commands = []
         commands.append(command)
-        reports = self.execute_command_list(commands, str(folder_path), project_cwd, stdout_path, stderr_path)
+        reports = self.execute_command_list(commands, str(folder_path), str(project_cwd), stdout_path, stderr_path)
         return reports
 
     @staticmethod
@@ -411,6 +431,7 @@ class GitFetcher(object):
         """ Returns all local branches """
         folder_path = self.get_archive_folder_path(project_info)
         project_cwd = self.get_git_project_folder_path(project_info)
+        project_cwd = GitFetcher.get_cwd_of_first_git_project_found_in(project_cwd)
         stdout_path = os.path.join(folder_path, 'log', 'git_clone_stdout.txt')
         stderr_path = os.path.join(folder_path, 'log', 'git_clone_stderr.txt')
 
@@ -439,6 +460,7 @@ class GitFetcher(object):
         """ Check out all the remote branches to local ones """
         folder_path = self.get_archive_folder_path(project_info)
         project_cwd = self.get_git_project_folder_path(project_info)
+        project_cwd = GitFetcher.get_cwd_of_first_git_project_found_in(project_cwd)
         stdout_path = os.path.join(folder_path, 'log', 'git_clone_stdout.txt')
         stderr_path = os.path.join(folder_path, 'log', 'git_clone_stderr.txt')
 
@@ -459,6 +481,7 @@ class GitFetcher(object):
         """ Fetch the hash of every branch name """
         folder_path = self.get_archive_folder_path(project_info)
         project_cwd = self.get_git_project_folder_path(project_info)
+        project_cwd = GitFetcher.get_cwd_of_first_git_project_found_in(project_cwd)
         stdout_path = os.path.join(folder_path, 'log', 'git_clone_stdout.txt')
         stderr_path = os.path.join(folder_path, 'log', 'git_clone_stderr.txt')
 
@@ -487,6 +510,7 @@ class GitFetcher(object):
         """ Get all commits from a branch, only first parent """
         folder_path = self.get_archive_folder_path(project_info)
         project_cwd = self.get_git_project_folder_path(project_info)
+        project_cwd = GitFetcher.get_cwd_of_first_git_project_found_in(project_cwd)
         stdout_path = os.path.join(folder_path, 'log', 'git_clone_stdout.txt')
         stderr_path = os.path.join(folder_path, 'log', 'git_clone_stderr.txt')
 
@@ -544,6 +568,7 @@ class GitFetcher(object):
         """ Get the common ancestor commit between two branches """
         folder_path = self.get_archive_folder_path(project_info)
         project_cwd = self.get_git_project_folder_path(project_info)
+        project_cwd = GitFetcher.get_cwd_of_first_git_project_found_in(project_cwd)
         stdout_path = os.path.join(folder_path, 'log', 'git_clone_stdout.txt')
         stderr_path = os.path.join(folder_path, 'log', 'git_clone_stderr.txt')
 
@@ -593,6 +618,7 @@ class GitFetcher(object):
 
         folder_path = self.get_archive_folder_path(project_info)
         project_cwd = self.get_git_project_folder_path(project_info)
+        project_cwd = GitFetcher.get_cwd_of_first_git_project_found_in(project_cwd)
         stdout_path = os.path.join(folder_path, 'log', 'git_clone_stdout.txt')
         stderr_path = os.path.join(folder_path, 'log', 'git_clone_stderr.txt')
 

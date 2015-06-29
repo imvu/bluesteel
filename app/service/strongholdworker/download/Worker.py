@@ -3,17 +3,15 @@
 # Disable warning for relative imports
 # pylint: disable=W0403
 
-# import GitFetcher
+import GitFetcher
 import os
 import time
 import json
 import pprint
 import urllib2
-# import urllib
 
 def get_obj():
-    """ Return a handmade object for testing purpose """
-
+    """ Returns a predefined object with fetch info """
     branch1 = {}
     branch1['name'] = 'master'
     branch1['hash'] = '50a284b3d0c7d95d4e8ea99acbfb9898765ce4c6'
@@ -66,14 +64,17 @@ def get_obj():
     obj['git']['fetch']['commands'].append(['git', 'submodule', 'update', '--init', '--recursive'])
     return obj
 
+def command_string_to_vector(command):
+    return command.split()
+
 def fragment_layout_in_project_infos(layout):
-    """ Takes a layout object and fragment it into individual project objects """
+    """ Fragment a layout objects on individual project objects """
     projects = []
     for project in layout['projects']:
         obj = {}
         obj['git'] = {}
         obj['git']['project'] = {}
-        obj['git']['project']['current_working_directory'] = os.path.dirname(__file__)
+        obj['git']['project']['current_working_directory'] = os.path.dirname(os.path.abspath(__file__))
         obj['git']['project']['tmp_directory'] = 'tmp'
         obj['git']['project']['archive'] = layout['archive']
         obj['git']['project']['name'] = layout['name']
@@ -87,13 +88,13 @@ def fragment_layout_in_project_infos(layout):
                 obj['git']['clone'] = {}
                 obj['git']['clone']['commands'] = []
                 for command in command_set['commands']:
-                    obj['git']['clone']['commands'].append(command['command'])
+                    obj['git']['clone']['commands'].append(command_string_to_vector(command['command']))
 
             if set_name == 'fetch':
                 obj['git']['fetch'] = {}
                 obj['git']['fetch']['commands'] = []
                 for command in command_set['commands']:
-                    obj['git']['fetch']['commands'].append(command['command'])
+                    obj['git']['fetch']['commands'].append(command_string_to_vector(command['command']))
 
         projects.append(obj)
     return projects
@@ -118,7 +119,7 @@ def main():
         resp_json = handler.read()
         resp = json.loads(resp_json)
 
-        ppi.pprint(resp)
+        # ppi.pprint(resp)
         for layout_url in resp['data']['layouts']:
 
             ppi.pprint(layout_url)
@@ -132,13 +133,11 @@ def main():
             projects = fragment_layout_in_project_infos(resp['data'])
 
             ppi.pprint(projects)
-            # obj = get_obj()
-
-            # fetcher = GitFetcher.GitFetcher()
-            # fetcher.fetch_git_project(obj)
-
-            # ppi = pprint.PrettyPrinter(depth=6)
-            # ppi.pprint(fetcher.feed_data)
+            for project in projects:
+                fetcher = GitFetcher.GitFetcher()
+                fetcher.fetch_git_project(project)
+                ppi.pprint(fetcher.feed_data)
+                ppi.pprint(fetcher.report_stack)
 
             time.sleep(30)
 
