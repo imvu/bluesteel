@@ -50,4 +50,5 @@ class BluesteelViewTestCase(TestCase):
         self.assertEqual(1, resp_obj['data']['id'])
         self.assertEqual('layout-1', resp_obj['data']['name'])
         self.assertEqual('archive-28', resp_obj['data']['archive'])
+        self.assertEqual('http://testserver/feed/commit/project/1/', resp_obj['data']['feed_url'])
 
