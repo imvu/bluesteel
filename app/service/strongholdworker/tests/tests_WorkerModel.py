@@ -12,7 +12,7 @@ import hashlib
 import shutil
 import mock
 
-class GitFetcherTestCase(TestCase):
+class WorkerModelTestCase(TestCase):
 
     def setUp(self):
         pass

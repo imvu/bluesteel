@@ -42,9 +42,9 @@ def get_worker(request):
     else:
         return res.get_template_data(request, 'presenter/not_found.html', {})
 
-def get_worker_info(request, worker_hash):
+def get_worker_info(request, worker_uuid):
     if request.method == 'GET':
-        worker = WorkerEntry.objects.all().filter(worker_hash=worker_hash).first()
+        worker = WorkerEntry.objects.all().filter(uuid=worker_uuid).first()
         if worker == None:
             return res.get_response(400, 'Worker not found', {})
         else:
