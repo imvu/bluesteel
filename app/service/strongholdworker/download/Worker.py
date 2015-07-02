@@ -67,15 +67,17 @@ def get_obj():
 def command_string_to_vector(command):
     return command.split()
 
-def fragment_layout_in_project_infos(layout):
+def fragment_layout_in_project_infos(layout, tmp_path):
     """ Fragment a layout objects on individual project objects """
     projects = []
     for project in layout['projects']:
         obj = {}
+        obj['feed'] = {}
+        obj['feed']['url'] = project['feed_url']
         obj['git'] = {}
         obj['git']['project'] = {}
         obj['git']['project']['current_working_directory'] = os.path.dirname(os.path.abspath(__file__))
-        obj['git']['project']['tmp_directory'] = 'tmp'
+        obj['git']['project']['tmp_directory'] = tmp_path
         obj['git']['project']['archive'] = layout['archive']
         obj['git']['project']['name'] = layout['name']
         obj['git']['branch'] = {}
@@ -99,9 +101,22 @@ def fragment_layout_in_project_infos(layout):
         projects.append(obj)
     return projects
 
+def read_settings():
+    """ Reads and return an objects with settings """
+    settings_file = open('settings.json')
+    settings_obj = {}
+    try:
+        settings_obj = json.loads(settings_file.read())
+    except ValueError, error:
+        print error
+        settings_obj['tmp_path'] = ['tmp']
+        settings_obj['entry_point'] = 'http://www.test.com'
+    settings_file.close()
+    return settings_obj
+
 def main():
     """ Main """
-    bluesteel_url = 'http://localhost:28028/bluesteel/layout/all/urls/'
+    settings = read_settings()
 
     # password_manager = urllib2.HTTPPasswordMgrWithDefaultRealm() # seriously?
     # password_manager.add_password(None, github_url, 'user', '***')
@@ -114,7 +129,7 @@ def main():
     while True:
         print 'Making request'
 
-        request = urllib2.Request(bluesteel_url) # Manual encoding required
+        request = urllib2.Request(settings['entry_point']) # Manual encoding required
         handler = urllib2.urlopen(request)
         resp_json = handler.read()
         resp = json.loads(resp_json)
@@ -125,19 +140,39 @@ def main():
             ppi.pprint(layout_url)
             request = urllib2.Request(layout_url) # Manual encoding required
             handler = urllib2.urlopen(request)
+            print 'handler', handler.info()
             resp_json = handler.read()
             resp = json.loads(resp_json)
 
             ppi.pprint(resp)
 
-            projects = fragment_layout_in_project_infos(resp['data'])
+            projects = fragment_layout_in_project_infos(resp['data'], settings['tmp_path'])
 
             ppi.pprint(projects)
             for project in projects:
                 fetcher = GitFetcher.GitFetcher()
-                fetcher.fetch_git_project(project)
+                res = fetcher.fetch_git_project(project)
                 ppi.pprint(fetcher.feed_data)
                 ppi.pprint(fetcher.report_stack)
+
+                obj = {}
+                obj['reports'] = fetcher.report_stack
+
+                if res:
+                    obj['feed_data'] = fetcher.feed_data
+
+                obj_json = json.dumps(obj)
+
+                ppi.pprint(project)
+                print project['feed']['url']
+                try:
+                    handler = urllib2.urlopen(project['feed']['url'], obj_json)
+                except urllib2.HTTPError as err:
+                    print err
+                    print handler.read()
+                resp_json = handler.read()
+                resp = json.loads(resp_json)
+                print resp
 
             time.sleep(30)
 

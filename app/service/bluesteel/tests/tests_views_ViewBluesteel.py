@@ -3,6 +3,11 @@
 from django.test import TestCase
 from django.test import Client
 from app.service.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
+from app.service.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
+from app.service.gitrepo.models.GitProjectModel import GitProjectEntry
+from app.util.commandrepo.models.CommandGroupModel import CommandGroupEntry
+from app.util.commandrepo.models.CommandSetModel import CommandSetEntry
+from app.util.commandrepo.models.CommandModel import CommandEntry
 from app.util.httpcommon import res
 import json
 
@@ -42,6 +47,29 @@ class BluesteelViewTestCase(TestCase):
         self.assertTrue('http://testserver/bluesteel/layout/3/' in resp_obj['data']['layouts'])
 
     def test_get_layout(self):
+        git_project = GitProjectEntry.objects.create(
+            url='http://www.test.com',
+            name='git-project-28',
+        )
+
+        command_group = CommandGroupEntry.objects.create()
+        command_set = CommandSetEntry.objects.create(
+            group=command_group
+        )
+
+        command = CommandEntry.objects.create(
+            command_set=command_set,
+            command='command-1 arg-2, arg-3',
+            order=0
+        )
+
+        project_1 = BluesteelProjectEntry.objects.create(
+            name='project-1',
+            layout=self.layout_1,
+            command_group=command_group,
+            git_project=git_project,
+        )
+
         resp = self.client.get('/bluesteel/layout/1/')
 
         res.check_cross_origin_headers(self, resp)
@@ -50,5 +78,5 @@ class BluesteelViewTestCase(TestCase):
         self.assertEqual(1, resp_obj['data']['id'])
         self.assertEqual('layout-1', resp_obj['data']['name'])
         self.assertEqual('archive-28', resp_obj['data']['archive'])
-        self.assertEqual('http://testserver/feed/commit/project/1/', resp_obj['data']['feed_url'])
+        self.assertEqual('http://testserver/gitfeeder/feed/commit/project/1/', resp_obj['data']['projects'][0]['feed_url'])
 

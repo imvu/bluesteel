@@ -24,7 +24,7 @@ class GitFetcherTestCase(TestCase):
         self.obj['git'] = {}
         self.obj['git']['project'] = {}
         self.obj['git']['project']['current_working_directory'] = self.tmp_folder
-        self.obj['git']['project']['tmp_directory'] = 'gitfetcher'
+        self.obj['git']['project']['tmp_directory'] = ['gitfetcher']
         self.obj['git']['project']['archive'] = 'proj-28-0123ABC'
         self.obj['git']['project']['name'] = 'test-repo'
         self.obj['git']['project']['url'] = 'git-url'

@@ -21,6 +21,7 @@ class BluesteelProjectEntry(models.Model):
     def as_object(self):
         """ Returns a project as an object """
         obj = {}
+        obj['id'] = self.id
         obj['name'] = self.name
         obj['git_project'] = self.git_project.as_object()
         obj['command_group'] = self.command_group.as_object()

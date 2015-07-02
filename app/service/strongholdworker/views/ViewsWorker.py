@@ -2,6 +2,7 @@
 
 from django.conf import settings
 from django.http import HttpResponse
+from app.service.strongholdworker.models.WorkerModel import WorkerEntry
 from app.util.httpcommon import res
 import os
 import zipfile
@@ -40,4 +41,14 @@ def get_worker(request):
         return response
     else:
         return res.get_template_data(request, 'presenter/not_found.html', {})
+
+def get_worker_info(request, worker_hash):
+    if request.method == 'GET':
+        worker = WorkerEntry.objects.all().filter(worker_hash=worker_hash).first()
+        if worker == None:
+            return res.get_response(400, 'Worker not found', {})
+        else:
+            return res.get_response(200, 'Worker found', worker.as_object())
+    else:
+        return res.get_only_get_allowed({})
 

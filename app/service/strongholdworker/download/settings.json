@@ -1,0 +1,4 @@
+{
+    "entry_point" : "http://localhost:28028/bluesteel/layout/all/urls/",
+    "tmp_path" : ["..", "..", "..", "..", "tmp", "worker_tmp"]
+}

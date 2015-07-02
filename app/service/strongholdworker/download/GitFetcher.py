@@ -243,9 +243,13 @@ class GitFetcher(object):
         return True
 
     @staticmethod
+    def get_tmp_directory_from_list_folders(folders_list):
+        return os.sep.join(folders_list)
+
+    @staticmethod
     def get_archive_folder_path(project_info):
         current = project_info['git']['project']['current_working_directory']
-        folder = project_info['git']['project']['tmp_directory']
+        folder = GitFetcher.get_tmp_directory_from_list_folders(project_info['git']['project']['tmp_directory'])
         archive = project_info['git']['project']['archive']
         return os.path.join(current, folder, archive)
 
@@ -253,7 +257,7 @@ class GitFetcher(object):
     def get_git_project_folder_path(project_info):
         """ Returns path for the git project """
         current = project_info['git']['project']['current_working_directory']
-        folder = project_info['git']['project']['tmp_directory']
+        folder = GitFetcher.get_tmp_directory_from_list_folders(project_info['git']['project']['tmp_directory'])
         archive = project_info['git']['project']['archive']
         git_name = project_info['git']['project']['name']
         return os.path.join(current, folder, archive, 'project', git_name)

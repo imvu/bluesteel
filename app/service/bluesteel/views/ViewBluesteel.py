@@ -3,9 +3,10 @@
 from app.service.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
 from app.util.httpcommon import res
 
-def add_project_feed_url(request, project):
-    project['feed_url'] = request.build_absolute_uri('/feed/commit/project/{0}/'.format(project['id']))
-    return project
+def add_project_feed_url(request, layout):
+    for project in layout['projects']:
+        project['feed_url'] = request.build_absolute_uri('/gitfeeder/feed/commit/project/{0}/'.format(project['id']))
+    return layout
 
 def get_all_layouts_urls(request):
     """ Return list of all layout in json """
