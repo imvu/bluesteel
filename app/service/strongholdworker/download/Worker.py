@@ -4,11 +4,15 @@
 # pylint: disable=W0403
 
 import GitFetcher
+import Request
 import os
 import time
 import json
-import pprint
-import urllib2
+# import pprint
+import uuid
+import socket
+import platform
+
 
 def get_obj():
     """ Returns a predefined object with fetch info """
@@ -67,6 +71,7 @@ def get_obj():
 def command_string_to_vector(command):
     return command.split()
 
+
 def fragment_layout_in_project_infos(layout, tmp_path):
     """ Fragment a layout objects on individual project objects """
     projects = []
@@ -114,67 +119,111 @@ def read_settings():
     settings_file.close()
     return settings_obj
 
+def get_host_info():
+    """ Returns an object with unique information about the host """
+    obj = {}
+    # uuid.getnode() can return a random number, we need to fix it
+    obj['uuid'] = str(uuid.uuid3(uuid.NAMESPACE_DNS, str(uuid.getnode())))
+    obj['host_name'] = socket.gethostname()
+    obj['operative_system'] = '{0}-{1}'.format(
+        platform.system(),
+        platform.release()
+    )
+    return obj
+
+def process_connect_worker(settings, host_info, session):
+    """ Create a Worker if first time and make login to BlueSteel """
+    connection_info = {}
+
+    url = '{0}{1}/'.format(settings['worker_info_point'], host_info['uuid'])
+    resp = session.GET(url, {})
+
+    if resp['content']['status'] == 400:
+        print '- Creating Worker'
+        resp = session.POST(settings['create_worker_info_point'], {}, json.dumps(host_info))
+
+    login_info = {}
+    login_info['username'] = host_info['uuid'][0:30]
+    login_info['password'] = host_info['uuid']
+
+    print '- Login Worker'
+    resp = session.POST(settings['login_worker_point'], {}, json.dumps(login_info))
+
+    connection_info['git_feeder'] = True
+    connection_info['succeed'] = resp['content']['status'] == 200
+    return connection_info
+
+def process_git_feed(settings, session):
+    """ Fetch all layouts and feed them to BlueSteel """
+    process_info = {}
+    process_info['succeed'] = True
+
+    print '- Getting layout list'
+    resp = session.GET(settings['entry_point'], {})
+    if resp['succeed'] == False:
+        process_info['succeed'] = False
+        return process_info
+
+    for layout_url in resp['content']['data']['layouts']:
+        print '- Get layout'
+        resp = session.get(layout_url, {})
+        if resp['succeed'] == False:
+            process_info['succeed'] = False
+            return process_info
+
+        print '- Fragmenting layout'
+        projects = fragment_layout_in_project_infos(resp['content']['data'], settings['tmp_path'])
+
+        for project in projects:
+            fetcher = GitFetcher.GitFetcher()
+
+            print '- Fetching git project'
+            res = fetcher.fetch_git_project(project)
+
+            obj = {}
+            obj['reports'] = fetcher.report_stack
+
+            if res:
+                obj['feed_data'] = fetcher.feed_data
+
+            obj_json = json.dumps(obj)
+
+            print project['feed']['url']
+
+            print '- Feeding git project'
+            resp = session.POST(project['feed']['url'], obj_json)
+            if resp['succeed'] == False:
+                process_info['succeed'] = False
+                return process_info
+
+            print resp['content']['data']
+
+    print '- Finshed feeding'
+    return process_info
+
+
 def main():
     """ Main """
+    # ppi = pprint.PrettyPrinter(depth=10)
+
     settings = read_settings()
+    host_info = get_host_info()
+    session = Request.Session()
 
-    # password_manager = urllib2.HTTPPasswordMgrWithDefaultRealm() # seriously?
-    # password_manager.add_password(None, github_url, 'user', '***')
-
-    # auth = urllib2.HTTPBasicAuthHandler(password_manager) # create an authentication handler
-    # opener = urllib2.build_opener(auth) # create an opener with the authentication handler
-    # urllib2.install_opener(opener) # install the opener...
-    ppi = pprint.PrettyPrinter(depth=10)
 
     while True:
-        print 'Making request'
+        con_info = process_connect_worker(settings, host_info, session)
 
-        request = urllib2.Request(settings['entry_point']) # Manual encoding required
-        handler = urllib2.urlopen(request)
-        resp_json = handler.read()
-        resp = json.loads(resp_json)
+        if con_info['succeed']:
 
-        # ppi.pprint(resp)
-        for layout_url in resp['data']['layouts']:
+            working = True
+            while working:
+                if con_info['git_feeder']:
+                    print '- Start git feeding'
+                    resp = process_git_feed(settings, session)
 
-            ppi.pprint(layout_url)
-            request = urllib2.Request(layout_url) # Manual encoding required
-            handler = urllib2.urlopen(request)
-            print 'handler', handler.info()
-            resp_json = handler.read()
-            resp = json.loads(resp_json)
-
-            ppi.pprint(resp)
-
-            projects = fragment_layout_in_project_infos(resp['data'], settings['tmp_path'])
-
-            ppi.pprint(projects)
-            for project in projects:
-                fetcher = GitFetcher.GitFetcher()
-                res = fetcher.fetch_git_project(project)
-                ppi.pprint(fetcher.feed_data)
-                ppi.pprint(fetcher.report_stack)
-
-                obj = {}
-                obj['reports'] = fetcher.report_stack
-
-                if res:
-                    obj['feed_data'] = fetcher.feed_data
-
-                obj_json = json.dumps(obj)
-
-                ppi.pprint(project)
-                print project['feed']['url']
-                try:
-                    handler = urllib2.urlopen(project['feed']['url'], obj_json)
-                except urllib2.HTTPError as err:
-                    print err
-                    print handler.read()
-                resp_json = handler.read()
-                resp = json.loads(resp_json)
-                print resp
-
-            time.sleep(30)
+                working = resp['succeed']
+                time.sleep(3)
 
 
 
