@@ -202,5 +202,10 @@ class GitFeedViewsBranchTestCase(TestCase):
         self.assertIsNotNone(GitBranchEntry.objects.filter(name='master').first())
 
         self.assertIsNotNone(GitBranchTrailEntry.objects.filter(commit__commit_hash='0000100001000010000100001000010000100001').first())
+        self.assertIsNotNone(0, GitBranchTrailEntry.objects.filter(commit__commit_hash='0000100001000010000100001000010000100001').first().order)
+
         self.assertIsNotNone(GitBranchTrailEntry.objects.filter(commit__commit_hash='0000200002000020000200002000020000200002').first())
+        self.assertIsNotNone(1, GitBranchTrailEntry.objects.filter(commit__commit_hash='0000200002000020000200002000020000200002').first().order)
+
         self.assertIsNotNone(GitBranchTrailEntry.objects.filter(commit__commit_hash='0000300003000030000300003000030000300003').first())
+        self.assertIsNotNone(2, GitBranchTrailEntry.objects.filter(commit__commit_hash='0000300003000030000300003000030000300003').first().order)

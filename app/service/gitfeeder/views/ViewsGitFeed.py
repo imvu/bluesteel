@@ -185,13 +185,17 @@ def insert_branches(branch_list, project):
 
         GitBranchTrailEntry.objects.filter(branch=branch_entry).delete()
 
-        for git_hash in branch['trail']:
+        for index, git_hash in enumerate(branch['trail']):
             commit_entry = GitCommitEntry.objects.filter(commit_hash=git_hash).first()
-            GitBranchTrailEntry.objects.create(
-                project=project,
-                branch=branch_entry,
-                commit=commit_entry
-            )
+            if commit_entry:
+                GitBranchTrailEntry.objects.create(
+                    project=project,
+                    branch=branch_entry,
+                    commit=commit_entry,
+                    order=index
+                )
+            else:
+                print 'Commit not found!'
 
 def update_branch_merge_target(branch_list, project):
     """ Updates all the branch merge targets into the db """

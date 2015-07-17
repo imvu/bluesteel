@@ -57,3 +57,4 @@ class GitBranchTrailTestCase(TestCase):
         self.assertEqual('http://test/', entry.project.url)
         self.assertEqual('0000100001000010000100001000010000100001', entry.commit.commit_hash)
         self.assertEqual('branch1', entry.branch.name)
+        self.assertEqual(0, entry.order)
