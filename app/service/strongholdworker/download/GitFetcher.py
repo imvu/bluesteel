@@ -230,7 +230,7 @@ class GitFetcher(object):
     def is_report_ok(report):
         """ Returns true if all commands status are 'OK' """
         for command in report['commands']:
-            if command['status'] != 'OK':
+            if command['result']['status'] != 0:
                 return False
         return True
 
@@ -328,20 +328,19 @@ class GitFetcher(object):
             file_stderr = open(err_file_path, 'w')
 
             report = {}
-            report['out'] = ''
-            report['error'] = ''
-            report['status'] = 'OK'
+            report['result'] = {}
+            report['result']['out'] = ''
+            report['result']['error'] = ''
+            report['result']['status'] = 0
 
-            try:
-                subprocess.check_call(
-                    command,
-                    stdout=file_stdout,
-                    stderr=file_stderr,
-                    cwd=os.path.normpath(project_cwd)
-                )
-            except subprocess.CalledProcessError as exc:
-                report['status'] = 'ERROR'
-                report['exception'] = str(exc)
+            status = subprocess.call(
+                command,
+                stdout=file_stdout,
+                stderr=file_stderr,
+                cwd=os.path.normpath(project_cwd)
+            )
+
+            report['result']['status'] = status
 
             file_stdout.close()
             file_stderr.close()
@@ -350,15 +349,15 @@ class GitFetcher(object):
             file_stderr = open(err_file_path, 'r')
 
             report['command'] = command
-            report['out'] = file_stdout.read()
-            report['error'] = file_stderr.read()
+            report['result']['out'] = file_stdout.read()
+            report['result']['error'] = file_stderr.read()
 
             reports['commands'].append(report)
 
             file_stdout.close()
             file_stderr.close()
 
-            if report['status'] == 'ERROR':
+            if report['result']['status'] != 0:
                 break
 
         return reports
@@ -418,8 +417,8 @@ class GitFetcher(object):
         remote_branch_names = []
 
         for command in reports['commands']:
-            if command['command'] == ['git', 'branch', '-r'] and command['status'] == 'OK':
-                names = command['out'].split('\n')
+            if command['command'] == ['git', 'branch', '-r'] and command['result']['status'] == 0:
+                names = command['result']['out'].split('\n')
                 for name in names:
                     name = name.strip()
                     if len(name) == 0:
@@ -451,8 +450,8 @@ class GitFetcher(object):
         branch_names = []
 
         for command in reports['commands']:
-            if command['command'] == ['git', 'branch'] and command['status'] == 'OK':
-                names = command['out'].split('\n')
+            if command['command'] == ['git', 'branch'] and command['result']['status'] == 0:
+                names = command['result']['out'].split('\n')
                 for name in names:
                     name = name.replace('*', '')
                     name = name.strip()
@@ -503,10 +502,11 @@ class GitFetcher(object):
         branch_names = []
 
         for command in reports['commands']:
-            if command['command'][0] == 'git' and command['command'][1] == 'rev-parse' and command['status'] == 'OK':
+            if command['command'][0] == 'git' and command['command'][1] == 'rev-parse' and \
+            command['result']['status'] == 0:
                 branch = {}
                 branch['name'] = command['command'][2].strip()
-                branch['hash'] = command['out'].strip()
+                branch['hash'] = command['result']['out'].strip()
                 branch_names.append(branch)
         return branch_names
 
@@ -547,12 +547,17 @@ class GitFetcher(object):
         commits = []
 
         for command in reports['commands']:
-            if command['command'][0] == 'git' and command['command'][1] == 'log' and command['status'] == 'OK':
-                commits_string = '[' + command['out'][:-1] + ']'
+            if command['command'][0] == 'git' and command['command'][1] == 'log' and command['result']['status'] == 0:
+                commits_string = '[' + command['result']['out'][:-1] + ']'
                 commits_obj = json.loads(commits_string)
 
                 for commit in commits_obj:
-                    commit['parent_hashes'] = commit['parent_hashes'].split(' ')
+                    original_parents_list = commit['parent_hashes'].split(' ')
+                    filtered_parents_list = []
+                    for parent in original_parents_list:
+                        if len(parent) > 0:
+                            filtered_parents_list.append(parent)
+                    commit['parent_hashes'] = filtered_parents_list
                 commits = commits_obj
         return commits
 
@@ -636,8 +641,8 @@ class GitFetcher(object):
         """ We extract the content of the diff from the report """
 
         for command in reports['commands']:
-            if command['command'][0] == 'git' and command['command'][1] == 'diff' and command['status'] == 'OK':
-                return command['out']
+            if command['command'][0] == 'git' and command['command'][1] == 'diff' and command['result']['status'] == 0:
+                return command['result']['out']
 
         return ''
 

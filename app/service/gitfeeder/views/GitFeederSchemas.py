@@ -25,9 +25,10 @@ GIT_FEEDER_SCHEMA = {
                             },
                             'parent_hashes' : {
                                 'type' : 'array',
+                                'minItems' : 0,
                                 'items' : {
                                     'type' : 'string',
-                                    'pattern': '(^[0-9a-f]{40}$)|(^$)'
+                                    'pattern': '(^[0-9a-f]{40}$)'
                                 }
                             },
                             'author' : {

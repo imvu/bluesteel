@@ -211,6 +211,7 @@ class GitFeedViewsCommitTestCase(TestCase):
         self.assertEqual('0000100001000010000100001000010000100001', branch_entry.commit.commit_hash)
         self.assertEqual('master', branch_entry.name)
 
+
     def test_feed_fails_because_bad_constructed_parent(self):
         commit_time = str(timezone.now().isoformat())
         commit1 = FeederTestHelper.create_commit(1, [], 'user1', 'user1@test.com', commit_time, commit_time)

@@ -8,7 +8,7 @@ import Request
 import os
 import time
 import json
-# import pprint
+import pprint
 import uuid
 import socket
 import platform
@@ -136,18 +136,18 @@ def process_connect_worker(settings, host_info, session):
     connection_info = {}
 
     url = '{0}{1}/'.format(settings['worker_info_point'], host_info['uuid'])
-    resp = session.GET(url, {})
+    resp = session.get(url, {})
 
     if resp['content']['status'] == 400:
         print '- Creating Worker'
-        resp = session.POST(settings['create_worker_info_point'], {}, json.dumps(host_info))
+        resp = session.post(settings['create_worker_info_point'], {}, json.dumps(host_info))
 
     login_info = {}
     login_info['username'] = host_info['uuid'][0:30]
     login_info['password'] = host_info['uuid']
 
     print '- Login Worker'
-    resp = session.POST(settings['login_worker_point'], {}, json.dumps(login_info))
+    resp = session.post(settings['login_worker_point'], {}, json.dumps(login_info))
 
     connection_info['git_feeder'] = True
     connection_info['succeed'] = resp['content']['status'] == 200
@@ -159,7 +159,7 @@ def process_git_feed(settings, session):
     process_info['succeed'] = True
 
     print '- Getting layout list'
-    resp = session.GET(settings['entry_point'], {})
+    resp = session.get(settings['entry_point'], {})
     if resp['succeed'] == False:
         process_info['succeed'] = False
         return process_info
@@ -178,25 +178,22 @@ def process_git_feed(settings, session):
             fetcher = GitFetcher.GitFetcher()
 
             print '- Fetching git project'
-            res = fetcher.fetch_git_project(project)
+            fetcher.fetch_git_project(project)
 
-            obj = {}
-            obj['reports'] = fetcher.report_stack
+            ppi = pprint.PrettyPrinter(depth=10)
+            ppi.pprint(fetcher.feed_data)
 
-            if res:
-                obj['feed_data'] = fetcher.feed_data
-
-            obj_json = json.dumps(obj)
+            obj_json = json.dumps(fetcher.feed_data)
 
             print project['feed']['url']
 
             print '- Feeding git project'
-            resp = session.POST(project['feed']['url'], obj_json)
+            resp = session.post(project['feed']['url'], {}, obj_json)
             if resp['succeed'] == False:
                 process_info['succeed'] = False
                 return process_info
 
-            print resp['content']['data']
+            ppi.pprint(resp)
 
     print '- Finshed feeding'
     return process_info
