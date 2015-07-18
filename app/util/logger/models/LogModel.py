@@ -1,6 +1,7 @@
 """ Log model """
 
 from django.db import models
+from django.contrib.auth.models import User
 
 class LogEntry(models.Model):
     """ Log entry """
@@ -18,6 +19,7 @@ class LogEntry(models.Model):
         (CRITICAL, 'Critical'),
     )
 
+    user = models.ForeignKey(User, related_name='log_user')
     log_type = models.IntegerField(choices=LOG_TYPE, default=INFO)
     message = models.TextField(default='')
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
@@ -35,36 +37,41 @@ class LogEntry(models.Model):
         return obj
 
     @staticmethod
-    def debug(message):
+    def debug(user, message):
         LogEntry.objects.create(
+            user=user,
             log_type=LogEntry.DEBUG,
             message=message
         )
 
     @staticmethod
-    def info(message):
+    def info(user, message):
         LogEntry.objects.create(
+            user=user,
             log_type=LogEntry.INFO,
             message=message
         )
 
     @staticmethod
-    def warning(message):
+    def warning(user, message):
         LogEntry.objects.create(
+            user=user,
             log_type=LogEntry.WARNING,
             message=message
         )
 
     @staticmethod
-    def error(message):
+    def error(user, message):
         LogEntry.objects.create(
+            user=user,
             log_type=LogEntry.ERROR,
             message=message
         )
 
     @staticmethod
-    def critical(message):
+    def critical(user, message):
         LogEntry.objects.create(
+            user=user,
             log_type=LogEntry.CRITICAL,
             message=message
         )
