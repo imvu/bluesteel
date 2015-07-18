@@ -46,6 +46,7 @@ INSTALLED_APPS = (
     'app.util.httpcommon',
     'app.util.commandrepo',
     'app.util.fontawesome',
+    'app.util.logger',
     'app.presenter',
 )
 
