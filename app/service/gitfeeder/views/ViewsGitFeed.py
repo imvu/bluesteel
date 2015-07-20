@@ -141,19 +141,33 @@ def insert_commits(commit_list, project):
                 committer_date=commit['committer']['date']
             )
 
-def insert_parents(commit_list, project):
+def insert_parents(user, commit_list, project):
     """ Inserts all the parents into the db """
     for commit in commit_list:
         for index, parent in enumerate(commit['parent_hashes']):
-            hash_parent = GitCommitEntry.objects.filter(commit_hash=parent).first()
-            hash_son = GitCommitEntry.objects.filter(commit_hash=commit['hash']).first()
+            commit_parent = GitCommitEntry.objects.filter(commit_hash=parent).first()
+            commit_son = GitCommitEntry.objects.filter(commit_hash=commit['hash']).first()
 
-            GitParentEntry.objects.create(
-                project=project,
-                parent=hash_parent,
-                son=hash_son,
-                order=index
-            )
+            if commit_parent == None:
+                msg = 'Commit parent {0} not found while inserting parents!'.format(parent)
+                LogEntry.error(user, msg)
+                continue
+
+
+            if commit_parent == None:
+                msg = 'Commit son {0} not found while inserting parents!'.format(commit['hash'])
+                LogEntry.error(user, msg)
+                continue
+
+            parent_entry = GitParentEntry.objects.filter(parent=commit_parent, son=commit_son).first()
+
+            if parent_entry == None:
+                GitParentEntry.objects.create(
+                    project=project,
+                    parent=commit_parent,
+                    son=commit_son,
+                    order=index
+                )
 
 def insert_diffs(diffs_list, project):
     """ Inserts all the parents into the db """
@@ -335,7 +349,7 @@ def post_commits(request, project_id):
             return res.get_response(400, 'Branches not correct', {})
 
         insert_commits(commits, project_entry)
-        insert_parents(commits, project_entry)
+        insert_parents(request.user, commits, project_entry)
         insert_diffs(diffs, project_entry)
         insert_branches(request.user, branches, project_entry)
         insert_branch_trails(request.user, branches, project_entry)

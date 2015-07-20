@@ -1,7 +1,7 @@
 """ Feeder test helper functions """
 
 def hash_string(commit_hash_num):
-    return '{0:05d}'.format(commit_hash_num) * 8
+    return str('{0:05d}'.format(commit_hash_num) * 8)
 
 def create_commit(commit_hash_num, parents, author_name, email, create_date, commit_date):
     """ Creates a commit object representation """
