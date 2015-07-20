@@ -33,6 +33,7 @@ class GitFeedViewsBranchTestCase(TestCase):
             email='user1@test.com'
         )
 
+
     def tearDown(self):
         pass
 

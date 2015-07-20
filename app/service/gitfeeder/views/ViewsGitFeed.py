@@ -14,6 +14,7 @@ from app.util.commandrepo.models.CommandGroupModel import CommandGroupEntry
 from app.util.commandrepo.models.CommandSetModel import CommandSetEntry
 from app.util.commandrepo.models.CommandModel import CommandEntry
 from app.util.commandrepo.models.CommandResultModel import CommandResultEntry
+from app.util.logger.models.LogModel import LogEntry
 from app.service.gitfeeder.views import GitFeederSchemas
 import json
 
@@ -167,10 +168,17 @@ def insert_diffs(diffs_list, project):
             content=diff['content']
         )
 
-def insert_branches(branch_list, project):
+def insert_branches(user, branch_list, project):
     """ Inserts all the branches into the db """
     for branch in branch_list:
-        commit_entry = GitCommitEntry.objects.get(commit_hash=branch['commit_hash'])
+        commit_entry = GitCommitEntry.objects.filter(commit_hash=branch['commit_hash']).first()
+        if commit_entry == None:
+            LogEntry.error(
+                user,
+                'Branch commit {0} not found!'.format(branch['commit_hash'])
+            )
+            continue
+
         try:
             branch_entry = GitBranchEntry.objects.get(name=branch['branch_name'])
         except GitBranchEntry.DoesNotExist:
@@ -182,6 +190,16 @@ def insert_branches(branch_list, project):
         else:
             branch_entry.commit = commit_entry
             branch_entry.save()
+
+def insert_branch_trails(user, branch_list, project):
+    for branch in branch_list:
+        branch_entry = GitBranchEntry.objects.filter(name=branch['branch_name']).first()
+        if branch_entry == None:
+            LogEntry.error(
+                user,
+                'Branch {0} not found while inserting trails!'.format(branch['branch_name'])
+            )
+            continue
 
         GitBranchTrailEntry.objects.filter(branch=branch_entry).delete()
 
@@ -195,7 +213,10 @@ def insert_branches(branch_list, project):
                     order=index
                 )
             else:
-                print 'Commit not found!'
+                LogEntry.error(
+                    user,
+                    'Commit {0} not found while inserting branches!'.format(git_hash)
+                )
 
 def update_branch_merge_target(branch_list, project):
     """ Updates all the branch merge targets into the db """
@@ -316,7 +337,8 @@ def post_commits(request, project_id):
         insert_commits(commits, project_entry)
         insert_parents(commits, project_entry)
         insert_diffs(diffs, project_entry)
-        insert_branches(branches, project_entry)
+        insert_branches(request.user, branches, project_entry)
+        insert_branch_trails(request.user, branches, project_entry)
         update_branch_merge_target(branches, project_entry)
 
         return res.get_response(200, 'Commits added correctly', {})
