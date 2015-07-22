@@ -206,3 +206,73 @@ class GitFeedViewsBranchTestCase(TestCase):
         self.assertEqual(2, LogEntry.objects.all().count())
         self.assertEqual(LogEntry.ERROR, LogEntry.objects.all()[0].log_type)
         self.assertEqual(LogEntry.ERROR, LogEntry.objects.all()[1].log_type)
+
+
+    def test_insert_diffs_correctly(self):
+        commit_time = str(timezone.now().isoformat())
+        git_commit1 = GitCommitEntry.objects.create(
+            project=self.git_project1,
+            commit_hash=FeederTestHelper.hash_string(1),
+            author=self.git_user1,
+            author_date=commit_time,
+            committer=self.git_user1,
+            committer_date=commit_time
+        )
+
+        git_commit2 = GitCommitEntry.objects.create(
+            project=self.git_project1,
+            commit_hash=FeederTestHelper.hash_string(2),
+            author=self.git_user1,
+            author_date=commit_time,
+            committer=self.git_user1,
+            committer_date=commit_time
+        )
+
+        diff1 = FeederTestHelper.create_diff(FeederTestHelper.hash_string(2), FeederTestHelper.hash_string(1), 'diff-content')
+
+        ViewsGitFeed.insert_diffs(self.user1, [diff1], self.git_project1)
+
+        self.assertEqual(1, GitDiffEntry.objects.all().count())
+        self.assertEqual(0, LogEntry.objects.all().count())
+        self.assertEqual('0000100001000010000100001000010000100001', GitDiffEntry.objects.all().first().commit_parent.commit_hash)
+        self.assertEqual('0000200002000020000200002000020000200002', GitDiffEntry.objects.all().first().commit_son.commit_hash)
+
+    def test_insert_diffs_no_son(self):
+        commit_time = str(timezone.now().isoformat())
+        git_commit1 = GitCommitEntry.objects.create(
+            project=self.git_project1,
+            commit_hash=FeederTestHelper.hash_string(1),
+            author=self.git_user1,
+            author_date=commit_time,
+            committer=self.git_user1,
+            committer_date=commit_time
+        )
+
+        diff1 = FeederTestHelper.create_diff(FeederTestHelper.hash_string(2), FeederTestHelper.hash_string(1), 'diff-content')
+
+        ViewsGitFeed.insert_diffs(self.user1, [diff1], self.git_project1)
+
+        self.assertEqual(0, GitDiffEntry.objects.all().count())
+        self.assertEqual(1, LogEntry.objects.all().count())
+        self.assertEqual(LogEntry.ERROR, LogEntry.objects.all().first().log_type)
+        self.assertEqual('Commit son 0000200002000020000200002000020000200002 not found while inserting diffs!', LogEntry.objects.all().first().message)
+
+    def test_insert_diffs_no_parent(self):
+        commit_time = str(timezone.now().isoformat())
+        git_commit1 = GitCommitEntry.objects.create(
+            project=self.git_project1,
+            commit_hash=FeederTestHelper.hash_string(2),
+            author=self.git_user1,
+            author_date=commit_time,
+            committer=self.git_user1,
+            committer_date=commit_time
+        )
+
+        diff1 = FeederTestHelper.create_diff(FeederTestHelper.hash_string(2), FeederTestHelper.hash_string(1), 'diff-content')
+
+        ViewsGitFeed.insert_diffs(self.user1, [diff1], self.git_project1)
+
+        self.assertEqual(0, GitDiffEntry.objects.all().count())
+        self.assertEqual(1, LogEntry.objects.all().count())
+        self.assertEqual(LogEntry.ERROR, LogEntry.objects.all().first().log_type)
+        self.assertEqual(u'Commit parent 0000100001000010000100001000010000100001 not found while inserting diffs!', LogEntry.objects.all().first().message)

@@ -19,7 +19,7 @@ class LogEntry(models.Model):
         (CRITICAL, 'Critical'),
     )
 
-    user = models.ForeignKey(User, related_name='log_user')
+    user = models.ForeignKey(User, related_name='log_user', blank=True, null=True)
     log_type = models.IntegerField(choices=LOG_TYPE, default=INFO)
     message = models.TextField(default='')
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
@@ -38,40 +38,65 @@ class LogEntry(models.Model):
 
     @staticmethod
     def debug(user, message):
+        """ DEBUG log level entry """
+        log_user = user
+        if user.is_anonymous():
+            log_user = None
+
         LogEntry.objects.create(
-            user=user,
+            user=log_user,
             log_type=LogEntry.DEBUG,
             message=message
         )
 
     @staticmethod
     def info(user, message):
+        """ INFO log level entry """
+        log_user = user
+        if user.is_anonymous():
+            log_user = None
+
         LogEntry.objects.create(
-            user=user,
+            user=log_user,
             log_type=LogEntry.INFO,
             message=message
         )
 
     @staticmethod
     def warning(user, message):
+        """ WARNING log level entry """
+        log_user = user
+        if user.is_anonymous():
+            log_user = None
+
         LogEntry.objects.create(
-            user=user,
+            user=log_user,
             log_type=LogEntry.WARNING,
             message=message
         )
 
     @staticmethod
     def error(user, message):
+        """ ERROR log level entry """
+        log_user = user
+        if user.is_anonymous():
+            log_user = None
+
         LogEntry.objects.create(
-            user=user,
+            user=log_user,
             log_type=LogEntry.ERROR,
             message=message
         )
 
     @staticmethod
     def critical(user, message):
+        """ CRITICAL log level entry """
+        log_user = user
+        if user.is_anonymous():
+            log_user = None
+
         LogEntry.objects.create(
-            user=user,
+            user=log_user,
             log_type=LogEntry.CRITICAL,
             message=message
         )

@@ -2,7 +2,7 @@
 
 from django.test import TestCase
 from django.utils import timezone
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AnonymousUser
 from app.util.logger.models.LogModel import LogEntry
 from datetime import timedelta
 
@@ -24,12 +24,30 @@ class LogEntryTestCase(TestCase):
         self.assertEqual(LogEntry.DEBUG, entry.log_type)
         self.assertEqual('message-1', entry.message)
 
+    def test_log_debug_anonymous(self):
+        LogEntry.debug(AnonymousUser(), 'message-1')
+
+        entry = LogEntry.objects.all().first()
+
+        self.assertEqual(None, entry.user)
+        self.assertEqual(LogEntry.DEBUG, entry.log_type)
+        self.assertEqual('message-1', entry.message)
+
     def test_log_info(self):
         LogEntry.info(self.user1, 'message-2')
 
         entry = LogEntry.objects.all().first()
 
         self.assertEqual(self.user1.id, entry.user.id)
+        self.assertEqual(LogEntry.INFO, entry.log_type)
+        self.assertEqual('message-2', entry.message)
+
+    def test_log_info_anonymous(self):
+        LogEntry.info(AnonymousUser(), 'message-2')
+
+        entry = LogEntry.objects.all().first()
+
+        self.assertEqual(None, entry.user)
         self.assertEqual(LogEntry.INFO, entry.log_type)
         self.assertEqual('message-2', entry.message)
 
@@ -42,6 +60,15 @@ class LogEntryTestCase(TestCase):
         self.assertEqual(LogEntry.WARNING, entry.log_type)
         self.assertEqual('message-3', entry.message)
 
+    def test_log_warning_anonymous(self):
+        LogEntry.warning(AnonymousUser(), 'message-3')
+
+        entry = LogEntry.objects.all().first()
+
+        self.assertEqual(None, entry.user)
+        self.assertEqual(LogEntry.WARNING, entry.log_type)
+        self.assertEqual('message-3', entry.message)
+
     def test_log_error(self):
         LogEntry.error(self.user1, 'message-4')
 
@@ -51,11 +78,29 @@ class LogEntryTestCase(TestCase):
         self.assertEqual(LogEntry.ERROR, entry.log_type)
         self.assertEqual('message-4', entry.message)
 
+    def test_log_error_anonymous(self):
+        LogEntry.error(AnonymousUser(), 'message-4')
+
+        entry = LogEntry.objects.all().first()
+
+        self.assertEqual(None, entry.user)
+        self.assertEqual(LogEntry.ERROR, entry.log_type)
+        self.assertEqual('message-4', entry.message)
+
     def test_log_critical(self):
         LogEntry.critical(self.user1, 'message-5')
 
         entry = LogEntry.objects.all().first()
 
         self.assertEqual(self.user1.id, entry.user.id)
+        self.assertEqual(LogEntry.CRITICAL, entry.log_type)
+        self.assertEqual('message-5', entry.message)
+
+    def test_log_critical_anonymous(self):
+        LogEntry.critical(AnonymousUser(), 'message-5')
+
+        entry = LogEntry.objects.all().first()
+
+        self.assertEqual(None, entry.user)
         self.assertEqual(LogEntry.CRITICAL, entry.log_type)
         self.assertEqual('message-5', entry.message)

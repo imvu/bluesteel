@@ -19,17 +19,19 @@ from app.service.gitfeeder.views import GitFeederSchemas
 import json
 
 
-def are_commits_unique(commit_list):
+def are_commits_unique(user, commit_list):
     """ Returns true if all commit hashes are unique """
     unique_hash = []
     for commit in commit_list:
         if commit['hash'] in unique_hash:
+            msg = 'Commit {0} not unique!'.format(commit['hash'])
+            LogEntry.error(user, msg)
             return (False, unique_hash)
         else:
             unique_hash.append(commit['hash'])
     return (True, unique_hash)
 
-def are_parent_hashes_correct(hash_list, commit_list):
+def are_parent_hashes_correct(user, hash_list, commit_list):
     """ Returns true if all parents are correct """
     for commit in commit_list:
         for parent in commit['parent_hashes']:
@@ -39,12 +41,14 @@ def are_parent_hashes_correct(hash_list, commit_list):
                 try:
                     GitCommitEntry.objects.get(commit_hash=parent)
                 except GitCommitEntry.DoesNotExist:
+                    msg = 'Parent with no commit {0}'.format(parent)
+                    LogEntry.error(user, msg)
                     return False
                 else:
                     continue
     return True
 
-def are_diffs_correct(hash_list, diffs_list, project):
+def are_diffs_correct(user, hash_list, diffs_list, project):
     """ Returns true if all diffs are correct """
     if len(diffs_list) < len(hash_list):
         return False
@@ -57,6 +61,8 @@ def are_diffs_correct(hash_list, diffs_list, project):
             ).first()
 
             if commit_son_entry == None:
+                msg = 'Commit {0} not found for diff!'.format(diff['commit_hash_son'])
+                LogEntry.error(user, msg)
                 return False
 
         if diff['commit_hash_parent'] not in hash_list:
@@ -66,14 +72,18 @@ def are_diffs_correct(hash_list, diffs_list, project):
             ).first()
 
             if commit_parent_entry == None:
+                msg = 'Commit {0} not found for diff!'.format(diff['commit_hash_parent'])
+                LogEntry.error(user, msg)
                 return False
 
     return True
 
-def are_branches_correct(hash_list, branch_list, project):
+def are_branches_correct(user, hash_list, branch_list, project):
     """ Returns true if all branches are correct """
     for branch in branch_list:
         if branch['commit_hash'] not in hash_list:
+            msg = 'Branch {0} with commit {1} not found!'.format(branch['branch_name'], branch['commit_hash'])
+            LogEntry.error(user, msg)
             return False
 
         for trail_hash in branch['trail']:
@@ -84,26 +94,32 @@ def are_branches_correct(hash_list, branch_list, project):
                 ).first()
 
                 if commit_trail_entry == None:
+                    msg = 'Trail hash {0} not found!'.format(trail_hash)
+                    LogEntry.error(user, msg)
                     return False
 
-        if branch['merge_target']['diff']['commit_hash_son'] not in hash_list:
+        merge_son_hash = branch['merge_target']['diff']['commit_hash_son']
+        if merge_son_hash not in hash_list:
             commit_son_entry = GitCommitEntry.objects.filter(
                 project=project,
-                commit_hash=branch['diff']['commit_hash_son'],
+                commit_hash=merge_son_hash,
             ).first()
 
             if commit_son_entry == None:
-                print 'commit_son_entry'
+                msg = 'Merge target diff son commit {0} not found!'.format(merge_son_hash)
+                LogEntry.error(user, msg)
                 return False
 
-        if branch['merge_target']['diff']['commit_hash_parent'] not in hash_list:
+        merge_parent_hash = branch['merge_target']['diff']['commit_hash_parent']
+        if merge_parent_hash not in hash_list:
             commit_parent_entry = GitCommitEntry.objects.filter(
                 project=project,
-                commit_hash=branch['merge_target']['diff']['commit_hash_parent'],
+                commit_hash=merge_parent_hash,
             ).first()
 
             if commit_parent_entry == None:
-                print 'commit_parent_entry'
+                msg = 'Merge target diff parent commit {0} not found!'.format(merge_parent_hash)
+                LogEntry.error(user, msg)
                 return False
 
         if branch['merge_target']['fork_point'] != branch['merge_target']['diff']['commit_hash_parent']:
@@ -154,7 +170,7 @@ def insert_parents(user, commit_list, project):
                 continue
 
 
-            if commit_parent == None:
+            if commit_son == None:
                 msg = 'Commit son {0} not found while inserting parents!'.format(commit['hash'])
                 LogEntry.error(user, msg)
                 continue
@@ -169,28 +185,40 @@ def insert_parents(user, commit_list, project):
                     order=index
                 )
 
-def insert_diffs(diffs_list, project):
+def insert_diffs(user, diffs_list, project):
     """ Inserts all the parents into the db """
     for diff in diffs_list:
         commit_son = GitCommitEntry.objects.filter(commit_hash=diff['commit_hash_son']).first()
         commit_parent = GitCommitEntry.objects.filter(commit_hash=diff['commit_hash_parent']).first()
 
-        GitDiffEntry.objects.create(
-            project=project,
-            commit_son=commit_son,
-            commit_parent=commit_parent,
-            content=diff['content']
-        )
+        if commit_parent == None:
+            msg = 'Commit parent {0} not found while inserting diffs!'.format(diff['commit_hash_parent'])
+            LogEntry.error(user, msg)
+            continue
+
+
+        if commit_son == None:
+            msg = 'Commit son {0} not found while inserting diffs!'.format(diff['commit_hash_son'])
+            LogEntry.error(user, msg)
+            continue
+
+        diff_entry = GitDiffEntry.objects.filter(commit_son=commit_son, commit_parent=commit_parent).first()
+
+        if diff_entry == None:
+            GitDiffEntry.objects.create(
+                project=project,
+                commit_son=commit_son,
+                commit_parent=commit_parent,
+                content=diff['content']
+            )
 
 def insert_branches(user, branch_list, project):
     """ Inserts all the branches into the db """
     for branch in branch_list:
         commit_entry = GitCommitEntry.objects.filter(commit_hash=branch['commit_hash']).first()
         if commit_entry == None:
-            LogEntry.error(
-                user,
-                'Branch commit {0} not found!'.format(branch['commit_hash'])
-            )
+            msg = 'Branch commit {0} not found!'.format(branch['commit_hash'])
+            LogEntry.error(user, msg)
             continue
 
         try:
@@ -209,10 +237,8 @@ def insert_branch_trails(user, branch_list, project):
     for branch in branch_list:
         branch_entry = GitBranchEntry.objects.filter(name=branch['branch_name']).first()
         if branch_entry == None:
-            LogEntry.error(
-                user,
-                'Branch {0} not found while inserting trails!'.format(branch['branch_name'])
-            )
+            msg = 'Branch {0} not found while inserting trails!'.format(branch['branch_name'])
+            LogEntry.error(user, msg)
             continue
 
         GitBranchTrailEntry.objects.filter(branch=branch_entry).delete()
@@ -227,10 +253,8 @@ def insert_branch_trails(user, branch_list, project):
                     order=index
                 )
             else:
-                LogEntry.error(
-                    user,
-                    'Commit {0} not found while inserting branches!'.format(git_hash)
-                )
+                msg = 'Commit {0} not found while inserting branches!'.format(git_hash)
+                LogEntry.error(user, msg)
 
 def update_branch_merge_target(branch_list, project):
     """ Updates all the branch merge targets into the db """
@@ -335,22 +359,22 @@ def post_commits(request, project_id):
         diffs = val_resp_obj['feed_data']['diffs']
         branches = val_resp_obj['feed_data']['branches']
 
-        unique, unique_hash_list = are_commits_unique(commits)
+        unique, unique_hash_list = are_commits_unique(request.user, commits)
         if not unique:
             return res.get_response(400, 'Commits not unique', {})
 
-        if not are_parent_hashes_correct(unique_hash_list, commits):
+        if not are_parent_hashes_correct(request.user, unique_hash_list, commits):
             return res.get_response(400, 'Parents not correct', {})
 
-        if not are_diffs_correct(unique_hash_list, diffs, project_entry):
+        if not are_diffs_correct(request.user, unique_hash_list, diffs, project_entry):
             return res.get_response(400, 'Diffs not correct', {})
 
-        if not are_branches_correct(unique_hash_list, branches, project_entry):
+        if not are_branches_correct(request.user, unique_hash_list, branches, project_entry):
             return res.get_response(400, 'Branches not correct', {})
 
         insert_commits(commits, project_entry)
         insert_parents(request.user, commits, project_entry)
-        insert_diffs(diffs, project_entry)
+        insert_diffs(request.user, diffs, project_entry)
         insert_branches(request.user, branches, project_entry)
         insert_branch_trails(request.user, branches, project_entry)
         update_branch_merge_target(branches, project_entry)
