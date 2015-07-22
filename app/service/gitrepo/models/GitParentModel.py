@@ -12,4 +12,4 @@ class GitParentEntry(models.Model):
     updated_at = models.DateTimeField(auto_now=True, editable=False)
 
     def __unicode__(self):
-        return u'Parent:{0}, Son:{1}'.format(self.parent.commit_hash, self.son.commit_hash)
+        return u'Parent:{0}, Son:{1}, order:{2}'.format(self.parent.commit_hash, self.son.commit_hash, self.order)
