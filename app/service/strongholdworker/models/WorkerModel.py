@@ -11,6 +11,7 @@ class WorkerEntry(models.Model):
     operative_system = models.TextField(default='')
     description = models.TextField(default='')
     user = models.ForeignKey(User, related_name='worker_user')
+    git_feeder = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True, editable=False)
 
@@ -25,4 +26,5 @@ class WorkerEntry(models.Model):
         obj['uuid'] = self.uuid
         obj['operative_system'] = self.operative_system
         obj['description'] = self.description
+        obj['git_feeder'] = self.git_feeder
         return obj

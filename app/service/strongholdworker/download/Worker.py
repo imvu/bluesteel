@@ -137,6 +137,7 @@ def process_connect_worker(settings, host_info, session):
 
     url = '{0}{1}/'.format(settings['worker_info_point'], host_info['uuid'])
     resp = session.get(url, {})
+    git_feeder = resp['content']['data']['worker']['git_feeder']
 
     if resp['content']['status'] == 400:
         print '- Creating Worker'
@@ -149,7 +150,7 @@ def process_connect_worker(settings, host_info, session):
     print '- Login Worker'
     resp = session.post(settings['login_worker_point'], {}, json.dumps(login_info))
 
-    connection_info['git_feeder'] = True
+    connection_info['git_feeder'] = git_feeder
     connection_info['succeed'] = resp['content']['status'] == 200
     return connection_info
 
@@ -217,9 +218,11 @@ def main():
             while working:
                 if con_info['git_feeder']:
                     print '- Start git feeding'
-                    resp = process_git_feed(settings, session)
+                    process_git_feed(settings, session)
+                else:
+                    print 'Is not a git feeder'
 
-                working = resp['succeed']
+                working = True
                 time.sleep(3)
 
 

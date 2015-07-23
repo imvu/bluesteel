@@ -39,3 +39,4 @@ class WorkerModelTestCase(TestCase):
         self.assertEqual('1234567890', obj['uuid'])
         self.assertEqual('osx', obj['operative_system'])
         self.assertEqual('One Worker :)', obj['description'])
+        self.assertEqual(False, obj['git_feeder'])
