@@ -71,7 +71,7 @@ class GitFeedViewsDiffTestCase(TestCase):
         self.assertEqual(200, resp_obj['status'])
         self.assertEqual(2, GitCommitEntry.objects.all().count())
         self.assertEqual(1, GitBranchEntry.objects.all().count())
-        self.assertEqual(3, GitDiffEntry.objects.all().count())
+        self.assertEqual(2, GitDiffEntry.objects.all().count())
 
         diff_entry1 = GitDiffEntry.objects.filter(
             project=self.git_project1,

@@ -161,8 +161,8 @@ def insert_parents(user, commit_list, project):
     """ Inserts all the parents into the db """
     for commit in commit_list:
         for index, parent in enumerate(commit['parent_hashes']):
-            commit_parent = GitCommitEntry.objects.filter(commit_hash=parent).first()
-            commit_son = GitCommitEntry.objects.filter(commit_hash=commit['hash']).first()
+            commit_parent = GitCommitEntry.objects.filter(project=project, commit_hash=parent).first()
+            commit_son = GitCommitEntry.objects.filter(project=project, commit_hash=commit['hash']).first()
 
             if commit_parent == None:
                 msg = 'Commit parent {0} not found while inserting parents!'.format(parent)
@@ -175,7 +175,7 @@ def insert_parents(user, commit_list, project):
                 LogEntry.error(user, msg)
                 continue
 
-            parent_entry = GitParentEntry.objects.filter(parent=commit_parent, son=commit_son).first()
+            parent_entry = GitParentEntry.objects.filter(project=project, parent=commit_parent, son=commit_son).first()
 
             if parent_entry == None:
                 GitParentEntry.objects.create(
@@ -188,8 +188,8 @@ def insert_parents(user, commit_list, project):
 def insert_diffs(user, diffs_list, project):
     """ Inserts all the parents into the db """
     for diff in diffs_list:
-        commit_son = GitCommitEntry.objects.filter(commit_hash=diff['commit_hash_son']).first()
-        commit_parent = GitCommitEntry.objects.filter(commit_hash=diff['commit_hash_parent']).first()
+        commit_son = GitCommitEntry.objects.filter(project=project, commit_hash=diff['commit_hash_son']).first()
+        commit_parent = GitCommitEntry.objects.filter(project=project, commit_hash=diff['commit_hash_parent']).first()
 
         if commit_parent == None:
             msg = 'Commit parent {0} not found while inserting diffs!'.format(diff['commit_hash_parent'])
@@ -202,7 +202,11 @@ def insert_diffs(user, diffs_list, project):
             LogEntry.error(user, msg)
             continue
 
-        diff_entry = GitDiffEntry.objects.filter(commit_son=commit_son, commit_parent=commit_parent).first()
+        diff_entry = GitDiffEntry.objects.filter(
+            project=project,
+            commit_son=commit_son,
+            commit_parent=commit_parent
+        ).first()
 
         if diff_entry == None:
             GitDiffEntry.objects.create(
@@ -215,14 +219,14 @@ def insert_diffs(user, diffs_list, project):
 def insert_branches(user, branch_list, project):
     """ Inserts all the branches into the db """
     for branch in branch_list:
-        commit_entry = GitCommitEntry.objects.filter(commit_hash=branch['commit_hash']).first()
+        commit_entry = GitCommitEntry.objects.filter(project=project, commit_hash=branch['commit_hash']).first()
         if commit_entry == None:
             msg = 'Branch commit {0} not found!'.format(branch['commit_hash'])
             LogEntry.error(user, msg)
             continue
 
         try:
-            branch_entry = GitBranchEntry.objects.get(name=branch['branch_name'])
+            branch_entry = GitBranchEntry.objects.get(project=project, name=branch['branch_name'])
         except GitBranchEntry.DoesNotExist:
             branch_entry = GitBranchEntry.objects.create(
                 project=project,
@@ -235,16 +239,16 @@ def insert_branches(user, branch_list, project):
 
 def insert_branch_trails(user, branch_list, project):
     for branch in branch_list:
-        branch_entry = GitBranchEntry.objects.filter(name=branch['branch_name']).first()
+        branch_entry = GitBranchEntry.objects.filter(project=project, name=branch['branch_name']).first()
         if branch_entry == None:
             msg = 'Branch {0} not found while inserting trails!'.format(branch['branch_name'])
             LogEntry.error(user, msg)
             continue
 
-        GitBranchTrailEntry.objects.filter(branch=branch_entry).delete()
+        GitBranchTrailEntry.objects.filter(project=project, branch=branch_entry).delete()
 
         for index, git_hash in enumerate(branch['trail']):
-            commit_entry = GitCommitEntry.objects.filter(commit_hash=git_hash).first()
+            commit_entry = GitCommitEntry.objects.filter(project=project, commit_hash=git_hash).first()
             if commit_entry:
                 GitBranchTrailEntry.objects.create(
                     project=project,
@@ -279,18 +283,25 @@ def update_branch_merge_target(branch_list, project):
         son_entry = GitCommitEntry.objects.get(
             project=project,
             commit_hash=branch['merge_target']['diff']['commit_hash_son']
-            )
+        )
 
         parent_entry = GitCommitEntry.objects.get(
             project=project,
             commit_hash=branch['merge_target']['diff']['commit_hash_parent']
-            )
+        )
 
-        diff_entry = GitDiffEntry.objects.create(
+        diff_entry = GitDiffEntry.objects.filter(
             project=project,
             commit_son=son_entry,
-            commit_parent=parent_entry,
-            content=branch['merge_target']['diff']['content']
+            commit_parent=parent_entry
+        ).first()
+
+        if diff_entry == None:
+            diff_entry = GitDiffEntry.objects.create(
+                project=project,
+                commit_son=son_entry,
+                commit_parent=parent_entry,
+                content=branch['merge_target']['diff']['content']
             )
 
         try:
