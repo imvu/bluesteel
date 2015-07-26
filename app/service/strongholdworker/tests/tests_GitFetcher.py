@@ -833,3 +833,4 @@ class GitFetcherTestCase(TestCase):
         diff = self.fetcher.extract_diff_from_report(obj)
 
         self.assertEqual('diff-long-long-text', diff)
+

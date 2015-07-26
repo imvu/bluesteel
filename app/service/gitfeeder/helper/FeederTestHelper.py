@@ -35,17 +35,21 @@ def create_branch(name, commit_hash_num, trail, merge_target):
     branch['merge_target'] = merge_target
     return branch
 
-def create_merge_target(target_name, commit_son, commit_parent, content):
+def create_merge_target(current_name, current_hash, target_name, target_hash, fork_point, content):
     """ Creates a merge target object representation """
-    target_merge = {}
-    target_merge['name'] = target_name
-    target_merge['hash'] = commit_son
-    target_merge['fork_point'] = commit_parent
-    target_merge['diff'] = {}
-    target_merge['diff']['commit_hash_son'] = commit_son
-    target_merge['diff']['commit_hash_parent'] = commit_parent
-    target_merge['diff']['content'] = content
-    return target_merge
+    merge_target = {}
+    merge_target['current_branch'] = {}
+    merge_target['current_branch']['name'] = current_name
+    merge_target['current_branch']['commit_hash'] = current_hash
+    merge_target['target_branch'] = {}
+    merge_target['target_branch']['name'] = target_name
+    merge_target['target_branch']['commit_hash'] = target_hash
+    merge_target['fork_point'] = fork_point
+    merge_target['diff'] = {}
+    merge_target['diff']['commit_hash_son'] = current_hash
+    merge_target['diff']['commit_hash_parent'] = fork_point
+    merge_target['diff']['content'] = content
+    return merge_target
 
 def create_feed_data_and_report(feed_data, reports):
     obj = {}

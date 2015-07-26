@@ -41,7 +41,14 @@ class GitFeedViewsBranchTestCase(TestCase):
         commit_time = str(timezone.now().isoformat())
         commit1 = FeederTestHelper.create_commit(1, [], 'user1', 'user1@test.com', commit_time, commit_time)
 
-        merge_target = FeederTestHelper.create_merge_target('master', FeederTestHelper.hash_string(2), FeederTestHelper.hash_string(2), 'merge-target-content')
+        merge_target = FeederTestHelper.create_merge_target(
+            'master',
+            FeederTestHelper.hash_string(2),
+            'master',
+            FeederTestHelper.hash_string(2),
+            FeederTestHelper.hash_string(2),
+            'merge-target-content'
+        )
 
         branch1 = FeederTestHelper.create_branch('master', 2, [FeederTestHelper.hash_string(2)], merge_target)
 
@@ -90,7 +97,14 @@ class GitFeedViewsBranchTestCase(TestCase):
         commit_time = str(timezone.now().isoformat())
         commit1 = FeederTestHelper.create_commit(2, [FeederTestHelper.hash_string(1)], 'user1', 'user1@test.com', commit_time, commit_time)
 
-        merge_target = FeederTestHelper.create_merge_target('master', FeederTestHelper.hash_string(2), FeederTestHelper.hash_string(2), 'merge-target-content')
+        merge_target = FeederTestHelper.create_merge_target(
+            'master',
+            FeederTestHelper.hash_string(2),
+            'master',
+            FeederTestHelper.hash_string(2),
+            FeederTestHelper.hash_string(2),
+            'merge-target-content'
+        )
 
         branch1 = FeederTestHelper.create_branch('master', 2, [FeederTestHelper.hash_string(2), FeederTestHelper.hash_string(1)], merge_target)
 
@@ -158,7 +172,14 @@ class GitFeedViewsBranchTestCase(TestCase):
         commit2 = FeederTestHelper.create_commit(2, [FeederTestHelper.hash_string(1)], 'user1', 'user1@test.com', commit_time, commit_time)
         commit3 = FeederTestHelper.create_commit(3, [FeederTestHelper.hash_string(2)], 'user1', 'user1@test.com', commit_time, commit_time)
 
-        merge_target = FeederTestHelper.create_merge_target('master', FeederTestHelper.hash_string(3), FeederTestHelper.hash_string(3), 'merge-target-content')
+        merge_target = FeederTestHelper.create_merge_target(
+            'master',
+            FeederTestHelper.hash_string(3),
+            'master',
+            FeederTestHelper.hash_string(3),
+            FeederTestHelper.hash_string(3),
+            'merge-target-content'
+        )
 
         branch1 = FeederTestHelper.create_branch('master', 3, [FeederTestHelper.hash_string(3), FeederTestHelper.hash_string(2), FeederTestHelper.hash_string(1)], merge_target)
 

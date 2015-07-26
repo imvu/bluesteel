@@ -38,7 +38,14 @@ class GitFeedViewsReportsTestCase(TestCase):
         self.commit1 = FeederTestHelper.create_commit(1, [], 'user1', 'user1@test.com', self.commit_time, self.commit_time)
         self.commit2 = FeederTestHelper.create_commit(2, [], 'user1', 'user1@test.com', self.commit_time, self.commit_time)
 
-        self.merge_target = FeederTestHelper.create_merge_target('master', FeederTestHelper.hash_string(1), FeederTestHelper.hash_string(1), 'merge-target-content')
+        self.merge_target = FeederTestHelper.create_merge_target(
+            'master',
+            FeederTestHelper.hash_string(1),
+            'master',
+            FeederTestHelper.hash_string(1),
+            FeederTestHelper.hash_string(1),
+            'merge-target-content'
+        )
 
         self.branch1 = FeederTestHelper.create_branch('master', 1, [FeederTestHelper.hash_string(1)], self.merge_target)
 

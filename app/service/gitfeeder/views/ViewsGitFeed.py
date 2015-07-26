@@ -271,7 +271,7 @@ def update_branch_merge_target(branch_list, project):
         )
 
         target_entry = GitBranchEntry.objects.get(
-            name=branch['merge_target']['name'],
+            name=branch['merge_target']['target_branch']['name'],
             project=project
         )
 

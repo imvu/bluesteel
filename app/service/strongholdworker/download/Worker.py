@@ -158,9 +158,6 @@ def process_connect_worker(settings, host_info, session):
     connection_info['succeed'] = resp['content']['status'] == 200
     return connection_info
 
-# def process_known_branches(settings, session):
-#     pass
-
 def process_git_feed(settings, session):
     """ Fetch all layouts and feed them to BlueSteel """
     process_info = {}

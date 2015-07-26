@@ -102,15 +102,37 @@ GIT_FEEDER_SCHEMA = {
                             'merge_target' : {
                                 'type' : 'object',
                                 'additionalProperties': False,
-                                'required': ['name', 'hash', 'diff', 'fork_point'],
+                                'required': ['current_branch', 'target_branch', 'diff', 'fork_point'],
                                 'properties' : {
-                                    'name' : {
-                                        'type' : 'string',
-                                        'minLength' : 1
+                                    'current_branch' : {
+                                        'type' : 'object',
+                                        'additionalProperties': False,
+                                        'required' : ['name', 'commit_hash'],
+                                        'properties' : {
+                                            'name' : {
+                                                'type' : 'string',
+                                                'minLength' : 1
+                                            },
+                                            'commit_hash' : {
+                                                'type' : 'string',
+                                                'pattern': '^[0-9a-f]{40}$'
+                                            },
+                                        }
                                     },
-                                    'hash' : {
-                                        'type' : 'string',
-                                        'pattern': '^[0-9a-f]{40}$'
+                                    'target_branch' : {
+                                        'type' : 'object',
+                                        'additionalProperties': False,
+                                        'required' : ['name', 'commit_hash'],
+                                        'properties' : {
+                                            'name' : {
+                                                'type' : 'string',
+                                                'minLength' : 1
+                                            },
+                                            'commit_hash' : {
+                                                'type' : 'string',
+                                                'pattern': '^[0-9a-f]{40}$'
+                                            },
+                                        }
                                     },
                                     'fork_point' : {
                                         'type' : 'string',
