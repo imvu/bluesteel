@@ -3,6 +3,7 @@
 from django.db import models
 from django.utils import timezone
 from app.service.gitrepo.models.GitBranchModel import GitBranchEntry
+from app.service.gitrepo.models.GitBranchMergeTargetModel import GitBranchMergeTargetEntry
 
 class GitProjectEntry(models.Model):
     """ Git Project """
@@ -21,7 +22,18 @@ class GitProjectEntry(models.Model):
 
         branches = []
         for branch in branch_entries:
-            branches.append(branch.as_object())
+            obj = branch.as_object()
+
+            merge_entry = GitBranchMergeTargetEntry.objects.filter(
+                project=self.id,
+                current_branch__commit__commit_hash=branch.commit.commit_hash
+            ).first()
+
+            if merge_entry:
+                obj['merge_target'] = merge_entry.as_object()
+
+            branches.append(obj)
+
 
         obj = {}
         obj['url'] = self.url

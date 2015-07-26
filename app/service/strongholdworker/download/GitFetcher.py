@@ -117,7 +117,7 @@ class GitFetcher(object):
 
             branch = {}
             branch['name'] = branch_name
-            branch['hash'] = branch_hash
+            branch['commit_hash'] = branch_hash
             branch['commits'] = commits
             self.branches_data.append(branch)
         return True
@@ -134,7 +134,7 @@ class GitFetcher(object):
             branch['merge_target'] = branch_merge_target
 
             for branch_target in self.branches_data:
-                if branch_target['hash'] == branch['merge_target']['hash']:
+                if branch_target['commit_hash'] == branch['merge_target']['target_branch']['commit_hash']:
                     branch['merge_target']['fork_point'] = self.get_fork_point_between_branches(
                         branch_target,
                         branch
@@ -147,8 +147,8 @@ class GitFetcher(object):
         for branch in self.branches_data:
             diff_target_report = self.commands_get_diff_between_commits(
                 project_info,
-                branch['hash'],
-                branch['merge_target']['fork_point']
+                branch['commit_hash'],
+                branch['merge_target']['target_branch']['fork_point']
             )
 
             self.report_stack.append(diff_target_report)
@@ -157,7 +157,7 @@ class GitFetcher(object):
 
             diff_content_target = self.extract_diff_from_report(diff_target_report)
             diff = {}
-            diff['commit_hash_son'] = branch['hash']
+            diff['commit_hash_son'] = branch['commit_hash']
             diff['commit_hash_parent'] = branch['merge_target']['fork_point']
             diff['content'] = diff_content_target
             branch['merge_target']['diff'] = diff
@@ -219,7 +219,7 @@ class GitFetcher(object):
         del project_info
         for branch in self.branches_data:
             branch_data = {}
-            branch_data['commit_hash'] = branch['hash']
+            branch_data['commit_hash'] = branch['commit_hash']
             branch_data['branch_name'] = branch['name']
             branch_data['merge_target'] = branch['merge_target']
             branch_data['trail'] = branch['trail']
@@ -506,7 +506,7 @@ class GitFetcher(object):
             command['result']['status'] == 0:
                 branch = {}
                 branch['name'] = command['command'][2].strip()
-                branch['hash'] = command['result']['out'].strip()
+                branch['commit_hash'] = command['result']['out'].strip()
                 branch_names.append(branch)
         return branch_names
 
@@ -569,7 +569,7 @@ class GitFetcher(object):
         for commit in commits:
             trimmed_commits.append(commit)
             for branch in known_branches:
-                if commit['hash'] == branch['hash']:
+                if commit['hash'] == branch['commit_hash']:
                     return trimmed_commits
         return trimmed_commits
 
@@ -581,7 +581,7 @@ class GitFetcher(object):
         stdout_path = os.path.join(folder_path, 'log', 'git_clone_stdout.txt')
         stderr_path = os.path.join(folder_path, 'log', 'git_clone_stderr.txt')
 
-        command = ['git', 'merge-base', branch1['hash'], branch2['hash']]
+        command = ['git', 'merge-base', branch1['commit_hash'], branch2['commit_hash']]
 
         reports = self.execute_command_list([command], str(folder_path), project_cwd, stdout_path, stderr_path)
         return reports
@@ -593,23 +593,22 @@ class GitFetcher(object):
         If not found on known branches, it returns 'master' or itself
         """
         merge_target = {}
-        merge_target['name'] = ''
-        merge_target['hash'] = ''
+        merge_target['current_branch'] = branch
+        merge_target['target_branch'] = {}
+        merge_target['target_branch']['name'] = ''
+        merge_target['target_branch']['commit_hash'] = ''
 
         for known_branch in known_branches:
             if branch['name'] == known_branch['name']:
-                merge_target['name'] = known_branch['merge_target']['name']
-                merge_target['hash'] = known_branch['merge_target']['hash']
+                merge_target['target_branch'] = known_branch['merge_target']['target_branch']
                 return merge_target
 
         for ext_branch in branch_list:
             if ext_branch['name'] == 'master':
-                merge_target['name'] = ext_branch['name']
-                merge_target['hash'] = ext_branch['hash']
+                merge_target['target_branch'] = ext_branch
                 return merge_target
 
-        merge_target['name'] = branch['name']
-        merge_target['hash'] = branch['hash']
+        merge_target['target_branch'] = branch
         return merge_target
 
     @staticmethod

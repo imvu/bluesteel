@@ -76,6 +76,10 @@ def fragment_layout_in_project_infos(layout, tmp_path):
     """ Fragment a layout objects on individual project objects """
     projects = []
     for project in layout['projects']:
+
+        ppi = pprint.PrettyPrinter(depth=10)
+        ppi.pprint(project)
+
         obj = {}
         obj['feed'] = {}
         obj['feed']['url'] = project['feed_url']
@@ -86,7 +90,7 @@ def fragment_layout_in_project_infos(layout, tmp_path):
         obj['git']['project']['archive'] = layout['archive']
         obj['git']['project']['name'] = layout['name']
         obj['git']['branch'] = {}
-        obj['git']['branch']['known'] = []
+        obj['git']['branch']['known'] = [] # project['git_project']['branches']
 
         for command_set in project['command_group']['command_sets']:
             set_name = command_set['name'].lower()
@@ -153,6 +157,9 @@ def process_connect_worker(settings, host_info, session):
     connection_info['git_feeder'] = git_feeder
     connection_info['succeed'] = resp['content']['status'] == 200
     return connection_info
+
+# def process_known_branches(settings, session):
+#     pass
 
 def process_git_feed(settings, session):
     """ Fetch all layouts and feed them to BlueSteel """
@@ -222,8 +229,7 @@ def main():
                 else:
                     print 'Is not a git feeder'
 
-                working = True
-                time.sleep(3)
+                time.sleep(10)
 
 
 
