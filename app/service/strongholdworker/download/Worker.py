@@ -90,7 +90,7 @@ def fragment_layout_in_project_infos(layout, tmp_path):
         obj['git']['project']['archive'] = layout['archive']
         obj['git']['project']['name'] = layout['name']
         obj['git']['branch'] = {}
-        obj['git']['branch']['known'] = [] # project['git_project']['branches']
+        obj['git']['branch']['known'] = project['git_project']['branches']
 
         for command_set in project['command_group']['command_sets']:
             set_name = command_set['name'].lower()

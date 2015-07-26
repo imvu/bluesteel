@@ -50,9 +50,6 @@ def are_parent_hashes_correct(user, hash_list, commit_list):
 
 def are_diffs_correct(user, hash_list, diffs_list, project):
     """ Returns true if all diffs are correct """
-    if len(diffs_list) < len(hash_list):
-        return False
-
     for diff in diffs_list:
         if diff['commit_hash_son'] not in hash_list:
             commit_son_entry = GitCommitEntry.objects.filter(

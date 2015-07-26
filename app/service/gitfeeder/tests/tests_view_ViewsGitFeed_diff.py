@@ -157,30 +157,3 @@ class GitFeedViewsDiffTestCase(TestCase):
         self.assertEqual(0, GitCommitEntry.objects.all().count())
         self.assertEqual(0, GitBranchEntry.objects.all().count())
 
-    def test_incorrect_diff_because_not_diff_present(self):
-        feed_data = {}
-        feed_data['commits'] = []
-        feed_data['commits'].append(self.commit1)
-        feed_data['commits'].append(self.commit2)
-        feed_data['branches'] = []
-        feed_data['branches'].append(self.branch1)
-        feed_data['diffs'] = []
-        feed_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(1), FeederTestHelper.hash_string(1), 'diff-1'))
-
-        post_data = FeederTestHelper.create_feed_data_and_report(
-            feed_data,
-            FeederTestHelper.get_default_report()
-        )
-
-        resp = self.client.post(
-            '/gitfeeder/feed/commit/project/{0}/'.format(self.git_project1.id),
-            data = json.dumps(post_data),
-            content_type='application/json')
-
-        res.check_cross_origin_headers(self, resp)
-        resp_obj = json.loads(resp.content)
-
-        self.assertEqual(400, resp_obj['status'])
-        self.assertEqual('Diffs not correct', resp_obj['message'])
-        self.assertEqual(0, GitCommitEntry.objects.all().count())
-        self.assertEqual(0, GitBranchEntry.objects.all().count())
