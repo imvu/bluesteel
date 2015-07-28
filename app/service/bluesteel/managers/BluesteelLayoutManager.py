@@ -50,10 +50,11 @@ class BluesteelLayoutManager(models.Manager):
         BluesteelLayoutManager.create_command(command_set_fetch, 0, 'git checkout master')
         BluesteelLayoutManager.create_command(command_set_fetch, 1, 'git reset --hard origin/master')
         BluesteelLayoutManager.create_command(command_set_fetch, 2, 'git clean -f -d -q')
-        BluesteelLayoutManager.create_command(command_set_fetch, 3, 'git pull -r origin master')
-        BluesteelLayoutManager.create_command(command_set_fetch, 4, 'git checkout master')
-        BluesteelLayoutManager.create_command(command_set_fetch, 5, 'git submodule sync')
-        BluesteelLayoutManager.create_command(command_set_fetch, 6, 'git submodule update --init --recursive')
+        BluesteelLayoutManager.create_command(command_set_fetch, 3, 'git fetch --all')
+        BluesteelLayoutManager.create_command(command_set_fetch, 4, 'git pull -r origin master')
+        BluesteelLayoutManager.create_command(command_set_fetch, 5, 'git checkout master')
+        BluesteelLayoutManager.create_command(command_set_fetch, 6, 'git submodule sync')
+        BluesteelLayoutManager.create_command(command_set_fetch, 7, 'git submodule update --init --recursive')
         return command_set_fetch
 
     @staticmethod
