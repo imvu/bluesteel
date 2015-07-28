@@ -1,5 +1,7 @@
 """ Git Feed views """
 
+from django.utils import timezone
+from django.conf import settings
 from app.util.httpcommon import res
 from app.util.httpcommon import val
 from app.service.gitrepo.models.GitProjectModel import GitProjectEntry
@@ -17,6 +19,8 @@ from app.util.commandrepo.models.CommandResultModel import CommandResultEntry
 from app.util.logger.models.LogModel import LogEntry
 from app.service.gitfeeder.views import GitFeederSchemas
 import json
+import arrow
+import pytz
 
 
 def are_commits_unique(user, commit_list):
@@ -334,11 +338,19 @@ def insert_reports(reports):
                 command=json.dumps(command['command']),
             )
 
+            start_time = arrow.get(command['result']['start_time']).naive
+            finish_time = arrow.get(command['result']['finish_time']).naive
+
+            start_time = timezone.make_aware(start_time, pytz.timezone(settings.TIME_ZONE))
+            finish_time = timezone.make_aware(finish_time, pytz.timezone(settings.TIME_ZONE))
+
             CommandResultEntry.objects.create(
                 command=comm_entry,
                 out=command['result']['out'],
                 error=command['result']['error'],
                 status=command['result']['status'],
+                start_time=start_time,
+                finish_time=finish_time,
             )
 
 

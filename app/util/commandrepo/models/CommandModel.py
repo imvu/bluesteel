@@ -20,7 +20,6 @@ class CommandEntry(models.Model):
 
         obj = {}
         obj['command'] = self.command
-        # obj['date_created_at'] = self.created_at
         obj['result'] = {}
 
         entry = CommandResultEntry.objects.all().filter(command_id=self.id).first()

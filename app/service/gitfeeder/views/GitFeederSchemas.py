@@ -210,7 +210,7 @@ GIT_FEEDER_SCHEMA = {
                                 'result' : {
                                     'type' : 'object',
                                     'additionalProperties' : False,
-                                    'required' : ['out', 'error', 'status'],
+                                    'required' : ['out', 'error', 'status', 'start_time', 'finish_time'],
                                     'properties' : {
                                         'out' : {
                                             'type' : 'string'
@@ -220,7 +220,15 @@ GIT_FEEDER_SCHEMA = {
                                         },
                                         'status' : {
                                             'type' : 'number'
-                                        }
+                                        },
+                                        'start_time' : {
+                                            'type' : 'string',
+                                            'format' : 'date-time'
+                                        },
+                                        'finish_time' : {
+                                            'type' : 'string',
+                                            'format' : 'date-time'
+                                        },
                                     }
                                 }
                             }

@@ -1,5 +1,7 @@
 """ Feeder test helper functions """
 
+import datetime
+
 def hash_string(commit_hash_num):
     return str('{0:05d}'.format(commit_hash_num) * 8)
 
@@ -70,6 +72,8 @@ def get_default_report():
     command['result']['error'] = 'default-error'
     command['result']['out'] = 'default-out'
     command['result']['status'] = 0
+    command['result']['start_time'] = datetime.datetime.utcnow().isoformat()
+    command['result']['finish_time'] = datetime.datetime.utcnow().isoformat()
 
     report['commands'].append(command)
     reports.append(report)

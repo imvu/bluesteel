@@ -4,6 +4,7 @@ import os
 import shutil
 import json
 import subprocess
+import datetime
 
 class GitFetcher(object):
     """
@@ -334,12 +335,16 @@ class GitFetcher(object):
             report['result']['error'] = ''
             report['result']['status'] = 0
 
+            start_time = datetime.datetime.utcnow().isoformat()
+
             status = subprocess.call(
                 command,
                 stdout=file_stdout,
                 stderr=file_stderr,
                 cwd=os.path.normpath(project_cwd)
             )
+
+            finish_time = datetime.datetime.utcnow().isoformat()
 
             report['result']['status'] = status
 
@@ -352,6 +357,8 @@ class GitFetcher(object):
             report['command'] = command
             report['result']['out'] = file_stdout.read()
             report['result']['error'] = file_stderr.read()
+            report['result']['start_time'] = start_time
+            report['result']['finish_time'] = finish_time
 
             reports['commands'].append(report)
 

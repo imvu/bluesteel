@@ -1,6 +1,7 @@
 """ Command Result model """
 
 from django.db import models
+from django.utils import timezone
 
 class CommandResultEntry(models.Model):
     """ Command Result """
@@ -9,6 +10,8 @@ class CommandResultEntry(models.Model):
     out = models.TextField(default='')
     error = models.TextField(default='')
     status = models.IntegerField(default=0)
+    start_time = models.DateTimeField(default=timezone.now)
+    finish_time = models.DateTimeField(default=timezone.now)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True, editable=False)
 
@@ -21,5 +24,7 @@ class CommandResultEntry(models.Model):
         obj['out'] = self.out
         obj['error'] = self.error
         obj['status'] = self.status
+        obj['start_time'] = self.start_time
+        obj['finish_time'] = self.finish_time
         return obj
 

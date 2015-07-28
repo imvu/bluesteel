@@ -22,6 +22,7 @@ import json
 import os
 import hashlib
 import shutil
+import datetime
 
 class GitFeedViewsReportsTestCase(TestCase):
 
@@ -64,6 +65,8 @@ class GitFeedViewsReportsTestCase(TestCase):
         command['result']['error'] = 'error-text-1'
         command['result']['out'] = 'out-text-1'
         command['result']['status'] = 0
+        command['result']['start_time'] = datetime.datetime.utcnow().isoformat()
+        command['result']['finish_time'] = datetime.datetime.utcnow().isoformat()
 
         report['commands'].append(command)
         reports.append(report)
