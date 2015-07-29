@@ -40,9 +40,13 @@
                         <div class="list_label">{{command_set.name}}</div>
                     </li>
                     {% for command in command_set.commands %}
-                    <li>
+                    <li id="command_entry_{{forloop.parentloop.counter0}}_{{forloop.counter0}}">
                         <input class="command_input" type="text" name="fname" value="{{command.command}}" maxlength="255"></input>
-                        <button class="btn_icon icon_gray"><i class="fa fa-times-circle fa-2x"></i></button>
+                        <button     class="btn_icon icon_gray"
+                                    onclick="remove_list_element(this, 'command_entry_{{forloop.parentloop.counter0}}_{{forloop.counter0}}');"
+                        >
+                            <i class="fa fa-times-circle fa-2x"></i>
+                        </button>
                     </li>
                     {% endfor %}
                 </ul>

@@ -19,3 +19,8 @@ create_new_layout = function(thisObj, url) {
     xhr.send("");
     thisObj.onclick = function() {};
 }
+
+remove_list_element = function(thisObj, idElementToRemove) {
+    var elementToRemove = document.getElementById(idElementToRemove);
+    elementToRemove.parentNode.removeChild(elementToRemove);
+}
