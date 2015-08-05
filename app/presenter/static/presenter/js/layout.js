@@ -20,7 +20,41 @@ create_new_layout = function(thisObj, url) {
     thisObj.onclick = function() {};
 }
 
-remove_list_element = function(thisObj, idElementToRemove) {
+removeListElement = function(idElementToRemove) {
     var elementToRemove = document.getElementById(idElementToRemove);
-    elementToRemove.parentNode.removeChild(elementToRemove);
+    var parent = elementToRemove.parentNode;
+    parent.removeChild(elementToRemove);
+}
+
+createRemoveListElementCallback = function(idElementToRemove) {
+    return function() {removeListElement(idElementToRemove);};
+}
+
+addListElement = function(thisObj, idParent, idListToAddElement) {
+    var listToAddElement = document.getElementById(idListToAddElement);
+
+    var childCount = listToAddElement.children.length;
+
+    var eleLi = document.createElement('li');
+    eleLi.className = "no_text";
+    eleLi.id = 'command_entry_new_' + (new Date()).getTime().toString();
+
+    var eleInput = document.createElement('input');
+    eleInput.className = "command_input";
+    eleInput.type = "text";
+    eleInput.name = "fname";
+    eleInput.value = "<edit command here>";
+    eleInput.maxlength = "255";
+
+    var eleButton = document.createElement('button');
+    eleButton.className = "btn_icon icon_gray";
+    eleButton.onclick = createRemoveListElementCallback(eleLi.id);
+
+    var eleI = document.createElement('i');
+    eleI.className = "fa fa-times-circle fa-2x";
+
+    eleButton.appendChild(eleI);
+    eleLi.appendChild(eleInput);
+    eleLi.appendChild(eleButton);
+    listToAddElement.appendChild(eleLi);
 }
