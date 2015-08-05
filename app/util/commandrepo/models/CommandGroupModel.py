@@ -2,12 +2,14 @@
 
 from django.db import models
 from app.util.commandrepo.models.CommandSetModel import CommandSetEntry
+from app.util.commandrepo.managers.CommandGroupManager import CommandGroupManager
 
 class CommandGroupEntry(models.Model):
     """ CommandGroup """
 
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True, editable=False)
+    objects = CommandGroupManager()
 
     def __unicode__(self):
         return u'CommandGroup:{0}'.format(self.id)

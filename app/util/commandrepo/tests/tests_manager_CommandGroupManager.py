@@ -1,0 +1,31 @@
+""" CommandGroup Manager tests """
+
+from django.test import TestCase
+from app.util.commandrepo.models.CommandModel import CommandEntry
+from app.util.commandrepo.models.CommandResultModel import CommandResultEntry
+from app.util.commandrepo.models.CommandSetModel import CommandSetEntry
+from app.util.commandrepo.models.CommandGroupModel import CommandGroupEntry
+from app.util.commandrepo.helper import TestCommandHelper
+
+class CommandGroupManagerTestCase(TestCase):
+
+    def setUp(self):
+        pass
+
+    def tearDown(self):
+        pass
+
+    def test_delete_command_group(self):
+        result = TestCommandHelper.create_default_command_result()
+
+        self.assertEqual(1, CommandGroupEntry.objects.all().count())
+        self.assertEqual(1, CommandSetEntry.objects.all().count())
+        self.assertEqual(1, CommandEntry.objects.all().count())
+        self.assertEqual(1, CommandResultEntry.objects.all().count())
+
+        CommandGroupEntry.objects.delete_command_group_by_id(CommandGroupEntry.objects.all().first().id)
+
+        self.assertEqual(0, CommandGroupEntry.objects.all().count())
+        self.assertEqual(0, CommandSetEntry.objects.all().count())
+        self.assertEqual(0, CommandEntry.objects.all().count())
+        self.assertEqual(0, CommandResultEntry.objects.all().count())
