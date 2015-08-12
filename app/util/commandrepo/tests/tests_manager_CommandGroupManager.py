@@ -29,3 +29,23 @@ class CommandGroupManagerTestCase(TestCase):
         self.assertEqual(0, CommandSetEntry.objects.all().count())
         self.assertEqual(0, CommandEntry.objects.all().count())
         self.assertEqual(0, CommandResultEntry.objects.all().count())
+
+    def test_add_full_command_set(self):
+        command_group = CommandGroupEntry.objects.create()
+
+        self.assertEqual(1, CommandGroupEntry.objects.all().count())
+        self.assertEqual(0, CommandSetEntry.objects.all().count())
+        self.assertEqual(0, CommandEntry.objects.all().count())
+        self.assertEqual(0, CommandResultEntry.objects.all().count())
+
+        commands = []
+        commands.append(['command 1'])
+        commands.append(['command 2'])
+        commands.append(['command 3'])
+
+        CommandGroupEntry.objects.add_full_command_set(command_group, 'CLONE', 28, commands)
+
+        self.assertEqual(1, CommandGroupEntry.objects.all().count())
+        self.assertEqual(1, CommandSetEntry.objects.all().count())
+        self.assertEqual(3, CommandEntry.objects.all().count())
+        self.assertEqual(0, CommandResultEntry.objects.all().count())

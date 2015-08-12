@@ -33,3 +33,14 @@ class CommandGroupManager(models.Manager):
             com_set.delete()
 
         command_group_entry.delete()
+
+    @staticmethod
+    def add_full_command_set(command_group, name, order, list_commands):
+        """ Adds a new set of commands from a name, order and list of strings """
+        set_entry = CommandSetEntry.objects.create(group=command_group, name=name, order=order)
+
+        for index, command in enumerate(list_commands):
+            CommandEntry.objects.create(
+                command_set=set_entry,
+                command=command,
+                order=index)
