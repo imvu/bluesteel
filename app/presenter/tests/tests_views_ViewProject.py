@@ -88,6 +88,7 @@ class BluesteelViewTestCase(TestCase):
         resp_obj = json.loads(resp.content)
 
         self.assertEqual(200, resp_obj['status'])
+        self.assertEqual('NAME-updated', BluesteelProjectEntry.objects.all().first().name)
         self.assertEqual(1, CommandGroupEntry.objects.all().count())
         self.assertEqual(3, CommandSetEntry.objects.all().count())
         self.assertEqual(5, CommandEntry.objects.all().count())
