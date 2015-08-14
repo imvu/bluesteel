@@ -8,6 +8,7 @@ class BluesteelLayoutEntry(models.Model):
     """ BlueSteel Layout """
     name = models.CharField(default='', max_length=50)
     archive = models.CharField(default='', max_length=50)
+    collect_commits_path = models.CharField(default='', max_length=50)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True, editable=False)
     objects = BluesteelLayoutManager()
@@ -28,6 +29,7 @@ class BluesteelLayoutEntry(models.Model):
         obj = {}
         obj['name'] = self.name
         obj['archive'] = self.archive
+        obj['collect_commits_path'] = self.collect_commits_path
         obj['id'] = self.id
         obj['projects'] = projects
         return obj
