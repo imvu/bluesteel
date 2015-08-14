@@ -14,14 +14,6 @@
                 <input class="command_input" type="text" name="fname" value="{{layout.name}}" maxlength="50"></input>
             </li>
         </ul>
-<!--         <ul class="no_dots">
-            <li>
-                <div class="list_label">ARCHIVE PATH</div>
-            </li>
-            <li>
-                <input class="command_input" type="text" name="fname" value="{{layout.archive}}" maxlength="50"></input>
-            </li>
-        </ul> -->
         <ul class="no_dots">
             <li>
                 <div class="list_label">COMMIT COLLECT PATH</div>
@@ -30,6 +22,16 @@
                 <input class="command_input" type="text" name="fname" value="{{layout.commit_collect_path}}" maxlength="255"></input>
             </li>
         </ul>
+        <ul class="no_dots no_indent vertical_margin horizontal_list">
+                <li class="horizontal">
+                    <button     class="btn_rect primary"
+                                onclick=""
+                    >Save</button>
+                </li>
+                <li class="horizontal">
+                    <button class="btn_rect danger">Delete</button>
+                </li>
+            </ul>
     </div>
     {% for project in layout.projects %}
         <div class="middle_card white_card">
@@ -100,20 +102,9 @@
             </ul>
         </div>
     {% endfor %}
-    <div class="middle_card white_card">
-        <ul class="no_dots no_indent vertical_margin horizontal_list">
-            <li class="horizontal"><button class="btn_round light">Add Project</button></li>
-        </ul>
-    </div>
     <div class="lower_card white_card">
         <ul class="no_dots no_indent vertical_margin horizontal_list">
-            <li class="horizontal">
-                <button     class="btn_rect primary"
-                >Save</button>
-            </li>
-            <li class="horizontal">
-                <button class="btn_rect danger">Delete</button>
-            </li>
+            <li class="horizontal"><button class="btn_round light">Add Project</button></li>
         </ul>
     </div>
 </div>
