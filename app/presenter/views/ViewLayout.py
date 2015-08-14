@@ -4,6 +4,9 @@ from app.presenter.views import ViewHelper
 from app.service.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
 from app.util.httpcommon import res
 
+def get_save_project_url(project_id):
+    return '/main/project/{0}/save/'.format(project_id)
+
 def get_layout_editable(request, layout_id):
     """ Returns html for the layout editable page """
     if request.method == 'GET':
@@ -14,6 +17,10 @@ def get_layout_editable(request, layout_id):
         data['menu'] = []
         data['menu'].append({'name':'Main', 'link':'/main/view/'})
         data['menu'].append({'name':'Layout', 'link':'/main/layout/edit/0/'})
+
+        for project in data['layout']['projects']:
+            project['save_url'] = get_save_project_url(project['id'])
+
         return res.get_template_data(request, 'presenter/layout.html', data)
     else:
         return res.get_template_data(request, 'presenter/not_found.html', {})

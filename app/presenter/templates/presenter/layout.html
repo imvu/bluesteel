@@ -26,45 +26,69 @@
     {% for project in layout.projects %}
         <div class="middle_card white_card">
             <div class="title">PROJECT</div>
-            <ul class="no_dots vertical_margin">
-                <li>
-                    <div class="list_label">NAME</div>
-                </li>
-                <li>
-                    <input class="command_input" type="text" name="fname" value="{{project.name}}" maxlength="50"></input>
-                </li>
-            </ul>
-            {% for command_set in project.command_group.command_sets %}
-                <ul     id="command_list_{{forloop.parentloop.counter0}}_{{forloop.counter0}}"
-                        class="no_dots vertical_margin"
-                >
+            <form   action="{{project.save_url}}"
+                    method="POST"
+                    name="projectForm"
+                    id="project_form_{{forloop.counter0}}"
+            >
+                <ul class="no_dots vertical_margin">
                     <li>
-                        <div class="list_label">{{command_set.name}}</div>
+                        <div class="list_label">NAME</div>
                     </li>
-                    {% for command in command_set.commands %}
-                    <li     class="no_text"
-                            id="command_entry_{{forloop.parentloop.counter0}}_{{forloop.counter0}}">
-                        <input class="command_input" type="text" name="fname" value="{{command.command}}" maxlength="255"></input>
-                        <button     class="btn_icon icon_gray"
-                                    onclick="removeListElement('command_entry_{{forloop.parentloop.counter0}}_{{forloop.counter0}}');"
-                        >
-                            <i class="fa fa-times-circle fa-2x"></i>
-                        </button>
-                    </li>
-                    {% endfor %}
-                </ul>
-                <ul class="no_dots no_indent vertical_margin horizontal_list">
-                    <li class="horizontal">
-                        <!-- <button class="btn_icon icon_gray"><i class="fa fa-plus-circle fa-2x"></i></button> -->
-                        <button     class="btn_round light"
-                                    onclick="addListElement(this, '{{forloop.counter0}}', 'command_list_{{forloop.parentloop.counter0}}_{{forloop.counter0}}');"
-                        >Add Command</button>
+                    <li>
+                        <input  class="command_input"
+                                type="text"
+                                name="project_name"
+                                value="{{project.name}}"
+                                maxlength="50"
+                        ></input>
                     </li>
                 </ul>
-            {% endfor %}
+                {% for command_set in project.command_group.command_sets %}
+                    <ul     id="command_list_{{forloop.parentloop.counter0}}_{{forloop.counter0}}"
+                            class="no_dots vertical_margin"
+                    >
+                        <li>
+                            <div class="list_label">{{command_set.name}}</div>
+                        </li>
+                        {% for command in command_set.commands %}
+                        <li     class="no_text"
+                                id="command_{{command_set.name}}_{{forloop.counter0}}">
+                            <input  class="command_input"
+                                    type="text"
+                                    name="command_{{command_set.name}}_{{forloop.counter0}}"
+                                    value="{{command.command}}"
+                                    maxlength="255"
+                            ></input>
+                            <button     class="btn_icon icon_gray"
+                                        type='button'
+                                        onclick="removeListElement('command_{{command_set.name}}_{{forloop.counter0}}');"
+                            >
+                                <i class="fa fa-times-circle fa-2x"></i>
+                            </button>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    <ul class="no_dots no_indent vertical_margin horizontal_list">
+                        <li class="horizontal">
+                            <!-- <button class="btn_icon icon_gray"><i class="fa fa-plus-circle fa-2x"></i></button> -->
+                            <button     class="btn_round light"
+                                        type='button'
+                                        onclick="addListElement(this, '{{forloop.counter0}}', 'command_list_{{forloop.parentloop.counter0}}_{{forloop.counter0}}', 'command_{{command_set.name}}_');"
+                            >Add Command</button>
+                        </li>
+                    </ul>
+                {% endfor %}
+            </form>
             <ul class="no_dots no_indent vertical_margin horizontal_list">
-                <li class="horizontal"><button class="btn_rect primary">Save</button></li>
-                <li class="horizontal"><button class="btn_rect danger">Delete</button></li>
+                <li class="horizontal">
+                    <button     class="btn_rect primary"
+                                onclick="saveProject('project_form_{{forloop.counter0}}');"
+                    >Save</button>
+                </li>
+                <li class="horizontal">
+                    <button class="btn_rect danger">Delete</button>
+                </li>
             </ul>
         </div>
     {% endfor %}
@@ -75,8 +99,13 @@
     </div>
     <div class="lower_card white_card">
         <ul class="no_dots no_indent vertical_margin horizontal_list">
-            <li class="horizontal"><button class="btn_rect primary">Save</button></li>
-            <li class="horizontal"><button class="btn_rect danger">Delete</button></li>
+            <li class="horizontal">
+                <button     class="btn_rect primary"
+                >Save</button>
+            </li>
+            <li class="horizontal">
+                <button class="btn_rect danger">Delete</button>
+            </li>
         </ul>
     </div>
 </div>

@@ -1,6 +1,5 @@
 create_new_layout = function(thisObj, url) {
     var cookie = getValueFromCookie('csrftoken');
-    console.log('hiiiii', thisObj);
 
     var xhr = new XMLHttpRequest();
     xhr.open("POST", url, true);
@@ -8,12 +7,9 @@ create_new_layout = function(thisObj, url) {
     xhr.onloadend = function(response) {
         var res_obj = JSON.parse(xhr.response);
 
-        console.log(res_obj);
         if (res_obj['status'] === 200) {
-            console.log('changing to main page!');
             window.location=res_obj['data']['layout']['url'];
         } else {
-            console.log('error happened!');
         }
     }
     xhr.send("");
@@ -30,19 +26,19 @@ createRemoveListElementCallback = function(idElementToRemove) {
     return function() {removeListElement(idElementToRemove);};
 }
 
-addListElement = function(thisObj, idParent, idListToAddElement) {
+addListElement = function(thisObj, idParent, idListToAddElement, startName) {
     var listToAddElement = document.getElementById(idListToAddElement);
 
     var childCount = listToAddElement.children.length;
 
     var eleLi = document.createElement('li');
     eleLi.className = "no_text";
-    eleLi.id = 'command_entry_new_' + (new Date()).getTime().toString();
+    eleLi.id = startName.toString() + (new Date()).getTime().toString() + '_new';
 
     var eleInput = document.createElement('input');
     eleInput.className = "command_input";
     eleInput.type = "text";
-    eleInput.name = "fname";
+    eleInput.name = eleLi.id;
     eleInput.value = "<edit command here>";
     eleInput.maxlength = "255";
 
@@ -57,4 +53,44 @@ addListElement = function(thisObj, idParent, idListToAddElement) {
     eleLi.appendChild(eleInput);
     eleLi.appendChild(eleButton);
     listToAddElement.appendChild(eleLi);
+}
+
+saveProject = function(idFormProject) {
+    var form = document.getElementById(idFormProject);
+
+    obj = {};
+    obj['name'] = form.elements['project_name'].value;
+    obj['clone'] = [];
+    obj['fetch'] = [];
+    obj['pull'] = [];
+
+    var keys = Object.keys(form.elements);
+
+    for (var i = 0; i < keys.length; i++) {
+        var key = keys[i];
+        if (key.startsWith("command_CLONE")) {
+            obj['clone'].push(form.elements[key].value);
+        } else if (key.startsWith("command_FETCH")) {
+            obj['fetch'].push(form.elements[key].value);
+        } else if (key.startsWith("command_PULL")) {
+            obj['pull'].push(form.elements[key].value);
+        }
+    }
+
+    var cookie = getValueFromCookie('csrftoken');
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", form.action, true);
+    xhr.setRequestHeader('X-CSRFToken', cookie);
+    xhr.onloadend = function(response) {
+        var res_obj = JSON.parse(xhr.response);
+
+        if (res_obj['status'] === 200) {
+            console.log('project saved!');
+        } else {
+            console.log('error happened!');
+        }
+    }
+    xhr.send(JSON.stringify(obj));
+    // thisObj.onclick = function() {};
 }
