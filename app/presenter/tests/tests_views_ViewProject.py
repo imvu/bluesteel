@@ -11,7 +11,7 @@ from app.util.commandrepo.models.CommandModel import CommandEntry
 from app.util.httpcommon import res
 import json
 
-class BluesteelViewTestCase(TestCase):
+class BluesteelViewProjectTestCase(TestCase):
 
     def setUp(self):
         self.client = Client()

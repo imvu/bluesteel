@@ -6,32 +6,39 @@
 <div class="container_med">
     <div class="upper_card white_card">
         <div class="title">LAYOUT</div>
-        <ul class="no_dots">
-            <li>
-                <div class="list_label">NAME</div>
-            </li>
-            <li>
-                <input class="command_input" type="text" name="fname" value="{{layout.name}}" maxlength="50"></input>
-            </li>
-        </ul>
-        <ul class="no_dots">
-            <li>
-                <div class="list_label">COMMIT COLLECT PATH</div>
-            </li>
-            <li>
-                <input class="command_input" type="text" name="fname" value="{{layout.commit_collect_path}}" maxlength="255"></input>
-            </li>
-        </ul>
-        <ul class="no_dots no_indent vertical_margin horizontal_list">
+        <form   action="{{layout.save_url}}"
+                method="POST"
+                name="layoutForm"
+                id="layout_form"
+        >
+            <ul class="no_dots">
+                <li>
+                    <div class="list_label">NAME</div>
+                </li>
+                <li>
+                    <input class="command_input" type="text" name="layout_name" value="{{layout.name}}" maxlength="50"></input>
+                </li>
+            </ul>
+            <ul class="no_dots">
+                <li>
+                    <div class="list_label">COLLECT COMMITS PATH</div>
+                </li>
+                <li>
+                    <input class="command_input" type="text" name="layout_collect_commits_path" value="{{layout.collect_commits_path}}" maxlength="255"></input>
+                </li>
+            </ul>
+            <ul class="no_dots no_indent vertical_margin horizontal_list">
                 <li class="horizontal">
                     <button     class="btn_rect primary"
-                                onclick=""
+                                type='button'
+                                onclick="saveLayout('layout_form');"
                     >Save</button>
                 </li>
                 <li class="horizontal">
-                    <button class="btn_rect danger">Delete</button>
+                    <button class="btn_rect danger" type='button'>Delete</button>
                 </li>
             </ul>
+        </form>
     </div>
     {% for project in layout.projects %}
         <div class="middle_card white_card">

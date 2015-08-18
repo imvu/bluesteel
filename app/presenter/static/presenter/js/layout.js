@@ -94,3 +94,28 @@ saveProject = function(idFormProject) {
     xhr.send(JSON.stringify(obj));
     // thisObj.onclick = function() {};
 }
+
+saveLayout = function(idFormLayout) {
+    var form = document.getElementById(idFormLayout);
+
+    obj = {};
+    obj['name'] = form.elements['layout_name'].value;
+    obj['collect_commits_path'] = form.elements['layout_collect_commits_path'].value;
+
+    var cookie = getValueFromCookie('csrftoken');
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", form.action, true);
+    xhr.setRequestHeader('X-CSRFToken', cookie);
+    xhr.onloadend = function(response) {
+        var res_obj = JSON.parse(xhr.response);
+
+        if (res_obj['status'] === 200) {
+            console.log('layout saved!');
+        } else {
+            console.log('error happened!', res_obj);
+        }
+    }
+    xhr.send(JSON.stringify(obj));
+    // thisObj.onclick = function() {};
+}
