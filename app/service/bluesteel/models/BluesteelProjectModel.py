@@ -5,6 +5,7 @@ from django.db import models
 class BluesteelProjectEntry(models.Model):
     """ BlueSteel Project """
     name = models.CharField(default='', max_length=50)
+    order = models.IntegerField(default=0)
     layout = models.ForeignKey('bluesteel.BluesteelLayoutEntry', related_name='bluesteel_layout')
     command_group = models.ForeignKey('commandrepo.CommandGroupEntry', related_name='bluesteel_command_group')
     git_project = models.ForeignKey('gitrepo.GitProjectEntry', related_name='bluesteel_git_project')
@@ -23,6 +24,7 @@ class BluesteelProjectEntry(models.Model):
         obj = {}
         obj['id'] = self.id
         obj['name'] = self.name
+        obj['order'] = self.order
         obj['git_project'] = self.git_project.as_object()
         obj['command_group'] = self.command_group.as_object()
 
