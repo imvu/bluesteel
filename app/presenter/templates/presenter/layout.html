@@ -24,6 +24,13 @@
                     <div class="list_label">COLLECT COMMITS PATH</div>
                 </li>
                 <li>
+                    <select name="project_selected">
+                        {% for project in layout.projects %}
+                            <option value="{{forloop.counter0}}">{{project.name}}</option>
+                        {% endfor %}
+                    </select>
+                </li>
+                <li>
                     <input class="command_input" type="text" name="layout_collect_commits_path" value="{{layout.collect_commits_path}}" maxlength="255"></input>
                 </li>
             </ul>
