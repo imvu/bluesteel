@@ -78,6 +78,18 @@ class BluesteelLayoutManager(models.Manager):
         BluesteelLayoutManager.create_default_command_set_pull(group, 2)
         return group
 
+    def add_default_project_to_layout(self, layout):
+        """ Adds a default project to a given layout """
+        new_git_project = GitProjectEntry.objects.create(url='http://www.test.com')
+
+        command_group = self.create_default_command_group()
+
+        BluesteelProjectEntry.objects.create(
+            layout=layout,
+            name='project-name',
+            command_group=command_group,
+            git_project=new_git_project
+        )
 
     def get_paginated_layouts_as_objects(self, page):
         """ Returns paginated list of layouts """
@@ -92,6 +104,7 @@ class BluesteelLayoutManager(models.Manager):
             layouts.append(layout.as_object())
         return layouts
 
+
     def create_new_default_layout(self):
         """ Create a new default layout with git project and return the ID of it """
         new_layout = self.create(
@@ -99,15 +112,6 @@ class BluesteelLayoutManager(models.Manager):
             archive='archive-1'
         )
 
-        new_git_project = GitProjectEntry.objects.create(url='http://www.test.com')
-
-        command_group = BluesteelLayoutManager.create_default_command_group()
-
-        BluesteelProjectEntry.objects.create(
-            layout=new_layout,
-            name='project-name',
-            command_group=command_group,
-            git_project=new_git_project
-        )
+        self.add_default_project_to_layout(new_layout)
 
         return new_layout
