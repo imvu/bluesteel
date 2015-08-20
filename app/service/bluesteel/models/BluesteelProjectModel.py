@@ -1,6 +1,7 @@
 """ BlueSteelProject model """
 
 from django.db import models
+from app.service.bluesteel.managers.BluesteelProjectManager import BluesteelProjectManager
 
 class BluesteelProjectEntry(models.Model):
     """ BlueSteel Project """
@@ -11,6 +12,7 @@ class BluesteelProjectEntry(models.Model):
     git_project = models.ForeignKey('gitrepo.GitProjectEntry', related_name='bluesteel_git_project')
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True, editable=False)
+    objects = BluesteelProjectManager()
 
     def __unicode__(self):
         return u'Bluesteel Project layout:{0}, name:{1}, git_project{2}'.format(

@@ -4,6 +4,7 @@ from django.test import TestCase
 from app.service.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
 from app.service.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
 from app.service.bluesteel.managers.BluesteelLayoutManager import BluesteelLayoutManager
+from app.service.bluesteel.managers.BluesteelProjectManager import BluesteelProjectManager
 from app.service.gitrepo.models.GitProjectModel import GitProjectEntry
 
 class BluesteelLayoutTestCase(TestCase):
@@ -29,8 +30,8 @@ class BluesteelLayoutTestCase(TestCase):
             archive='archive-name',
         )
 
-        command_group_1 = BluesteelLayoutManager.create_default_command_group()
-        command_group_2 = BluesteelLayoutManager.create_default_command_group()
+        command_group_1 = BluesteelProjectManager.create_default_command_group()
+        command_group_2 = BluesteelProjectManager.create_default_command_group()
 
         project_entry_1 = BluesteelProjectEntry.objects.create(
             layout=layout,
