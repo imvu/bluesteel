@@ -3,6 +3,7 @@
 from django.test import TestCase
 from django.test import Client
 from app.service.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
+from app.service.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
 from app.util.httpcommon import res
 import json
 
@@ -37,3 +38,31 @@ class BluesteelViewLayoutTestCase(TestCase):
         self.assertEqual(200, resp_obj['status'])
         self.assertEqual(1, BluesteelLayoutEntry.objects.filter(name='layout-1', collect_commits_path='/changed/url/').count())
 
+    def test_save_bluesteel_layout(self):
+        self.assertEqual(1, BluesteelLayoutEntry.objects.all().count())
+        self.assertEqual(0, BluesteelProjectEntry.objects.all().count())
+
+        resp = self.client.post(
+            '/main/layout/{0}/add/project/'.format(self.layout_1.id),
+            data = '',
+            content_type='application/json')
+
+        res.check_cross_origin_headers(self, resp)
+        resp_obj = json.loads(resp.content)
+
+        self.assertEqual(200, resp_obj['status'])
+        self.assertEqual(1, BluesteelLayoutEntry.objects.all().count())
+        self.assertEqual(1, BluesteelProjectEntry.objects.filter(order=0).count())
+
+        resp = self.client.post(
+            '/main/layout/{0}/add/project/'.format(self.layout_1.id),
+            data = '',
+            content_type='application/json')
+
+        res.check_cross_origin_headers(self, resp)
+        resp_obj = json.loads(resp.content)
+
+        self.assertEqual(200, resp_obj['status'])
+        self.assertEqual(1, BluesteelLayoutEntry.objects.all().count())
+        self.assertEqual(1, BluesteelProjectEntry.objects.filter(order=0).count())
+        self.assertEqual(1, BluesteelProjectEntry.objects.filter(order=1).count())

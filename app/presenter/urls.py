@@ -14,6 +14,9 @@ urlpatterns = patterns(
     url(r'^layout/(?P<layout_id>\d+)/save/$',
         'app.presenter.views.ViewLayout.save_layout'),
 
+    url(r'^layout/(?P<layout_id>\d+)/add/project/$',
+        'app.presenter.views.ViewLayout.add_default_project'),
+
     url(r'^layout/create/$',
         'app.presenter.views.ViewLayout.post_create_new_layout'),
 

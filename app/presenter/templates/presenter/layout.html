@@ -118,7 +118,11 @@
     {% endfor %}
     <div class="lower_card white_card">
         <ul class="no_dots no_indent vertical_margin horizontal_list">
-            <li class="horizontal"><button class="btn_round light">Add Project</button></li>
+            <li class="horizontal">
+                <button     class="btn_round light"
+                            onclick="addProjectToLayout('{{layout.add_project_url}}');"
+                >Add Project</button>
+            </li>
         </ul>
     </div>
 </div>

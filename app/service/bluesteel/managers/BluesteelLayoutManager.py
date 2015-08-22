@@ -19,6 +19,17 @@ class BluesteelLayoutManager(models.Manager):
         project_count = BluesteelProjectEntry.objects.filter(layout=layout).count()
         BluesteelProjectEntry.objects.create_default_project(layout, 'project-name', project_count)
 
+    @staticmethod
+    def sort_layout_projects_by_order(layout):
+        """ Sorts all projects on a layout by order """
+        # I need to fix these function to not have a circular reference :(
+        from app.service.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
+        project_entries = BluesteelProjectEntry.objects.filter(layout=layout)
+
+        for index, project in enumerate(project_entries):
+            project.order = index
+            project.save()
+
 
     def get_paginated_layouts_as_objects(self, page):
         """ Returns paginated list of layouts """
