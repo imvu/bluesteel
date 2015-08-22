@@ -15,6 +15,13 @@ def main():
         print out_str
         sys.exit(1)
 
+    print '----------------------------------------'
+    print 'Tested command: ' + ' '.join(command)
+    print 'Out:'
+    print out_str
+    print '----------------------------------------'
+
+    # We call it again to see color :)
     subprocess.call(command)
 
 if __name__ == '__main__':
