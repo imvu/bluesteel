@@ -22,4 +22,7 @@ urlpatterns = patterns(
 
     url(r'^project/(?P<project_id>\d+)/save/$',
         'app.presenter.views.ViewProject.save_project'),
+
+    url(r'^project/(?P<project_id>\d+)/delete/$',
+        'app.presenter.views.ViewProject.delete_project'),
 )

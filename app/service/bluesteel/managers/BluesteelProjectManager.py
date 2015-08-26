@@ -2,6 +2,7 @@
 
 from django.db import models
 from app.service.gitrepo.models.GitProjectModel import GitProjectEntry
+from app.service.gitrepo.controllers.GitController import GitController
 from app.util.commandrepo.models.CommandModel import CommandEntry
 from app.util.commandrepo.models.CommandSetModel import CommandSetEntry
 from app.util.commandrepo.models.CommandGroupModel import CommandGroupEntry
@@ -75,6 +76,12 @@ class BluesteelProjectManager(models.Manager):
         BluesteelProjectManager.create_default_command_set_fetch(group, 1)
         BluesteelProjectManager.create_default_command_set_pull(group, 2)
         return group
+
+    @staticmethod
+    def delete_project(project):
+        CommandGroupEntry.objects.delete_command_group_by_id(project.command_group.id)
+        GitController.delete_git_project(project.git_project)
+        project.delete()
 
     def create_default_project(self, layout, name, order):
         """ Adds a default project to a given layout """

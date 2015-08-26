@@ -98,3 +98,54 @@ class BluesteelViewProjectTestCase(TestCase):
         self.assertEqual(1, CommandEntry.objects.filter(command='command-31').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='command-32').count())
 
+
+    def test_delete_bluesteel_project(self):
+        commands = []
+        commands.append('command-1')
+        commands.append('command-2')
+        commands.append('command-3')
+
+        commands2 = []
+        commands2.append('command-4')
+        commands2.append('command-5')
+        commands2.append('command-6')
+
+        command_group = CommandGroupEntry.objects.create()
+        CommandGroupEntry.objects.add_full_command_set(command_group, "CLONE", 0, commands)
+        CommandGroupEntry.objects.add_full_command_set(command_group, "FETCH", 1, commands2)
+
+        git_project = GitProjectEntry.objects.create(url='', name='git-project')
+
+        bluesteel_proj = BluesteelProjectEntry.objects.create(
+            name='project-1',
+            layout=self.layout_1,
+            command_group=command_group,
+            git_project=git_project
+        )
+
+        self.assertEqual(1, CommandGroupEntry.objects.all().count())
+        self.assertEqual(2, CommandSetEntry.objects.all().count())
+        self.assertEqual(6, CommandEntry.objects.all().count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='command-1').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='command-2').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='command-3').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='command-4').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='command-5').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='command-6').count())
+        self.assertEqual(1, GitProjectEntry.objects.all().count())
+
+        resp = self.client.post(
+            '/main/project/{0}/delete/'.format(bluesteel_proj.id),
+            data = '',
+            content_type='application/json')
+
+        res.check_cross_origin_headers(self, resp)
+        resp_obj = json.loads(resp.content)
+
+        self.assertEqual(200, resp_obj['status'])
+        self.assertEqual(0, BluesteelProjectEntry.objects.all().count())
+        self.assertEqual(0, CommandGroupEntry.objects.all().count())
+        self.assertEqual(0, CommandSetEntry.objects.all().count())
+        self.assertEqual(0, CommandEntry.objects.all().count())
+        self.assertEqual(0, GitProjectEntry.objects.all().count())
+

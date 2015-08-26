@@ -1,13 +1,16 @@
 """ Presenter views, Project page functions """
 
+from app.presenter.views import ViewUrlGenerator
 from app.service.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
+from app.service.bluesteel.managers.BluesteelProjectManager import BluesteelProjectManager
+from app.service.bluesteel.managers.BluesteelLayoutManager import BluesteelLayoutManager
 from app.service.bluesteel.views import BluesteelSchemas
 from app.util.commandrepo.models.CommandGroupModel import CommandGroupEntry
 from app.util.httpcommon import res
 from app.util.httpcommon import val
 
 def save_project(request, project_id):
-    """ Returns html for the layout editable page """
+    """ Save project properties """
     if request.method == 'POST':
         project_entry = BluesteelProjectEntry.objects.filter(id=project_id).first()
         if project_entry == None:
@@ -33,5 +36,23 @@ def save_project(request, project_id):
         CommandGroupEntry.objects.add_full_command_set(project_entry.command_group, 'PULL', 2, val_resp_obj['pull'])
 
         return res.get_response(200, 'Project saved', {})
+    else:
+        return res.get_only_post_allowed({})
+
+def delete_project(request, project_id):
+    """ Delete project on a layout """
+    if request.method == 'POST':
+        project_entry = BluesteelProjectEntry.objects.filter(id=project_id).first()
+        if project_entry == None:
+            return res.get_response(404, 'Bluesteel project not found', {})
+
+        layout_id = project_entry.layout.id
+
+        BluesteelProjectManager.delete_project(project_entry)
+        BluesteelLayoutManager.sort_layout_projects_by_order(project_entry.layout)
+
+        obj = {}
+        obj['redirect'] = ViewUrlGenerator.get_layout_edit_url(layout_id)
+        return res.get_response(200, 'Project deleted', obj)
     else:
         return res.get_only_post_allowed({})
