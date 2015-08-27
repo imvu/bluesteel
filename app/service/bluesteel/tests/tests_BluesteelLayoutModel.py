@@ -20,34 +20,34 @@ class BluesteelLayoutTestCase(TestCase):
             name='git-project-2',
         )
 
+        self.layout = BluesteelLayoutEntry.objects.create(
+            name='layout-1',
+            archive='archive-name',
+        )
+
+        self.command_group_1 = BluesteelProjectManager.create_default_command_group()
+        self.command_group_2 = BluesteelProjectManager.create_default_command_group()
+
+        self.project_entry_1 = BluesteelProjectEntry.objects.create(
+            layout=self.layout,
+            name='project-1',
+            command_group=self.command_group_1,
+            git_project=self.git_project_1,
+        )
+
+        self.project_entry_2 = BluesteelProjectEntry.objects.create(
+            layout=self.layout,
+            name='project-2',
+            command_group=self.command_group_2,
+            git_project=self.git_project_2,
+        )
+
 
     def tearDown(self):
         pass
 
     def test_get_layout_entry_as_object(self):
-        layout = BluesteelLayoutEntry.objects.create(
-            name='layout-1',
-            archive='archive-name',
-        )
-
-        command_group_1 = BluesteelProjectManager.create_default_command_group()
-        command_group_2 = BluesteelProjectManager.create_default_command_group()
-
-        project_entry_1 = BluesteelProjectEntry.objects.create(
-            layout=layout,
-            name='project-1',
-            command_group=command_group_1,
-            git_project=self.git_project_1,
-        )
-
-        project_entry_2 = BluesteelProjectEntry.objects.create(
-            layout=layout,
-            name='project-2',
-            command_group=command_group_2,
-            git_project=self.git_project_2,
-        )
-
-        obj = layout.as_object()
+        obj = self.layout.as_object()
 
         self.assertEqual('layout-1', obj['name'])
         self.assertEqual('archive-name', obj['archive'])
@@ -58,3 +58,34 @@ class BluesteelLayoutTestCase(TestCase):
 
         self.assertEqual('project-2', obj['projects'][1]['name'])
         # self.assertEqual(self.git_project_2.id, obj['projects'][1]['git_project']['id'])
+
+    def test_clamp_project_index_path_succesful(self):
+        self.layout.project_index_path = 28
+        self.layout.save()
+
+        self.assertEqual(28, self.layout.project_index_path)
+
+        self.layout.clamp_project_index_path()
+
+        self.assertEqual(1, self.layout.project_index_path)
+
+    def test_clamp_project_index_path_already_clamped(self):
+        self.layout.project_index_path = 0
+        self.layout.save()
+
+        self.assertEqual(0, self.layout.project_index_path)
+
+        self.layout.clamp_project_index_path()
+
+        self.assertEqual(0, self.layout.project_index_path)
+
+    def test_check_active_state(self):
+        self.layout.project_index_path = 28
+        self.layout.active = True
+        self.layout.save()
+
+        self.assertEqual(True, self.layout.active)
+
+        self.layout.check_active_state()
+
+        self.assertEqual(False, self.layout.active)

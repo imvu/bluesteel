@@ -11,6 +11,14 @@ SAVE_LAYOUT = {
             'minLength' : 1,
             'maxLength' : 50,
         },
+        'active' : {
+            'type': 'boolean',
+        },
+        'project_index_path' : {
+            'type': 'number',
+            'minimum': 0,
+            'maximum': 100,
+        },
         'collect_commits_path' : {
             'type' : 'string',
             'minLength' : 1,

@@ -59,8 +59,12 @@ def save_layout(request, layout_id):
             return res.get_schema_failed(val_resp_obj)
 
         layout_entry.name = val_resp_obj['name']
+        layout_entry.active = val_resp_obj['active']
+        layout_entry.project_index_path = val_resp_obj['project_index_path']
         # Check if change of path in case we need to purge other services like 'performance tests service'
         layout_entry.collect_commits_path = val_resp_obj['collect_commits_path']
+        layout_entry.clamp_project_index_path()
+        layout_entry.check_active_state()
         layout_entry.save()
         return res.get_response(200, 'Layout saved', {})
     else:
