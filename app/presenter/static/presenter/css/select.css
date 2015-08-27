@@ -1,0 +1,16 @@
+select.selection
+{
+    background: #F9F9F9;
+    color: gray;
+    width: 30%;
+    padding: 10px;
+    font-size: 15px;
+    height: 39px;
+    text-decoration: none;
+    line-height: 15px;
+    border: solid 0px transparent;
+}
+
+select.selection:focus {
+    outline: none;
+}

@@ -16,7 +16,22 @@
                     <div class="list_label">NAME</div>
                 </li>
                 <li>
-                    <input class="command_input" type="text" name="layout_name" value="{{layout.name}}" maxlength="50"></input>
+                    <div class="container_input">
+                        <input class="command_input" type="text" name="layout_name" value="{{layout.name}}" maxlength="50"></input>
+                    </div>
+                </li>
+            </ul>
+            <ul class="no_dots">
+                <li>
+                    <div class="list_label">STATUS</div>
+                </li>
+                <li>
+                    <select     class="selection"
+                                name="project_selected"
+                    >
+                        <option value="0">ACTIVE</option>
+                        <option value="1">INACTIVE</option>
+                    </select>
                 </li>
             </ul>
             <ul class="no_dots">
@@ -24,14 +39,16 @@
                     <div class="list_label">COLLECT COMMITS PATH</div>
                 </li>
                 <li>
-                    <select name="project_selected">
-                        {% for project in layout.projects %}
-                            <option value="{{forloop.counter0}}">{{project.name}}</option>
-                        {% endfor %}
-                    </select>
-                </li>
-                <li>
-                    <input class="command_input" type="text" name="layout_collect_commits_path" value="{{layout.collect_commits_path}}" maxlength="255"></input>
+                    <div class="container_input">
+                        <select     class="selection"
+                                    name="project_selected"
+                        >
+                            {% for project in layout.projects %}
+                                <option value="{{forloop.counter0}}">{{project.name}}</option>
+                            {% endfor %}
+                        </select>
+                        <input class="path_input" type="text" name="layout_collect_commits_path" value="{{layout.collect_commits_path}}" maxlength="255"></input>
+                    </div>
                 </li>
             </ul>
             <ul class="no_dots no_indent vertical_margin horizontal_list">
@@ -60,12 +77,14 @@
                         <div class="list_label">NAME</div>
                     </li>
                     <li>
-                        <input  class="command_input"
-                                type="text"
-                                name="project_name"
-                                value="{{project.name}}"
-                                maxlength="50"
-                        ></input>
+                        <div class="container_input">
+                            <input  class="command_input"
+                                    type="text"
+                                    name="project_name"
+                                    value="{{project.name}}"
+                                    maxlength="50"
+                            ></input>
+                        </div>
                     </li>
                 </ul>
                 {% for command_set in project.command_group.command_sets %}
@@ -78,12 +97,14 @@
                         {% for command in command_set.commands %}
                         <li     class="no_text"
                                 id="command_{{command_set.name}}_{{forloop.counter0}}">
-                            <input  class="command_input"
-                                    type="text"
-                                    name="command_{{command_set.name}}_{{forloop.counter0}}"
-                                    value="{{command.command}}"
-                                    maxlength="255"
-                            ></input>
+                            <div class="container_input">
+                                <input  class="command_input"
+                                        type="text"
+                                        name="command_{{command_set.name}}_{{forloop.counter0}}"
+                                        value="{{command.command}}"
+                                        maxlength="255"
+                                ></input>
+                            </div>
                             <button     class="btn_icon icon_gray"
                                         type='button'
                                         onclick="removeListElement('command_{{command_set.name}}_{{forloop.counter0}}');"
