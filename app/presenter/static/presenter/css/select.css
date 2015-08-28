@@ -11,6 +11,12 @@ select.selection
     border: solid 0px transparent;
 }
 
+select.individual
+{
+    width: 100%;
+    background: transparent;
+}
+
 select.selection:focus {
     outline: none;
 }
