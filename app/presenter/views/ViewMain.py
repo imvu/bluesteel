@@ -1,21 +1,20 @@
 """ Presenter views, main page functions """
 
 from app.presenter.views import ViewUrlGenerator
+from app.presenter.views import ViewPrepareObjects
 from app.service.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
 from app.util.httpcommon.Page import Page
 from app.util.httpcommon import res
 
 LAYOUT_ITEMS_PER_PAGE = 30
 
-def add_url_to_each_layout(layout_list):
-    for layout in layout_list:
-        layout['url'] = ViewUrlGenerator.get_layout_edit_url(layout['id'])
-
 def get_main(request):
     """ Returns html for the main page """
     page = Page(LAYOUT_ITEMS_PER_PAGE, 1)
     layout_list = BluesteelLayoutEntry.objects.get_paginated_layouts_as_objects(page)
-    add_url_to_each_layout(layout_list)
+
+    for layout in layout_list:
+        layout = ViewPrepareObjects.prepare_layout_for_html(layout)
 
     data = {}
     data['layout_list'] = layout_list

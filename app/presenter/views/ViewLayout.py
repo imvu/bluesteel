@@ -1,6 +1,7 @@
 """ Presenter views, layout page functions """
 
 from app.presenter.views import ViewUrlGenerator
+from app.presenter.views import ViewPrepareObjects
 from app.service.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
 from app.service.bluesteel.managers.BluesteelLayoutManager import BluesteelLayoutManager
 from app.service.bluesteel.views import BluesteelSchemas
@@ -14,16 +15,13 @@ def get_layout_editable(request, layout_id):
 
         data = {}
         data['layout'] = layout.as_object()
+        data['layout'] = ViewPrepareObjects.prepare_layout_for_html(data['layout'])
         data['menu'] = []
         data['menu'].append({'name':'Main', 'link':'/main/view/'})
         data['menu'].append({'name':'Layout', 'link':'/main/layout/edit/0/'})
 
-        data['layout']['save_url'] = ViewUrlGenerator.get_save_layout_url(data['layout']['id'])
-        data['layout']['add_project_url'] = ViewUrlGenerator.get_add_default_project_url(data['layout']['id'])
-
         for project in data['layout']['projects']:
-            project['save_url'] = ViewUrlGenerator.get_save_project_url(project['id'])
-            project['delete_url'] = ViewUrlGenerator.get_delete_project_url(project['id'])
+            project = ViewPrepareObjects.prepare_project_for_html(project)
 
         return res.get_template_data(request, 'presenter/layout.html', data)
     else:
@@ -36,7 +34,7 @@ def post_create_new_layout(request):
 
         data = {}
         data['layout'] = new_layout.as_object()
-        data['layout']['url'] = ViewUrlGenerator.get_layout_edit_url(data['layout']['id'])
+        data['layout'] = ViewPrepareObjects.prepare_layout_for_html(data['layout'])
 
         return res.get_response(200, 'New layout created', data)
     else:
