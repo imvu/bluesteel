@@ -100,7 +100,7 @@ saveLayout = function(idFormLayout) {
 
     obj = {};
     obj['name'] = form.elements['layout_name'].value;
-    obj['active'] = (form.elements['layout_active'].value == 0) ? true : false;
+    obj['active'] = (form.elements['layout_active'].value == 1) ? true : false;
     obj['project_index_path'] = parseInt(form.elements['layout_project_index_path'].value);
     obj['collect_commits_path'] = form.elements['layout_collect_commits_path'].value;
 

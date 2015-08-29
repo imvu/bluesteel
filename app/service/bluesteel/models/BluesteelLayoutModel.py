@@ -47,6 +47,6 @@ class BluesteelLayoutEntry(models.Model):
     def check_active_state(self):
         project_count = BluesteelProjectEntry.objects.all().filter(layout_id=self.id).count()
 
-        if self.project_index_path == 0 or self.project_index_path >= project_count:
+        if project_count == 0 or self.project_index_path >= project_count:
             self.active = False
             self.save()

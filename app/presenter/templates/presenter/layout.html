@@ -30,8 +30,9 @@
                         <select     class="selection individual"
                                     name="layout_active"
                         >
-                            <option value="0">ACTIVE</option>
-                            <option value="1">INACTIVE</option>
+                            {% for active in layout.active_selection %}
+                                <option value="{{active.value}}" {{active.selected}}>{{active.name}}</option>
+                            {% endfor %}
                         </select>
                     </div>
                 </li>
@@ -45,8 +46,8 @@
                         <select     class="selection"
                                     name="layout_project_index_path"
                         >
-                            {% for project in layout.projects %}
-                                <option value="{{forloop.counter0}}">{{project.name}}</option>
+                            {% for selection in layout.project_selection %}
+                                <option value="{{selection.value}}" {{selection.selected}}>{{selection.name}}</option>
                             {% endfor %}
                         </select>
                         <input class="path_input" type="text" name="layout_collect_commits_path" value="{{layout.collect_commits_path}}" maxlength="255"></input>

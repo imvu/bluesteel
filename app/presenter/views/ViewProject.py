@@ -47,6 +47,8 @@ def delete_project(request, project_id):
             return res.get_response(404, 'Bluesteel project not found', {})
 
         layout_id = project_entry.layout.id
+        project_entry.layout.active = False
+        project_entry.layout.save()
 
         BluesteelProjectManager.delete_project(project_entry)
         BluesteelLayoutManager.sort_layout_projects_by_order(project_entry.layout)

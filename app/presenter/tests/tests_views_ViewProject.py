@@ -18,6 +18,7 @@ class BluesteelViewProjectTestCase(TestCase):
         self.layout_1 = BluesteelLayoutEntry.objects.create(
             name='layout-1',
             archive='archive-28',
+            active=True,
         )
 
         self.layout_2 = BluesteelLayoutEntry.objects.create(
@@ -133,6 +134,7 @@ class BluesteelViewProjectTestCase(TestCase):
         self.assertEqual(1, CommandEntry.objects.filter(command='command-5').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='command-6').count())
         self.assertEqual(1, GitProjectEntry.objects.all().count())
+        self.assertEqual(True, BluesteelLayoutEntry.objects.all().first().active)
 
         resp = self.client.post(
             '/main/project/{0}/delete/'.format(bluesteel_proj.id),
@@ -148,4 +150,5 @@ class BluesteelViewProjectTestCase(TestCase):
         self.assertEqual(0, CommandSetEntry.objects.all().count())
         self.assertEqual(0, CommandEntry.objects.all().count())
         self.assertEqual(0, GitProjectEntry.objects.all().count())
+        self.assertEqual(False, BluesteelLayoutEntry.objects.all().first().active)
 

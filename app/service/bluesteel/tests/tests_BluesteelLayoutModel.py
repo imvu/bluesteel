@@ -79,7 +79,18 @@ class BluesteelLayoutTestCase(TestCase):
 
         self.assertEqual(0, self.layout.project_index_path)
 
-    def test_check_active_state(self):
+    def test_check_active_state_and_keep_it_active(self):
+        self.layout.project_index_path = 0
+        self.layout.active = True
+        self.layout.save()
+
+        self.assertEqual(True, self.layout.active)
+
+        self.layout.check_active_state()
+
+        self.assertEqual(True, self.layout.active)
+
+    def test_check_active_state_and_change_it_to_inactive(self):
         self.layout.project_index_path = 28
         self.layout.active = True
         self.layout.save()
