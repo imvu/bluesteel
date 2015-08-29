@@ -28,7 +28,7 @@
                 <li>
                     <div class="container_input">
                         <select     class="selection individual"
-                                    name="project_selected"
+                                    name="layout_active"
                         >
                             <option value="0">ACTIVE</option>
                             <option value="1">INACTIVE</option>
@@ -43,7 +43,7 @@
                 <li>
                     <div class="container_input">
                         <select     class="selection"
-                                    name="project_selected"
+                                    name="layout_project_index_path"
                         >
                             {% for project in layout.projects %}
                                 <option value="{{forloop.counter0}}">{{project.name}}</option>
