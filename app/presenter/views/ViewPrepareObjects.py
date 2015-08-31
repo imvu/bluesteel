@@ -47,3 +47,26 @@ def prepare_project_for_html(project):
     project['url']['save'] = ViewUrlGenerator.get_save_project_url(project['id'])
     project['url']['delete'] = ViewUrlGenerator.get_delete_project_url(project['id'])
     return project
+
+def prepare_menu_for_html(menu):
+    """ Adds default items to menu plus already existing ones """
+    menu_items = []
+
+    item_1 = {}
+    item_1['name'] = ''
+    item_1['icon'] = 'fa fa-home fa-lg'
+    item_1['link'] = '/main/view/'
+
+    item_2 = {}
+    item_2['name'] = 'Worker'
+    item_2['icon'] = ''
+    item_2['link'] = '/bluesteelworker/download/'
+
+    menu_items.append(item_1)
+    menu_items.append(item_2)
+
+    for item in menu:
+        menu_items.append(item)
+
+    return menu_items
+

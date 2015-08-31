@@ -18,6 +18,8 @@ li.menu_item
     display: inline-block;
     margin-left: 15px;
     margin-right: 15px;
+    line-height: 45px;
+    text-align: vertical;
 }
 
 a.menu_item_link

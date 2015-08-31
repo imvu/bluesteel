@@ -18,10 +18,7 @@ def get_main(request):
 
     data = {}
     data['layout_list'] = layout_list
-    data['menu'] = []
-    data['menu'].append({'name':'Main', 'link':'/main/view/'})
-    data['menu'].append({'name':'Layout', 'link':'/main/layout/edit/0/'})
-    data['menu'].append({'name':'Worker', 'link':'/bluesteelworker/download/'})
+    data['menu'] = ViewPrepareObjects.prepare_menu_for_html([])
     data['create_layout'] = {}
     data['create_layout']['url'] = ViewUrlGenerator.get_layout_create_url()
 

@@ -16,9 +16,7 @@ def get_layout_editable(request, layout_id):
         data = {}
         data['layout'] = layout.as_object()
         data['layout'] = ViewPrepareObjects.prepare_layout_for_html(data['layout'])
-        data['menu'] = []
-        data['menu'].append({'name':'Main', 'link':'/main/view/'})
-        data['menu'].append({'name':'Layout', 'link':'/main/layout/edit/0/'})
+        data['menu'] = ViewPrepareObjects.prepare_menu_for_html([])
 
         for project in data['layout']['projects']:
             project = ViewPrepareObjects.prepare_project_for_html(project)

@@ -3,7 +3,6 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel="stylesheet" type="text/css" href="{% static 'fontawesome/css/font-awesome.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'presenter/css/main.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'presenter/css/menu-bar.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'presenter/css/projects.css' %}" />
@@ -17,6 +16,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'presenter/css/lists.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'presenter/css/select.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'presenter/css/footer.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'fontawesome/css/font-awesome.css' %}" />
 
     <script type="text/javascript" src="{% static 'presenter/js/cookie.js' %}"></script>
     <script type="text/javascript" src="{% static 'presenter/js/layout.js' %}"></script>
@@ -28,7 +28,7 @@
         <div class="menu_item_container">
             <menu>
                 {% for menu_item in menu %}
-                <li class="menu_item"><a href="{{menu_item.link}}" class="menu_item_link">{{menu_item.name}}</a></li>
+                    <li class="menu_item"><a href="{{menu_item.link}}" class="menu_item_link"><i class="{{menu_item.icon}}"></i>{{menu_item.name}}</a></li>
                 {% endfor %}
             </menu>
         </div>
