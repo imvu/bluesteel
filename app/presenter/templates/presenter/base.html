@@ -16,6 +16,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'presenter/css/input.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'presenter/css/lists.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'presenter/css/select.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'presenter/css/footer.css' %}" />
 
     <script type="text/javascript" src="{% static 'presenter/js/cookie.js' %}"></script>
     <script type="text/javascript" src="{% static 'presenter/js/layout.js' %}"></script>
@@ -36,9 +37,10 @@
     {% block data_body %}{% endblock %}
 
     <footer>
-        <div>
-            <div class="credits"><i class="fa fa-camera-retro fa-1x"></i> fa-camera-retro</div>
-            <div class="credits">BlueSteel, created by <a class="author_name" href="https://twitter.com/LlorensMarti">@LlorensMarti</a>, 2014-15</div>
+        <div class="footer_container">
+            <div class="footer_item_container">
+                <div class="footer_item">BlueSteel, created by <a class="footer_item_link" href="https://twitter.com/LlorensMarti">@LlorensMarti</a> at IMVU, 2014-15</div>
+            </div>
         </div>
     </footer>
 </body>

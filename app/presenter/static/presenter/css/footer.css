@@ -1,0 +1,36 @@
+div.footer_container
+{
+    background: transparent;
+}
+
+div.footer_item_container
+{
+    width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+div.footer_item
+{
+    font-family: arial, sans-serif;
+    color: gray;
+    background: transparent;
+    display: inline-block;
+    margin-left: 15px;
+    margin-right: 15px;
+    line-height: 45px;
+}
+
+a.footer_item_link
+{
+    font-family: arial, sans-serif;
+    color: steelblue;
+    text-decoration: none;
+    line-height: 45px;
+}
+
+a.footer_item_link:hover
+{
+    color: lightsteelblue;
+}
