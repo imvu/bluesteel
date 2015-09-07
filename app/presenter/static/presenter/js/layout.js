@@ -31,6 +31,9 @@ addListElement = function(thisObj, idParent, idListToAddElement, startName) {
 
     var childCount = listToAddElement.children.length;
 
+    var eleDiv = document.createElement('div');
+    eleDiv.className = "container_input";
+
     var eleLi = document.createElement('li');
     eleLi.className = "no_text";
     eleLi.id = startName.toString() + (new Date()).getTime().toString() + '_new';
@@ -50,7 +53,8 @@ addListElement = function(thisObj, idParent, idListToAddElement, startName) {
     eleI.className = "fa fa-times-circle fa-2x";
 
     eleButton.appendChild(eleI);
-    eleLi.appendChild(eleInput);
+    eleDiv.appendChild(eleInput)
+    eleLi.appendChild(eleDiv);
     eleLi.appendChild(eleButton);
     listToAddElement.appendChild(eleLi);
 }
