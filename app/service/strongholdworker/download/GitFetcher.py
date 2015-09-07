@@ -249,9 +249,13 @@ class GitFetcher(object):
         return os.sep.join(folders_list)
 
     @staticmethod
+    def get_temp_folder_path(project_info):
+        return GitFetcher.get_tmp_directory_from_list_folders(project_info['git']['project']['tmp_directory'])
+
+    @staticmethod
     def get_archive_folder_path(project_info):
         current = project_info['git']['project']['current_working_directory']
-        folder = GitFetcher.get_tmp_directory_from_list_folders(project_info['git']['project']['tmp_directory'])
+        folder = GitFetcher.get_temp_folder_path(project_info)
         archive = project_info['git']['project']['archive']
         return os.path.join(current, folder, archive)
 
@@ -259,10 +263,10 @@ class GitFetcher(object):
     def get_git_project_folder_path(project_info):
         """ Returns path for the git project """
         current = project_info['git']['project']['current_working_directory']
-        folder = GitFetcher.get_tmp_directory_from_list_folders(project_info['git']['project']['tmp_directory'])
+        folder = GitFetcher.get_temp_folder_path(project_info)
         archive = project_info['git']['project']['archive']
-        git_name = project_info['git']['project']['name']
-        return os.path.join(current, folder, archive, 'project', git_name)
+        project_name = project_info['git']['project']['name']
+        return os.path.join(current, folder, archive, project_name, 'project', project_name)
 
     @staticmethod
     def get_cwd_of_first_git_project_found_in(directory):
@@ -274,58 +278,78 @@ class GitFetcher(object):
                     return root
         return None
 
-    def is_project_folder_present(self, project_info):
+    @staticmethod
+    def get_folder_paths(project_info):
+        """ Returns an object with all the paths needed on a project """
+        project_name = project_info['git']['project']['name']
+
+        obj = {}
+        obj['temp'] = str(GitFetcher.get_temp_folder_path(project_info))
+        obj['archive'] = str(GitFetcher.get_archive_folder_path(project_info))
+        obj['project_name'] = str(os.path.join(obj['archive'], project_name))
+        obj['project'] = str(os.path.join(obj['project_name'], 'project'))
+        obj['log'] = str(os.path.join(obj['project_name'], 'log'))
+        obj['log_stdout'] = str(os.path.join(obj['log'], 'git_clone_stdout.txt'))
+        obj['log_stderr'] = str(os.path.join(obj['log'], 'git_clone_stderr.txt'))
+        obj['project_git'] = str(os.path.join(obj['project'], project_name))
+        return obj
+
+    @staticmethod
+    def is_project_folder_present(project_info):
         """ Checks if the folder structure exists """
-        folder_path = self.get_archive_folder_path(project_info)
+        folder_path = GitFetcher.get_archive_folder_path(project_info)
         if not os.path.exists(folder_path):
             return False
         return True
 
-    def is_git_project_folder_present(self, project_info):
+    @staticmethod
+    def is_git_project_folder_present(project_info):
         """ Checks if the folder structure exists """
-        folder_path = self.get_archive_folder_path(project_info)
-        project_path = os.path.join(folder_path, 'project')
-        if not os.path.exists(project_path):
+        paths = GitFetcher.get_folder_paths(project_info)
+        if not os.path.exists(paths['project']):
             return False
 
-        project_path = GitFetcher.get_cwd_of_first_git_project_found_in(project_path)
+        project_path = GitFetcher.get_cwd_of_first_git_project_found_in(paths['project'])
         if project_path == None:
             return False
 
         return True
 
-    def is_log_project_folder_present(self, project_info):
+    @staticmethod
+    def is_log_project_folder_present(project_info):
         """ Checks if the folder structure exists """
-        folder_path = self.get_archive_folder_path(project_info)
-        if not os.path.exists(os.path.join(folder_path, 'log')):
+        paths = GitFetcher.get_folder_paths(project_info)
+        if not os.path.exists(paths['log']):
             return False
         return True
 
-
-    def create_tmp_folder_for_git_project(self, project_info):
+    @staticmethod
+    def create_tmp_folder_for_git_project(project_info):
         """ Creates git rpoject folder structure """
-        folder_path = self.get_archive_folder_path(project_info)
-        if os.path.exists(folder_path):
-            shutil.rmtree(folder_path)
+        paths = GitFetcher.get_folder_paths(project_info)
 
-        os.makedirs(os.path.join(folder_path, 'project'))
-        os.makedirs(os.path.join(folder_path, 'log'))
+        if os.path.exists(paths['project_name']):
+            shutil.rmtree(paths['project_name'])
+
+        os.makedirs(paths['project'])
+        os.makedirs(paths['log'])
 
     @staticmethod
     def clear_logs_folder(project_folder_path):
         """ Remove and re-creates the logs folder """
         logs_path = os.path.join(project_folder_path, 'log')
+
         if os.path.exists(logs_path):
             shutil.rmtree(logs_path)
         os.makedirs(logs_path)
 
-    def execute_command_list(self, command_list, project_directory, project_cwd, out_file_path, err_file_path):
+    def execute_command_list(self, command_list, project_name_directory, project_cwd, out_file_path, err_file_path):
         """ Executes a list of commands, if the command fails it returns inmediately """
         reports = {}
         reports['commands'] = []
 
         for command in command_list:
-            self.clear_logs_folder(project_directory)
+            self.clear_logs_folder(project_name_directory)
             file_stdout = open(out_file_path, 'w')
             file_stderr = open(err_file_path, 'w')
 
@@ -372,51 +396,44 @@ class GitFetcher(object):
 
     def commands_clone_git_project(self, project_info):
         """ clone a git repo """
-        folder_path = self.get_archive_folder_path(project_info)
-        project_cwd = self.get_git_project_folder_path(project_info)
-        stdout_path = os.path.join(folder_path, 'log', 'git_clone_stdout.txt')
-        stderr_path = os.path.join(folder_path, 'log', 'git_clone_stderr.txt')
-
-        os.makedirs(project_cwd)
+        paths = GitFetcher.get_folder_paths(project_info)
 
         reports = self.execute_command_list(
             project_info['git']['clone']['commands'],
-            str(folder_path),
-            project_cwd,
-            stdout_path,
-            stderr_path
+            paths['project_name'],
+            paths['project'],
+            paths['log_stdout'],
+            paths['log_stderr'],
         )
         return reports
 
     def commands_fetch_git_project(self, project_info):
         """ fetch a git repo """
-        folder_path = self.get_archive_folder_path(project_info)
-        project_cwd = self.get_git_project_folder_path(project_info)
-        project_cwd = GitFetcher.get_cwd_of_first_git_project_found_in(project_cwd)
-        stdout_path = os.path.join(folder_path, 'log', 'git_clone_stdout.txt')
-        stderr_path = os.path.join(folder_path, 'log', 'git_clone_stderr.txt')
+        paths = GitFetcher.get_folder_paths(project_info)
+        project_cwd = GitFetcher.get_cwd_of_first_git_project_found_in(paths['project_git'])
 
         reports = self.execute_command_list(
             project_info['git']['fetch']['commands'],
-            str(folder_path),
+            paths['project_name'],
             project_cwd,
-            stdout_path,
-            stderr_path
+            paths['log_stdout'],
+            paths['log_stderr'],
         )
         return reports
 
     def commands_get_remote_branch_names(self, project_info):
         """ Returns all remote branches names """
-        folder_path = self.get_archive_folder_path(project_info)
-        project_cwd = self.get_git_project_folder_path(project_info)
-        project_cwd = GitFetcher.get_cwd_of_first_git_project_found_in(project_cwd)
-        stdout_path = os.path.join(folder_path, 'log', 'git_clone_stdout.txt')
-        stderr_path = os.path.join(folder_path, 'log', 'git_clone_stderr.txt')
+        paths = GitFetcher.get_folder_paths(project_info)
+        project_cwd = GitFetcher.get_cwd_of_first_git_project_found_in(paths['project_git'])
 
-        command = [u'git', u'branch', u'-r']
-        commands = []
-        commands.append(command)
-        reports = self.execute_command_list(commands, str(folder_path), str(project_cwd), stdout_path, stderr_path)
+        commands = [[u'git', u'branch', u'-r']]
+        reports = self.execute_command_list(
+            commands,
+            paths['project_name'],
+            project_cwd,
+            paths['log_stdout'],
+            paths['log_stderr'],
+        )
         return reports
 
     @staticmethod
@@ -440,16 +457,19 @@ class GitFetcher(object):
 
     def commands_get_branch_names(self, project_info):
         """ Returns all local branches """
-        folder_path = self.get_archive_folder_path(project_info)
-        project_cwd = self.get_git_project_folder_path(project_info)
-        project_cwd = GitFetcher.get_cwd_of_first_git_project_found_in(project_cwd)
-        stdout_path = os.path.join(folder_path, 'log', 'git_clone_stdout.txt')
-        stderr_path = os.path.join(folder_path, 'log', 'git_clone_stderr.txt')
+        paths = GitFetcher.get_folder_paths(project_info)
+        project_cwd = GitFetcher.get_cwd_of_first_git_project_found_in(paths['project_git'])
 
         command = ['git', 'branch']
         commands = []
         commands.append(command)
-        reports = self.execute_command_list(commands, str(folder_path), project_cwd, stdout_path, stderr_path)
+        reports = self.execute_command_list(
+            commands,
+            paths['project_name'],
+            project_cwd,
+            paths['log_stdout'],
+            paths['log_stderr'],
+        )
         return reports
 
     @staticmethod
@@ -469,11 +489,8 @@ class GitFetcher(object):
 
     def checkout_remote_branches_to_local(self, project_info, remote_branch_names):
         """ Check out all the remote branches to local ones """
-        folder_path = self.get_archive_folder_path(project_info)
-        project_cwd = self.get_git_project_folder_path(project_info)
-        project_cwd = GitFetcher.get_cwd_of_first_git_project_found_in(project_cwd)
-        stdout_path = os.path.join(folder_path, 'log', 'git_clone_stdout.txt')
-        stderr_path = os.path.join(folder_path, 'log', 'git_clone_stderr.txt')
+        paths = GitFetcher.get_folder_paths(project_info)
+        project_cwd = GitFetcher.get_cwd_of_first_git_project_found_in(paths['project_git'])
 
         commands = []
         for name in remote_branch_names:
@@ -483,25 +500,33 @@ class GitFetcher(object):
             else:
                 name = name[0]
 
-            command = ['git', 'checkout', name]
-            commands.append(command)
-        reports = self.execute_command_list(commands, str(folder_path), project_cwd, stdout_path, stderr_path)
+            commands = [['git', 'checkout', name]]
+        reports = self.execute_command_list(
+            commands,
+            paths['project_name'],
+            project_cwd,
+            paths['log_stdout'],
+            paths['log_stderr'],
+        )
         return reports
 
     def commands_get_branch_names_and_hashes(self, project_info, branch_names):
         """ Fetch the hash of every branch name """
-        folder_path = self.get_archive_folder_path(project_info)
-        project_cwd = self.get_git_project_folder_path(project_info)
-        project_cwd = GitFetcher.get_cwd_of_first_git_project_found_in(project_cwd)
-        stdout_path = os.path.join(folder_path, 'log', 'git_clone_stdout.txt')
-        stderr_path = os.path.join(folder_path, 'log', 'git_clone_stderr.txt')
+        paths = GitFetcher.get_folder_paths(project_info)
+        project_cwd = GitFetcher.get_cwd_of_first_git_project_found_in(paths['project_git'])
 
         commands = []
 
         for name in branch_names:
             commands.append(['git', 'rev-parse', name])
 
-        reports = self.execute_command_list(commands, str(folder_path), project_cwd, stdout_path, stderr_path)
+        reports = self.execute_command_list(
+            commands,
+            paths['project_name'],
+            project_cwd,
+            paths['log_stdout'],
+            paths['log_stderr'],
+        )
         return reports
 
     @staticmethod
@@ -520,11 +545,8 @@ class GitFetcher(object):
 
     def commands_get_commits_from_branch(self, project_info, branch_name):
         """ Get all commits from a branch, only first parent """
-        folder_path = self.get_archive_folder_path(project_info)
-        project_cwd = self.get_git_project_folder_path(project_info)
-        project_cwd = GitFetcher.get_cwd_of_first_git_project_found_in(project_cwd)
-        stdout_path = os.path.join(folder_path, 'log', 'git_clone_stdout.txt')
-        stderr_path = os.path.join(folder_path, 'log', 'git_clone_stderr.txt')
+        paths = GitFetcher.get_folder_paths(project_info)
+        project_cwd = GitFetcher.get_cwd_of_first_git_project_found_in(paths['project_git'])
 
         pretty_format = {}
         pretty_format['hash'] = '%H'
@@ -546,7 +568,13 @@ class GitFetcher(object):
         commands.append(['git', 'checkout', branch_name])
         commands.append(['git', 'log', '--first-parent', '--date=iso', pretty_string])
 
-        reports = self.execute_command_list(commands, str(folder_path), project_cwd, stdout_path, stderr_path)
+        reports = self.execute_command_list(
+            commands,
+            paths['project_name'],
+            project_cwd,
+            paths['log_stdout'],
+            paths['log_stderr'],
+        )
         return reports
 
     @staticmethod
@@ -583,15 +611,18 @@ class GitFetcher(object):
 
     def commands_get_fork_commit_between_branches(self, project_info, branch1, branch2):
         """ Get the common ancestor commit between two branches """
-        folder_path = self.get_archive_folder_path(project_info)
-        project_cwd = self.get_git_project_folder_path(project_info)
-        project_cwd = GitFetcher.get_cwd_of_first_git_project_found_in(project_cwd)
-        stdout_path = os.path.join(folder_path, 'log', 'git_clone_stdout.txt')
-        stderr_path = os.path.join(folder_path, 'log', 'git_clone_stderr.txt')
+        paths = GitFetcher.get_folder_paths(project_info)
+        project_cwd = GitFetcher.get_cwd_of_first_git_project_found_in(paths['project_git'])
 
-        command = ['git', 'merge-base', branch1['commit_hash'], branch2['commit_hash']]
+        commands = [['git', 'merge-base', branch1['commit_hash'], branch2['commit_hash']]]
 
-        reports = self.execute_command_list([command], str(folder_path), project_cwd, stdout_path, stderr_path)
+        reports = self.execute_command_list(
+            commands,
+            paths['project_name'],
+            project_cwd,
+            paths['log_stdout'],
+            paths['log_stderr'],
+        )
         return reports
 
     @staticmethod
@@ -637,16 +668,18 @@ class GitFetcher(object):
 
     def commands_get_diff_between_commits(self, project_info, commit_hash_1, commit_hash_2):
         """ Get the diff between 2 commits """
+        paths = GitFetcher.get_folder_paths(project_info)
+        project_cwd = GitFetcher.get_cwd_of_first_git_project_found_in(paths['project_git'])
 
-        folder_path = self.get_archive_folder_path(project_info)
-        project_cwd = self.get_git_project_folder_path(project_info)
-        project_cwd = GitFetcher.get_cwd_of_first_git_project_found_in(project_cwd)
-        stdout_path = os.path.join(folder_path, 'log', 'git_clone_stdout.txt')
-        stderr_path = os.path.join(folder_path, 'log', 'git_clone_stderr.txt')
+        commands = [['git', 'diff', commit_hash_1, commit_hash_2]]
 
-        command = ['git', 'diff', commit_hash_1, commit_hash_2]
-
-        reports = self.execute_command_list([command], str(folder_path), project_cwd, stdout_path, stderr_path)
+        reports = self.execute_command_list(
+            commands,
+            paths['project_name'],
+            project_cwd,
+            paths['log_stdout'],
+            paths['log_stderr'],
+        )
         return reports
 
     @staticmethod

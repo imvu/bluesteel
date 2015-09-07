@@ -88,7 +88,7 @@ def fragment_layout_in_project_infos(layout, tmp_path):
         obj['git']['project']['current_working_directory'] = os.path.dirname(os.path.abspath(__file__))
         obj['git']['project']['tmp_directory'] = tmp_path
         obj['git']['project']['archive'] = layout['archive']
-        obj['git']['project']['name'] = layout['name']
+        obj['git']['project']['name'] = project['name']
         obj['git']['branch'] = {}
         obj['git']['branch']['known'] = project['git_project']['branches']
 
