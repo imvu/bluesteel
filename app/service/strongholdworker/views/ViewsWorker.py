@@ -26,7 +26,7 @@ def zip_folder_and_return_path(path_to_compress, path_destination, name_destinat
     for root, dirs, files in os.walk(path_to_compress):
         del dirs
         for file_entry in files:
-            if file_entry.endswith('.py'):
+            if file_entry.endswith('.py') or file_entry.endswith('.json'):
                 zip_file.write(os.path.join(root, file_entry), os.path.basename(file_entry))
     zip_file.close()
     return path_final

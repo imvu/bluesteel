@@ -81,10 +81,11 @@ class GitFetcherTestCase(TestCase):
         self.assertEqual(path, self.fetcher.get_archive_folder_path(self.obj2))
 
     def test_is_project_folder_present(self):
-        os.makedirs(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC'))
+        os.makedirs(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'project'))
         self.assertTrue(self.fetcher.is_project_folder_present(self.obj1))
 
     def test_is_not_project_folder_present(self):
+        os.makedirs(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1'))
         self.assertFalse(self.fetcher.is_project_folder_present(self.obj1))
 
     def test_is_git_project_folder_present(self):
