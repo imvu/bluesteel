@@ -509,8 +509,8 @@ class GitFetcher(object):
                 name = name[1]
             else:
                 name = name[0]
+            commands.append(['git', 'checkout', name])
 
-            commands = [['git', 'checkout', name]]
         reports = self.execute_command_list(
             commands,
             paths['project_name'],

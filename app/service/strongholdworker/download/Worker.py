@@ -186,7 +186,7 @@ def process_git_feed(settings, session):
             fetcher.fetch_git_project(project)
 
             ppi = pprint.PrettyPrinter(depth=10)
-            ppi.pprint(fetcher.feed_data)
+            # ppi.pprint(fetcher.feed_data)
 
             obj_json = json.dumps(fetcher.feed_data)
 

@@ -35,7 +35,7 @@ def are_commits_unique(user, commit_list):
             unique_hash.append(commit['hash'])
     return (True, unique_hash)
 
-def are_parent_hashes_correct(user, hash_list, commit_list):
+def are_parent_hashes_correct(user, hash_list, commit_list, project):
     """ Returns true if all parents are correct """
     for commit in commit_list:
         for parent in commit['parent_hashes']:
@@ -43,9 +43,11 @@ def are_parent_hashes_correct(user, hash_list, commit_list):
                 continue
             else:
                 try:
-                    GitCommitEntry.objects.get(commit_hash=parent)
+                    GitCommitEntry.objects.get(project=project, commit_hash=parent)
                 except GitCommitEntry.DoesNotExist:
-                    msg = 'Parent with no commit {0}'.format(parent)
+                    msg = ('Project: {0}({1})\n'
+                           'Commit {2} has parent hash {3} but it is not present\n'
+                          ).format(project.name, project.id, commit['hash'], parent)
                     LogEntry.error(user, msg)
                     return False
                 else:
@@ -383,7 +385,7 @@ def post_commits(request, project_id):
         if not unique:
             return res.get_response(400, 'Commits not unique', {})
 
-        if not are_parent_hashes_correct(request.user, unique_hash_list, commits):
+        if not are_parent_hashes_correct(request.user, unique_hash_list, commits, project_entry):
             return res.get_response(400, 'Parents not correct', {})
 
         if not are_diffs_correct(request.user, unique_hash_list, diffs, project_entry):

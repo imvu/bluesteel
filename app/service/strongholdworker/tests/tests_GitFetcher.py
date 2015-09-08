@@ -279,6 +279,42 @@ class GitFetcherTestCase(TestCase):
         self.assertEqual(0, len(branch_names))
 
     @mock.patch('app.service.strongholdworker.download.GitFetcher.subprocess.call')
+    def test_checkout_remote_branches_to_local(self, mock_subprocess):
+        branch_names = ['origin/master', 'origin/branch-1', 'origin/branch-2', 'origin/branch-test-1']
+        mock_subprocess.return_value = 0
+        self.fetcher.create_tmp_folder_for_git_project(self.obj1)
+        self.create_git_hidden_folder(settings.TMP_ROOT, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1')
+
+        reports = self.fetcher.checkout_remote_branches_to_local(self.obj1, branch_names)
+        # mock_subprocess.call.assert_called_once(['git', 'checkout', 'master'])
+        # mock_subprocess.call.assert_called_once(['git', 'checkout', 'branch-1'])
+        # mock_subprocess.call.assert_called_once(['git', 'checkout', 'branch-2'])
+        # mock_subprocess.call.assert_called_once(['git', 'checkout', 'branch-test-1'])
+
+        self.assertEqual(4, len(reports['commands']))
+
+        self.assertEqual(0, reports['commands'][0]['result']['status'])
+        self.assertEqual(['git', 'checkout', 'master'], reports['commands'][0]['command'])
+        self.assertEqual('', reports['commands'][0]['result']['error'])
+        self.assertEqual('', reports['commands'][0]['result']['out'])
+
+        self.assertEqual(0, reports['commands'][1]['result']['status'])
+        self.assertEqual(['git', 'checkout', 'branch-1'], reports['commands'][1]['command'])
+        self.assertEqual('', reports['commands'][1]['result']['error'])
+        self.assertEqual('', reports['commands'][1]['result']['out'])
+
+        self.assertEqual(0, reports['commands'][2]['result']['status'])
+        self.assertEqual(['git', 'checkout', 'branch-2'], reports['commands'][2]['command'])
+        self.assertEqual('', reports['commands'][2]['result']['error'])
+        self.assertEqual('', reports['commands'][2]['result']['out'])
+
+        self.assertEqual(0, reports['commands'][3]['result']['status'])
+        self.assertEqual(['git', 'checkout', 'branch-test-1'], reports['commands'][3]['command'])
+        self.assertEqual('', reports['commands'][3]['result']['error'])
+        self.assertEqual('', reports['commands'][3]['result']['out'])
+
+
+    @mock.patch('app.service.strongholdworker.download.GitFetcher.subprocess.call')
     def test_commands_get_branch_names_and_hashes(self, mock_subprocess):
         branch_names = ['master', 'branch-1', 'branch-2']
         mock_subprocess.return_value = 0
