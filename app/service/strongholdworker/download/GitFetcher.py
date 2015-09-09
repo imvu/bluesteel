@@ -11,15 +11,17 @@ class GitFetcher(object):
     GitFetcher is able to gather information of a git repository and return all the data with an
     understandable structure.
     """
-    report_stack = []
-    remote_branch_names = []
-    branch_names = []
-    branch_names_and_hashes = []
-    branches_data = []
-    diff_list = []
-    unique_commmits = []
-    branch_list = []
-    feed_data = {}
+    def __init__(self):
+        """ Constructor """
+        self.report_stack = []
+        self.remote_branch_names = []
+        self.branch_names = []
+        self.branch_names_and_hashes = []
+        self.branches_data = []
+        self.diff_list = []
+        self.unique_commmits = []
+        self.branch_list = []
+        self.feed_data = {}
 
     def fetch_git_project(self, project_info):
         """ Returns an object with the repository information """
