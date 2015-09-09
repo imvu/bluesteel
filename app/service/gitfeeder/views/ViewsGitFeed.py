@@ -38,7 +38,8 @@ def are_commits_unique(user, commit_list):
 def are_parent_hashes_correct(user, hash_list, commit_list, project):
     """ Returns true if all parents are correct """
     for commit in commit_list:
-        for parent in commit['parent_hashes']:
+        if len(commit['parent_hashes']) > 0:
+            parent = commit['parent_hashes'][0]
             if parent in hash_list:
                 continue
             else:

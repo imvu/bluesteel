@@ -282,6 +282,48 @@ class GitFeedViewsCommitTestCase(TestCase):
         self.assertEqual(400, resp_obj['status'])
         self.assertEqual('Parents not correct', resp_obj['message'])
 
+    def test_feed_only_care_about_the_first_parent_of_every_commit(self):
+        commit_time = str(timezone.now().isoformat())
+        commit1 = FeederTestHelper.create_commit(1, [], 'user1', 'user1@test.com', commit_time, commit_time)
+        commit2 = FeederTestHelper.create_commit(2, [FeederTestHelper.hash_string(1), FeederTestHelper.hash_string(3)], 'user1', 'user1@test.com', commit_time, commit_time)
+
+        merge_target = FeederTestHelper.create_merge_target(
+            'master',
+            FeederTestHelper.hash_string(2),
+            'master',
+            FeederTestHelper.hash_string(2),
+            FeederTestHelper.hash_string(2),
+            'merge-target-content'
+        )
+
+        branch1 = FeederTestHelper.create_branch('master', 2, [FeederTestHelper.hash_string(2), FeederTestHelper.hash_string(1)], merge_target)
+
+        feed_data = {}
+        feed_data['commits'] = []
+        feed_data['commits'].append(commit1)
+        feed_data['commits'].append(commit2)
+        feed_data['branches'] = []
+        feed_data['branches'].append(branch1)
+        feed_data['diffs'] = []
+        feed_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(1), FeederTestHelper.hash_string(1), 'diff-1'))
+        feed_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(2), FeederTestHelper.hash_string(1), 'diff-2-1'))
+
+        post_data = FeederTestHelper.create_feed_data_and_report(
+            feed_data,
+            FeederTestHelper.get_default_report()
+        )
+
+        resp = self.client.post(
+            '/gitfeeder/feed/commit/project/{0}/'.format(self.git_project1.id),
+            data = json.dumps(post_data),
+            content_type='application/json')
+
+        res.check_cross_origin_headers(self, resp)
+        resp_obj = json.loads(resp.content)
+
+        self.assertEqual(200, resp_obj['status'])
+        self.assertEqual('Commits added correctly', resp_obj['message'])
+
 
     def test_feed_two_times(self):
         commit_time = str(timezone.now().isoformat())
