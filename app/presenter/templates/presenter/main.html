@@ -11,7 +11,7 @@
                     <button class="btn_rect primary"
                             onclick="create_new_layout(this, '{{create_layout.url}}');"
                     >
-                        Add project
+                        Add Layout
                     </button>
                 </li>
             </ul>
@@ -19,13 +19,23 @@
         {% for layout in layout_list %}
         <li>
             <div class="card white_card">
-                <div>{{layout.name}}</div>
-                <ul>
+                <div class="title">LAYOUT</div>
+                <ul class="no_dots">
                 {% for project in layout.projects %}
-                    <li>{{project.name}}</li>
+                    <li>
+                        <div class="list_label">{{project.name}}</div>
+                    </li>
                 {% endfor %}
                 </ul>
-                <a class="author_name" href="{{layout.url.edit}}">Edit</a>
+
+                <ul class="no_dots no_indent vertical_margin horizontal_list">
+                    <li class="horizontal">
+                        <button     class="btn_round light"
+                                    type='button'
+                                    onclick="window.location='{{layout.url.edit}}'"
+                        >Edit Layout</button>
+                    </li>
+                </ul>
             </div>
         </li>
         {% endfor %}
