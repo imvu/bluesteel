@@ -39,18 +39,17 @@
             </ul>
             <ul class="no_dots">
                 <li>
-                    <div class="list_label">COLLECT COMMITS PATH</div>
+                    <div class="list_label">FEED COMMITS FROM</div>
                 </li>
                 <li>
                     <div class="container_input">
-                        <select     class="selection"
+                        <select     class="selection individual"
                                     name="layout_project_index_path"
                         >
                             {% for selection in layout.project_selection %}
                                 <option value="{{selection.value}}" {{selection.selected}}>{{selection.name}}</option>
                             {% endfor %}
                         </select>
-                        <input class="path_input" type="text" name="layout_collect_commits_path" value="{{layout.collect_commits_path}}" maxlength="255"></input>
                     </div>
                 </li>
             </ul>

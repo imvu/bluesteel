@@ -10,7 +10,6 @@ class BluesteelLayoutEntry(models.Model):
     archive = models.CharField(default='', max_length=50)
     active = models.BooleanField(default=False)
     project_index_path = models.IntegerField(default=0)
-    collect_commits_path = models.CharField(default='', max_length=50)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True, editable=False)
     objects = BluesteelLayoutManager()
@@ -33,7 +32,6 @@ class BluesteelLayoutEntry(models.Model):
         obj['archive'] = self.archive
         obj['active'] = self.active
         obj['project_index_path'] = self.project_index_path
-        obj['collect_commits_path'] = self.collect_commits_path
         obj['id'] = self.id
         obj['projects'] = projects
         return obj

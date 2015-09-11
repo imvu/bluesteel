@@ -22,8 +22,7 @@ class BluesteelProjectManagerTestCase(TestCase):
 
         layout_entry = BluesteelLayoutEntry.objects.create(
             name='name',
-            archive='archive-1',
-            collect_commits_path='/path/to/commits/'
+            archive='archive-1'
         )
 
         new_entry = BluesteelProjectEntry.objects.create_default_project(

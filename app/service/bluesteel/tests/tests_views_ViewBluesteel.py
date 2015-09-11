@@ -17,8 +17,7 @@ class BluesteelViewTestCase(TestCase):
         self.client = Client()
         self.layout_1 = BluesteelLayoutEntry.objects.create(
             name='layout-1',
-            archive='archive-28',
-            collect_commits_path='/test/path/unix/'
+            archive='archive-28'
         )
 
         self.layout_2 = BluesteelLayoutEntry.objects.create(
@@ -79,9 +78,5 @@ class BluesteelViewTestCase(TestCase):
         self.assertEqual(1, resp_obj['data']['id'])
         self.assertEqual('layout-1', resp_obj['data']['name'])
         self.assertEqual('archive-28', resp_obj['data']['archive'])
-        self.assertEqual(3, len(resp_obj['data']['collect_commits_path_split']))
-        self.assertEqual('test', resp_obj['data']['collect_commits_path_split'][0])
-        self.assertEqual('path', resp_obj['data']['collect_commits_path_split'][1])
-        self.assertEqual('unix', resp_obj['data']['collect_commits_path_split'][2])
         self.assertEqual('http://testserver/gitfeeder/feed/commit/project/1/', resp_obj['data']['projects'][0]['feed_url'])
 

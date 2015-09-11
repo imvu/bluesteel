@@ -58,7 +58,6 @@ def save_layout(request, layout_id):
         layout_entry.active = val_resp_obj['active']
         layout_entry.project_index_path = val_resp_obj['project_index_path']
         # Check if change of path in case we need to purge other services like 'performance tests service'
-        layout_entry.collect_commits_path = val_resp_obj['collect_commits_path']
         layout_entry.clamp_project_index_path()
         layout_entry.check_active_state()
         layout_entry.save()

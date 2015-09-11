@@ -4,7 +4,7 @@ SAVE_LAYOUT = {
     '$schema': 'http://json-schema.org/draft-03/schema#',
     'type' : 'object',
     'additionalProperties': False,
-    'required': ['name', 'collect_commits_path'],
+    'required': ['name', 'active', 'project_index_path'],
     'properties' : {
         'name' : {
             'type' : 'string',
@@ -18,11 +18,6 @@ SAVE_LAYOUT = {
             'type': 'number',
             'minimum': 0,
             'maximum': 100,
-        },
-        'collect_commits_path' : {
-            'type' : 'string',
-            'minLength' : 1,
-            'maxLength' : 255,
         },
     },
 }

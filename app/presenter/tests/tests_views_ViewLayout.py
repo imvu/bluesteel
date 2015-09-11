@@ -15,8 +15,7 @@ class BluesteelViewLayoutTestCase(TestCase):
         self.client = Client()
         self.layout_1 = BluesteelLayoutEntry.objects.create(
             name='layout-1',
-            archive='archive-28',
-            collect_commits_path='/original/url/',
+            archive='archive-28'
         )
 
     def tearDown(self):
@@ -24,12 +23,11 @@ class BluesteelViewLayoutTestCase(TestCase):
 
     def test_save_bluesteel_layout(self):
         obj = {}
-        obj['name'] = 'layout-1'
+        obj['name'] = 'layout-2'
         obj['active'] = False
         obj['project_index_path'] = 0
-        obj['collect_commits_path'] = '/changed/url/'
 
-        self.assertEqual(1, BluesteelLayoutEntry.objects.filter(name='layout-1', collect_commits_path='/original/url/').count())
+        self.assertEqual(1, BluesteelLayoutEntry.objects.filter(name='layout-1').count())
 
         resp = self.client.post(
             '/main/layout/{0}/save/'.format(self.layout_1.id),
@@ -40,14 +38,13 @@ class BluesteelViewLayoutTestCase(TestCase):
         resp_obj = json.loads(resp.content)
 
         self.assertEqual(200, resp_obj['status'])
-        self.assertEqual(1, BluesteelLayoutEntry.objects.filter(name='layout-1', collect_commits_path='/changed/url/').count())
+        self.assertEqual(1, BluesteelLayoutEntry.objects.filter(name='layout-2', active=False).count())
 
     def test_layout_become_inactive_because_project_index_not_correct(self):
         obj = {}
         obj['name'] = 'layout-1'
         obj['active'] = True
         obj['project_index_path'] = 0
-        obj['collect_commits_path'] = '/'
 
         resp = self.client.post(
             '/main/layout/{0}/save/'.format(self.layout_1.id),
@@ -96,7 +93,6 @@ class BluesteelViewLayoutTestCase(TestCase):
         obj['name'] = 'layout-1'
         obj['active'] = True
         obj['project_index_path'] = 1
-        obj['collect_commits_path'] = '/'
 
         resp = self.client.post(
             '/main/layout/{0}/save/'.format(self.layout_1.id),
@@ -116,7 +112,6 @@ class BluesteelViewLayoutTestCase(TestCase):
         obj['name'] = 'layout-1'
         obj['active'] = False
         obj['project_index_path'] = 28
-        obj['collect_commits_path'] = '/'
 
         resp = self.client.post(
             '/main/layout/{0}/save/'.format(self.layout_1.id),
