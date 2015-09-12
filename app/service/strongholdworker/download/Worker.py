@@ -74,8 +74,9 @@ def command_string_to_vector(command):
 
 def fragment_layout_in_project_infos(layout, tmp_path):
     """ Fragment a layout objects on individual project objects """
+    project_to_feed = layout['project_index_path']
     projects = []
-    for project in layout['projects']:
+    for index, project in enumerate(layout['projects']):
 
         ppi = pprint.PrettyPrinter(depth=10)
         ppi.pprint(project)
@@ -83,6 +84,7 @@ def fragment_layout_in_project_infos(layout, tmp_path):
         obj = {}
         obj['feed'] = {}
         obj['feed']['url'] = project['feed_url']
+        obj['feed']['active'] = index == project_to_feed
         obj['git'] = {}
         obj['git']['project'] = {}
         obj['git']['project']['current_working_directory'] = os.path.dirname(os.path.abspath(__file__))
@@ -199,13 +201,14 @@ def process_git_feed(settings, session):
 
             print project['feed']['url']
 
-            print '- Feeding git project'
-            resp = session.post(project['feed']['url'], {}, obj_json)
-            if resp['succeed'] == False:
-                process_info['succeed'] = False
-                return process_info
+            if project['feed']['active']:
+                print '- Feeding git project'
+                resp = session.post(project['feed']['url'], {}, obj_json)
+                if resp['succeed'] == False:
+                    process_info['succeed'] = False
+                    return process_info
 
-            ppi.pprint(resp)
+                ppi.pprint(resp)
 
     print '- Finshed feeding'
     return process_info
