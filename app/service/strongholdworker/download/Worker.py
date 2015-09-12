@@ -176,8 +176,15 @@ def process_git_feed(settings, session):
             process_info['succeed'] = False
             return process_info
 
+        layout = resp['content']['data']
+
+        if not layout['active']:
+            print 'Layout not active!'
+            continue
+
+
         print '- Fragmenting layout'
-        projects = fragment_layout_in_project_infos(resp['content']['data'], settings['tmp_path'])
+        projects = fragment_layout_in_project_infos(layout, settings['tmp_path'])
 
         for project in projects:
             fetcher = GitFetcher.GitFetcher()
