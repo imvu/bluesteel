@@ -58,9 +58,9 @@ def prepare_menu_for_html(menu):
     item_1['link'] = '/main/view/'
 
     item_2 = {}
-    item_2['name'] = 'Worker'
+    item_2['name'] = 'Workers'
     item_2['icon'] = ''
-    item_2['link'] = '/bluesteelworker/download/'
+    item_2['link'] = '/main/workers/'
 
     menu_items.append(item_1)
     menu_items.append(item_2)

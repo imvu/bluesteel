@@ -25,4 +25,7 @@ urlpatterns = patterns(
 
     url(r'^project/(?P<project_id>\d+)/delete/$',
         'app.presenter.views.ViewProject.delete_project'),
+
+    url(r'^workers/$',
+        'app.presenter.views.ViewWorkers.get_workers'),
 )
