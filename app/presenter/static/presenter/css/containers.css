@@ -1,7 +1,6 @@
 div.container_small
 {
     width: 300px;
-    min-height: 900px;
     margin-left: auto;
     margin-right: auto;
 }
@@ -9,7 +8,6 @@ div.container_small
 div.container_med
 {
     width: 600px;
-    min-height: 900px;
     margin-left: auto;
     margin-right: auto;
 }
@@ -17,9 +15,13 @@ div.container_med
 div.container_large
 {
     width: 900px;
-    min-height: 900px;
     margin-left: auto;
     margin-right: auto;
+}
+
+div.container_height
+{
+    min-height: 900px;
 }
 
 div.container_input
