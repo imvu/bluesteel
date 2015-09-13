@@ -1,12 +1,14 @@
 """ CommandGroup model """
 
 from django.db import models
+from django.contrib.auth.models import User
 from app.util.commandrepo.models.CommandSetModel import CommandSetEntry
 from app.util.commandrepo.managers.CommandGroupManager import CommandGroupManager
 
 class CommandGroupEntry(models.Model):
     """ CommandGroup """
 
+    user = models.ForeignKey(User, related_name='command_group_user', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True, editable=False)
     objects = CommandGroupManager()

@@ -4,6 +4,7 @@ from django.test import TestCase
 from django.test import Client
 from django.conf import settings
 from django.utils import timezone
+from django.contrib.auth.models import User
 from app.service.gitrepo.models.GitProjectModel import GitProjectEntry
 from app.service.gitrepo.models.GitUserModel import GitUserEntry
 from app.service.gitrepo.models.GitCommitModel import GitCommitEntry
@@ -12,6 +13,7 @@ from app.service.gitrepo.models.GitDiffModel import GitDiffEntry
 from app.service.gitrepo.models.GitBranchModel import GitBranchEntry
 from app.service.gitrepo.models.GitBranchTrailModel import GitBranchTrailEntry
 from app.service.gitfeeder.helper import FeederTestHelper
+from app.util.commandrepo.models.CommandGroupModel import CommandGroupEntry
 from app.util.httpcommon import res
 from datetime import timedelta
 import json
@@ -25,6 +27,8 @@ class GitFeedViewsCommitTestCase(TestCase):
 
     def setUp(self):
         self.client = Client()
+        self.user1 = User.objects.create_user('user1@test.com', 'user1@test.com', 'pass1')
+        self.user1.save()
         self.git_project1 = GitProjectEntry.objects.create(url='http://test/')
         self.git_user1 = GitUserEntry.objects.create(
             project=self.git_project1,
@@ -79,6 +83,46 @@ class GitFeedViewsCommitTestCase(TestCase):
         branch_entry = GitBranchEntry.objects.all().first()
         self.assertEqual('0000100001000010000100001000010000100001', branch_entry.commit.commit_hash)
         self.assertEqual('master', branch_entry.name)
+
+    def test_feed_reports_have_correct_user_assign(self):
+        commit_time = str(timezone.now().isoformat())
+        commit1 = FeederTestHelper.create_commit(1, [], 'user1', 'user1@test.com', commit_time, commit_time)
+
+        merge_target = FeederTestHelper.create_merge_target(
+            'master',
+            FeederTestHelper.hash_string(1),
+            'master',
+            FeederTestHelper.hash_string(1),
+            FeederTestHelper.hash_string(1),
+            'merge-target-content'
+        )
+
+        branch1 = FeederTestHelper.create_branch('master', 1, [FeederTestHelper.hash_string(1)], merge_target)
+
+        feed_data = {}
+        feed_data['commits'] = []
+        feed_data['commits'].append(commit1)
+        feed_data['branches'] = []
+        feed_data['branches'].append(branch1)
+        feed_data['diffs'] = []
+        feed_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(1), FeederTestHelper.hash_string(1), 'diff-1'))
+
+        post_data = FeederTestHelper.create_feed_data_and_report(
+            feed_data,
+            FeederTestHelper.get_default_report()
+        )
+
+        self.client.login(username='user1@test.com', password='pass1')
+        resp = self.client.post(
+            '/gitfeeder/feed/commit/project/{0}/'.format(self.git_project1.id),
+            data = json.dumps(post_data),
+            content_type='application/json')
+
+        res.check_cross_origin_headers(self, resp)
+        resp_obj = json.loads(resp.content)
+
+        self.assertEqual(200, resp_obj['status'])
+        self.assertEqual(1, CommandGroupEntry.objects.filter(user=self.user1).count())
 
 
     def test_feed_simple_commit_already_present(self):

@@ -328,9 +328,13 @@ def update_branch_merge_target(branch_list, project):
             merge_target_entry.diff = diff_entry
             merge_target_entry.save()
 
-def insert_reports(reports):
+def insert_reports(user, reports):
     """ Inserts all the commands into the db """
-    group_entry = CommandGroupEntry.objects.create()
+    report_user = user
+    if user.is_anonymous():
+        report_user = None
+
+    group_entry = CommandGroupEntry.objects.create(user=report_user)
 
     for command_set in reports:
         set_entry = CommandSetEntry.objects.create(group=group_entry)
@@ -357,7 +361,6 @@ def insert_reports(reports):
             )
 
 
-
 def post_commits(request, project_id):
     """ Insert new commits to a given git project """
     if request.method == 'POST':
@@ -373,7 +376,7 @@ def post_commits(request, project_id):
         if not obj_validated:
             return res.get_schema_failed(val_resp_obj)
 
-        insert_reports(val_resp_obj['reports'])
+        insert_reports(request.user, val_resp_obj['reports'])
 
         if 'feed_data' not in val_resp_obj:
             return res.get_response(200, 'Only reports added', {})
