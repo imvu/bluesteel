@@ -18,21 +18,14 @@
         </div>
         {% for layout in layout_list %}
         <li>
-            <div class="card white_card">
-                <div class="title">LAYOUT</div>
-                <ul class="no_dots">
-                    <li>
-                        <div class="list_label">{{layout.name}}</div>
-                    </li>
-                </ul>
-                <div class="title">PROJECTS</div>
-                <ul class="no_dots">
+            <div class="upper_card white_card">
+                <div class="title centered">{{layout.name}}</div>
+            </div>
+            <div class="lower_card white_card">
+                <div class="list_label">PROJECTS</div>
                 {% for project in layout.projects %}
-                    <li>
-                        <div class="list_label">{{project.name}}</div>
-                    </li>
+                    <div class="normal">{{project.name}}</div>
                 {% endfor %}
-                </ul>
                 <ul class="no_dots no_indent vertical_margin horizontal_list">
                     <li class="horizontal">
                         <button     class="btn_round light"
