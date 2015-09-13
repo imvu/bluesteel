@@ -9,6 +9,7 @@ div.title
 
 div.list_label
 {
+    min-width: 200px;
     width: 90%;
     padding-left: 10px;
     font-family: arial, sans-serif;
@@ -17,6 +18,17 @@ div.list_label
     font-size: 15px;
     line-height: 20px;
     font-style: bold;
+    text-align: left;
+}
+
+div.normal
+{
+    padding-left: 20px;
+    font-family: arial, sans-serif;
+    color: gray;
+    font-size: 15px;
+    line-height: 20px;
+    text-align: left;
 }
 
 div.command

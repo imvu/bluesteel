@@ -18,6 +18,35 @@
         </div>
     </ul>
 </div>
-<div class="container_med container_height">
+<div class="container_large container_height">
+    <ul class="no_dots no_indent horizontal_list">
+        {% for worker in workers %}
+        <li class="horizontal">
+            <div class="upper_card white_card">
+                <div class="title">{{worker.name}}</div>
+            </div>
+            <div class="lower_card white_card">
+                <ul class="no_dots no_indent">
+                    <li>
+                        <div class="list_label">OPERATIVE SYSTEM</div>
+                        <div class="normal">{{worker.operative_system}}</div>
+                    </li>
+                    <li>
+                        <div class="list_label">DESCRIPTION</div>
+                        <div class="normal">{{worker.description}}</div>
+                    </li>
+                    <li>
+                        <div class="list_label">COMMIT FEEDER</div>
+                        <div class="normal">{{worker.git_feeder|yesno:"Yes,No"}}</div>
+                    </li>
+                    <li>
+                        <div class="list_label">STATUS</div>
+                        <div class="normal">{{worker.last_update}}</div>
+                    </li>
+                </ul>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
 </div>
 {% endblock %}

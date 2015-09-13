@@ -227,7 +227,6 @@ def main():
         con_info = process_connect_worker(settings, host_info, session)
 
         if con_info['succeed']:
-
             working = True
             while working:
                 if con_info['git_feeder']:

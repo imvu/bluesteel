@@ -137,4 +137,3 @@ def login_worker_info(request):
             return res.get_response(401, 'Access denied!', {})
     else:
         return res.get_only_post_allowed({})
-

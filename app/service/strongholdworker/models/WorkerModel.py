@@ -27,4 +27,5 @@ class WorkerEntry(models.Model):
         obj['operative_system'] = self.operative_system
         obj['description'] = self.description
         obj['git_feeder'] = self.git_feeder
+        obj['last_update'] = str(self.created_at)
         return obj
