@@ -68,7 +68,9 @@ def get_worker_info(request, worker_uuid):
         if worker == None:
             return res.get_response(400, 'Worker not found', obj)
         else:
-            obj['worker'] = worker.as_object()
+            ret_worker = worker.as_object()
+            ret_worker['last_update'] = str(ret_worker['last_update'])
+            obj['worker'] = ret_worker
             return res.get_response(200, 'Worker found', obj)
     else:
         return res.get_only_get_allowed({})
@@ -106,8 +108,10 @@ def create_worker_info(request):
                     user=user
                 )
                 new_worker.save()
+                ret_worker = new_worker.as_object()
+                ret_worker['last_update'] = str(ret_worker['last_update'])
 
-                return res.get_response(200, 'Worker created succesfuly!', new_worker.as_object())
+                return res.get_response(200, 'Worker created succesfuly!', ret_worker)
         else:
             return res.get_response(405, 'Worker already created', {})
     else:

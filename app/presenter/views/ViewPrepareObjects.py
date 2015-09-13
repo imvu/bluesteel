@@ -75,6 +75,8 @@ def prepare_workers_for_html(workers):
     worker_items = []
 
     for worker in workers:
+
+        worker['last_update'] = str(worker['last_update'])
         worker_items.append(worker)
         worker_items.append(worker)
         worker_items.append(worker)
