@@ -1,6 +1,7 @@
 """ Prepare objects for template consumption """
 
 from app.presenter.views import ViewUrlGenerator
+import json
 
 def prepare_layout_for_html(layout):
     """ Adds information to layout objects for template interaction """
@@ -77,6 +78,8 @@ def prepare_workers_for_html(workers):
     for worker in workers:
 
         worker['last_update'] = str(worker['last_update'])
+        worker['url'] = {}
+        worker['url']['report'] = ViewUrlGenerator.get_worker_report_url(worker['id'])
         worker_items.append(worker)
         worker_items.append(worker)
         worker_items.append(worker)
@@ -85,3 +88,17 @@ def prepare_workers_for_html(workers):
         worker_items.append(worker)
 
     return worker_items
+
+def prepare_reports_for_html(reports):
+    """ Prepares reports for html template """
+    report_items = []
+
+    for report in reports:
+        for com_set in report['command_sets']:
+            for command in com_set['commands']:
+                parts = json.loads(command['command'])
+                command['command'] = ' '.join(parts)
+
+        report_items.append(report)
+
+    return report_items

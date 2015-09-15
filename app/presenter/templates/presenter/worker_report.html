@@ -1,0 +1,46 @@
+{% extends "presenter/base.html" %}
+
+{% load staticfiles %}
+
+{% block data_body %}
+<div class="container_large container_height">
+    <ul class="no_dots no_indent">
+        {% for report in reports %}
+        <li>
+            <div class="upper_card white_card">
+                <div class="title">REPORT {{report.id}}</div>
+            </div>
+            {% for set in report.command_sets %}
+                {% if forloop.last %}
+                <div class="lower_card white_card">
+                {% else %}
+                <div class="middle_card white_card">
+                {% endif%}
+                    <ul class="no_dots no_indent">
+                        {% for command in set.commands %}
+                        <li>
+                            <div class="list_label indent_1">COMMAND {{command.order}}</div>
+                            <div class="command indent_2">{{command.command}}</div>
+                            {% if command.result.out != "" %}
+                                <div class="list_label indent_1">OUT</div>
+                                <div class="command indent_2">{{command.result.out}}</div>
+                            {% endif %}
+                            {% if command.result.status != 0 %}
+                                <div class="list_label indent_1">ERR (status code: {{command.result.status}})</div>
+                                <div class="command indent_2">{{command.result.err}}</div>
+                            {% endif %}
+                            {% if not forloop.last %}
+                                <br/>
+                                <br/>
+                            {% endif %}
+                            <!-- <div class="command">..</div> -->
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endfor %}
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

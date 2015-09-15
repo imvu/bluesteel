@@ -28,4 +28,7 @@ urlpatterns = patterns(
 
     url(r'^workers/$',
         'app.presenter.views.ViewWorkers.get_workers'),
+
+    url(r'^worker/(?P<worker_id>\d+)/report/all/$',
+        'app.presenter.views.ViewWorkers.get_worker_reports'),
 )

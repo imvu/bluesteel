@@ -20,3 +20,6 @@ def get_delete_project_url(project_id):
 
 def get_download_worker_url():
     return '/bluesteelworker/download/'
+
+def get_worker_report_url(worker_id):
+    return '/main/worker/{0}/report/'.format(worker_id)

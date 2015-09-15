@@ -20,6 +20,7 @@ class CommandEntry(models.Model):
 
         obj = {}
         obj['command'] = self.command
+        obj['order'] = self.order
         obj['result'] = {}
 
         entry = CommandResultEntry.objects.all().filter(command_id=self.id).first()

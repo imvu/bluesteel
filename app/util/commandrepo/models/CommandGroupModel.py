@@ -19,6 +19,7 @@ class CommandGroupEntry(models.Model):
     def as_object(self):
         """ Returns a Command Group Entry as an object """
         obj = {}
+        obj['id'] = self.id
         obj['command_sets'] = []
 
         sets_list = CommandSetEntry.objects.all().filter(group_id=self.id).order_by('order')
