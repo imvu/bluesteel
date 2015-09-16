@@ -19,4 +19,7 @@ urlpatterns = patterns(
 
     url(r'^worker/login/',
         'app.service.strongholdworker.views.ViewsWorker.login_worker_info'),
+
+    url(r'^worker/(?P<worker_id>\d+)/update/activity/',
+        'app.service.strongholdworker.views.ViewsWorker.update_worker_activity'),
 )

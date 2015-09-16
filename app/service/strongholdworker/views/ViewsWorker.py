@@ -70,6 +70,11 @@ def get_worker_info(request, worker_uuid):
         else:
             ret_worker = worker.as_object()
             ret_worker['last_update'] = str(ret_worker['last_update'])
+            ret_worker['url'] = {}
+            ret_worker['url']['update_activity_point'] = '{0}/bluesteelworker/worker/{1}/update/activity/'.format(
+                'http://localhost:28028',
+                ret_worker['id']
+                )
             obj['worker'] = ret_worker
             return res.get_response(200, 'Worker found', obj)
     else:
@@ -139,5 +144,16 @@ def login_worker_info(request):
         else:
             # the authentication system was unable to verify the username and password
             return res.get_response(401, 'Access denied!', {})
+    else:
+        return res.get_only_post_allowed({})
+
+def update_worker_activity(request, worker_id):
+    if request.method == 'POST':
+        worker = WorkerEntry.objects.filter(id=worker_id).first()
+        if worker:
+            worker.save()
+            return res.get_response(200, 'Acitivity updated', {})
+        else:
+            return res.get_response(404, 'Worker not found!', {})
     else:
         return res.get_only_post_allowed({})

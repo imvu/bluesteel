@@ -141,3 +141,22 @@ class ViewsWorkerTestCase(TestCase):
         self.assertEqual(401, resp_obj['status'])
         self.assertEqual('Access denied!', resp_obj['message'])
         self.assertEqual(False, self.client.session.has_key('_auth_user_id'))
+
+    def test_update_activity(self):
+        update_time_1 = WorkerEntry.objects.filter(id=self.worker_1.id).first().updated_at
+
+        resp = self.client.post(
+            '/bluesteelworker/worker/{0}/update/activity/'.format(self.worker_1.id),
+            data='',
+            content_type='text/plain'
+        )
+
+        update_time_2 = WorkerEntry.objects.filter(id=self.worker_1.id).first().updated_at
+
+        res.check_cross_origin_headers(self, resp)
+        resp_obj = json.loads(resp.content)
+
+        self.assertEqual(200, resp_obj['status'])
+        self.assertFalse(update_time_1 == update_time_2)
+        self.assertTrue(update_time_1 < update_time_2)
+

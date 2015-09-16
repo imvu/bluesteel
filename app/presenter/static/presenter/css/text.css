@@ -52,3 +52,18 @@ div.indent_2
 {
     padding-left: 20px;
 }
+
+div.inline
+{
+    display: inline-block;
+}
+
+div.color_correct
+{
+    color: steelblue;
+}
+
+div.color_error
+{
+    color: darkred;
+}

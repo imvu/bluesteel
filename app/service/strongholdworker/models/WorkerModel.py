@@ -2,6 +2,8 @@
 
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
+import datetime
 
 class WorkerEntry(models.Model):
     """ Worker Model """
@@ -27,5 +29,6 @@ class WorkerEntry(models.Model):
         obj['operative_system'] = self.operative_system
         obj['description'] = self.description
         obj['git_feeder'] = self.git_feeder
-        obj['last_update'] = self.created_at
+        obj['last_update'] = timezone.now() - self.updated_at
+        obj['activity'] = obj['last_update'] < datetime.timedelta(seconds=30)
         return obj

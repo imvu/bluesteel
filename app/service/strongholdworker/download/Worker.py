@@ -137,26 +137,32 @@ def get_host_info():
     )
     return obj
 
-def process_connect_worker(settings, host_info, session):
-    """ Create a Worker if first time and make login to BlueSteel """
-    connection_info = {}
-
+def process_get_or_create_worker(settings, host_info, session):
+    """ Gets or create a Worker, returns worker info """
     url = '{0}{1}/'.format(settings['worker_info_point'], host_info['uuid'])
     resp = session.get(url, {})
-    git_feeder = resp['content']['data']['worker']['git_feeder']
 
     if resp['content']['status'] == 400:
         print '- Creating Worker'
         resp = session.post(settings['create_worker_info_point'], {}, json.dumps(host_info))
 
-    login_info = {}
-    login_info['username'] = host_info['uuid'][0:30]
-    login_info['password'] = host_info['uuid']
+    connection_info = {}
+    connection_info['succeed'] = resp['content']['status'] == 200
+    connection_info['worker'] = resp['content']['data']['worker']
+    return connection_info
 
+def process_connect_worker(settings, worker_info, session):
+    """ Make woerker login to BlueSteel """
     print '- Login Worker'
+
+    login_info = {}
+    login_info['username'] = worker_info['uuid'][0:30]
+    login_info['password'] = worker_info['uuid']
+
     resp = session.post(settings['login_worker_point'], {}, json.dumps(login_info))
 
-    connection_info['git_feeder'] = git_feeder
+    connection_info = {}
+    connection_info['git_feeder'] = worker_info['git_feeder']
     connection_info['succeed'] = resp['content']['status'] == 200
     return connection_info
 
@@ -216,7 +222,7 @@ def process_git_feed(settings, session):
 
 def main():
     """ Main """
-    # ppi = pprint.PrettyPrinter(depth=10)
+    ppi = pprint.PrettyPrinter(depth=10)
 
     settings = read_settings()
     host_info = get_host_info()
@@ -224,18 +230,30 @@ def main():
 
 
     while True:
-        con_info = process_connect_worker(settings, host_info, session)
+        worker_info = process_get_or_create_worker(settings, host_info, session)
+        if worker_info['succeed'] == False:
+            continue
 
-        if con_info['succeed']:
-            working = True
-            while working:
-                if con_info['git_feeder']:
-                    print '- Start git feeding'
-                    process_git_feed(settings, session)
-                else:
-                    print 'Is not a git feeder'
+        con_info = process_connect_worker(settings, worker_info['worker'], session)
+        if con_info['succeed'] == False:
+            continue
 
-                time.sleep(10)
+        session.post(worker_info['worker']['url']['update_activity_point'], {}, '')
+
+        ppi.pprint(worker_info)
+        ppi.pprint(con_info)
+        time.sleep(1)
+
+        # if con_info['succeed']:
+        #     working = True
+        #     while working:
+        #         if con_info['git_feeder']:
+        #             print '- Start git feeding'
+        #             process_git_feed(settings, session)
+        #         else:
+        #             print 'Is not a git feeder'
+
+        #         time.sleep(10)
 
 
 

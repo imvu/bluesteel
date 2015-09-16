@@ -40,8 +40,16 @@
                         <div class="normal indent_2">{{worker.git_feeder|yesno:"Yes,No"}}</div>
                     </li>
                     <li>
-                        <div class="list_label indent_1">STATUS</div>
-                        <div class="normal indent_2">{{worker.last_update}}</div>
+                        <div class="list_label indent_1">LAST ACTIVITY</div>
+                        <div class="normal indent_2">
+                            {% if worker.activity %}
+                            <div class="normal inline color_correct"><i class="fa fa-check-circle"></i></div>
+                            <div class="normal inline">{{worker.last_update}} ago</div>
+                            {% else %}
+                            <div class="normal inline color_error"><i class="fa fa-exclamation-circle"></i></i></div>
+                            <div class="normal inline color_error">{{worker.last_update}} ago</div>
+                            {% endif %}
+                        </div>
                     </li>
                 </ul>
             </div>
