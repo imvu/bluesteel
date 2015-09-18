@@ -244,16 +244,16 @@ def main():
         ppi.pprint(con_info)
         time.sleep(1)
 
-        # if con_info['succeed']:
-        #     working = True
-        #     while working:
-        #         if con_info['git_feeder']:
-        #             print '- Start git feeding'
-        #             process_git_feed(settings, session)
-        #         else:
-        #             print 'Is not a git feeder'
+        if con_info['succeed']:
+            working = True
+            while working:
+                if con_info['git_feeder']:
+                    print '- Start git feeding'
+                    process_git_feed(settings, session)
+                else:
+                    print 'Is not a git feeder'
 
-        #         time.sleep(10)
+                time.sleep(10)
 
 
 
