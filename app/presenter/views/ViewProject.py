@@ -1,6 +1,7 @@
 """ Presenter views, Project page functions """
 
 from app.presenter.views import ViewUrlGenerator
+from app.presenter.views import ViewPrepareObjects
 from app.service.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
 from app.service.bluesteel.controllers.BluesteelProjectController import BluesteelProjectController
 from app.service.bluesteel.managers.BluesteelLayoutManager import BluesteelLayoutManager
@@ -68,6 +69,7 @@ def get_project_branches(request, project_id):
 
         data = {}
         data['branches'] = BluesteelProjectController.get_project_git_branch_data(project_entry)
+        data['menu'] = ViewPrepareObjects.prepare_menu_for_html([])
 
         return res.get_template_data(request, 'presenter/project_branches.html', data)
     else:
