@@ -9,11 +9,15 @@
             <div class="container_small container_height">
                 <ul class="no_dots no_indent">
                     <li>
-                        <div class="upper_card white_card">{{branch.name}}</div>
+                        <div class="upper_card white_card">
+                            <div class="title">{{branch.name}}</div>
+                        </div>
                     </li>
                     {% for commit in branch.commits %}
                     <li>
-                        <div class="middle_card white_card">{{commit.hash}}</div>
+                        <div class="middle_card white_card">
+                            <div class="normal">{{commit.hash}}</div>
+                        </div>
                     </li>
                     {% endfor %}
                     <li>
