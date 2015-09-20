@@ -2,7 +2,7 @@
 
 from app.presenter.views import ViewUrlGenerator
 from app.service.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
-from app.service.bluesteel.managers.BluesteelProjectManager import BluesteelProjectManager
+from app.service.bluesteel.controllers.BluesteelProjectController import BluesteelProjectController
 from app.service.bluesteel.managers.BluesteelLayoutManager import BluesteelLayoutManager
 from app.service.bluesteel.views import BluesteelSchemas
 from app.util.commandrepo.models.CommandGroupModel import CommandGroupEntry
@@ -50,7 +50,7 @@ def delete_project(request, project_id):
         project_entry.layout.active = False
         project_entry.layout.save()
 
-        BluesteelProjectManager.delete_project(project_entry)
+        BluesteelProjectController.delete_project(project_entry)
         BluesteelLayoutManager.sort_layout_projects_by_order(project_entry.layout)
 
         obj = {}
@@ -58,3 +58,17 @@ def delete_project(request, project_id):
         return res.get_response(200, 'Project deleted', obj)
     else:
         return res.get_only_post_allowed({})
+
+def get_project_branches(request, project_id):
+    """ Display all the branches of a project """
+    if request.method == 'GET':
+        project_entry = BluesteelProjectEntry.objects.filter(id=project_id).first()
+        if project_entry == None:
+            return res.get_template_data(request, 'presenter/not_found.html', {})
+
+        data = {}
+        data['branches'] = BluesteelProjectController.get_project_git_branch_data(project_entry)
+
+        return res.get_template_data(request, 'presenter/project_branches.html', data)
+    else:
+        return res.get_template_data(request, 'presenter/not_found.html', {})

@@ -2,6 +2,7 @@
 
 from django.db import models
 from django.core.paginator import Paginator
+from app.service.bluesteel.controllers.BluesteelProjectController import BluesteelProjectController
 
 # pylint: disable=R0904
 
@@ -17,7 +18,7 @@ class BluesteelLayoutManager(models.Manager):
         # I need to fix these function to not have a circular reference :(
         from app.service.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
         project_count = BluesteelProjectEntry.objects.filter(layout=layout).count()
-        BluesteelProjectEntry.objects.create_default_project(layout, 'project-name', project_count)
+        BluesteelProjectController.create_default_project(layout, 'project-name', project_count)
 
     @staticmethod
     def sort_layout_projects_by_order(layout):

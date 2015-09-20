@@ -46,3 +46,51 @@ class GitController(object):
 
         project.delete()
 
+    @staticmethod
+    def get_commits_from_trails(project, branch):
+        """ Return commits as objects from trails """
+        trails = GitBranchTrailEntry.objects.filter(project=project, branch=branch).order_by('order')
+        obj = []
+
+        for trail in trails:
+            obj.append(trail.commit.as_object())
+        return obj
+
+    @staticmethod
+    def get_commits_from_trails_until_fork(project, branch, fork_point_hash):
+        """ Return commits as objects from trails until fork point is found """
+        trails = GitBranchTrailEntry.objects.filter(project=project, branch=branch).order_by('order')
+        obj = []
+
+        for trail in trails:
+            if trail.commit.commit_hash == fork_point_hash:
+                break
+            obj.append(trail.commit.as_object())
+        return obj
+
+    @staticmethod
+    def get_branches_trimmed_by_merge_target(project):
+        """ Returns branch data trimmed by its merge target information """
+        branches = GitBranchEntry.objects.filter(project=project)
+        ret_branches = []
+
+        for branch in branches:
+            merge_target = GitBranchMergeTargetEntry.objects.filter(project=project, current_branch=branch).first()
+            if merge_target == None:
+                continue
+
+            obj = {}
+            obj['name'] = branch.name
+            obj['commits'] = []
+
+            if merge_target.current_branch == merge_target.target_branch:
+                obj['commits'] = GitController.get_commits_from_trails(project, branch)
+            else:
+                obj['commits'] = GitController.get_commits_from_trails_until_fork(
+                    project,
+                    branch,
+                    merge_target.fork_point.commit_hash
+                )
+
+            ret_branches.append(obj)
+        return ret_branches

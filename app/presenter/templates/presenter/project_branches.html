@@ -1,0 +1,28 @@
+{% extends "presenter/base.html" %}
+
+{% load staticfiles %}
+
+{% block data_body %}
+<ul class="no_dots no_indent horizontal_list">
+    {% for branch in branches %}
+        <li class="horizontal">
+            <div class="container_small container_height">
+                <ul class="no_dots no_indent">
+                    <li>
+                        <div class="upper_card white_card">{{branch.name}}</div>
+                    </li>
+                    {% for commit in branch.commits %}
+                    <li>
+                        <div class="middle_card white_card">{{commit.hash}}</div>
+                    </li>
+                    {% endfor %}
+                    <li>
+                        <div class="lower_card white_card">
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </li>
+    {% endfor %}
+</ul>
+{% endblock %}

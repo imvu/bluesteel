@@ -16,3 +16,7 @@ class GitCommitEntry(models.Model):
     def __unicode__(self):
         return u'Commit hash:{0}, name:{1}'.format(self.commit_hash, self.author.name)
 
+    def as_object(self):
+        obj = {}
+        obj['hash'] = self.commit_hash
+        return obj

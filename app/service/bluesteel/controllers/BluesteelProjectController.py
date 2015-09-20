@@ -1,19 +1,14 @@
-""" Manager for Bluesteel Project entries """
+""" BluesteelProject Controller file """
 
-from django.db import models
+from app.service.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
 from app.service.gitrepo.models.GitProjectModel import GitProjectEntry
 from app.service.gitrepo.controllers.GitController import GitController
 from app.util.commandrepo.models.CommandModel import CommandEntry
 from app.util.commandrepo.models.CommandSetModel import CommandSetEntry
 from app.util.commandrepo.models.CommandGroupModel import CommandGroupEntry
 
-# pylint: disable=R0904
-
-# Class has not __init__ method
-# pylint: disable=W0232
-
-class BluesteelProjectManager(models.Manager):
-    """ Bluesteel Project Manager """
+class BluesteelProjectController(object):
+    """ BluesteelProject controller with helper functions """
 
     @staticmethod
     def create_command(command_set, order, command):
@@ -34,7 +29,7 @@ class BluesteelProjectManager(models.Manager):
             order=order,
         )
 
-        BluesteelProjectManager.create_command(command_set_clone, 0, 'git clone http://www.test.com')
+        BluesteelProjectController.create_command(command_set_clone, 0, 'git clone http://www.test.com')
         return command_set_clone
 
     @staticmethod
@@ -46,14 +41,14 @@ class BluesteelProjectManager(models.Manager):
             order=order,
         )
 
-        BluesteelProjectManager.create_command(command_set_fetch, 0, 'git checkout master')
-        BluesteelProjectManager.create_command(command_set_fetch, 1, 'git reset --hard origin/master')
-        BluesteelProjectManager.create_command(command_set_fetch, 2, 'git clean -f -d -q')
-        BluesteelProjectManager.create_command(command_set_fetch, 3, 'git fetch --all')
-        BluesteelProjectManager.create_command(command_set_fetch, 4, 'git pull -r origin master')
-        BluesteelProjectManager.create_command(command_set_fetch, 5, 'git checkout master')
-        BluesteelProjectManager.create_command(command_set_fetch, 6, 'git submodule sync')
-        BluesteelProjectManager.create_command(command_set_fetch, 7, 'git submodule update --init --recursive')
+        BluesteelProjectController.create_command(command_set_fetch, 0, 'git checkout master')
+        BluesteelProjectController.create_command(command_set_fetch, 1, 'git reset --hard origin/master')
+        BluesteelProjectController.create_command(command_set_fetch, 2, 'git clean -f -d -q')
+        BluesteelProjectController.create_command(command_set_fetch, 3, 'git fetch --all')
+        BluesteelProjectController.create_command(command_set_fetch, 4, 'git pull -r origin master')
+        BluesteelProjectController.create_command(command_set_fetch, 5, 'git checkout master')
+        BluesteelProjectController.create_command(command_set_fetch, 6, 'git submodule sync')
+        BluesteelProjectController.create_command(command_set_fetch, 7, 'git submodule update --init --recursive')
         return command_set_fetch
 
     @staticmethod
@@ -65,16 +60,16 @@ class BluesteelProjectManager(models.Manager):
             order=order,
         )
 
-        BluesteelProjectManager.create_command(command_set_pull, 0, 'git pull -r')
+        BluesteelProjectController.create_command(command_set_pull, 0, 'git pull -r')
         return command_set_pull
 
     @staticmethod
     def create_default_command_group():
         """ Creates a group of sets of commands """
         group = CommandGroupEntry.objects.create()
-        BluesteelProjectManager.create_default_command_set_clone(group, 0)
-        BluesteelProjectManager.create_default_command_set_fetch(group, 1)
-        BluesteelProjectManager.create_default_command_set_pull(group, 2)
+        BluesteelProjectController.create_default_command_set_clone(group, 0)
+        BluesteelProjectController.create_default_command_set_fetch(group, 1)
+        BluesteelProjectController.create_default_command_set_pull(group, 2)
         return group
 
     @staticmethod
@@ -83,16 +78,25 @@ class BluesteelProjectManager(models.Manager):
         GitController.delete_git_project(project.git_project)
         project.delete()
 
-    def create_default_project(self, layout, name, order):
+    @staticmethod
+    def create_default_project(layout, name, order):
         """ Adds a default project to a given layout """
         new_git_project = GitProjectEntry.objects.create(url='http://www.test.com')
 
-        command_group = BluesteelProjectManager.create_default_command_group()
+        command_group = BluesteelProjectController.create_default_command_group()
 
-        self.create(
+        entry = BluesteelProjectEntry.objects.create(
             layout=layout,
             name=name,
             order=order,
             command_group=command_group,
             git_project=new_git_project
         )
+
+        return entry
+
+    @staticmethod
+    def get_project_git_branch_data(project):
+        """ Returns branch data associated with a project """
+        return GitController.get_branches_trimmed_by_merge_target(project)
+

@@ -4,12 +4,13 @@ from django.test import TestCase
 from app.service.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
 from app.service.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
 from app.service.bluesteel.managers.BluesteelLayoutManager import BluesteelLayoutManager
+from app.service.bluesteel.controllers.BluesteelProjectController import BluesteelProjectController
 from app.service.gitrepo.models.GitProjectModel import GitProjectEntry
 from app.util.commandrepo.models.CommandModel import CommandEntry
 from app.util.httpcommon import res
 import json
 
-class BluesteelProjectManagerTestCase(TestCase):
+class BluesteelProjectControllerTestCase(TestCase):
 
     def setUp(self):
         pass
@@ -17,7 +18,7 @@ class BluesteelProjectManagerTestCase(TestCase):
     def tearDown(self):
         pass
 
-    def test_create_default_rpoject_entry(self):
+    def test_create_default_project_entry(self):
         self.assertEqual(0, BluesteelProjectEntry.objects.all().count())
 
         layout_entry = BluesteelLayoutEntry.objects.create(
@@ -25,7 +26,7 @@ class BluesteelProjectManagerTestCase(TestCase):
             archive='archive-1'
         )
 
-        new_entry = BluesteelProjectEntry.objects.create_default_project(
+        new_entry = BluesteelProjectController.create_default_project(
             layout=layout_entry,
             name='project-name',
             order=28
