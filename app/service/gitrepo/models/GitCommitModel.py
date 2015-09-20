@@ -17,6 +17,9 @@ class GitCommitEntry(models.Model):
         return u'Commit hash:{0}, name:{1}'.format(self.commit_hash, self.author.name)
 
     def as_object(self):
+        """ Return the entry as an object """
         obj = {}
         obj['hash'] = self.commit_hash
+        obj['author'] = self.author.as_object()
+        obj['committer'] = self.committer.as_object()
         return obj

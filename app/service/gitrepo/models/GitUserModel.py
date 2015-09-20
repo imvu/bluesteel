@@ -12,3 +12,9 @@ class GitUserEntry(models.Model):
 
     def __unicode__(self):
         return u'GitUser name:{0}, email:{1}'.format(self.name, self.email)
+
+    def as_object(self):
+        obj = {}
+        obj['name'] = self.name
+        obj['email'] = self.email
+        return obj
