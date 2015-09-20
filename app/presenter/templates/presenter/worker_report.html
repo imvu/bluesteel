@@ -7,14 +7,14 @@
     <ul class="no_dots no_indent">
         {% for report in reports %}
         <li>
-            <div class="upper_card white_card">
+            <div class="upper_card white_card card_padding_large">
                 <div class="title">REPORT {{report.id}}</div>
             </div>
             {% for set in report.command_sets %}
                 {% if forloop.last %}
-                <div class="lower_card white_card">
+                <div class="lower_card white_card card_padding_large">
                 {% else %}
-                <div class="middle_card white_card">
+                <div class="middle_card white_card card_padding_large">
                 {% endif%}
                     <ul class="no_dots no_indent">
                         {% for command in set.commands %}

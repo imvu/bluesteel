@@ -6,7 +6,6 @@ div.card
     margin-bottom: 10px;
     margin-left: auto;
     margin-right: auto;
-    padding: 30px;
 }
 
 div.upper_card
@@ -18,7 +17,6 @@ div.upper_card
     margin-bottom: 4px;
     margin-left: auto;
     margin-right: auto;
-    padding: 30px;
 }
 
 div.lower_card
@@ -30,7 +28,6 @@ div.lower_card
     margin-bottom: 10px;
     margin-left: auto;
     margin-right: auto;
-    padding: 30px;
 }
 
 div.middle_card
@@ -40,10 +37,22 @@ div.middle_card
     margin-bottom: 4px;
     margin-left: auto;
     margin-right: auto;
-    padding: 30px;
 }
 
 div.white_card
 {
     background: white;
+}
+
+div.card_padding_large
+{
+    padding: 30px;
+}
+
+div.card_padding_small
+{
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 30px;
+    padding-right: 30px;
 }

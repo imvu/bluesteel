@@ -5,7 +5,7 @@
 {% block data_body %}
 <div class="container_small">
     <ul class="no_dots no_indent">
-        <div class="card white_card">
+        <div class="card white_card card_padding_large">
             <ul class="no_dots no_indent horizontal_list">
                 <li class="horizontal">
                     <button class="btn_rect primary"
@@ -22,10 +22,10 @@
     <ul class="no_dots no_indent horizontal_list">
         {% for worker in workers %}
         <li class="horizontal">
-            <div class="upper_card white_card">
+            <div class="upper_card white_card card_padding_small">
                 <div class="title">{{worker.name}}</div>
             </div>
-            <div class="lower_card white_card">
+            <div class="lower_card white_card card_padding_large">
                 <ul class="no_dots no_indent">
                     <li>
                         <div class="list_label indent_1">OPERATIVE SYSTEM</div>
