@@ -16,13 +16,25 @@
                     {% for commit in branch.commits %}
                     <li>
                         <div class="middle_card white_card card_padding_small">
+                            <div class="list_label indent_1">HASH</div>
                             <div class="command">{{commit.short_hash}}</div>
-                            <div class="normal">{{commit.author.name}}</div>
+                            <div class="list_label indent_1">AUTHOR</div>
+                            <div class="normal indent_2">{{commit.author.name}}</div>
                         </div>
                     </li>
                     {% endfor %}
                     <li>
-                        <div class="lower_card white_card card_padding_small">
+                        <div class="lower_card white_card card_padding_large">
+                            <div class="list_label indent_1">MERGE TARGET</div>
+                            <div class="container_input">
+                                <select     class="selection individual"
+                                            name="merge_target_select"
+                                >
+                                    <option value="master">master</option>
+                                    <option value="master">master</option>
+                                    <option value="master">master</option>
+                                </select>
+                            </div>
                         </div>
                     </li>
                 </ul>
