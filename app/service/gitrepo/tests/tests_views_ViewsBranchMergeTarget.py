@@ -7,6 +7,7 @@ from django.utils import timezone
 from app.util.httpcommon import res
 from app.service.gitrepo.models.GitProjectModel import GitProjectEntry
 from app.service.gitrepo.models.GitBranchModel import GitBranchEntry
+from app.service.gitrepo.models.GitBranchTrailModel import GitBranchTrailEntry
 from app.service.gitrepo.models.GitBranchMergeTargetModel import GitBranchMergeTargetEntry
 from app.service.gitrepo.models.GitCommitModel import GitCommitEntry
 from app.service.gitrepo.models.GitUserModel import GitUserEntry
@@ -56,6 +57,15 @@ class ViewsGitMergeTargetTestCase(TestCase):
             committer_date=timezone.now()
         )
 
+        self.git_commit4 = GitCommitEntry.objects.create(
+            project=self.git_project1,
+            commit_hash='0000400004000040000400004000040000400004',
+            author=self.git_user1,
+            author_date=timezone.now(),
+            committer=self.git_user1,
+            committer_date=timezone.now()
+        )
+
         self.git_branch1 = GitBranchEntry.objects.create(
             project=self.git_project1,
             name='branch-1',
@@ -76,6 +86,51 @@ class ViewsGitMergeTargetTestCase(TestCase):
             commit_son=self.git_commit1,
             commit_parent=self.git_commit3,
             content='diff-1-3'
+        )
+
+        # 1 - 2 - 3
+        # 4
+
+        self.git_trail_1_1 = GitBranchTrailEntry.objects.create(
+            project=self.git_project1,
+            branch=self.git_branch1,
+            commit=self.git_commit1,
+            order=0
+        )
+
+        self.git_trail_1_2 = GitBranchTrailEntry.objects.create(
+            project=self.git_project1,
+            branch=self.git_branch1,
+            commit=self.git_commit4,
+            order=1
+        )
+
+        self.git_trail_2_1 = GitBranchTrailEntry.objects.create(
+            project=self.git_project1,
+            branch=self.git_branch2,
+            commit=self.git_commit2,
+            order=0
+        )
+
+        self.git_trail_2_2 = GitBranchTrailEntry.objects.create(
+            project=self.git_project1,
+            branch=self.git_branch2,
+            commit=self.git_commit4,
+            order=1
+        )
+
+        self.git_trail_3_1 = GitBranchTrailEntry.objects.create(
+            project=self.git_project1,
+            branch=self.git_branch3,
+            commit=self.git_commit3,
+            order=0
+        )
+
+        self.git_trail_3_2 = GitBranchTrailEntry.objects.create(
+            project=self.git_project1,
+            branch=self.git_branch3,
+            commit=self.git_commit4,
+            order=1
         )
 
         self.git_merge_target1 = GitBranchMergeTargetEntry.objects.create(
@@ -195,8 +250,9 @@ class ViewsGitMergeTargetTestCase(TestCase):
 
         self.assertEqual(200, resp_obj['status'])
         self.assertEqual('Target branch changed', resp_obj['message'])
-        self.assertEqual(True, GitBranchMergeTargetEntry.objects.get(project=self.git_project1, target_branch=self.git_branch3).invalidated)
+        self.assertEqual(False, GitBranchMergeTargetEntry.objects.get(project=self.git_project1, target_branch=self.git_branch3).invalidated)
         self.assertEqual('branch-3', GitBranchMergeTargetEntry.objects.get(project=self.git_project1, target_branch=self.git_branch3).target_branch.name)
+        self.assertEqual('0000400004000040000400004000040000400004', GitBranchMergeTargetEntry.objects.get(project=self.git_project1, target_branch=self.git_branch3).fork_point.commit_hash)
 
     def test_merge_target_not_changed_because_its_the_same(self):
         self.git_merge_target1.target_branch = self.git_branch3
