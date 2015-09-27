@@ -25,14 +25,17 @@
                     {% endfor %}
                     <li>
                         <div class="lower_card white_card card_padding_large">
+                            <div class="list_label indent_1">FORK COMMIT</div>
+                            <div class="command indent_2">{{branch.merge_target.fork_point.short_hash}}</div>
                             <div class="list_label indent_1">MERGE TARGET</div>
                             <div class="container_input">
                                 <select     class="selection individual"
                                             name="merge_target_select"
+                                            onchange="change_branch_merge_target(this, '{{url.change_merge_target}}', '{{branch.name}}');"
                                 >
-                                    <option value="master">master</option>
-                                    <option value="master">master</option>
-                                    <option value="master">master</option>
+                                    {% for info in branch.branch_info %}
+                                        <option value="{{info.name}}" {{info.current_target|yesno:"selected,"}} >{{info.name}}</option>
+                                    {% endfor %}
                                 </select>
                             </div>
                         </div>

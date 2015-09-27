@@ -74,13 +74,26 @@ class GitController(object):
         branches = GitBranchEntry.objects.filter(project=project)
         ret_branches = []
 
+        branch_names = []
+        for branch in branches:
+            branch_names.append(branch.name)
+
         for branch in branches:
             merge_target = GitBranchMergeTargetEntry.objects.filter(project=project, current_branch=branch).first()
             if merge_target == None:
                 continue
 
+            branch_info = []
+            for branch_name in branch_names:
+                obj = {}
+                obj['name'] = branch_name
+                obj['current_target'] = branch_name == merge_target.target_branch.name
+                branch_info.append(obj)
+
             obj = {}
             obj['name'] = branch.name
+            obj['merge_target'] = merge_target.as_object()
+            obj['branch_info'] = branch_info
             obj['commits'] = []
 
             if merge_target.current_branch == merge_target.target_branch:
@@ -94,3 +107,23 @@ class GitController(object):
 
             ret_branches.append(obj)
         return ret_branches
+
+
+    @staticmethod
+    def get_fork_point(trails_a, trails_b):
+        """ Returns the last common commit between 2 branch trails """
+        fork_point = None
+
+        if len(trails_a) > len(trails_b):
+            long_list = trails_a
+            short_list = trails_b
+        else:
+            long_list = trails_b
+            short_list = trails_a
+
+        for index, trail in enumerate(short_list):
+            if trail.commit.commit_hash != long_list[index].commit.commit_hash:
+                break
+            else:
+                fork_point = trail.commit
+        return fork_point

@@ -23,3 +23,6 @@ def get_download_worker_url():
 
 def get_worker_report_url(worker_id):
     return '/main/worker/{0}/report/'.format(worker_id)
+
+def get_change_merge_target_url(project_id):
+    return '/git/branch/merge/target/project/{0}/'.format(project_id)

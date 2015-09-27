@@ -25,5 +25,5 @@ class GitBranchMergeTargetEntry(models.Model):
         obj = {}
         obj['current_branch'] = self.current_branch.as_object()
         obj['target_branch'] = self.target_branch.as_object()
-        obj['fork_point'] = self.fork_point.commit_hash
+        obj['fork_point'] = self.fork_point.as_object()
         return obj

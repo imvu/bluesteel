@@ -69,6 +69,8 @@ def get_project_branches(request, project_id):
 
         data = {}
         data['branches'] = BluesteelProjectController.get_project_git_branch_data(project_entry)
+        data['url'] = {}
+        data['url']['change_merge_target'] = ViewUrlGenerator.get_change_merge_target_url(project_entry.id)
         data['menu'] = ViewPrepareObjects.prepare_menu_for_html([])
 
         return res.get_template_data(request, 'presenter/project_branches.html', data)

@@ -44,6 +44,16 @@ class GitBranchMergeTargetTestCase(TestCase):
         )
         return git_commit
 
+    def create_trail(self, project, branch, commit, order):
+        del self
+        git_trail = GitBranchTrailEntry.objects.create(
+            project=project,
+            branch=branch,
+            commit=commit,
+            order=order
+        )
+        return git_trail
+
     def test_delete_git_project(self):
         git_commit1 = GitCommitEntry.objects.create(
             project=self.git_project1,
@@ -126,6 +136,7 @@ class GitBranchMergeTargetTestCase(TestCase):
         #  3   5
         #  2 - 4
         #  1
+
         # Commits
         git_commit1 = self.create_commit(self.git_project1, self.git_user1, 1)
         git_commit2 = self.create_commit(self.git_project1, self.git_user1, 2)
@@ -261,3 +272,214 @@ class GitBranchMergeTargetTestCase(TestCase):
         self.assertEqual('branch2' , branches_trimmed[1]['name'])
         self.assertEqual('0000500005000050000500005000050000500005', branches_trimmed[1]['commits'][0]['hash'])
         self.assertEqual('0000400004000040000400004000040000400004', branches_trimmed[1]['commits'][1]['hash'])
+
+    def test_last_equal_trail_commit(self):
+        #  4   6
+        #  3 - 5
+        #  2
+        #  1
+
+        # Commits
+        git_commit1 = self.create_commit(self.git_project1, self.git_user1, 1)
+        git_commit2 = self.create_commit(self.git_project1, self.git_user1, 2)
+        git_commit3 = self.create_commit(self.git_project1, self.git_user1, 3)
+        git_commit4 = self.create_commit(self.git_project1, self.git_user1, 4)
+        git_commit5 = self.create_commit(self.git_project1, self.git_user1, 5)
+        git_commit6 = self.create_commit(self.git_project1, self.git_user1, 6)
+
+        # Branches
+        git_branch1 = GitBranchEntry.objects.create(
+            project=self.git_project1,
+            commit=git_commit4,
+            name='branch1'
+        )
+
+        git_branch2 = GitBranchEntry.objects.create(
+            project=self.git_project1,
+            commit=git_commit6,
+            name='branch2'
+        )
+
+        # Trails Branch 1
+        git_trail_1_1 = self.create_trail(self.git_project1, git_branch1, git_commit1, 3)
+        git_trail_1_2 = self.create_trail(self.git_project1, git_branch1, git_commit2, 2)
+        git_trail_1_3 = self.create_trail(self.git_project1, git_branch1, git_commit3, 1)
+        git_trail_1_4 = self.create_trail(self.git_project1, git_branch1, git_commit4, 0)
+
+        # Trails Branch 2
+        git_trail_2_1 = self.create_trail(self.git_project1, git_branch2, git_commit1, 4)
+        git_trail_2_2 = self.create_trail(self.git_project1, git_branch2, git_commit2, 3)
+        git_trail_2_3 = self.create_trail(self.git_project1, git_branch2, git_commit3, 2)
+        git_trail_2_4 = self.create_trail(self.git_project1, git_branch2, git_commit5, 1)
+        git_trail_2_5 = self.create_trail(self.git_project1, git_branch2, git_commit6, 0)
+
+        trails_a = GitBranchTrailEntry.objects.filter(project=self.git_project1, branch=git_branch1).order_by('-order')
+        trails_b = GitBranchTrailEntry.objects.filter(project=self.git_project1, branch=git_branch2).order_by('-order')
+
+        commit_fork_point = GitController.get_fork_point(trails_a, trails_b)
+
+        self.assertEqual('0000300003000030000300003000030000300003', commit_fork_point.commit_hash)
+
+        commit_fork_point = GitController.get_fork_point(trails_b, trails_a)
+
+        self.assertEqual('0000300003000030000300003000030000300003', commit_fork_point.commit_hash)
+
+
+    def test_last_equal_trail_commit_with_only_one_commit_shared(self):
+        #  4   8
+        #  3   7
+        #  2   6
+        #  1 - 5
+
+        # Commits
+        git_commit1 = self.create_commit(self.git_project1, self.git_user1, 1)
+        git_commit2 = self.create_commit(self.git_project1, self.git_user1, 2)
+        git_commit3 = self.create_commit(self.git_project1, self.git_user1, 3)
+        git_commit4 = self.create_commit(self.git_project1, self.git_user1, 4)
+        git_commit5 = self.create_commit(self.git_project1, self.git_user1, 5)
+        git_commit6 = self.create_commit(self.git_project1, self.git_user1, 6)
+        git_commit7 = self.create_commit(self.git_project1, self.git_user1, 7)
+        git_commit8 = self.create_commit(self.git_project1, self.git_user1, 8)
+
+        # Branches
+        git_branch1 = GitBranchEntry.objects.create(
+            project=self.git_project1,
+            commit=git_commit4,
+            name='branch1'
+        )
+
+        git_branch2 = GitBranchEntry.objects.create(
+            project=self.git_project1,
+            commit=git_commit8,
+            name='branch2'
+        )
+
+        # Trails Branch 1
+        git_trail_1_1 = self.create_trail(self.git_project1, git_branch1, git_commit1, 3)
+        git_trail_1_2 = self.create_trail(self.git_project1, git_branch1, git_commit2, 2)
+        git_trail_1_3 = self.create_trail(self.git_project1, git_branch1, git_commit3, 1)
+        git_trail_1_4 = self.create_trail(self.git_project1, git_branch1, git_commit4, 0)
+
+        # Trails Branch 2
+        git_trail_2_1 = self.create_trail(self.git_project1, git_branch2, git_commit1, 4)
+        git_trail_2_2 = self.create_trail(self.git_project1, git_branch2, git_commit5, 3)
+        git_trail_2_3 = self.create_trail(self.git_project1, git_branch2, git_commit6, 2)
+        git_trail_2_4 = self.create_trail(self.git_project1, git_branch2, git_commit7, 1)
+        git_trail_2_5 = self.create_trail(self.git_project1, git_branch2, git_commit8, 0)
+
+        trails_a = GitBranchTrailEntry.objects.filter(project=self.git_project1, branch=git_branch1).order_by('-order')
+        trails_b = GitBranchTrailEntry.objects.filter(project=self.git_project1, branch=git_branch2).order_by('-order')
+
+        commit_fork_point = GitController.get_fork_point(trails_a, trails_b)
+
+        self.assertEqual('0000100001000010000100001000010000100001', commit_fork_point.commit_hash)
+
+        commit_fork_point = GitController.get_fork_point(trails_b, trails_a)
+
+        self.assertEqual('0000100001000010000100001000010000100001', commit_fork_point.commit_hash)
+
+
+    def test_last_equal_trail_commit_with_rebased_branch(self):
+        #      7
+        #      6
+        #  4 - 5
+        #  3
+        #  2
+        #  1
+
+        # Commits
+        git_commit1 = self.create_commit(self.git_project1, self.git_user1, 1)
+        git_commit2 = self.create_commit(self.git_project1, self.git_user1, 2)
+        git_commit3 = self.create_commit(self.git_project1, self.git_user1, 3)
+        git_commit4 = self.create_commit(self.git_project1, self.git_user1, 4)
+        git_commit5 = self.create_commit(self.git_project1, self.git_user1, 5)
+        git_commit6 = self.create_commit(self.git_project1, self.git_user1, 6)
+        git_commit7 = self.create_commit(self.git_project1, self.git_user1, 7)
+
+
+        # Branches
+        git_branch1 = GitBranchEntry.objects.create(
+            project=self.git_project1,
+            commit=git_commit4,
+            name='branch1'
+        )
+
+        git_branch2 = GitBranchEntry.objects.create(
+            project=self.git_project1,
+            commit=git_commit7,
+            name='branch2'
+        )
+
+        # Trails Branch 1
+        git_trail_1_1 = self.create_trail(self.git_project1, git_branch1, git_commit1, 3)
+        git_trail_1_2 = self.create_trail(self.git_project1, git_branch1, git_commit2, 2)
+        git_trail_1_3 = self.create_trail(self.git_project1, git_branch1, git_commit3, 1)
+        git_trail_1_4 = self.create_trail(self.git_project1, git_branch1, git_commit4, 0)
+
+        # Trails Branch 2
+        git_trail_2_1 = self.create_trail(self.git_project1, git_branch2, git_commit1, 6)
+        git_trail_2_2 = self.create_trail(self.git_project1, git_branch2, git_commit2, 5)
+        git_trail_2_3 = self.create_trail(self.git_project1, git_branch2, git_commit3, 4)
+        git_trail_2_4 = self.create_trail(self.git_project1, git_branch2, git_commit4, 3)
+        git_trail_2_5 = self.create_trail(self.git_project1, git_branch2, git_commit5, 2)
+        git_trail_2_6 = self.create_trail(self.git_project1, git_branch2, git_commit6, 1)
+        git_trail_2_7 = self.create_trail(self.git_project1, git_branch2, git_commit7, 0)
+
+        trails_a = GitBranchTrailEntry.objects.filter(project=self.git_project1, branch=git_branch1).order_by('-order')
+        trails_b = GitBranchTrailEntry.objects.filter(project=self.git_project1, branch=git_branch2).order_by('-order')
+
+        commit_fork_point = GitController.get_fork_point(trails_a, trails_b)
+
+        self.assertEqual('0000400004000040000400004000040000400004', commit_fork_point.commit_hash)
+
+        commit_fork_point = GitController.get_fork_point(trails_b, trails_a)
+
+        self.assertEqual('0000400004000040000400004000040000400004', commit_fork_point.commit_hash)
+
+    def test_last_equal_trail_commit_with_branches_equal(self):
+        #  4
+        #  3
+        #  2
+        #  1
+
+        # Commits
+        git_commit1 = self.create_commit(self.git_project1, self.git_user1, 1)
+        git_commit2 = self.create_commit(self.git_project1, self.git_user1, 2)
+        git_commit3 = self.create_commit(self.git_project1, self.git_user1, 3)
+        git_commit4 = self.create_commit(self.git_project1, self.git_user1, 4)
+
+        # Branches
+        git_branch1 = GitBranchEntry.objects.create(
+            project=self.git_project1,
+            commit=git_commit4,
+            name='branch1'
+        )
+
+        git_branch2 = GitBranchEntry.objects.create(
+            project=self.git_project1,
+            commit=git_commit4,
+            name='branch2'
+        )
+
+        # Trails Branch 1
+        git_trail_1_1 = self.create_trail(self.git_project1, git_branch1, git_commit1, 3)
+        git_trail_1_2 = self.create_trail(self.git_project1, git_branch1, git_commit2, 2)
+        git_trail_1_3 = self.create_trail(self.git_project1, git_branch1, git_commit3, 1)
+        git_trail_1_4 = self.create_trail(self.git_project1, git_branch1, git_commit4, 0)
+
+        # Trails Branch 2
+        git_trail_2_1 = self.create_trail(self.git_project1, git_branch2, git_commit1, 3)
+        git_trail_2_2 = self.create_trail(self.git_project1, git_branch2, git_commit2, 2)
+        git_trail_2_3 = self.create_trail(self.git_project1, git_branch2, git_commit3, 1)
+        git_trail_2_4 = self.create_trail(self.git_project1, git_branch2, git_commit4, 0)
+
+        trails_a = GitBranchTrailEntry.objects.filter(project=self.git_project1, branch=git_branch1).order_by('-order')
+        trails_b = GitBranchTrailEntry.objects.filter(project=self.git_project1, branch=git_branch2).order_by('-order')
+
+        commit_fork_point = GitController.get_fork_point(trails_a, trails_b)
+
+        self.assertEqual('0000400004000040000400004000040000400004', commit_fork_point.commit_hash)
+
+        commit_fork_point = GitController.get_fork_point(trails_b, trails_a)
+
+        self.assertEqual('0000400004000040000400004000040000400004', commit_fork_point.commit_hash)

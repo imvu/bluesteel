@@ -1,10 +1,12 @@
 """ Git BranchMergetTarget views """
 
 from app.util.httpcommon import res, val
+from app.util.logger.models.LogModel import LogEntry
 from app.service.gitrepo.models.GitProjectModel import GitProjectEntry
 from app.service.gitrepo.models.GitBranchModel import GitBranchEntry
 from app.service.gitrepo.models.GitBranchTrailModel import GitBranchTrailEntry
 from app.service.gitrepo.models.GitBranchMergeTargetModel import GitBranchMergeTargetEntry
+from app.service.gitrepo.controllers.GitController import GitController
 from app.service.gitrepo.views import GitRepoSchemas
 
 
@@ -62,17 +64,15 @@ def set_branch_merge_target(request, project_id):
             project=project_entry,
             branch=target_branch).order_by('-order')
 
-        fork_point = None
-        for index, trail in enumerate(target_branch_trails):
-            if trail.commit.commit_hash != current_branch_trails[index].commit.commit_hash:
-                break
-            else:
-                fork_point = trail.commit
+        fork_point = GitController.get_fork_point(target_branch_trails, current_branch_trails)
 
         # If fork point not present, we select the first and most ancient commit of the branch
         if not fork_point:
-            fork_point = current_branch_trails[-1]
-            target_branch = current_branch
+            msg = ('Fork point is None, this should never happen\n'
+                   'Current branch: {0}\n'
+                   'Target branch: {1}\n'
+                  ).format(current_branch.name, target_branch.name)
+            LogEntry.error(request.user, msg)
 
         merge_target.target_branch = target_branch
         merge_target.fork_point = fork_point
