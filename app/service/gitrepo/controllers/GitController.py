@@ -92,6 +92,7 @@ class GitController(object):
 
             obj = {}
             obj['name'] = branch.name
+            obj['id'] = branch.id
             obj['merge_target'] = merge_target.as_object()
             obj['branch_info'] = branch_info
             obj['commits'] = []
@@ -120,7 +121,7 @@ class GitController(object):
         branches = []
 
         merge_target = GitBranchMergeTargetEntry.objects.filter(project=project, current_branch=branch).first()
-        if merge_target:
+        if merge_target and merge_target.current_branch != merge_target.target_branch:
             branches.append(merge_target.target_branch)
 
         branches.append(branch)

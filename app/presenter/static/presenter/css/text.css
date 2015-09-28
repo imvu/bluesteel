@@ -67,3 +67,17 @@ div.color_error
 {
     color: darkred;
 }
+
+a.title_link
+{
+    font-family: arial, sans-serif;
+    color: gray;
+    text-decoration: none;
+    line-height: 30px;
+    font-style: bold;
+}
+
+a.title_link:hover
+{
+    color: steelblue;
+}

@@ -11,7 +11,7 @@ class GitBranchEntry(models.Model):
     updated_at = models.DateTimeField(auto_now=True, editable=False)
 
     def __unicode__(self):
-        return u'Branch:{0}, name:{1}'.format(self.commit.commit_hash, self.name)
+        return u'Branch - id:{0} hash:{1}, name:{2}'.format(self.id, self.commit.commit_hash, self.name)
 
     def as_object(self):
         """ Returns the entry as an object """

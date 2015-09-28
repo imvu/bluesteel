@@ -29,6 +29,9 @@ urlpatterns = patterns(
     url(r'^project/(?P<project_id>\d+)/branch/all/$',
         'app.presenter.views.ViewProject.get_project_branches'),
 
+    url(r'^project/(?P<project_id>\d+)/branch/(?P<branch_id>\d+)/$',
+        'app.presenter.views.ViewProject.get_project_single_branch'),
+
     url(r'^workers/$',
         'app.presenter.views.ViewWorkers.get_workers'),
 

@@ -6,6 +6,7 @@ from app.service.bluesteel.models.BluesteelProjectModel import BluesteelProjectE
 from app.service.bluesteel.controllers.BluesteelProjectController import BluesteelProjectController
 from app.service.bluesteel.managers.BluesteelLayoutManager import BluesteelLayoutManager
 from app.service.bluesteel.views import BluesteelSchemas
+from app.service.gitrepo.models.GitBranchModel import GitBranchEntry
 from app.util.commandrepo.models.CommandGroupModel import CommandGroupEntry
 from app.util.httpcommon import res
 from app.util.httpcommon import val
@@ -67,8 +68,33 @@ def get_project_branches(request, project_id):
         if project_entry == None:
             return res.get_template_data(request, 'presenter/not_found.html', {})
 
+        branches = BluesteelProjectController.get_project_git_branch_data(project_entry)
+
         data = {}
-        data['branches'] = BluesteelProjectController.get_project_git_branch_data(project_entry)
+        data['branches'] = ViewPrepareObjects.prepare_branches_for_html(project_entry.id, branches)
+        data['url'] = {}
+        data['url']['change_merge_target'] = ViewUrlGenerator.get_change_merge_target_url(project_entry.id)
+        data['menu'] = ViewPrepareObjects.prepare_menu_for_html([])
+
+        return res.get_template_data(request, 'presenter/project_branches.html', data)
+    else:
+        return res.get_template_data(request, 'presenter/not_found.html', {})
+
+def get_project_single_branch(request, project_id, branch_id):
+    """ Display all the branches of a project """
+    if request.method == 'GET':
+        project_entry = BluesteelProjectEntry.objects.filter(id=project_id).first()
+        if project_entry == None:
+            return res.get_template_data(request, 'presenter/not_found.html', {})
+
+        branch_entry = GitBranchEntry.objects.filter(id=branch_id, project=project_entry.git_project.id).first()
+        if branch_entry == None:
+            return res.get_template_data(request, 'presenter/not_found.html', {})
+
+        branches = BluesteelProjectController.get_project_single_git_branch_data(project_entry, branch_entry)
+
+        data = {}
+        data['branches'] = ViewPrepareObjects.prepare_branches_for_html(project_entry.id, branches)
         data['url'] = {}
         data['url']['change_merge_target'] = ViewUrlGenerator.get_change_merge_target_url(project_entry.id)
         data['menu'] = ViewPrepareObjects.prepare_menu_for_html([])
