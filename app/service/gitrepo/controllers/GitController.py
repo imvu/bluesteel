@@ -69,13 +69,13 @@ class GitController(object):
         return obj
 
     @staticmethod
-    def get_branches_trimmed_by_merge_target(project):
-        """ Returns branch data trimmed by its merge target information """
-        branches = GitBranchEntry.objects.filter(project=project)
+    def get_branches_trimmed_by_merge_target(project, branches):
+        """ Returns branch data trimmed by its merge target information from branches input """
+        all_branches = GitBranchEntry.objects.filter(project=project)
         ret_branches = []
 
         branch_names = []
-        for branch in branches:
+        for branch in all_branches:
             branch_names.append(branch.name)
 
         for branch in branches:
@@ -108,6 +108,24 @@ class GitController(object):
             ret_branches.append(obj)
         return ret_branches
 
+    @staticmethod
+    def get_all_branches_trimmed_by_merge_target(project):
+        """ Returns branch data trimmed by its merge target information """
+        branches = GitBranchEntry.objects.filter(project=project)
+        return GitController.get_branches_trimmed_by_merge_target(project, branches)
+
+    @staticmethod
+    def get_single_branch_trimmed_by_merge_target(project, branch):
+        """ Returns current and target branch data trimmed by its merge target information """
+        branches = []
+
+        merge_target = GitBranchMergeTargetEntry.objects.filter(project=project, current_branch=branch).first()
+        if merge_target:
+            branches.append(merge_target.target_branch)
+
+        branches.append(branch)
+
+        return GitController.get_branches_trimmed_by_merge_target(project, branches)
 
     @staticmethod
     def get_fork_point(trails_a, trails_b):

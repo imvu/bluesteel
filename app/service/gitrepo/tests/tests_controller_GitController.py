@@ -258,7 +258,7 @@ class GitBranchMergeTargetTestCase(TestCase):
             order=3
         )
 
-        branches_trimmed = GitController.get_branches_trimmed_by_merge_target(self.git_project1)
+        branches_trimmed = GitController.get_all_branches_trimmed_by_merge_target(self.git_project1)
 
         self.assertEqual(2 , len(branches_trimmed))
 

@@ -98,5 +98,5 @@ class BluesteelProjectController(object):
     @staticmethod
     def get_project_git_branch_data(project):
         """ Returns branch data associated with a project """
-        return GitController.get_branches_trimmed_by_merge_target(project)
+        return GitController.get_all_branches_trimmed_by_merge_target(project)
 
