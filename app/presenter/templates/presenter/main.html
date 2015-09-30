@@ -5,17 +5,6 @@
 {% block data_body %}
 <div class="container_small container_height">
     <ul class="no_dots no_indent">
-        <div class="card white_card card_padding_large">
-            <ul class="no_dots no_indent horizontal_list">
-                <li class="horizontal">
-                    <button class="btn_rect primary"
-                            onclick="create_new_layout(this, '{{create_layout.url}}');"
-                    >
-                        Add Layout
-                    </button>
-                </li>
-            </ul>
-        </div>
         {% for layout in layout_list %}
         <li>
             <div class="upper_card white_card card_padding_small">

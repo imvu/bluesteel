@@ -3,21 +3,6 @@
 {% load staticfiles %}
 
 {% block data_body %}
-<div class="container_small">
-    <ul class="no_dots no_indent">
-        <div class="card white_card card_padding_large">
-            <ul class="no_dots no_indent horizontal_list">
-                <li class="horizontal">
-                    <button class="btn_rect primary"
-                            onclick="window.location='{{download_worker.url}}';"
-                    >
-                        Download Worker
-                    </button>
-                </li>
-            </ul>
-        </div>
-    </ul>
-</div>
 <div class="container_large container_height">
     <ul class="no_dots no_indent horizontal_list">
         {% for worker in workers %}

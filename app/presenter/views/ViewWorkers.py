@@ -14,11 +14,17 @@ def get_workers(request):
         for entry in worker_entries:
             workers.append(entry.as_object())
 
+        control = {}
+        control['name'] = '  Download Worker'
+        control['link'] = ViewUrlGenerator.get_download_worker_url()
+        control['icon'] = 'fa fa-plus'
+        control['onclick'] = 'window.location="{0}"'.format(control['link'])
+
         data = {}
         data['menu'] = ViewPrepareObjects.prepare_menu_for_html([])
         data['workers'] = ViewPrepareObjects.prepare_workers_for_html(workers)
-        data['download_worker'] = {}
-        data['download_worker']['url'] = ViewUrlGenerator.get_download_worker_url()
+        data['controls'] = []
+        data['controls'].append(control)
 
         return res.get_template_data(request, 'presenter/workers.html', data)
     else:

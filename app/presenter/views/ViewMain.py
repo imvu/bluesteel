@@ -16,10 +16,16 @@ def get_main(request):
     for layout in layout_list:
         layout = ViewPrepareObjects.prepare_layout_for_html(layout)
 
+    control = {}
+    control['name'] = '  Add Layout'
+    control['link'] = ViewUrlGenerator.get_layout_create_url()
+    control['icon'] = 'fa fa-plus'
+    control['onclick'] = 'create_new_layout(this, \'{0}\');'.format(control['link'])
+
     data = {}
     data['layout_list'] = layout_list
     data['menu'] = ViewPrepareObjects.prepare_menu_for_html([])
-    data['create_layout'] = {}
-    data['create_layout']['url'] = ViewUrlGenerator.get_layout_create_url()
+    data['controls'] = []
+    data['controls'].append(control)
 
     return res.get_template_data(request, 'presenter/main.html', data)

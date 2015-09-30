@@ -1,3 +1,13 @@
+menu.no_margin
+{
+    margin: 0px;
+}
+
+menu.no_padding
+{
+    padding: 0px;
+}
+
 div.menu_bar_container
 {
     height: 45px;
@@ -33,4 +43,36 @@ a.menu_item_link
 a.menu_item_link:hover
 {
     color: #E0E0E0;
+}
+
+div.control_bar_container
+{
+    height: 45px;
+    background: transparent;
+    border: solid 1px lightgray;
+}
+
+li.control_item
+{
+    background: transparent;
+    display: inline-block;
+    margin-left: 15px;
+    margin-right: 15px;
+    line-height: 45px;
+    text-align: vertical;
+}
+
+a.control_item_link
+{
+    font-family: arial, sans-serif;
+    color: gray;
+    text-decoration: none;
+    line-height: 45px;
+    cursor: pointer;
+}
+
+a.control_item_link:hover
+{
+    color: lightgray;
+    cursor: pointer;
 }

@@ -3,6 +3,16 @@ ul.no_dots
     list-style: none;
 }
 
+ul.no_margin
+{
+    margin: 0px;
+}
+
+ul.no_padding
+{
+    padding: 0px;
+}
+
 ul.no_indent
 {
     margin: 0px;

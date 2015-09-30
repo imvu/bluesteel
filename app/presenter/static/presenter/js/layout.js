@@ -8,7 +8,8 @@ create_new_layout = function(thisObj, url) {
         var res_obj = JSON.parse(xhr.response);
 
         if (res_obj['status'] === 200) {
-            window.location=res_obj['data']['layout']['url'];
+            console.log(res_obj);
+            window.location=res_obj['data']['layout']['url']['edit'];
         } else {
         }
     }
@@ -91,6 +92,7 @@ saveProject = function(idFormProject) {
 
         if (res_obj['status'] === 200) {
             console.log('project saved!');
+            location.reload();
         } else {
             console.log('error happened!');
         }
@@ -117,6 +119,7 @@ saveLayout = function(idFormLayout) {
 
         if (res_obj['status'] === 200) {
             console.log('layout saved!');
+            location.reload();
         } else {
             console.log('error happened!', res_obj);
         }

@@ -71,6 +71,7 @@ def prepare_menu_for_html(menu):
 
     return menu_items
 
+
 def prepare_workers_for_html(workers):
     """ Prepares workers for html template """
     worker_items = []
