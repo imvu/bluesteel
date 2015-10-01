@@ -31,14 +31,14 @@ def zip_folder_and_return_path(path_to_compress, path_destination, name_destinat
     zip_file.close()
     return path_final
 
-def is_username_registered(username):
-    """ Returns true or false if the user is registered inside DB"""
-    try:
-        User.objects.get(username=username)
-    except User.DoesNotExist:
-        return False
-    return True
-
+def get_worker_urls(domain, worker_id):
+    """ Returns all the urls associated with a worker """
+    obj = {}
+    obj['update_activity_point'] = 'http://{0}/bluesteelworker/worker/{1}/update/activity/'.format(
+        domain,
+        worker_id
+    )
+    return obj
 
 def get_worker(request):
     """ Returns the worker scripts compressed in a zip file """
@@ -70,11 +70,7 @@ def get_worker_info(request, worker_uuid):
         else:
             ret_worker = worker.as_object()
             ret_worker['last_update'] = str(ret_worker['last_update'])
-            ret_worker['url'] = {}
-            ret_worker['url']['update_activity_point'] = '{0}/bluesteelworker/worker/{1}/update/activity/'.format(
-                'http://localhost:28028',
-                ret_worker['id']
-                )
+            ret_worker['url'] = get_worker_urls(request.get_host(), ret_worker['id'])
             obj['worker'] = ret_worker
             return res.get_response(200, 'Worker found', obj)
     else:
@@ -93,30 +89,33 @@ def create_worker_info(request):
             return res.get_schema_failed(val_resp_obj)
 
         obj = val_resp_obj
+        username_trimmed = obj['uuid'][:30]
 
-        worker = WorkerEntry.objects.all().filter(uuid=obj['uuid']).first()
+        worker = WorkerEntry.objects.all().filter(uuid=username_trimmed).first()
         if worker == None:
-            if is_username_registered(obj['uuid']):
-                return res.get_response(405, 'Worker not found but user already present!', {})
-            else:
+            user = User.objects.filter(username=username_trimmed).first()
+            if not user:
                 user = User.objects.create_user(
-                    username=obj['uuid'][:30],
+                    username=username_trimmed,
                     email=None,
                     password=obj['uuid']
                 )
                 user.save()
 
-                new_worker = WorkerEntry.objects.create(
-                    uuid=obj['uuid'],
-                    name=obj['host_name'],
-                    operative_system=obj['operative_system'],
-                    user=user
-                )
-                new_worker.save()
-                ret_worker = new_worker.as_object()
-                ret_worker['last_update'] = str(ret_worker['last_update'])
+            new_worker = WorkerEntry.objects.create(
+                uuid=obj['uuid'],
+                name=obj['host_name'],
+                operative_system=obj['operative_system'],
+                user=user
+            )
+            new_worker.save()
 
-                return res.get_response(200, 'Worker created succesfuly!', ret_worker)
+            ret = {}
+            ret['worker'] = new_worker.as_object()
+            ret['worker']['url'] = get_worker_urls(request.get_host(), ret['worker']['id'])
+            ret['worker']['last_update'] = str(ret['worker']['last_update'])
+
+            return res.get_response(200, 'Worker created succesfuly!', ret)
         else:
             return res.get_response(405, 'Worker already created', {})
     else:
