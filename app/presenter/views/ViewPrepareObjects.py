@@ -82,11 +82,6 @@ def prepare_workers_for_html(workers):
         worker['url'] = {}
         worker['url']['report'] = ViewUrlGenerator.get_worker_report_url(worker['id'])
         worker_items.append(worker)
-        worker_items.append(worker)
-        worker_items.append(worker)
-        worker_items.append(worker)
-        worker_items.append(worker)
-        worker_items.append(worker)
 
     return worker_items
 
