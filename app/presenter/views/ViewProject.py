@@ -61,6 +61,29 @@ def delete_project(request, project_id):
     else:
         return res.get_only_post_allowed({})
 
+def get_projects(request):
+    """ Display all branch names """
+    if request.method == 'GET':
+        project_entries = BluesteelProjectEntry.objects.all()
+
+        projects = []
+        for project in project_entries:
+            obj = {}
+            obj['name'] = project.name
+            obj['url'] = {}
+            obj['url']['branches'] = ViewUrlGenerator.get_project_branches_url(project.id)
+            projects.append(obj)
+
+        data = {}
+        data['projects'] = projects
+        data['menu'] = ViewPrepareObjects.prepare_menu_for_html([])
+
+        print data
+
+        return res.get_template_data(request, 'presenter/projects.html', data)
+    else:
+        return res.get_template_data(request, 'presenter/not_found.html', {})
+
 def get_project_branches(request, project_id):
     """ Display all the branches of a project """
     if request.method == 'GET':
