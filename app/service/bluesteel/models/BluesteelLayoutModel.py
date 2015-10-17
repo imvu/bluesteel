@@ -2,7 +2,6 @@
 
 from django.db import models
 from app.service.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
-from app.service.bluesteel.managers.BluesteelLayoutManager import BluesteelLayoutManager
 
 class BluesteelLayoutEntry(models.Model):
     """ BlueSteel Layout """
@@ -12,7 +11,6 @@ class BluesteelLayoutEntry(models.Model):
     project_index_path = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True, editable=False)
-    objects = BluesteelLayoutManager()
 
     def __unicode__(self):
         return u'Bluesteel Layout name:{0}'.format(

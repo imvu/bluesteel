@@ -3,7 +3,7 @@
 from app.presenter.views import ViewUrlGenerator
 from app.presenter.views import ViewPrepareObjects
 from app.service.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
-from app.service.bluesteel.managers.BluesteelLayoutManager import BluesteelLayoutManager
+from app.service.bluesteel.controllers.BluesteelLayoutController import BluesteelLayoutController
 from app.service.bluesteel.views import BluesteelSchemas
 from app.util.httpcommon import res
 from app.util.httpcommon import val
@@ -74,8 +74,8 @@ def add_default_project(request, layout_id):
         if layout_entry == None:
             return res.get_response(404, 'Bluesteel layout not found', {})
 
-        BluesteelLayoutManager.add_default_project_to_layout(layout_entry)
-        BluesteelLayoutManager.sort_layout_projects_by_order(layout_entry)
+        BluesteelLayoutController.add_default_project_to_layout(layout_entry)
+        BluesteelLayoutController.sort_layout_projects_by_order(layout_entry)
 
         obj = {}
         obj['redirect'] = ViewUrlGenerator.get_layout_edit_url(layout_entry.id)

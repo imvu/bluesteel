@@ -1,15 +1,15 @@
-""" Bluesteel Layout Manager tests """
+""" Bluesteel Layout Controller tests """
 
 from django.test import TestCase
 from app.service.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
 from app.service.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
-from app.service.bluesteel.managers.BluesteelLayoutManager import BluesteelLayoutManager
+from app.service.bluesteel.controllers.BluesteelLayoutController import BluesteelLayoutController
 from app.service.gitrepo.models.GitProjectModel import GitProjectEntry
 from app.util.commandrepo.models.CommandModel import CommandEntry
 from app.util.httpcommon import res
 import json
 
-class BluesteelLayoutManagerTestCase(TestCase):
+class BluesteelLayoutControllerTestCase(TestCase):
 
     def setUp(self):
         pass
@@ -21,7 +21,7 @@ class BluesteelLayoutManagerTestCase(TestCase):
         self.assertEqual(0, BluesteelLayoutEntry.objects.all().count())
         self.assertEqual(0, BluesteelProjectEntry.objects.all().count())
 
-        new_entry = BluesteelLayoutEntry.objects.create_new_default_layout()
+        new_entry = BluesteelLayoutController.create_new_default_layout()
 
         self.assertEqual(1, BluesteelLayoutEntry.objects.all().count())
         self.assertEqual(1, BluesteelProjectEntry.objects.all().count())

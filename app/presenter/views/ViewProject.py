@@ -4,7 +4,7 @@ from app.presenter.views import ViewUrlGenerator
 from app.presenter.views import ViewPrepareObjects
 from app.service.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
 from app.service.bluesteel.controllers.BluesteelProjectController import BluesteelProjectController
-from app.service.bluesteel.managers.BluesteelLayoutManager import BluesteelLayoutManager
+from app.service.bluesteel.controllers.BluesteelLayoutController import BluesteelLayoutController
 from app.service.bluesteel.views import BluesteelSchemas
 from app.service.gitrepo.models.GitBranchModel import GitBranchEntry
 from app.util.commandrepo.models.CommandGroupModel import CommandGroupEntry
@@ -53,7 +53,7 @@ def delete_project(request, project_id):
         project_entry.layout.save()
 
         BluesteelProjectController.delete_project(project_entry)
-        BluesteelLayoutManager.sort_layout_projects_by_order(project_entry.layout)
+        BluesteelLayoutController.sort_layout_projects_by_order(project_entry.layout)
 
         obj = {}
         obj['redirect'] = ViewUrlGenerator.get_layout_edit_url(layout_id)

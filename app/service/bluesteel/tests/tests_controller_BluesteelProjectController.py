@@ -3,7 +3,6 @@
 from django.test import TestCase
 from app.service.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
 from app.service.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
-from app.service.bluesteel.managers.BluesteelLayoutManager import BluesteelLayoutManager
 from app.service.bluesteel.controllers.BluesteelProjectController import BluesteelProjectController
 from app.service.gitrepo.models.GitProjectModel import GitProjectEntry
 from app.util.commandrepo.models.CommandModel import CommandEntry
