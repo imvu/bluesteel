@@ -1,21 +1,17 @@
-""" Manager for CommandGroup entries """
+""" Controller for CommandGroup entries """
 
-from django.db import models
+from app.util.commandrepo.models.CommandGroupModel import CommandGroupEntry
 from app.util.commandrepo.models.CommandModel import CommandEntry
 from app.util.commandrepo.models.CommandResultModel import CommandResultEntry
 from app.util.commandrepo.models.CommandSetModel import CommandSetEntry
 
-# pylint: disable=R0904
+class CommandGroupController(object):
+    """ Command Controller """
 
-# Class has not __init__ method
-# pylint: disable=W0232
-
-class CommandGroupManager(models.Manager):
-    """ Command Manager """
-
-    def delete_command_group_by_id(self, command_group_id):
+    @staticmethod
+    def delete_command_group_by_id(command_group_id):
         """ Delete a whole command group and its associated objects """
-        command_group_entry = self.filter(id=command_group_id).first()
+        command_group_entry = CommandGroupEntry.objects.filter(id=command_group_id).first()
 
         if command_group_id == None:
             return
