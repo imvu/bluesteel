@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.test import Client
 from app.service.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
 from app.service.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
-from app.service.bluesteel.managers.BluesteelProjectManager import BluesteelProjectManager
+from app.service.bluesteel.controllers.BluesteelProjectController import BluesteelProjectController
 from app.service.gitrepo.models.GitProjectModel import GitProjectEntry
 from app.util.httpcommon import res
 import json
@@ -70,8 +70,8 @@ class BluesteelViewLayoutTestCase(TestCase):
             name='git-project-2',
         )
 
-        command_group_1 = BluesteelProjectManager.create_default_command_group()
-        command_group_2 = BluesteelProjectManager.create_default_command_group()
+        command_group_1 = BluesteelProjectController.create_default_command_group()
+        command_group_2 = BluesteelProjectController.create_default_command_group()
 
         project_entry_1 = BluesteelProjectEntry.objects.create(
             layout=self.layout_1,

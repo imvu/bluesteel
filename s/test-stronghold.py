@@ -58,17 +58,21 @@ def main(args=sys.argv):
         if len(tag_filter) > 0 and (tag_filter not in test[0]):
             continue
 
+        name_test = '{0}'.format(' '.join(test[0])) 
+
         try:
             result = subprocess.check_call(test[1], cwd=work_dir)
         except subprocess.CalledProcessError, e:
-            print 'Tests: '+ get_red_string('FAILED')
+            print 'Tests {0}: {1}'.format(name_test, get_red_string('FAILED'))
             sys.exit(1)
             return
         if result != 0:
-            print 'Tests: ' + get_red_string('FAILED')
+            print 'Tests {0}: {1}'.format(name_test, get_red_string('FAILED'))
             sys.exit(1)
             return
-    print 'Tests: ' + get_green_string('OK')
+        else:
+            print 'Tests {0}: {1}'.format(name_test, get_green_string('OK'))
+    print 'All tests: ' + get_green_string('OK')
     return
 
 if __name__ == '__main__':

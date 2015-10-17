@@ -141,10 +141,14 @@ class GitFetcherTestCase(TestCase):
         mock_subprocess.return_value = 0
         self.fetcher.create_tmp_folder_for_git_project(self.obj1)
         reports = self.fetcher.commands_clone_git_project(self.obj1)
-        mock_subprocess.call.assert_called_once(['git','clone','https://llorensmarti@bitbucket.org/llorensmarti/test-repo.git'])
-        mock_subprocess.call.assert_called_once(['git','submodule','update', '--init', '--recursive'])
-        # print dir(mock_subprocess)
-        # self.assertEqual(2, mock_subprocess.call.call_count)
+
+        name, args, side = mock_subprocess.mock_calls[0]
+        self.assertEqual(['git','clone','https://llorensmarti@bitbucket.org/llorensmarti/test-repo.git'], args[0])
+
+        name, args, side = mock_subprocess.mock_calls[1]
+        self.assertEqual(['git','submodule','update', '--init', '--recursive'], args[0])
+
+        self.assertEqual(2, mock_subprocess.call_count)
 
         self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC')))
         self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'project')))
@@ -171,12 +175,23 @@ class GitFetcherTestCase(TestCase):
         self.fetcher.create_tmp_folder_for_git_project(self.obj1)
         self.create_git_hidden_folder(settings.TMP_ROOT, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1')
         reports = self.fetcher.commands_fetch_git_project(self.obj1)
-        mock_subprocess.call.assert_called_once(['git', 'reset', '--hard', 'origin/master'])
-        mock_subprocess.call.assert_called_once(['git', 'clean', '-f', '-d', '-q'])
-        mock_subprocess.call.assert_called_once(['git', 'pull', '-r', 'origin', 'master'])
-        mock_subprocess.call.assert_called_once(['git', 'checkout', 'master'])
-        mock_subprocess.call.assert_called_once(['git','submodule','update', '--init', '--recursive'])
-        # self.assertEqual(5, mock_subprocess.call.call_count)
+
+        name, args, side = mock_subprocess.mock_calls[0]
+        self.assertEqual(['git', 'reset', '--hard', 'origin/master'], args[0])
+
+        name, args, side = mock_subprocess.mock_calls[1]
+        self.assertEqual(['git', 'clean', '-f', '-d', '-q'], args[0])
+
+        name, args, side = mock_subprocess.mock_calls[2]
+        self.assertEqual(['git', 'pull', '-r', 'origin', 'master'], args[0])
+
+        name, args, side = mock_subprocess.mock_calls[3]
+        self.assertEqual(['git', 'checkout', 'master'], args[0])
+
+        name, args, side = mock_subprocess.mock_calls[4]
+        self.assertEqual(['git','submodule','update', '--init', '--recursive'], args[0])
+
+        self.assertEqual(5, mock_subprocess.call_count)
 
         self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1')))
         self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'project')))
@@ -217,8 +232,11 @@ class GitFetcherTestCase(TestCase):
         self.fetcher.create_tmp_folder_for_git_project(self.obj1)
         self.create_git_hidden_folder(settings.TMP_ROOT, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1')
         reports = self.fetcher.commands_get_branch_names(self.obj1)
-        mock_subprocess.call.assert_called_once(['git', 'branch'])
-        # self.assertEqual(1, mock_subprocess.call.call_count)
+
+        name, args, side = mock_subprocess.mock_calls[0]
+        self.assertEqual(['git', 'branch'], args[0])
+
+        self.assertEqual(1, mock_subprocess.call_count)
 
         self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1')))
         self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'project')))
@@ -286,10 +304,20 @@ class GitFetcherTestCase(TestCase):
         self.create_git_hidden_folder(settings.TMP_ROOT, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1')
 
         reports = self.fetcher.checkout_remote_branches_to_local(self.obj1, branch_names)
-        # mock_subprocess.call.assert_called_once(['git', 'checkout', 'master'])
-        # mock_subprocess.call.assert_called_once(['git', 'checkout', 'branch-1'])
-        # mock_subprocess.call.assert_called_once(['git', 'checkout', 'branch-2'])
-        # mock_subprocess.call.assert_called_once(['git', 'checkout', 'branch-test-1'])
+
+        name, args, side = mock_subprocess.mock_calls[0]
+        self.assertEqual(['git', 'checkout', 'master'], args[0])
+
+        name, args, side = mock_subprocess.mock_calls[1]
+        self.assertEqual(['git', 'checkout', 'branch-1'], args[0])
+
+        name, args, side = mock_subprocess.mock_calls[2]
+        self.assertEqual(['git', 'checkout', 'branch-2'], args[0])
+
+        name, args, side = mock_subprocess.mock_calls[3]
+        self.assertEqual(['git', 'checkout', 'branch-test-1'], args[0])
+
+        self.assertEqual(4, mock_subprocess.call_count)
 
         self.assertEqual(4, len(reports['commands']))
 
@@ -323,10 +351,17 @@ class GitFetcherTestCase(TestCase):
         self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC','test-repo-1', 'project', 'test-repo-1', '.git')))
 
         reports = self.fetcher.commands_get_branch_names_and_hashes(self.obj1, branch_names)
-        mock_subprocess.call.assert_called_once(['git', 'rev-parse', 'master'])
-        mock_subprocess.call.assert_called_once(['git', 'rev-parse', 'branch-1'])
-        mock_subprocess.call.assert_called_once(['git', 'rev-parse', 'branch-2'])
-        # self.assertEqual(3, mock_subprocess.call.call_count)
+
+        name, args, side = mock_subprocess.mock_calls[0]
+        self.assertEqual(['git', 'rev-parse', 'master'], args[0])
+        
+        name, args, side = mock_subprocess.mock_calls[1]
+        self.assertEqual(['git', 'rev-parse', 'branch-1'], args[0])
+
+        name, args, side = mock_subprocess.mock_calls[2]
+        self.assertEqual(['git', 'rev-parse', 'branch-2'], args[0])
+
+        self.assertEqual(3, mock_subprocess.call_count)
 
         self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC','test-repo-1')))
         self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC','test-repo-1', 'project')))
@@ -403,11 +438,20 @@ class GitFetcherTestCase(TestCase):
         self.fetcher.create_tmp_folder_for_git_project(self.obj1)
         self.create_git_hidden_folder(settings.TMP_ROOT, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1')
         reports = self.fetcher.commands_get_commits_from_branch(self.obj1, branch_name)
-        mock_subprocess.call.assert_called_once(['git', 'reset', '--hard'])
-        mock_subprocess.call.assert_called_once(['git', 'clean', '-f', '-d', '-q'])
-        mock_subprocess.call.assert_called_once(['git', 'checkout', 'branch-1'])
-        mock_subprocess.call.assert_called_once(['git', 'log', '--first-parent', '--date=iso', pretty_string])
-        # self.assertEqual(4, mock_subprocess.call.call_count)
+        
+        name, args, side = mock_subprocess.mock_calls[0]
+        self.assertEqual(['git', 'reset', '--hard'], args[0])
+
+        name, args, side = mock_subprocess.mock_calls[1]
+        self.assertEqual(['git', 'clean', '-f', '-d', '-q'], args[0])
+
+        name, args, side = mock_subprocess.mock_calls[2]
+        self.assertEqual(['git', 'checkout', 'branch-1'], args[0])
+
+        name, args, side = mock_subprocess.mock_calls[3]
+        self.assertEqual(['git', 'log', '--first-parent', '--date=iso', pretty_string], args[0])
+
+        self.assertEqual(4, mock_subprocess.call_count)
 
         self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC','test-repo-1')))
         self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC','test-repo-1', 'project')))
@@ -637,8 +681,11 @@ class GitFetcherTestCase(TestCase):
         self.fetcher.create_tmp_folder_for_git_project(self.obj1)
         self.create_git_hidden_folder(settings.TMP_ROOT, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1')
         reports = self.fetcher.commands_get_fork_commit_between_branches(self.obj1, branch1, branch2)
-        mock_subprocess.call.assert_called_once(['git', 'merge-base', branch1['commit_hash'], branch2['commit_hash']])
-        # self.assertEqual(1, mock_subprocess.call.call_count)
+        
+        name, args, side = mock_subprocess.mock_calls[0]
+        self.assertEqual(['git', 'merge-base', branch1['commit_hash'], branch2['commit_hash']], args[0])
+
+        self.assertEqual(1, mock_subprocess.call_count)
 
         self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1')))
         self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'project')))
@@ -862,8 +909,11 @@ class GitFetcherTestCase(TestCase):
         self.fetcher.create_tmp_folder_for_git_project(self.obj1)
         self.create_git_hidden_folder(settings.TMP_ROOT, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1')
         reports = self.fetcher.commands_get_diff_between_commits(self.obj1, commit_1, commit_2)
-        mock_subprocess.call.assert_called_once(['git', 'diff', commit_1, commit_2])
-        # self.assertEqual(1, mock_subprocess.call.call_count)
+        
+        name, args, side = mock_subprocess.mock_calls[0]
+        self.assertEqual(['git', 'diff', commit_1, commit_2], args[0])
+
+        self.assertEqual(1, mock_subprocess.call_count)
 
         self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1')))
         self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'project')))
