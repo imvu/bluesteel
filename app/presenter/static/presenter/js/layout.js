@@ -92,10 +92,10 @@ saveProject = function(idFormProject) {
 
         if (res_obj['status'] === 200) {
             console.log('project saved!');
-            location.reload();
         } else {
-            console.log('error happened!');
+            console.log('error happened!', res_obj['data']);
         }
+        location.reload();
     }
     xhr.send(JSON.stringify(obj));
     // thisObj.onclick = function() {};

@@ -1,5 +1,8 @@
 """ Bluesteel schemas """
 
+# Anomalous backslash in string: '\.'. String constant might be missing an r prefix.
+# pylint: disable=W1401
+
 SAVE_LAYOUT = {
     '$schema': 'http://json-schema.org/draft-03/schema#',
     'type' : 'object',
@@ -8,6 +11,7 @@ SAVE_LAYOUT = {
     'properties' : {
         'name' : {
             'type' : 'string',
+            'pattern' : '^[^\\/?%*:|"<>\.]+$',
             'minLength' : 1,
             'maxLength' : 50,
         },
@@ -30,6 +34,7 @@ SAVE_PROJECT = {
     'properties' : {
         'name' : {
             'type' : 'string',
+            'pattern' : '^[^\\/?%*:|"<>\.]+$',
             'minLength' : 1,
             'maxLength' : 50,
         },

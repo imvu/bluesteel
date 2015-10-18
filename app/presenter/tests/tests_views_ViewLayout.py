@@ -60,6 +60,25 @@ class BluesteelViewLayoutTestCase(TestCase):
         self.assertEqual(False, BluesteelLayoutEntry.objects.all().first().active)
         self.assertEqual(0, BluesteelLayoutEntry.objects.all().first().project_index_path)
 
+    def test_save_fails_because_name_not_correct(self):
+        obj = {}
+        obj['name'] = 'layout/1'
+        obj['active'] = True
+        obj['project_index_path'] = 0
+
+        resp = self.client.post(
+            '/main/layout/{0}/save/'.format(self.layout_1.id),
+            data = json.dumps(obj),
+            content_type='application/json')
+
+        res.check_cross_origin_headers(self, resp)
+        resp_obj = json.loads(resp.content)
+
+        self.assertEqual(406, resp_obj['status'])
+        self.assertEqual('layout-1', BluesteelLayoutEntry.objects.all().first().name)
+        self.assertEqual(False, BluesteelLayoutEntry.objects.all().first().active)
+        self.assertEqual(0, BluesteelLayoutEntry.objects.all().first().project_index_path)
+
 
     def test_layout_remains_active_because_project_index_is_correct(self):
         git_project_1 = GitProjectEntry.objects.create(
