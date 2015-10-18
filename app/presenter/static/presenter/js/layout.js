@@ -127,6 +127,25 @@ saveLayout = function(idFormLayout) {
     xhr.send(JSON.stringify(obj));
 }
 
+deleteLayout = function(url) {
+    var cookie = getValueFromCookie('csrftoken');
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader('X-CSRFToken', cookie);
+    xhr.onloadend = function(response) {
+        var res_obj = JSON.parse(xhr.response);
+
+        if (res_obj['status'] === 200) {
+            console.log('layout deleted!');
+            window.location=res_obj['data']['redirect'];
+        } else {
+            console.log('error happened!', res_obj);
+        }
+    }
+    xhr.send("");
+}
+
 addProjectToLayout = function(addProjectUrl) {
     var cookie = getValueFromCookie('csrftoken');
 

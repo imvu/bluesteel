@@ -48,3 +48,15 @@ class BluesteelLayoutController(object):
         BluesteelLayoutController.add_default_project_to_layout(new_layout)
 
         return new_layout
+
+    @staticmethod
+    def delete_layout(layout):
+        """ Delete layout """
+        project_entries = BluesteelProjectEntry.objects.filter(layout=layout)
+
+        for project in project_entries:
+            BluesteelProjectController.delete_project(project)
+        layout.delete()
+
+
+

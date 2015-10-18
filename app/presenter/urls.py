@@ -17,6 +17,12 @@ urlpatterns = patterns(
     url(r'^layout/(?P<layout_id>\d+)/add/project/$',
         'app.presenter.views.ViewLayout.add_default_project'),
 
+    url(r'^layout/(?P<layout_id>\d+)/confirm/delete/$',
+        'app.presenter.views.ViewLayout.confirm_delete'),
+
+    url(r'^layout/(?P<layout_id>\d+)/delete/$',
+        'app.presenter.views.ViewLayout.delete'),
+
     url(r'^layout/create/$',
         'app.presenter.views.ViewLayout.post_create_new_layout'),
 

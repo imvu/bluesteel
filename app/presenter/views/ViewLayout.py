@@ -28,7 +28,7 @@ def get_layout_editable(request, layout_id):
 def post_create_new_layout(request):
     """ Create a new layout and return the ID of it """
     if request.method == 'POST':
-        new_layout = BluesteelLayoutEntry.objects.create_new_default_layout()
+        new_layout = BluesteelLayoutController.create_new_default_layout()
 
         data = {}
         data['layout'] = new_layout.as_object()
@@ -37,6 +37,41 @@ def post_create_new_layout(request):
         print data
 
         return res.get_response(200, 'New layout created', data)
+    else:
+        return res.get_only_post_allowed({})
+
+def confirm_delete(request, layout_id):
+    """ Confirm layout deletion """
+    if request.method == 'GET':
+        layout_entry = BluesteelLayoutEntry.objects.filter(id=layout_id).first()
+        if layout_entry == None:
+            return res.get_response(404, 'Bluesteel layout not found', {})
+
+        data = {}
+        data['confirm'] = {}
+        data['confirm']['title'] = 'Delete layout'
+        data['confirm']['text'] = 'Are you sure you want to delete this Layout ?'
+        data['confirm']['url'] = {}
+        data['confirm']['url']['accept'] = ViewUrlGenerator.get_delete_layout_url(layout_entry.id)
+        data['confirm']['url']['cancel'] = ViewUrlGenerator.get_layout_edit_url(layout_entry.id)
+        data['menu'] = ViewPrepareObjects.prepare_menu_for_html([])
+
+        return res.get_template_data(request, 'presenter/confirm.html', data)
+    else:
+        return res.get_only_get_allowed({})
+
+def delete(request, layout_id):
+    """ Layout deletion """
+    if request.method == 'POST':
+        layout_entry = BluesteelLayoutEntry.objects.filter(id=layout_id).first()
+        if layout_entry == None:
+            return res.get_response(404, 'Bluesteel layout not found', {})
+
+        BluesteelLayoutController.delete_layout(layout_entry)
+
+        data = {}
+        data['redirect'] = ViewUrlGenerator.get_main_url()
+        return res.get_response(200, 'Layout deleted', data)
     else:
         return res.get_only_post_allowed({})
 

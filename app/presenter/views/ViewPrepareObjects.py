@@ -8,6 +8,7 @@ def prepare_layout_for_html(layout):
     layout['url'] = {}
     layout['url']['edit'] = ViewUrlGenerator.get_layout_edit_url(layout['id'])
     layout['url']['save'] = ViewUrlGenerator.get_save_layout_url(layout['id'])
+    layout['url']['confirm_delete'] = ViewUrlGenerator.get_confirm_delete_layout_url(layout['id'])
     layout['url']['add_project'] = ViewUrlGenerator.get_add_default_project_url(layout['id'])
 
     obj_active = {}

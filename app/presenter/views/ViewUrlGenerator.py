@@ -1,5 +1,8 @@
 """ View URL generator """
 
+def get_main_url():
+    return '/main/view/'
+
 def get_layout_create_url():
     return '/main/layout/create/'
 
@@ -8,6 +11,12 @@ def get_layout_edit_url(layout_id):
 
 def get_save_layout_url(layout_id):
     return '/main/layout/{0}/save/'.format(layout_id)
+
+def get_delete_layout_url(layout_id):
+    return '/main/layout/{0}/delete/'.format(layout_id)
+
+def get_confirm_delete_layout_url(layout_id):
+    return '/main/layout/{0}/confirm/delete/'.format(layout_id)
 
 def get_add_default_project_url(layout_id):
     return '/main/layout/{0}/add/project/'.format(layout_id)

@@ -5,7 +5,9 @@ from django.test import Client
 from app.service.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
 from app.service.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
 from app.service.bluesteel.controllers.BluesteelProjectController import BluesteelProjectController
+from app.service.bluesteel.controllers.BluesteelLayoutController import BluesteelLayoutController
 from app.service.gitrepo.models.GitProjectModel import GitProjectEntry
+from app.util.commandrepo.models.CommandModel import CommandEntry
 from app.util.httpcommon import res
 import json
 
@@ -153,3 +155,32 @@ class BluesteelViewLayoutTestCase(TestCase):
         self.assertEqual(1, BluesteelLayoutEntry.objects.all().count())
         self.assertEqual(1, BluesteelProjectEntry.objects.filter(order=0).count())
         self.assertEqual(1, BluesteelProjectEntry.objects.filter(order=1).count())
+
+    def test_add_bluesteel_project_to_layout(self):
+        layout_entry = BluesteelLayoutController.create_new_default_layout()
+
+        self.assertEqual(1, BluesteelLayoutEntry.objects.filter(id=layout_entry.id).count())
+        self.assertEqual(1, BluesteelProjectEntry.objects.all().count())
+
+        self.assertEqual(1, CommandEntry.objects.filter(order=0, command='git checkout master').count())
+        self.assertEqual(1, CommandEntry.objects.filter(order=1, command='git reset --hard origin/master').count())
+        self.assertEqual(1, CommandEntry.objects.filter(order=2, command='git clean -f -d -q').count())
+        self.assertEqual(1, CommandEntry.objects.filter(order=3, command='git fetch --all').count())
+        self.assertEqual(1, CommandEntry.objects.filter(order=4, command='git pull -r origin master').count())
+        self.assertEqual(1, CommandEntry.objects.filter(order=5, command='git checkout master').count())
+        self.assertEqual(1, CommandEntry.objects.filter(order=6, command='git submodule sync').count())
+        self.assertEqual(1, CommandEntry.objects.filter(order=7, command='git submodule update --init --recursive').count())
+
+        resp = self.client.post(
+            '/main/layout/{0}/delete/'.format(layout_entry.id),
+            data = '',
+            content_type='application/json')
+
+        res.check_cross_origin_headers(self, resp)
+        resp_obj = json.loads(resp.content)
+
+        self.assertEqual(200, resp_obj['status'])
+        self.assertEqual(0, BluesteelLayoutEntry.objects.filter(id=layout_entry.id).count())
+        self.assertEqual(0, BluesteelProjectEntry.objects.all().count())
+        self.assertEqual(0, CommandEntry.objects.all().count())
+
