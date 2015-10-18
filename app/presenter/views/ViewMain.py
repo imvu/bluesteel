@@ -2,7 +2,7 @@
 
 from app.presenter.views import ViewUrlGenerator
 from app.presenter.views import ViewPrepareObjects
-from app.service.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
+from app.service.bluesteel.controllers.BluesteelLayoutController import BluesteelLayoutController
 from app.util.httpcommon.Page import Page
 from app.util.httpcommon import res
 
@@ -11,7 +11,7 @@ LAYOUT_ITEMS_PER_PAGE = 30
 def get_main(request):
     """ Returns html for the main page """
     page = Page(LAYOUT_ITEMS_PER_PAGE, 1)
-    layout_list = BluesteelLayoutEntry.objects.get_paginated_layouts_as_objects(page)
+    layout_list = BluesteelLayoutController.get_paginated_layouts_as_objects(page)
 
     for layout in layout_list:
         layout = ViewPrepareObjects.prepare_layout_for_html(layout)
