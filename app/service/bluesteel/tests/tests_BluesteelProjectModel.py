@@ -29,7 +29,6 @@ class BluesteelProjectTestCase(TestCase):
 
         self.layout = BluesteelLayoutEntry.objects.create(
             name='layout-1',
-            archive='archive-28',
         )
 
         self.project = BluesteelProjectEntry.objects.create(

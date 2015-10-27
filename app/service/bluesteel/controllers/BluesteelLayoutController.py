@@ -42,7 +42,6 @@ class BluesteelLayoutController(object):
         """ Create a new default layout with git project and return the ID of it """
         new_layout = BluesteelLayoutEntry.objects.create(
             name='default-name',
-            archive='archive-1'
         )
 
         BluesteelLayoutController.add_default_project_to_layout(new_layout)

@@ -6,7 +6,6 @@ from app.service.bluesteel.models.BluesteelProjectModel import BluesteelProjectE
 class BluesteelLayoutEntry(models.Model):
     """ BlueSteel Layout """
     name = models.CharField(default='', max_length=50)
-    archive = models.CharField(default='', max_length=50)
     active = models.BooleanField(default=False)
     project_index_path = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
@@ -27,12 +26,15 @@ class BluesteelLayoutEntry(models.Model):
 
         obj = {}
         obj['name'] = self.name
-        obj['archive'] = self.archive
+        obj['uuid'] = self.get_uuid()
         obj['active'] = self.active
         obj['project_index_path'] = self.project_index_path
         obj['id'] = self.id
         obj['projects'] = projects
         return obj
+
+    def get_uuid(self):
+        return 'archive-{0}'.format(self.id)
 
     def clamp_project_index_path(self):
         project_count = BluesteelProjectEntry.objects.all().filter(layout_id=self.id).count()

@@ -18,18 +18,15 @@ class BluesteelViewProjectTestCase(TestCase):
         self.client = Client()
         self.layout_1 = BluesteelLayoutEntry.objects.create(
             name='layout-1',
-            archive='archive-28',
             active=True,
         )
 
         self.layout_2 = BluesteelLayoutEntry.objects.create(
             name='layout-2',
-            archive='archive-28',
         )
 
         self.layout_3 = BluesteelLayoutEntry.objects.create(
             name='layout-3',
-            archive='archive-28',
         )
 
 

@@ -22,7 +22,6 @@ class BluesteelProjectControllerTestCase(TestCase):
 
         layout_entry = BluesteelLayoutEntry.objects.create(
             name='name',
-            archive='archive-1'
         )
 
         new_entry = BluesteelProjectController.create_default_project(

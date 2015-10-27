@@ -21,7 +21,6 @@ class BluesteelLayoutTestCase(TestCase):
 
         self.layout = BluesteelLayoutEntry.objects.create(
             name='layout-1',
-            archive='archive-name',
         )
 
         self.command_group_1 = BluesteelProjectController.create_default_command_group()
@@ -49,7 +48,7 @@ class BluesteelLayoutTestCase(TestCase):
         obj = self.layout.as_object()
 
         self.assertEqual('layout-1', obj['name'])
-        self.assertEqual('archive-name', obj['archive'])
+        self.assertEqual('archive-{0}'.format(self.layout.id), obj['uuid'])
         self.assertEqual(2, len(obj['projects']))
 
         self.assertEqual('project-1', obj['projects'][0]['name'])

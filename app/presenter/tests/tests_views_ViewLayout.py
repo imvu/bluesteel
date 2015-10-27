@@ -17,7 +17,6 @@ class BluesteelViewLayoutTestCase(TestCase):
         self.client = Client()
         self.layout_1 = BluesteelLayoutEntry.objects.create(
             name='layout-1',
-            archive='archive-28'
         )
 
     def tearDown(self):
