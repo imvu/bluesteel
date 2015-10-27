@@ -24,8 +24,12 @@ class BluesteelProjectEntry(models.Model):
         obj = {}
         obj['id'] = self.id
         obj['name'] = self.name
+        obj['uuid'] = self.get_uuid()
         obj['order'] = self.order
         obj['git_project'] = self.git_project.as_object()
         obj['command_group'] = self.command_group.as_object()
 
         return obj
+
+    def get_uuid(self):
+        return 'project-{0}'.format(self.id)

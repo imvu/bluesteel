@@ -47,6 +47,15 @@ class BluesteelProjectTestCase(TestCase):
         obj = self.project.as_object()
 
         self.assertEqual('project-1', obj['name'])
-        # self.assertEqual('git-project-28', obj['git_project']['name'])
-        # self.assertEqual(self.git_project.id, obj['git_project']['id'])
+        self.assertEqual('project-{0}'.format(self.project.id), self.project.get_uuid())
         self.assertEqual(1, len(obj['command_group']['command_sets']))
+
+    def test_get_uuid(self):
+        project_new = BluesteelProjectEntry.objects.create(
+            name='project-28',
+            layout=self.layout,
+            command_group=self.command_group,
+            git_project=self.git_project,
+        )
+
+        self.assertEqual('project-{0}'.format(project_new.id), project_new.get_uuid())
