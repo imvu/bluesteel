@@ -65,14 +65,14 @@ def prepare_menu_for_html(menu):
     item_2['link'] = '/main/layout/all/'
 
     item_3 = {}
-    item_3['name'] = 'Workers'
+    item_3['name'] = 'Projects'
     item_3['icon'] = ''
-    item_3['link'] = '/main/workers/'
+    item_3['link'] = '/main/projects/'
 
     item_4 = {}
-    item_4['name'] = 'Projects'
+    item_4['name'] = 'Workers'
     item_4['icon'] = ''
-    item_4['link'] = '/main/projects/'
+    item_4['link'] = '/main/workers/'
 
     menu_items.append(item_1)
     menu_items.append(item_2)
