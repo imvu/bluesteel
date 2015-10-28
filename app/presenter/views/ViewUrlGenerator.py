@@ -3,6 +3,9 @@
 def get_main_url():
     return '/main/view/'
 
+def get_layout_all_url():
+    return '/main/layout/all/'
+
 def get_layout_create_url():
     return '/main/layout/create/'
 

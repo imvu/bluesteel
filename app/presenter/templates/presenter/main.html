@@ -3,21 +3,5 @@
 {% load staticfiles %}
 
 {% block data_body %}
-<div class="container_small container_height">
-    <ul class="no_dots no_indent">
-        {% for layout in layout_list %}
-        <li>
-            <div class="upper_card white_card card_padding_small">
-                <div class="centered"><a class="title_link" href="{{layout.url.edit}}">{{layout.name}}</a></div>
-            </div>
-            <div class="lower_card white_card card_padding_large">
-                <div class="list_label indent_1">PROJECTS</div>
-                {% for project in layout.projects %}
-                    <div class="normal indent_2">{{project.name}}</div>
-                {% endfor %}
-            </div>
-        </li>
-        {% endfor %}
-    </ul>
-</div>
+
 {% endblock %}

@@ -5,8 +5,34 @@ from app.presenter.views import ViewPrepareObjects
 from app.service.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
 from app.service.bluesteel.controllers.BluesteelLayoutController import BluesteelLayoutController
 from app.service.bluesteel.views import BluesteelSchemas
+from app.util.httpcommon.Page import Page
 from app.util.httpcommon import res
 from app.util.httpcommon import val
+
+LAYOUT_ITEMS_PER_PAGE = 30
+
+def get_layouts(request):
+    """ Returns html for the layout page """
+    page = Page(LAYOUT_ITEMS_PER_PAGE, 1)
+    layout_list = BluesteelLayoutController.get_paginated_layouts_as_objects(page)
+
+    for layout in layout_list:
+        layout = ViewPrepareObjects.prepare_layout_for_html(layout)
+
+    control = {}
+    control['name'] = '  Add Layout'
+    control['link'] = ViewUrlGenerator.get_layout_create_url()
+    control['icon'] = 'fa fa-plus'
+    control['onclick'] = 'create_new_layout(this, \'{0}\');'.format(control['link'])
+
+    data = {}
+    data['layout_list'] = layout_list
+    data['menu'] = ViewPrepareObjects.prepare_menu_for_html([])
+    data['controls'] = []
+    data['controls'].append(control)
+
+    return res.get_template_data(request, 'presenter/layout.html', data)
+
 
 def get_layout_editable(request, layout_id):
     """ Returns html for the layout editable page """
@@ -21,7 +47,7 @@ def get_layout_editable(request, layout_id):
         for project in data['layout']['projects']:
             project = ViewPrepareObjects.prepare_project_for_html(project)
 
-        return res.get_template_data(request, 'presenter/layout.html', data)
+        return res.get_template_data(request, 'presenter/layout_edit.html', data)
     else:
         return res.get_template_data(request, 'presenter/not_found.html', {})
 
@@ -70,7 +96,7 @@ def delete(request, layout_id):
         BluesteelLayoutController.delete_layout(layout_entry)
 
         data = {}
-        data['redirect'] = ViewUrlGenerator.get_main_url()
+        data['redirect'] = ViewUrlGenerator.get_layout_all_url()
         return res.get_response(200, 'Layout deleted', data)
     else:
         return res.get_only_post_allowed({})
