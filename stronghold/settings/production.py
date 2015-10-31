@@ -43,6 +43,7 @@ INSTALLED_APPS = (
     'app.service.gitfeeder',
     'app.service.strongholdworker',
     'app.service.bluesteel',
+    'app.service.benchmark',
     'app.util.httpcommon',
     'app.util.commandrepo',
     'app.util.fontawesome',
