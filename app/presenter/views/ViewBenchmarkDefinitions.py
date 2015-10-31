@@ -2,11 +2,17 @@
 
 # from app.presenter.views import ViewUrlGenerator
 from app.presenter.views import ViewPrepareObjects
-# from app.service.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
+from app.service.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
 from app.util.httpcommon import res
 
 def get_benchmark_definitions(request):
     """ Returns html for the benchmark definition page """
+
+    def_entries = BenchmarkDefinitionEntry.objects.all()
+
+    definitions = []
+    for entry in def_entries:
+        definitions.append(entry.as_object())
 
     control = {}
     control['name'] = '  Add Definition'
@@ -15,6 +21,7 @@ def get_benchmark_definitions(request):
     # control['onclick'] = 'create_new_layout(this, \'{0}\');'.format(control['link'])
 
     data = {}
+    data['definitions'] = definitions
     data['menu'] = ViewPrepareObjects.prepare_menu_for_html([])
     data['controls'] = []
     data['controls'].append(control)
