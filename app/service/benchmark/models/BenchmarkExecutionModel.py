@@ -13,12 +13,12 @@ class BenchmarkExecutionEntry(models.Model):
     updated_at = models.DateTimeField(auto_now=True, editable=False)
 
     def __unicode__(self):
-        return u'Benchmark Definition id:{0} name:{1}'.format(
-            self.id,
-            self.name,
+        return u'Benchmark Execution id:{0}'.format(
+            self.id
         )
 
     def as_object(self):
+        """ Returns Benchmark execution as an object """
         obj = {}
         obj['definition'] = self.definition.as_object()
         obj['commit'] = self.commit.commit_hash

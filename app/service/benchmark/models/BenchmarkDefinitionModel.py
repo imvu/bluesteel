@@ -20,6 +20,7 @@ class BenchmarkDefinitionEntry(models.Model):
         )
 
     def as_object(self):
+        """ Returns Benchmark Definition as an object"""
         obj = {}
         obj['name'] = self.name
         obj['layout'] = self.layout.id
