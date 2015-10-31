@@ -49,4 +49,8 @@ urlpatterns = patterns(
 
     url(r'^worker/(?P<worker_id>\d+)/report/all/$',
         'app.presenter.views.ViewWorkers.get_worker_reports'),
+
+    url(r'^definitions/all/$',
+        'app.presenter.views.ViewBenchmarkDefinitions.get_benchmark_definitions'),
+
 )
