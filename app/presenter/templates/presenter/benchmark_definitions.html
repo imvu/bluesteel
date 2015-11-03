@@ -3,21 +3,39 @@
 {% load staticfiles %}
 
 {% block data_body %}
-<div class="container_small container_height">
-    <!-- <ul class="no_dots no_indent">
-        {% for layout in layout_list %}
-        <li>
-            <div class="upper_card white_card card_padding_small">
-                <div class="centered"><a class="title_link" href="{{layout.url.edit}}">{{layout.name}}</a></div>
-            </div>
-            <div class="lower_card white_card card_padding_large">
-                <div class="list_label indent_1">PROJECTS</div>
-                {% for project in layout.projects %}
-                    <div class="normal indent_2">{{project.name}}</div>
-                {% endfor %}
-            </div>
-        </li>
+<div class="container_med container_height">
+    <ul class="no_dots no_indent">
+        {% for definition in definitions %}
+            <li>
+                <div class="upper_card white_card card_padding_small">
+                    <div class="centered"><a class="title_link" href="">{{definition.name}}</a></div>
+                </div>
+                <div class="lower_card white_card card_padding_large">
+                    <div class="list_label indent_1">LAYOUT</div>
+                    <div class="normal indent_2">{{definition.layout.name}}</div>
+                    <div class="list_label indent_1">PROJECT</div>
+                    <div class="normal indent_2">{{definition.project.name}}</div>
+                    <div class="list_label indent_1">COMMANDS</div>
+                    <ul class="no_dots vertical_margin">
+                    {% for command in definition.command_set.commands %}
+                        <li>
+                            <div class="container_input">
+                                <div class="command">{{command.command}}</div>
+                            </div>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                    <ul class="no_dots no_indent vertical_margin horizontal_list">
+                        <li class="horizontal">
+                            <button     class="btn_rect danger"
+                                        type='button'
+                                        onclick=""
+                            >Delete</button>
+                        </li>
+                    </ul>
+                </div>
+            </li>
         {% endfor %}
-    </ul> -->
+    </ul>
 </div>
 {% endblock %}

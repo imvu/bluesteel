@@ -23,7 +23,7 @@ class BenchmarkDefinitionEntry(models.Model):
         """ Returns Benchmark Definition as an object"""
         obj = {}
         obj['name'] = self.name
-        obj['layout'] = self.layout.id
+        obj['layout'] = self.layout.as_object()
         obj['project'] = self.project.as_object()
         obj['command_set'] = self.command_set.as_object()
         obj['revision'] = self.revision
