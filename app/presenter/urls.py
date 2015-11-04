@@ -53,4 +53,7 @@ urlpatterns = patterns(
     url(r'^definitions/all/$',
         'app.presenter.views.ViewBenchmarkDefinitions.get_benchmark_definitions'),
 
+    url(r'^definitions/create/$',
+        'app.presenter.views.ViewBenchmarkDefinitions.create_new_benchmark_definition'),
+
 )

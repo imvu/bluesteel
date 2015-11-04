@@ -6,7 +6,7 @@ from app.util.commandrepo.models.CommandModel import CommandEntry
 class CommandSetEntry(models.Model):
     """ CommandSet """
 
-    group = models.ForeignKey('commandrepo.CommandGroupEntry', related_name='command_group')
+    group = models.ForeignKey('commandrepo.CommandGroupEntry', related_name='command_group', null=True)
     name = models.TextField(default='')
     order = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)

@@ -47,3 +47,6 @@ def get_project_branch_single_url(project_id, branch_id):
 
 def get_benchmark_definitions_url():
     return '/main/definitions/all/'
+
+def get_create_benchmark_definitions_url():
+    return '/main/definitions/create/'
