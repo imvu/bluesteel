@@ -5,7 +5,7 @@ from django.test import Client
 from app.service.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
 from app.service.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
 from app.service.gitrepo.models.GitProjectModel import GitProjectEntry
-from app.util.commandrepo.controllers.CommandGroupController import CommandGroupController
+from app.util.commandrepo.controllers.CommandController import CommandController
 from app.util.commandrepo.models.CommandGroupModel import CommandGroupEntry
 from app.util.commandrepo.models.CommandSetModel import CommandSetEntry
 from app.util.commandrepo.models.CommandModel import CommandEntry
@@ -45,8 +45,8 @@ class BluesteelViewProjectTestCase(TestCase):
         commands2.append('command-6')
 
         command_group = CommandGroupEntry.objects.create()
-        CommandGroupController.add_full_command_set(command_group, "CLONE", 0, commands)
-        CommandGroupController.add_full_command_set(command_group, "FETCH", 1, commands2)
+        CommandController.add_full_command_set(command_group, "CLONE", 0, commands)
+        CommandController.add_full_command_set(command_group, "FETCH", 1, commands2)
 
         git_project = GitProjectEntry.objects.create(url='', name='git-project')
 
@@ -110,8 +110,8 @@ class BluesteelViewProjectTestCase(TestCase):
         commands2.append('command-6')
 
         command_group = CommandGroupEntry.objects.create()
-        CommandGroupController.add_full_command_set(command_group, "CLONE", 0, commands)
-        CommandGroupController.add_full_command_set(command_group, "FETCH", 1, commands2)
+        CommandController.add_full_command_set(command_group, "CLONE", 0, commands)
+        CommandController.add_full_command_set(command_group, "FETCH", 1, commands2)
 
         git_project = GitProjectEntry.objects.create(url='', name='git-project')
 

@@ -8,7 +8,7 @@ from app.service.bluesteel.controllers.BluesteelLayoutController import Bluestee
 from app.service.bluesteel.views import BluesteelSchemas
 from app.service.gitrepo.models.GitBranchModel import GitBranchEntry
 from app.util.commandrepo.models.CommandGroupModel import CommandGroupEntry
-from app.util.commandrepo.controllers.CommandGroupController import CommandGroupController
+from app.util.commandrepo.controllers.CommandController import CommandController
 from app.util.httpcommon import res
 from app.util.httpcommon import val
 
@@ -28,15 +28,15 @@ def save_project(request, project_id):
         if not obj_validated:
             return res.get_schema_failed(val_resp_obj)
 
-        CommandGroupController.delete_command_group_by_id(project_entry.command_group.id)
+        CommandController.delete_command_group_by_id(project_entry.command_group.id)
 
         project_entry.name = val_resp_obj['name']
         project_entry.command_group = CommandGroupEntry.objects.create()
         project_entry.save()
 
-        CommandGroupController.add_full_command_set(project_entry.command_group, 'CLONE', 0, val_resp_obj['clone'])
-        CommandGroupController.add_full_command_set(project_entry.command_group, 'FETCH', 1, val_resp_obj['fetch'])
-        CommandGroupController.add_full_command_set(project_entry.command_group, 'PULL', 2, val_resp_obj['pull'])
+        CommandController.add_full_command_set(project_entry.command_group, 'CLONE', 0, val_resp_obj['clone'])
+        CommandController.add_full_command_set(project_entry.command_group, 'FETCH', 1, val_resp_obj['fetch'])
+        CommandController.add_full_command_set(project_entry.command_group, 'PULL', 2, val_resp_obj['pull'])
 
         return res.get_response(200, 'Project saved', {})
     else:

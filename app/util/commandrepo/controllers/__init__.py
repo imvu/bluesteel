@@ -1,5 +1,5 @@
 """ Automatic file """
 
-from app.util.commandrepo.controllers.CommandGroupController import CommandGroupController
+from app.util.commandrepo.controllers.CommandController import CommandController
 
 

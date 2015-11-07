@@ -1,11 +1,11 @@
-""" Controller for CommandGroup entries """
+""" Controller for Command entries """
 
 from app.util.commandrepo.models.CommandGroupModel import CommandGroupEntry
 from app.util.commandrepo.models.CommandModel import CommandEntry
 from app.util.commandrepo.models.CommandResultModel import CommandResultEntry
 from app.util.commandrepo.models.CommandSetModel import CommandSetEntry
 
-class CommandGroupController(object):
+class CommandController(object):
     """ Command Controller """
 
     @staticmethod

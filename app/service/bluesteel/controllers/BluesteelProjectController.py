@@ -6,7 +6,7 @@ from app.service.gitrepo.controllers.GitController import GitController
 from app.util.commandrepo.models.CommandModel import CommandEntry
 from app.util.commandrepo.models.CommandSetModel import CommandSetEntry
 from app.util.commandrepo.models.CommandGroupModel import CommandGroupEntry
-from app.util.commandrepo.controllers.CommandGroupController import CommandGroupController
+from app.util.commandrepo.controllers.CommandController import CommandController
 
 class BluesteelProjectController(object):
     """ BluesteelProject controller with helper functions """
@@ -75,7 +75,7 @@ class BluesteelProjectController(object):
 
     @staticmethod
     def delete_project(project):
-        CommandGroupController.delete_command_group_by_id(project.command_group.id)
+        CommandController.delete_command_group_by_id(project.command_group.id)
         GitController.delete_git_project(project.git_project)
         project.delete()
 
