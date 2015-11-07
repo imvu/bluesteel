@@ -19,16 +19,40 @@ class CommandController(object):
         command_sets = CommandSetEntry.objects.filter(group=command_group_entry)
 
         for com_set in command_sets:
-            command_entries = CommandEntry.objects.filter(command_set=com_set)
-
-            for com_ent in command_entries:
-                command_result = CommandResultEntry.objects.filter(command=com_ent)
-                command_result.delete()
-                com_ent.delete()
-
-            com_set.delete()
+            CommandController.delete_command_set_by_id(com_set.id)
 
         command_group_entry.delete()
+
+    @staticmethod
+    def delete_command_set_by_id(command_set_id):
+        """ Delete a whole command set and its associated objects """
+        command_set_entry = CommandSetEntry.objects.filter(id=command_set_id).first()
+
+        if command_set_id == None:
+            return
+
+        commands = CommandEntry.objects.filter(command_set=command_set_entry)
+
+        for command in commands:
+            CommandController.delete_command_by_id(command.id)
+
+        command_set_entry.delete()
+
+    @staticmethod
+    def delete_command_by_id(command_id):
+        """ Delete a whole command and its associated objects """
+        command_entry = CommandEntry.objects.filter(id=command_id).first()
+
+        if command_id == None:
+            return
+
+        command_result = CommandResultEntry.objects.filter(command=command_entry).first()
+
+        if command_result != None:
+            command_result.delete()
+
+        command_entry.delete()
+
 
     @staticmethod
     def add_full_command_set(command_group, name, order, list_commands):
