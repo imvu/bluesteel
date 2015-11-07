@@ -50,3 +50,21 @@ class CommandControllerTestCase(TestCase):
         self.assertEqual(1, CommandSetEntry.objects.all().count())
         self.assertEqual(3, CommandEntry.objects.all().count())
         self.assertEqual(0, CommandResultEntry.objects.all().count())
+
+    def test_add_full_command_set_with_group_to_none(self):
+        self.assertEqual(0, CommandGroupEntry.objects.all().count())
+        self.assertEqual(0, CommandSetEntry.objects.all().count())
+        self.assertEqual(0, CommandEntry.objects.all().count())
+        self.assertEqual(0, CommandResultEntry.objects.all().count())
+
+        commands = []
+        commands.append(['command 1'])
+        commands.append(['command 2'])
+        commands.append(['command 3'])
+
+        CommandController.add_full_command_set(None, 'CLONE', 28, commands)
+
+        self.assertEqual(0, CommandGroupEntry.objects.all().count())
+        self.assertEqual(1, CommandSetEntry.objects.all().count())
+        self.assertEqual(3, CommandEntry.objects.all().count())
+        self.assertEqual(0, CommandResultEntry.objects.all().count())
