@@ -8,7 +8,7 @@
         {% for definition in definitions %}
             <li>
                 <div class="upper_card white_card card_padding_small">
-                    <div class="centered"><a class="title_link" href="">{{definition.name}}</a></div>
+                    <div class="centered"><a class="title_link" href="{{definition.url.edit}}">{{definition.name}}</a></div>
                 </div>
                 <div class="lower_card white_card card_padding_large">
                     <div class="list_label indent_1">LAYOUT</div>
@@ -24,14 +24,6 @@
                             </div>
                         </li>
                     {% endfor %}
-                    </ul>
-                    <ul class="no_dots no_indent vertical_margin horizontal_list">
-                        <li class="horizontal">
-                            <button     class="btn_rect danger"
-                                        type='button'
-                                        onclick=""
-                            >Delete</button>
-                        </li>
                     </ul>
                 </div>
             </li>

@@ -64,3 +64,5 @@ class CommandController(object):
                 command_set=set_entry,
                 command=command,
                 order=index)
+
+        return set_entry
