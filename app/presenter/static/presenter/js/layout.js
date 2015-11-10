@@ -98,7 +98,6 @@ saveProject = function(idFormProject) {
         location.reload();
     }
     xhr.send(JSON.stringify(obj));
-    // thisObj.onclick = function() {};
 }
 
 saveLayout = function(idFormLayout) {

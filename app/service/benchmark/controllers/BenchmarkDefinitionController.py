@@ -46,6 +46,8 @@ class BenchmarkDefinitionController(object):
 
     @staticmethod
     def save_benchmark_definition(benchmark_definition_id, layout_id, project_id, command_list):
+        # This function has a design proble, what happens if the layout that you want to save does not have
+        # a project with the same id that appears on the <select> tag on the
         """ Save benchmark definition with the new data provided, returns None if error """
         benchmark_def_entry = BenchmarkDefinitionEntry.objects.filter(id=benchmark_definition_id).first()
 
@@ -60,11 +62,17 @@ class BenchmarkDefinitionController(object):
         project_entry = BluesteelProjectEntry.objects.filter(layout=layout_entry, id=project_id).first()
 
         if project_entry == None:
+            project_entry = BluesteelProjectEntry.objects.filter(layout=layout_entry).first()
+            benchmark_def_entry.layout = layout_entry
+            benchmark_def_entry.project = project_entry
+            benchmark_def_entry.save()
             return None
 
         CommandController.delete_command_set_by_id(benchmark_def_entry.command_set.id)
         new_com_set = CommandController.add_full_command_set(None, 'bench-com-set', 0, command_list)
 
+        benchmark_def_entry.layout = layout_entry
+        benchmark_def_entry.project = project_entry
         benchmark_def_entry.command_set = new_com_set
         benchmark_def_entry.save()
 

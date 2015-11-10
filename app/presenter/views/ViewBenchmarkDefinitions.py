@@ -57,6 +57,7 @@ def get_benchmark_definitions(request):
         obj = entry.as_object()
         obj['url'] = {}
         obj['url']['edit'] = ViewUrlGenerator.get_edit_benchmark_definition_url(entry.id)
+        obj['url']['save'] = ViewUrlGenerator.get_save_benchmark_definition_url(entry.id)
         definitions.append(obj)
 
     data = {}
@@ -77,6 +78,8 @@ def get_benchmark_definition_edit(request, definition_id):
         return res.get_template_data(request, 'presenter/not_found.html', data)
 
     obj = def_entry.as_object()
+    obj['url'] = {}
+    obj['url']['save'] = ViewUrlGenerator.get_save_benchmark_definition_url(def_entry.id)
     obj['layout_selection'] = get_layout_selection(def_entry.layout)
     obj['project_selection'] = get_project_selection(def_entry.layout, def_entry.project)
 
