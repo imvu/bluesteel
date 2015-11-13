@@ -46,9 +46,14 @@ class BenchmarkDefinitionController(object):
 
     @staticmethod
     def save_benchmark_definition(benchmark_definition_id, layout_id, project_id, command_list):
-        # This function has a design proble, what happens if the layout that you want to save does not have
-        # a project with the same id that appears on the <select> tag on the
         """ Save benchmark definition with the new data provided, returns None if error """
+        if BenchmarkDefinitionController.is_benchmark_definition_equivalent(
+                benchmark_definition_id,
+                layout_id,
+                project_id,
+                command_list):
+            return None
+
         benchmark_def_entry = BenchmarkDefinitionEntry.objects.filter(id=benchmark_definition_id).first()
 
         if benchmark_def_entry == None:
@@ -78,3 +83,28 @@ class BenchmarkDefinitionController(object):
         benchmark_def_entry.save()
 
         return benchmark_def_entry
+
+    @staticmethod
+    def is_benchmark_definition_equivalent(benchmark_definition_id, layout_id, project_id, command_list):
+        """ Returns true if the new information to be saved is equivalent to the stored one """
+        benchmark_def_entry = BenchmarkDefinitionEntry.objects.filter(id=benchmark_definition_id).first()
+
+        if benchmark_def_entry == None:
+            return False
+
+        if benchmark_def_entry.layout.id != layout_id:
+            return False
+
+        if benchmark_def_entry.project.id != project_id:
+            return False
+
+        com_entries = CommandEntry.objects.filter(command_set=benchmark_def_entry.command_set).order_by('order')
+
+        if len(com_entries) != len(command_list):
+            return False
+
+        for index, com in enumerate(com_entries):
+            if com.command != command_list[index]:
+                return False
+
+        return True
