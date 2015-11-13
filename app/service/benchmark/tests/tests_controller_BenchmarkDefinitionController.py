@@ -77,6 +77,7 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
         self.assertNotEqual(None, definition.command_set)
         self.assertEqual(3, CommandEntry.objects.filter(command_set=definition.command_set).count())
         self.assertEqual(0, CommandResultEntry.objects.all().count())
+        self.assertEqual(0, definition.revision)
 
         commands = []
         commands.append('command-28')
@@ -88,3 +89,4 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
         self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='command-28').count())
         self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='command-29').count())
         self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='command-30').count())
+        self.assertEqual(1, definition.revision)
