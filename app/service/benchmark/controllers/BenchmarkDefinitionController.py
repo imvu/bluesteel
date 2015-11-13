@@ -74,6 +74,7 @@ class BenchmarkDefinitionController(object):
         benchmark_def_entry.layout = layout_entry
         benchmark_def_entry.project = project_entry
         benchmark_def_entry.command_set = new_com_set
+        benchmark_def_entry.revision = benchmark_def_entry.revision + 1
         benchmark_def_entry.save()
 
         return benchmark_def_entry

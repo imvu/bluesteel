@@ -32,7 +32,7 @@ def get_layout_selection(layout):
         obj['id'] = entry.id
         obj['selected'] = layout.id == entry.id
 
-        layouts.append(entry)
+        layouts.append(obj)
     return layouts
 
 def get_project_selection(layout, project):
@@ -80,6 +80,7 @@ def get_benchmark_definition_edit(request, definition_id):
     obj = def_entry.as_object()
     obj['url'] = {}
     obj['url']['save'] = ViewUrlGenerator.get_save_benchmark_definition_url(def_entry.id)
+    obj['url']['project_info'] = ViewUrlGenerator.get_editable_projects_info_url()
     obj['layout_selection'] = get_layout_selection(def_entry.layout)
     obj['project_selection'] = get_project_selection(def_entry.layout, def_entry.project)
 

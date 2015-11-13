@@ -22,6 +22,7 @@
                             <div class="container_input">
                                 <select     class="selection individual"
                                             name="layout_active"
+                                            onchange="changeSelectProjectInfo(this, '{{definition.url.project_info}}', 'project_selection');"
                                 >
                                     {% for active in definition.layout_selection %}
                                         <option value="{{active.id}}" {{active.selected|yesno:"selected,"}}>{{active.name}}</option>
@@ -36,6 +37,7 @@
                             <div class="container_input">
                                 <select     class="selection individual"
                                             name="project_active"
+                                            id="project_selection"
                                 >
                                     {% for active in definition.project_selection %}
                                         <option value="{{active.id}}" {{active.selected|yesno:"selected,"}}>{{active.name}}</option>

@@ -56,3 +56,6 @@ def get_edit_benchmark_definition_url(benchmark_definition_id):
 
 def get_save_benchmark_definition_url(benchmark_definition_id):
     return '/main/definition/{0}/save/'.format(benchmark_definition_id)
+
+def get_editable_projects_info_url():
+    return '/bluesteel/layout/<0>/projects/info/'
