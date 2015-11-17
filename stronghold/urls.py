@@ -19,6 +19,9 @@ urlpatterns = patterns(
     url(r'^main/',
         include('app.presenter.urls')),
 
+    url(r'^benchmark/',
+        include('app.service.benchmark.urls')),
+
     url(r'^bluesteel/',
         include('app.service.bluesteel.urls')),
 
