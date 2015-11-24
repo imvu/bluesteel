@@ -4,5 +4,5 @@ Django==1.7.5
 pylint==1.4.0
 pytz==2015.4
 jsonschema==2.4.0
-uWSGI==2.0.9
+uWSGI==2.0.11.2
 mock==1.3.0
