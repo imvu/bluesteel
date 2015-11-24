@@ -10,13 +10,15 @@ def main():
         print '- This script needs to be executed with root privileges (sudo).'
         sys.exit(1)
 
-    list_scripts = []
-    list_scripts.append('s/internal/install-hooks.py')
-    list_scripts.append('s/internal/install-pip.py')
-    list_scripts.append('s/internal/install-pip-requirements.py')
+    list_commands = []
+    list_commands.append(['python', 's/internal/install-hooks.py'])
+    list_commands.append(['python', 's/internal/install-pip.py'])
+    list_commands.append(['python', 's/internal/install-pip-requirements.py'])
+    list_commands.append(['./manage.py', 'makemigrations'])
+    list_commands.append(['./manage.py', 'migrate'])
 
-    for script in list_scripts:
-        subprocess.call(['python', script])
+    for command in list_commands:
+        subprocess.call(command)
 
 if __name__ == '__main__':
     main()
