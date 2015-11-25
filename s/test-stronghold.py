@@ -28,7 +28,6 @@ def get_test_list():
     packs.append(get_packed_app_info(['app', 'benchmark'],          'app/service/benchmark',))
     packs.append(get_packed_app_info(['app', 'httpcommon'],         'app/util/httpcommon',))
     packs.append(get_packed_app_info(['app', 'commandrepo'],        'app/util/commandrepo',))
-    packs.append(get_packed_app_info(['app', 'fontawesome'],        'app/util/fontawesome',))
     packs.append(get_packed_app_info(['app', 'logger'],             'app/util/logger',))
     packs.append(get_packed_app_info(['app', 'presenter'],          'app/presenter',))
 
