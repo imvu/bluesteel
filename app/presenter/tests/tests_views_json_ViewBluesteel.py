@@ -32,16 +32,16 @@ class BluesteelViewTestCase(TestCase):
         pass
 
     def test_get_all_layouts_urls(self):
-        resp = self.client.get('/bluesteel/layout/all/urls/')
+        resp = self.client.get('/main/layout/all/urls/')
 
         res.check_cross_origin_headers(self, resp)
         resp_obj = json.loads(resp.content)
 
         self.assertEqual(3, len(resp_obj['data']['layouts']))
 
-        self.assertTrue('http://testserver/bluesteel/layout/1/' in resp_obj['data']['layouts'])
-        self.assertTrue('http://testserver/bluesteel/layout/2/' in resp_obj['data']['layouts'])
-        self.assertTrue('http://testserver/bluesteel/layout/3/' in resp_obj['data']['layouts'])
+        self.assertTrue('http://testserver/main/layout/1/' in resp_obj['data']['layouts'])
+        self.assertTrue('http://testserver/main/layout/2/' in resp_obj['data']['layouts'])
+        self.assertTrue('http://testserver/main/layout/3/' in resp_obj['data']['layouts'])
 
     def test_get_layout_1(self):
         git_project = GitProjectEntry.objects.create(
@@ -67,7 +67,7 @@ class BluesteelViewTestCase(TestCase):
             git_project=git_project,
         )
 
-        resp = self.client.get('/bluesteel/layout/1/')
+        resp = self.client.get('/main/layout/1/')
 
         res.check_cross_origin_headers(self, resp)
         resp_obj = json.loads(resp.content)
@@ -119,7 +119,7 @@ class BluesteelViewTestCase(TestCase):
         self.layout_1.project_index_path = 2
         self.layout_1.save()
 
-        resp = self.client.get('/bluesteel/layout/1/projects/info/')
+        resp = self.client.get('/main/layout/1/projects/info/')
 
         res.check_cross_origin_headers(self, resp)
         resp_obj = json.loads(resp.content)

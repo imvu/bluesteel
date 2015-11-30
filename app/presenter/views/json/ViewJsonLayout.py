@@ -2,9 +2,9 @@
 
 from app.presenter.views.helpers import ViewUrlGenerator
 from app.presenter.views.helpers import ViewPrepareObjects
+from app.presenter.schemas import BluesteelSchemas
 from app.service.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
 from app.service.bluesteel.controllers.BluesteelLayoutController import BluesteelLayoutController
-from app.service.bluesteel.views import BluesteelSchemas
 from app.util.httpcommon import res
 from app.util.httpcommon import val
 

@@ -52,6 +52,15 @@ urlpatterns = patterns(
     url(r'^layout/create/$',
         'app.presenter.views.json.ViewJsonLayout.post_create_new_layout'),
 
+    url(r'^layout/all/urls/$',
+        'app.presenter.views.json.ViewJsonBluesteel.get_all_layouts_urls'),
+
+    url(r'^layout/(?P<layout_id>\d+)/$',
+        'app.presenter.views.json.ViewJsonBluesteel.get_layout'),
+
+    url(r'^layout/(?P<layout_id>\d+)/projects/info/$',
+        'app.presenter.views.json.ViewJsonBluesteel.get_project_ids_and_names_from_layout'),
+
     url(r'^project/(?P<project_id>\d+)/save/$',
         'app.presenter.views.json.ViewJsonProject.save_project'),
 

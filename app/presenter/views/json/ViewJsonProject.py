@@ -1,10 +1,10 @@
 """ Presenter json views, Project page functions """
 
 from app.presenter.views.helpers import ViewUrlGenerator
+from app.presenter.schemas import BluesteelSchemas
 from app.service.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
 from app.service.bluesteel.controllers.BluesteelProjectController import BluesteelProjectController
 from app.service.bluesteel.controllers.BluesteelLayoutController import BluesteelLayoutController
-from app.service.bluesteel.views import BluesteelSchemas
 from app.util.commandrepo.models.CommandGroupModel import CommandGroupEntry
 from app.util.commandrepo.controllers.CommandController import CommandController
 from app.util.httpcommon import res
