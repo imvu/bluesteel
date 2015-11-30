@@ -1,6 +1,6 @@
 """ Presenter views, main page functions """
 
-from app.presenter.views import ViewPrepareObjects
+from app.presenter.views.helpers import ViewPrepareObjects
 from app.util.httpcommon import res
 
 def get_main(request):

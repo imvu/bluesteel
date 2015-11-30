@@ -1,6 +1,6 @@
 """ Prepare objects for template consumption """
 
-from app.presenter.views import ViewUrlGenerator
+from app.presenter.views.helpers import ViewUrlGenerator
 import json
 
 def prepare_layout_for_html(layout):

@@ -21,13 +21,13 @@ urlpatterns = patterns(
         'app.presenter.views.ViewLayout.confirm_delete'),
 
     url(r'^layout/(?P<layout_id>\d+)/save/$',
-        'app.presenter.views_json.ViewJsonLayout.save_layout'),
+        'app.presenter.views.json.ViewJsonLayout.save_layout'),
 
     url(r'^layout/(?P<layout_id>\d+)/delete/$',
-        'app.presenter.views_json.ViewJsonLayout.delete'),
+        'app.presenter.views.json.ViewJsonLayout.delete'),
 
     url(r'^layout/create/$',
-        'app.presenter.views_json.ViewJsonLayout.post_create_new_layout'),
+        'app.presenter.views.json.ViewJsonLayout.post_create_new_layout'),
 
     url(r'^projects/$',
         'app.presenter.views.ViewProject.get_projects'),
@@ -57,8 +57,8 @@ urlpatterns = patterns(
         'app.presenter.views.ViewBenchmarkDefinitions.get_benchmark_definition_edit'),
 
     url(r'^definitions/create/$',
-        'app.presenter.views_json.ViewJsonBenchmarkDefinitions.create_new_benchmark_definition'),
+        'app.presenter.views.json.ViewJsonBenchmarkDefinitions.create_new_benchmark_definition'),
 
     url(r'^definition/(?P<benchmark_definition_id>\d+)/save/$',
-        'app.presenter.views_json.ViewJsonBenchmarkDefinitions.view_save_benchmark_definition'),
+        'app.presenter.views.json.ViewJsonBenchmarkDefinitions.view_save_benchmark_definition'),
 )

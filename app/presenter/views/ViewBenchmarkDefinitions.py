@@ -1,7 +1,7 @@
 """ Presenter views, benchmark definition page functions """
 
-from app.presenter.views import ViewUrlGenerator
-from app.presenter.views import ViewPrepareObjects
+from app.presenter.views.helpers import ViewUrlGenerator
+from app.presenter.views.helpers import ViewPrepareObjects
 from app.service.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
 from app.service.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
 from app.service.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry

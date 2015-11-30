@@ -1,7 +1,7 @@
 """ Presenter views, Project page functions """
 
-from app.presenter.views import ViewUrlGenerator
-from app.presenter.views import ViewPrepareObjects
+from app.presenter.views.helpers import ViewUrlGenerator
+from app.presenter.views.helpers import ViewPrepareObjects
 from app.service.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
 from app.service.bluesteel.controllers.BluesteelProjectController import BluesteelProjectController
 from app.service.bluesteel.controllers.BluesteelLayoutController import BluesteelLayoutController

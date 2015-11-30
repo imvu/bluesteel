@@ -1,6 +1,6 @@
 """ Presenter json views, benchmark definition page functions """
 
-from app.presenter.views import ViewUrlGenerator
+from app.presenter.views.helpers import ViewUrlGenerator
 from app.service.benchmark.controllers.BenchmarkDefinitionController import BenchmarkDefinitionController
 from app.service.benchmark.views import BenchmarkDefinitionSchemas
 from app.util.httpcommon import res, val
