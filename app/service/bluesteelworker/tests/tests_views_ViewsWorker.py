@@ -6,7 +6,7 @@ from django.conf import settings
 from django.utils import timezone
 from django.contrib.auth.models import User
 from app.util.httpcommon import res
-from app.service.strongholdworker.models.WorkerModel import WorkerEntry
+from app.service.bluesteelworker.models.WorkerModel import WorkerEntry
 from datetime import timedelta
 import json
 

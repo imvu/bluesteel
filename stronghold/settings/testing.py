@@ -41,7 +41,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'app.service.gitrepo',
     'app.service.gitfeeder',
-    'app.service.strongholdworker',
+    'app.service.bluesteelworker',
     'app.service.bluesteel',
     'app.service.benchmark',
     'app.util.httpcommon',

@@ -23,7 +23,7 @@ def get_test_list():
     packs = []
     packs.append(get_packed_app_info(['app', 'gitrepo'],            'app/service/gitrepo',))
     packs.append(get_packed_app_info(['app', 'gitfeeder'],          'app/service/gitfeeder',))
-    packs.append(get_packed_app_info(['app', 'strongholdworker'],   'app/service/strongholdworker',))
+    packs.append(get_packed_app_info(['app', 'bluesteelworker'],    'app/service/bluesteelworker',))
     packs.append(get_packed_app_info(['app', 'bluesteel'],          'app/service/bluesteel',))
     packs.append(get_packed_app_info(['app', 'benchmark'],          'app/service/benchmark',))
     packs.append(get_packed_app_info(['app', 'httpcommon'],         'app/util/httpcommon',))

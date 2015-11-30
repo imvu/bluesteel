@@ -2,7 +2,7 @@
 
 from app.presenter.views.helpers import ViewUrlGenerator
 from app.presenter.views.helpers import ViewPrepareObjects
-from app.service.strongholdworker.models.WorkerModel import WorkerEntry
+from app.service.bluesteelworker.models.WorkerModel import WorkerEntry
 from app.util.commandrepo.models.CommandGroupModel import CommandGroupEntry
 from app.util.httpcommon import res
 
