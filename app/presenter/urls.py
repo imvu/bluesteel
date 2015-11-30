@@ -20,23 +20,8 @@ urlpatterns = patterns(
     url(r'^layout/(?P<layout_id>\d+)/confirm/delete/$',
         'app.presenter.views.html.ViewHtmlLayout.confirm_delete'),
 
-    url(r'^layout/(?P<layout_id>\d+)/save/$',
-        'app.presenter.views.json.ViewJsonLayout.save_layout'),
-
-    url(r'^layout/(?P<layout_id>\d+)/delete/$',
-        'app.presenter.views.json.ViewJsonLayout.delete'),
-
-    url(r'^layout/create/$',
-        'app.presenter.views.json.ViewJsonLayout.post_create_new_layout'),
-
     url(r'^projects/$',
         'app.presenter.views.html.ViewHtmlProject.get_projects'),
-
-    url(r'^project/(?P<project_id>\d+)/save/$',
-        'app.presenter.views.json.ViewJsonProject.save_project'),
-
-    url(r'^project/(?P<project_id>\d+)/delete/$',
-        'app.presenter.views.json.ViewJsonProject.delete_project'),
 
     url(r'^project/(?P<project_id>\d+)/branch/all/$',
         'app.presenter.views.html.ViewHtmlProject.get_project_branches'),
@@ -56,9 +41,27 @@ urlpatterns = patterns(
     url(r'^definition/(?P<definition_id>\d+)/edit/$',
         'app.presenter.views.html.ViewHtmlBenchmarkDefinitions.get_benchmark_definition_edit'),
 
+    # json views
+
+    url(r'^layout/(?P<layout_id>\d+)/save/$',
+        'app.presenter.views.json.ViewJsonLayout.save_layout'),
+
+    url(r'^layout/(?P<layout_id>\d+)/delete/$',
+        'app.presenter.views.json.ViewJsonLayout.delete'),
+
+    url(r'^layout/create/$',
+        'app.presenter.views.json.ViewJsonLayout.post_create_new_layout'),
+
+    url(r'^project/(?P<project_id>\d+)/save/$',
+        'app.presenter.views.json.ViewJsonProject.save_project'),
+
+    url(r'^project/(?P<project_id>\d+)/delete/$',
+        'app.presenter.views.json.ViewJsonProject.delete_project'),
+
     url(r'^definitions/create/$',
         'app.presenter.views.json.ViewJsonBenchmarkDefinitions.create_new_benchmark_definition'),
 
     url(r'^definition/(?P<benchmark_definition_id>\d+)/save/$',
         'app.presenter.views.json.ViewJsonBenchmarkDefinitions.view_save_benchmark_definition'),
+
 )
