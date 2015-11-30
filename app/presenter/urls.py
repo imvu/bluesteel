@@ -33,10 +33,10 @@ urlpatterns = patterns(
         'app.presenter.views.ViewProject.get_projects'),
 
     url(r'^project/(?P<project_id>\d+)/save/$',
-        'app.presenter.views.ViewProject.save_project'),
+        'app.presenter.views.json.ViewJsonProject.save_project'),
 
     url(r'^project/(?P<project_id>\d+)/delete/$',
-        'app.presenter.views.ViewProject.delete_project'),
+        'app.presenter.views.json.ViewJsonProject.delete_project'),
 
     url(r'^project/(?P<project_id>\d+)/branch/all/$',
         'app.presenter.views.ViewProject.get_project_branches'),
