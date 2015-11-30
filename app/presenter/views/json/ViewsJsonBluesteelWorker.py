@@ -7,7 +7,8 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from app.service.bluesteelworker.models.WorkerModel import WorkerEntry
-from app.service.bluesteelworker.views import WorkerSchemas
+from app.presenter.schemas import BluesteelWorkerSchemas
+from app.presenter.views.helpers import ViewUrlGenerator
 from app.util.httpcommon import res
 from app.util.httpcommon import val
 import os
@@ -34,7 +35,7 @@ def zip_folder_and_return_path(path_to_compress, path_destination, name_destinat
 def get_worker_urls(domain, worker_id):
     """ Returns all the urls associated with a worker """
     obj = {}
-    obj['update_activity_point'] = 'http://{0}/bluesteelworker/worker/{1}/update/activity/'.format(
+    obj['update_activity_point'] = ViewUrlGenerator.get_worker_update_activity_full_url(
         domain,
         worker_id
     )
@@ -82,9 +83,14 @@ def create_worker_info(request):
     if request.method == 'POST':
         (json_valid, post_info) = val.validate_json_string(request.body)
         if not json_valid:
-            return res.get_json_parser_failed({})
+            return res.get_json_parser_failed(
+                {}
+            )
 
-        (obj_validated, val_resp_obj) = val.validate_obj_schema(post_info, WorkerSchemas.CREATE_WORKER_INFO_SCHEMA)
+        (obj_validated, val_resp_obj) = val.validate_obj_schema(
+            post_info,
+            BluesteelWorkerSchemas.CREATE_WORKER_INFO_SCHEMA
+        )
         if not obj_validated:
             return res.get_schema_failed(val_resp_obj)
 
@@ -128,7 +134,7 @@ def login_worker_info(request):
         if not json_valid:
             return res.get_json_parser_failed({})
 
-        (obj_validated, obj) = val.validate_obj_schema(post_info, WorkerSchemas.LOGIN_WORKER_SCHEMA)
+        (obj_validated, obj) = val.validate_obj_schema(post_info, BluesteelWorkerSchemas.LOGIN_WORKER_SCHEMA)
         if not obj_validated:
             return res.get_schema_failed(obj)
 

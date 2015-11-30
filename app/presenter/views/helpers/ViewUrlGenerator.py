@@ -34,10 +34,16 @@ def get_delete_project_url(project_id):
     return '/main/project/{0}/delete/'.format(project_id)
 
 def get_download_worker_url():
-    return '/bluesteelworker/download/'
+    return '/main/bluesteelworker/download/'
 
 def get_worker_report_url(worker_id):
-    return '/main/worker/{0}/report/'.format(worker_id)
+    return '/main/bluesteelworker/{0}/report/'.format(worker_id)
+
+def get_worker_update_activity_full_url(domain, worker_id):
+    return 'http://{0}/main/bluesteelworker/{1}/update/activity/'.format(
+        domain,
+        worker_id
+    )
 
 def get_change_merge_target_url(project_id):
     return '/git/branch/merge/target/project/{0}/'.format(project_id)

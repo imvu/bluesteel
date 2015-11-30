@@ -32,7 +32,7 @@ urlpatterns = patterns(
     url(r'^workers/$',
         'app.presenter.views.html.ViewHtmlWorkers.get_workers'),
 
-    url(r'^worker/(?P<worker_id>\d+)/report/all/$',
+    url(r'^bluesteelworker/(?P<worker_id>\d+)/report/all/$',
         'app.presenter.views.html.ViewHtmlWorkers.get_worker_reports'),
 
     url(r'^definitions/all/$',
@@ -72,5 +72,22 @@ urlpatterns = patterns(
 
     url(r'^definition/(?P<benchmark_definition_id>\d+)/save/$',
         'app.presenter.views.json.ViewJsonBenchmarkDefinitions.view_save_benchmark_definition'),
+
+    url(r'^bluesteelworker/download/$',
+        'app.presenter.views.json.ViewsJsonBluesteelWorker.get_worker'),
+
+    # Using a UUID regex for a uuid3 version
+    # [0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}
+    url(r'^bluesteelworker/(?P<worker_uuid>[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/$',
+        'app.presenter.views.json.ViewsJsonBluesteelWorker.get_worker_info'),
+
+    url(r'^bluesteelworker/create/',
+        'app.presenter.views.json.ViewsJsonBluesteelWorker.create_worker_info'),
+
+    url(r'^bluesteelworker/login/',
+        'app.presenter.views.json.ViewsJsonBluesteelWorker.login_worker_info'),
+
+    url(r'^bluesteelworker/(?P<worker_id>\d+)/update/activity/',
+        'app.presenter.views.json.ViewsJsonBluesteelWorker.update_worker_activity'),
 
 )

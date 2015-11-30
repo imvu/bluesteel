@@ -28,8 +28,6 @@ urlpatterns = patterns(
     url(r'^git/',
         include('app.service.gitrepo.urls')),
 
-    url(r'^bluesteelworker/',
-        include('app.service.bluesteelworker.urls')),
 
     # url(r'^$',
     #     RedirectView.as_view(url='/<url_here>/')),

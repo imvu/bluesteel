@@ -10,7 +10,7 @@ from app.service.bluesteelworker.models.WorkerModel import WorkerEntry
 from datetime import timedelta
 import json
 
-class ViewsWorkerTestCase(TestCase):
+class ViewsBluesteelWorkerTestCase(TestCase):
 
     def setUp(self):
         self.client = Client()
@@ -27,8 +27,12 @@ class ViewsWorkerTestCase(TestCase):
     def tearDown(self):
         pass
 
+    #  !!!!!!!!
+    #  Test bluesteelworker/download/ url !!!!!!!
+    #  !!!!!!!!
+
     def test_get_worker_info(self):
-        resp = self.client.get('/bluesteelworker/worker/8a88432d-33db-4d24-a0a7-2f863e7e8e4a/')
+        resp = self.client.get('/main/bluesteelworker/8a88432d-33db-4d24-a0a7-2f863e7e8e4a/')
 
         res.check_cross_origin_headers(self, resp)
         resp_obj = json.loads(resp.content)
@@ -37,10 +41,10 @@ class ViewsWorkerTestCase(TestCase):
         self.assertEqual('worker-1', resp_obj['data']['worker']['name'])
         self.assertEqual('8a88432d-33db-4d24-a0a7-2f863e7e8e4a', resp_obj['data']['worker']['uuid'])
         self.assertEqual('One Worker :)', resp_obj['data']['worker']['description'])
-        self.assertEqual('http://testserver/bluesteelworker/worker/1/update/activity/', resp_obj['data']['worker']['url']['update_activity_point'])
+        self.assertEqual('http://testserver/main/bluesteelworker/1/update/activity/', resp_obj['data']['worker']['url']['update_activity_point'])
 
     def test_get_worker_info_not_found(self):
-        resp = self.client.get('/bluesteelworker/worker/8a88432d-33db-4d24-a0a7-20000000000a/')
+        resp = self.client.get('/main/bluesteelworker/8a88432d-33db-4d24-a0a7-20000000000a/')
 
         res.check_cross_origin_headers(self, resp)
         resp_obj = json.loads(resp.content)
@@ -57,7 +61,7 @@ class ViewsWorkerTestCase(TestCase):
         post_str = json.dumps(post_data)
 
         resp = self.client.post(
-            '/bluesteelworker/worker/create/',
+            '/main/bluesteelworker/create/',
             data=post_str,
             content_type='text/plain'
         )
@@ -69,7 +73,7 @@ class ViewsWorkerTestCase(TestCase):
         self.assertEqual('8a88432d-33db-4d24-a0a7-0000007e8e4a', resp_obj['data']['worker']['uuid'])
         self.assertEqual('osx', resp_obj['data']['worker']['operative_system'])
         self.assertEqual('host-name', resp_obj['data']['worker']['name'])
-        self.assertEqual('http://testserver/bluesteelworker/worker/2/update/activity/', resp_obj['data']['worker']['url']['update_activity_point'])
+        self.assertEqual('http://testserver/main/bluesteelworker/2/update/activity/', resp_obj['data']['worker']['url']['update_activity_point'])
 
         entry = WorkerEntry.objects.all().filter(id=resp_obj['data']['worker']['id']).first()
 
@@ -98,7 +102,7 @@ class ViewsWorkerTestCase(TestCase):
         )
 
         resp = self.client.post(
-            '/bluesteelworker/worker/login/',
+            '/main/bluesteelworker/login/',
             data=json.dumps(post_data),
             content_type='text/plain'
         )
@@ -126,7 +130,7 @@ class ViewsWorkerTestCase(TestCase):
         )
 
         resp = self.client.post(
-            '/bluesteelworker/worker/login/',
+            '/main/bluesteelworker/login/',
             data=json.dumps(post_data),
             content_type='text/plain'
         )
@@ -158,7 +162,7 @@ class ViewsWorkerTestCase(TestCase):
         )
 
         resp = self.client.post(
-            '/bluesteelworker/worker/login/',
+            '/main/bluesteelworker/login/',
             data=json.dumps(post_data),
             content_type='text/plain'
         )
@@ -174,7 +178,7 @@ class ViewsWorkerTestCase(TestCase):
         update_time_1 = WorkerEntry.objects.filter(id=self.worker_1.id).first().updated_at
 
         resp = self.client.post(
-            '/bluesteelworker/worker/{0}/update/activity/'.format(self.worker_1.id),
+            '/main/bluesteelworker/{0}/update/activity/'.format(self.worker_1.id),
             data='',
             content_type='text/plain'
         )
