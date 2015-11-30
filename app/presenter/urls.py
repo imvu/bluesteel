@@ -53,12 +53,12 @@ urlpatterns = patterns(
     url(r'^definitions/all/$',
         'app.presenter.views.ViewBenchmarkDefinitions.get_benchmark_definitions'),
 
-    url(r'^definitions/create/$',
-        'app.presenter.views.ViewBenchmarkDefinitions.create_new_benchmark_definition'),
-
     url(r'^definition/(?P<definition_id>\d+)/edit/$',
         'app.presenter.views.ViewBenchmarkDefinitions.get_benchmark_definition_edit'),
 
+    url(r'^definitions/create/$',
+        'app.presenter.views_json.ViewJsonBenchmarkDefinitions.create_new_benchmark_definition'),
+
     url(r'^definition/(?P<benchmark_definition_id>\d+)/save/$',
-        'app.presenter.views.ViewBenchmarkDefinitions.view_save_benchmark_definition'),
+        'app.presenter.views_json.ViewJsonBenchmarkDefinitions.view_save_benchmark_definition'),
 )

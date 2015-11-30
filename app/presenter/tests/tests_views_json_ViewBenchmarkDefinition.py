@@ -12,7 +12,7 @@ from app.util.commandrepo.models.CommandModel import CommandEntry
 from app.util.httpcommon import res
 import json
 
-class BenchmarkDefinitionViewTestCase(TestCase):
+class BenchmarkDefinitionViewJsonTestCase(TestCase):
 
     def setUp(self):
         self.client = Client()
