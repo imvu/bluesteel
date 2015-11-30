@@ -22,9 +22,6 @@ urlpatterns = patterns(
     url(r'^benchmark/',
         include('app.service.benchmark.urls')),
 
-    url(r'^gitfeeder/',
-        include('app.service.gitfeeder.urls')),
-
     url(r'^git/',
         include('app.service.gitrepo.urls')),
 

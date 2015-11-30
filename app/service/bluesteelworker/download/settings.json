@@ -1,7 +1,7 @@
 {
-    "entry_point" : "http://localhost:28028/bluesteel/layout/all/urls/",
-    "worker_info_point" : "http://localhost:28028/bluesteelworker/worker/",
-    "create_worker_info_point" : "http://localhost:28028/bluesteelworker/worker/create/",
-    "login_worker_point" : "http://localhost:28028/bluesteelworker/worker/login/",
+    "entry_point" : "http://localhost:28028/main/layout/all/urls/",
+    "worker_info_point" : "http://localhost:28028/main/bluesteelworker/",
+    "create_worker_info_point" : "http://localhost:28028/main/bluesteelworker/create/",
+    "login_worker_point" : "http://localhost:28028/main/bluesteelworker/login/",
     "tmp_path" : ["..", "..", "..", "..", "tmp", "worker_tmp"]
 }

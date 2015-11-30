@@ -75,7 +75,7 @@ class GitFeedViewsReportsTestCase(TestCase):
         obj['reports'] = reports
 
         resp = self.client.post(
-            '/gitfeeder/feed/commit/project/{0}/'.format(self.git_project1.id),
+            '/main/feed/commit/project/{0}/'.format(self.git_project1.id),
             data = json.dumps(obj),
             content_type='application/json')
 
@@ -113,7 +113,7 @@ class GitFeedViewsReportsTestCase(TestCase):
         obj['reports'] = report_1
 
         resp = self.client.post(
-            '/gitfeeder/feed/commit/project/{0}/'.format(self.git_project1.id),
+            '/main/feed/commit/project/{0}/'.format(self.git_project1.id),
             data = json.dumps(obj),
             content_type='application/json')
 
@@ -126,7 +126,7 @@ class GitFeedViewsReportsTestCase(TestCase):
         obj['reports'] = report_2
 
         resp = self.client.post(
-            '/gitfeeder/feed/commit/project/{0}/'.format(self.git_project1.id),
+            '/main/feed/commit/project/{0}/'.format(self.git_project1.id),
             data = json.dumps(obj),
             content_type='application/json')
 

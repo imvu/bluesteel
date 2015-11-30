@@ -1,4 +1,4 @@
-""" Git Feed views """
+""" Git Feed json views """
 
 from django.utils import timezone
 from django.conf import settings
@@ -17,7 +17,7 @@ from app.util.commandrepo.models.CommandSetModel import CommandSetEntry
 from app.util.commandrepo.models.CommandModel import CommandEntry
 from app.util.commandrepo.models.CommandResultModel import CommandResultEntry
 from app.util.logger.models.LogModel import LogEntry
-from app.service.gitfeeder.views import GitFeederSchemas
+from app.presenter.schemas import GitFeederSchemas
 import json
 import arrow
 import pytz

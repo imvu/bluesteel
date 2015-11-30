@@ -90,4 +90,7 @@ urlpatterns = patterns(
     url(r'^bluesteelworker/(?P<worker_id>\d+)/update/activity/',
         'app.presenter.views.json.ViewsJsonBluesteelWorker.update_worker_activity'),
 
+    url(r'^feed/commit/project/(?P<project_id>\d+)/$',
+        'app.presenter.views.json.ViewJsonGitFeeder.post_commits'),
+
 )

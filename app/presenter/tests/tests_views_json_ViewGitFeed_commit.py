@@ -69,7 +69,7 @@ class GitFeedViewsCommitTestCase(TestCase):
         )
 
         resp = self.client.post(
-            '/gitfeeder/feed/commit/project/{0}/'.format(self.git_project1.id),
+            '/main/feed/commit/project/{0}/'.format(self.git_project1.id),
             data = json.dumps(post_data),
             content_type='application/json')
 
@@ -114,7 +114,7 @@ class GitFeedViewsCommitTestCase(TestCase):
 
         self.client.login(username='user1@test.com', password='pass1')
         resp = self.client.post(
-            '/gitfeeder/feed/commit/project/{0}/'.format(self.git_project1.id),
+            '/main/feed/commit/project/{0}/'.format(self.git_project1.id),
             data = json.dumps(post_data),
             content_type='application/json')
 
@@ -163,7 +163,7 @@ class GitFeedViewsCommitTestCase(TestCase):
         )
 
         resp = self.client.post(
-            '/gitfeeder/feed/commit/project/{0}/'.format(self.git_project1.id),
+            '/main/feed/commit/project/{0}/'.format(self.git_project1.id),
             data = json.dumps(post_data),
             content_type='application/json')
 
@@ -216,7 +216,7 @@ class GitFeedViewsCommitTestCase(TestCase):
         )
 
         resp = self.client.post(
-            '/gitfeeder/feed/commit/project/{0}/'.format(self.git_project1.id),
+            '/main/feed/commit/project/{0}/'.format(self.git_project1.id),
             data = json.dumps(post_data),
             content_type='application/json')
 
@@ -263,7 +263,7 @@ class GitFeedViewsCommitTestCase(TestCase):
         )
 
         resp = self.client.post(
-            '/gitfeeder/feed/commit/project/{0}/'.format(self.git_project1.id),
+            '/main/feed/commit/project/{0}/'.format(self.git_project1.id),
             data = json.dumps(post_data),
             content_type='application/json')
 
@@ -316,7 +316,7 @@ class GitFeedViewsCommitTestCase(TestCase):
         )
 
         resp = self.client.post(
-            '/gitfeeder/feed/commit/project/{0}/'.format(self.git_project1.id),
+            '/main/feed/commit/project/{0}/'.format(self.git_project1.id),
             data = json.dumps(post_data),
             content_type='application/json')
 
@@ -358,7 +358,7 @@ class GitFeedViewsCommitTestCase(TestCase):
         )
 
         resp = self.client.post(
-            '/gitfeeder/feed/commit/project/{0}/'.format(self.git_project1.id),
+            '/main/feed/commit/project/{0}/'.format(self.git_project1.id),
             data = json.dumps(post_data),
             content_type='application/json')
 
@@ -415,7 +415,7 @@ class GitFeedViewsCommitTestCase(TestCase):
         )
 
         resp = self.client.post(
-            '/gitfeeder/feed/commit/project/{0}/'.format(self.git_project1.id),
+            '/main/feed/commit/project/{0}/'.format(self.git_project1.id),
             data = json.dumps(post_data),
             content_type='application/json')
 
@@ -464,7 +464,7 @@ class GitFeedViewsCommitTestCase(TestCase):
         )
 
         resp = self.client.post(
-            '/gitfeeder/feed/commit/project/{0}/'.format(self.git_project1.id),
+            '/main/feed/commit/project/{0}/'.format(self.git_project1.id),
             data = json.dumps(post_data),
             content_type='application/json')
 

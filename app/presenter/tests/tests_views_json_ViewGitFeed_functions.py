@@ -5,6 +5,8 @@ from django.test import Client
 from django.conf import settings
 from django.utils import timezone
 from django.contrib.auth.models import User
+# Move view functions on ViewsJsonGitFeeder to a GitFeeder Controller. It is missing!
+from app.presenter.views.json import ViewJsonGitFeeder
 from app.service.gitrepo.models.GitProjectModel import GitProjectEntry
 from app.service.gitrepo.models.GitUserModel import GitUserEntry
 from app.service.gitrepo.models.GitCommitModel import GitCommitEntry
@@ -14,7 +16,6 @@ from app.service.gitrepo.models.GitBranchModel import GitBranchEntry
 from app.service.gitrepo.models.GitBranchTrailModel import GitBranchTrailEntry
 from app.service.gitrepo.models.GitBranchMergeTargetModel import GitBranchMergeTargetEntry
 from app.service.gitfeeder.helper import FeederTestHelper
-from app.service.gitfeeder.views import ViewsGitFeed
 from app.util.httpcommon import res
 from app.util.logger.models.LogModel import LogEntry
 from datetime import timedelta
@@ -58,7 +59,7 @@ class GitFeedViewsBranchTestCase(TestCase):
         commit1 = FeederTestHelper.create_commit(1, [], 'user1', 'user1@test.com', commit_time, commit_time)
         branch1 = FeederTestHelper.create_branch('master', 1, [FeederTestHelper.hash_string(1)], 'master')
 
-        ViewsGitFeed.insert_branches(self.user1, [branch1], self.git_project1)
+        ViewJsonGitFeeder.insert_branches(self.user1, [branch1], self.git_project1)
 
         self.assertEqual(1, GitBranchEntry.objects.all().count())
         self.assertEqual('master', GitBranchEntry.objects.all().first().name)
@@ -76,7 +77,7 @@ class GitFeedViewsBranchTestCase(TestCase):
 
         branch1 = FeederTestHelper.create_branch('master', 1, [FeederTestHelper.hash_string(1)], 'master')
 
-        ViewsGitFeed.insert_branches(self.user1, [branch1], self.git_project1)
+        ViewJsonGitFeeder.insert_branches(self.user1, [branch1], self.git_project1)
 
         self.assertEqual(0, GitBranchTrailEntry.objects.all().count())
         self.assertEqual(0, GitCommitEntry.objects.all().count())
@@ -124,7 +125,7 @@ class GitFeedViewsBranchTestCase(TestCase):
 
         commits = [commit1, commit2, commit3]
 
-        ViewsGitFeed.insert_parents(self.user1, commits, self.git_project1)
+        ViewJsonGitFeeder.insert_parents(self.user1, commits, self.git_project1)
 
         self.assertEqual(0, LogEntry.objects.all().count())
         self.assertEqual(2, GitParentEntry.objects.all().count())
@@ -186,7 +187,7 @@ class GitFeedViewsBranchTestCase(TestCase):
 
         commits = [commit1, commit2, commit3]
 
-        ViewsGitFeed.insert_parents(self.user1, commits, self.git_project1)
+        ViewJsonGitFeeder.insert_parents(self.user1, commits, self.git_project1)
 
         self.assertEqual(0, LogEntry.objects.all().count())
         self.assertEqual(2, GitParentEntry.objects.all().count())
@@ -201,7 +202,7 @@ class GitFeedViewsBranchTestCase(TestCase):
 
         commits = [commit1, commit2, commit3]
 
-        ViewsGitFeed.insert_parents(self.user1, commits, self.git_project1)
+        ViewJsonGitFeeder.insert_parents(self.user1, commits, self.git_project1)
 
         self.assertEqual(2, LogEntry.objects.all().count())
         self.assertEqual(LogEntry.ERROR, LogEntry.objects.all()[0].log_type)
@@ -230,7 +231,7 @@ class GitFeedViewsBranchTestCase(TestCase):
 
         diff1 = FeederTestHelper.create_diff(FeederTestHelper.hash_string(2), FeederTestHelper.hash_string(1), 'diff-content')
 
-        ViewsGitFeed.insert_diffs(self.user1, [diff1], self.git_project1)
+        ViewJsonGitFeeder.insert_diffs(self.user1, [diff1], self.git_project1)
 
         self.assertEqual(1, GitDiffEntry.objects.all().count())
         self.assertEqual(0, LogEntry.objects.all().count())
@@ -250,7 +251,7 @@ class GitFeedViewsBranchTestCase(TestCase):
 
         diff1 = FeederTestHelper.create_diff(FeederTestHelper.hash_string(2), FeederTestHelper.hash_string(1), 'diff-content')
 
-        ViewsGitFeed.insert_diffs(self.user1, [diff1], self.git_project1)
+        ViewJsonGitFeeder.insert_diffs(self.user1, [diff1], self.git_project1)
 
         self.assertEqual(0, GitDiffEntry.objects.all().count())
         self.assertEqual(1, LogEntry.objects.all().count())
@@ -270,7 +271,7 @@ class GitFeedViewsBranchTestCase(TestCase):
 
         diff1 = FeederTestHelper.create_diff(FeederTestHelper.hash_string(2), FeederTestHelper.hash_string(1), 'diff-content')
 
-        ViewsGitFeed.insert_diffs(self.user1, [diff1], self.git_project1)
+        ViewJsonGitFeeder.insert_diffs(self.user1, [diff1], self.git_project1)
 
         self.assertEqual(0, GitDiffEntry.objects.all().count())
         self.assertEqual(1, LogEntry.objects.all().count())

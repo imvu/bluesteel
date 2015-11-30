@@ -68,7 +68,7 @@ class GitFeedViewsDiffTestCase(TestCase):
         )
 
         resp = self.client.post(
-            '/gitfeeder/feed/commit/project/{0}/'.format(self.git_project1.id),
+            '/main/feed/commit/project/{0}/'.format(self.git_project1.id),
             data = json.dumps(post_data),
             content_type='application/json')
 
@@ -116,7 +116,7 @@ class GitFeedViewsDiffTestCase(TestCase):
         )
 
         resp = self.client.post(
-            '/gitfeeder/feed/commit/project/{0}/'.format(self.git_project1.id),
+            '/main/feed/commit/project/{0}/'.format(self.git_project1.id),
             data = json.dumps(post_data),
             content_type='application/json')
 
@@ -145,7 +145,7 @@ class GitFeedViewsDiffTestCase(TestCase):
         )
 
         resp = self.client.post(
-            '/gitfeeder/feed/commit/project/{0}/'.format(self.git_project1.id),
+            '/main/feed/commit/project/{0}/'.format(self.git_project1.id),
             data = json.dumps(post_data),
             content_type='application/json')
 
