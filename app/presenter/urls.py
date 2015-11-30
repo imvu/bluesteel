@@ -14,20 +14,20 @@ urlpatterns = patterns(
     url(r'^layout/edit/(?P<layout_id>\d+)/$',
         'app.presenter.views.ViewLayout.get_layout_editable'),
 
-    url(r'^layout/(?P<layout_id>\d+)/save/$',
-        'app.presenter.views.ViewLayout.save_layout'),
-
     url(r'^layout/(?P<layout_id>\d+)/add/project/$',
         'app.presenter.views.ViewLayout.add_default_project'),
 
     url(r'^layout/(?P<layout_id>\d+)/confirm/delete/$',
         'app.presenter.views.ViewLayout.confirm_delete'),
 
+    url(r'^layout/(?P<layout_id>\d+)/save/$',
+        'app.presenter.views_json.ViewJsonLayout.save_layout'),
+
     url(r'^layout/(?P<layout_id>\d+)/delete/$',
-        'app.presenter.views.ViewLayout.delete'),
+        'app.presenter.views_json.ViewJsonLayout.delete'),
 
     url(r'^layout/create/$',
-        'app.presenter.views.ViewLayout.post_create_new_layout'),
+        'app.presenter.views_json.ViewJsonLayout.post_create_new_layout'),
 
     url(r'^projects/$',
         'app.presenter.views.ViewProject.get_projects'),
