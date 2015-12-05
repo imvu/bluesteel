@@ -75,7 +75,7 @@ class ViewsGitRepoTestCase(TestCase):
         pass
 
     def test_get_all_branches_of_a_project(self):
-        resp = self.client.get('/git/branch/all/project/{0}/'.format(self.git_project1.id))
+        resp = self.client.get('/main/branch/all/project/{0}/'.format(self.git_project1.id))
 
         res.check_cross_origin_headers(self, resp)
         resp_obj = json.loads(resp.content)
@@ -105,7 +105,7 @@ class ViewsGitRepoTestCase(TestCase):
             diff=diff_entry
         )
 
-        resp = self.client.get('/git/branch/all/project/{0}/'.format(self.git_project1.id))
+        resp = self.client.get('/main/branch/all/project/{0}/'.format(self.git_project1.id))
 
         res.check_cross_origin_headers(self, resp)
         resp_obj = json.loads(resp.content)

@@ -146,7 +146,7 @@ class ViewsGitMergeTargetTestCase(TestCase):
 
     def test_project_not_found(self):
         resp = self.client.post(
-            '/git/branch/merge/target/project/128/',
+            '/main/branch/merge/target/project/128/',
             data = '{}',
             content_type='application/json')
 
@@ -158,7 +158,7 @@ class ViewsGitMergeTargetTestCase(TestCase):
 
     def test_json_data_is_incorrect(self):
         resp = self.client.post(
-            '/git/branch/merge/target/project/{0}/'.format(self.git_project1.id),
+            '/main/branch/merge/target/project/{0}/'.format(self.git_project1.id),
             data = '/',
             content_type='application/json')
 
@@ -174,7 +174,7 @@ class ViewsGitMergeTargetTestCase(TestCase):
         obj['target_branch_name'] = 'name'
 
         resp = self.client.post(
-            '/git/branch/merge/target/project/{0}/'.format(self.git_project1.id),
+            '/main/branch/merge/target/project/{0}/'.format(self.git_project1.id),
             data = json.dumps(obj),
             content_type='application/json')
 
@@ -190,7 +190,7 @@ class ViewsGitMergeTargetTestCase(TestCase):
         obj['target_branch_name'] = 'branch-3'
 
         resp = self.client.post(
-            '/git/branch/merge/target/project/{0}/'.format(self.git_project1.id),
+            '/main/branch/merge/target/project/{0}/'.format(self.git_project1.id),
             data = json.dumps(obj),
             content_type='application/json')
 
@@ -206,7 +206,7 @@ class ViewsGitMergeTargetTestCase(TestCase):
         obj['target_branch_name'] = 'branch-5'
 
         resp = self.client.post(
-            '/git/branch/merge/target/project/{0}/'.format(self.git_project1.id),
+            '/main/branch/merge/target/project/{0}/'.format(self.git_project1.id),
             data = json.dumps(obj),
             content_type='application/json')
 
@@ -222,7 +222,7 @@ class ViewsGitMergeTargetTestCase(TestCase):
         obj['target_branch_name'] = 'branch-3'
 
         resp = self.client.post(
-            '/git/branch/merge/target/project/{0}/'.format(self.git_project1.id),
+            '/main/branch/merge/target/project/{0}/'.format(self.git_project1.id),
             data = json.dumps(obj),
             content_type='application/json')
 
@@ -241,7 +241,7 @@ class ViewsGitMergeTargetTestCase(TestCase):
         obj['target_branch_name'] = 'branch-3'
 
         resp = self.client.post(
-            '/git/branch/merge/target/project/{0}/'.format(self.git_project1.id),
+            '/main/branch/merge/target/project/{0}/'.format(self.git_project1.id),
             data = json.dumps(obj),
             content_type='application/json')
 
@@ -266,7 +266,7 @@ class ViewsGitMergeTargetTestCase(TestCase):
         obj['target_branch_name'] = 'branch-3'
 
         resp = self.client.post(
-            '/git/branch/merge/target/project/{0}/'.format(self.git_project1.id),
+            '/main/branch/merge/target/project/{0}/'.format(self.git_project1.id),
             data = json.dumps(obj),
             content_type='application/json')
 

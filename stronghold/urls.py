@@ -22,10 +22,6 @@ urlpatterns = patterns(
     url(r'^benchmark/',
         include('app.service.benchmark.urls')),
 
-    url(r'^git/',
-        include('app.service.gitrepo.urls')),
-
-
     # url(r'^$',
     #     RedirectView.as_view(url='/<url_here>/')),
 )

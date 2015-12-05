@@ -14,9 +14,6 @@ urlpatterns = patterns(
     url(r'^layout/edit/(?P<layout_id>\d+)/$',
         'app.presenter.views.html.ViewHtmlLayout.get_layout_editable'),
 
-    url(r'^layout/(?P<layout_id>\d+)/add/project/$',
-        'app.presenter.views.html.ViewHtmlLayout.add_default_project'),
-
     url(r'^layout/(?P<layout_id>\d+)/confirm/delete/$',
         'app.presenter.views.html.ViewHtmlLayout.confirm_delete'),
 
@@ -42,6 +39,9 @@ urlpatterns = patterns(
         'app.presenter.views.html.ViewHtmlBenchmarkDefinitions.get_benchmark_definition_edit'),
 
     # json views
+
+    url(r'^layout/(?P<layout_id>\d+)/add/project/$',
+        'app.presenter.views.json.ViewJsonLayout.add_default_project'),
 
     url(r'^layout/(?P<layout_id>\d+)/save/$',
         'app.presenter.views.json.ViewJsonLayout.save_layout'),
@@ -92,5 +92,11 @@ urlpatterns = patterns(
 
     url(r'^feed/commit/project/(?P<project_id>\d+)/$',
         'app.presenter.views.json.ViewJsonGitFeeder.post_commits'),
+
+    url(r'^branch/all/project/(?P<project_id>\d+)/$',
+        'app.presenter.views.json.ViewJsonGitRepo.get_branch_list'),
+
+    url(r'^branch/merge/target/project/(?P<project_id>\d+)/$',
+        'app.presenter.views.json.ViewJsonBranchMergeTarget.set_branch_merge_target'),
 
 )

@@ -7,7 +7,7 @@ from app.service.gitrepo.models.GitBranchModel import GitBranchEntry
 from app.service.gitrepo.models.GitBranchTrailModel import GitBranchTrailEntry
 from app.service.gitrepo.models.GitBranchMergeTargetModel import GitBranchMergeTargetEntry
 from app.service.gitrepo.controllers.GitController import GitController
-from app.service.gitrepo.views import GitRepoSchemas
+from app.presenter.schemas import GitRepoSchemas
 
 
 def set_branch_merge_target(request, project_id):
@@ -17,8 +17,8 @@ def set_branch_merge_target(request, project_id):
         if project_entry == None:
             return res.get_response(404, 'project not found', {})
 
-        (json_valid, post_info) = val.validate_json_string(request.body)
-        if not json_valid:
+        (json_is_valid, post_info) = val.validate_json_string(request.body)
+        if not json_is_valid:
             return res.get_json_parser_failed({})
 
         (obj_validated, val_resp_obj) = val.validate_obj_schema(post_info, GitRepoSchemas.GIT_MERGE_TARGET_SCHEMA)
