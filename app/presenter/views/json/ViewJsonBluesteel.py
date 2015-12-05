@@ -1,8 +1,8 @@
 """ Bluesteel views functions """
 
-from app.service.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
-from app.service.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
-from app.util.httpcommon import res
+from app.logic.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
+from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
+from app.logic.httpcommon import res
 
 def add_project_feed_url(request, layout):
     for project in layout['projects']:

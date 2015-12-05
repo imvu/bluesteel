@@ -2,10 +2,10 @@
 
 from app.presenter.views.helpers import ViewUrlGenerator
 from app.presenter.views.helpers import ViewPrepareObjects
-from app.service.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
-from app.service.bluesteel.controllers.BluesteelLayoutController import BluesteelLayoutController
-from app.util.httpcommon.Page import Page
-from app.util.httpcommon import res
+from app.logic.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
+from app.logic.bluesteel.controllers.BluesteelLayoutController import BluesteelLayoutController
+from app.logic.httpcommon.Page import Page
+from app.logic.httpcommon import res
 
 LAYOUT_ITEMS_PER_PAGE = 30
 

@@ -2,8 +2,8 @@
 
 from app.presenter.views.helpers import ViewUrlGenerator
 from app.presenter.schemas import BenchmarkDefinitionSchemas
-from app.service.benchmark.controllers.BenchmarkDefinitionController import BenchmarkDefinitionController
-from app.util.httpcommon import res, val
+from app.logic.benchmark.controllers.BenchmarkDefinitionController import BenchmarkDefinitionController
+from app.logic.httpcommon import res, val
 
 def create_new_benchmark_definition(request):
     """ Creates a new benchmark defintion """

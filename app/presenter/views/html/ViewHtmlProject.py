@@ -2,10 +2,10 @@
 
 from app.presenter.views.helpers import ViewUrlGenerator
 from app.presenter.views.helpers import ViewPrepareObjects
-from app.service.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
-from app.service.bluesteel.controllers.BluesteelProjectController import BluesteelProjectController
-from app.service.gitrepo.models.GitBranchModel import GitBranchEntry
-from app.util.httpcommon import res
+from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
+from app.logic.bluesteel.controllers.BluesteelProjectController import BluesteelProjectController
+from app.logic.gitrepo.models.GitBranchModel import GitBranchEntry
+from app.logic.httpcommon import res
 
 def get_projects(request):
     """ Display all branch names """

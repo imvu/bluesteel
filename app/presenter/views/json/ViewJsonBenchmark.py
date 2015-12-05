@@ -1,7 +1,7 @@
 """ Bluesteel views functions """
 
-from app.service.benchmark.controllers.BenchmarkExecutionController import BenchmarkExecutionController
-from app.util.httpcommon import res
+from app.logic.benchmark.controllers.BenchmarkExecutionController import BenchmarkExecutionController
+from app.logic.httpcommon import res
 
 def acquire_benchmark_execution(request):
     """ Acquire the next available benchmark execution posible """

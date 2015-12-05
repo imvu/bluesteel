@@ -2,10 +2,10 @@
 
 from app.presenter.views.helpers import ViewUrlGenerator
 from app.presenter.views.helpers import ViewPrepareObjects
-from app.service.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
-from app.service.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
-from app.service.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
-from app.util.httpcommon import res
+from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
+from app.logic.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
+from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
+from app.logic.httpcommon import res
 
 def get_definition_controls():
     """ Returns a list of control buttons for the benchmark definitions page """

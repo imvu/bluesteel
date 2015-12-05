@@ -3,10 +3,10 @@
 from app.presenter.views.helpers import ViewUrlGenerator
 from app.presenter.views.helpers import ViewPrepareObjects
 from app.presenter.schemas import BluesteelSchemas
-from app.service.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
-from app.service.bluesteel.controllers.BluesteelLayoutController import BluesteelLayoutController
-from app.util.httpcommon import res
-from app.util.httpcommon import val
+from app.logic.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
+from app.logic.bluesteel.controllers.BluesteelLayoutController import BluesteelLayoutController
+from app.logic.httpcommon import res
+from app.logic.httpcommon import val
 
 def post_create_new_layout(request):
     """ Create a new layout and return the ID of it """

@@ -2,9 +2,9 @@
 
 from app.presenter.views.helpers import ViewUrlGenerator
 from app.presenter.views.helpers import ViewPrepareObjects
-from app.service.bluesteelworker.models.WorkerModel import WorkerEntry
-from app.util.commandrepo.models.CommandGroupModel import CommandGroupEntry
-from app.util.httpcommon import res
+from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
+from app.logic.commandrepo.models.CommandGroupModel import CommandGroupEntry
+from app.logic.httpcommon import res
 
 def get_workers(request):
     """ Returns html for the workers page """

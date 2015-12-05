@@ -3,16 +3,16 @@
 from django.test import TestCase
 from django.test import Client
 from django.utils import timezone
-from app.service.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
-from app.service.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
-from app.service.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
-from app.service.gitrepo.models.GitProjectModel import GitProjectEntry
-from app.service.gitrepo.models.GitUserModel import GitUserEntry
-from app.service.gitrepo.models.GitCommitModel import GitCommitEntry
-from app.util.commandrepo.models.CommandGroupModel import CommandGroupEntry
-from app.util.commandrepo.models.CommandSetModel import CommandSetEntry
-from app.util.commandrepo.models.CommandModel import CommandEntry
-from app.util.httpcommon import res
+from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
+from app.logic.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
+from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
+from app.logic.gitrepo.models.GitProjectModel import GitProjectEntry
+from app.logic.gitrepo.models.GitUserModel import GitUserEntry
+from app.logic.gitrepo.models.GitCommitModel import GitCommitEntry
+from app.logic.commandrepo.models.CommandGroupModel import CommandGroupEntry
+from app.logic.commandrepo.models.CommandSetModel import CommandSetEntry
+from app.logic.commandrepo.models.CommandModel import CommandEntry
+from app.logic.httpcommon import res
 import json
 
 class BenchmarkViewTestCase(TestCase):

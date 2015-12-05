@@ -21,14 +21,14 @@ def get_test_list():
     """ Returns a list of tests, every test its a list of commands """
 
     packs = []
-    packs.append(get_packed_app_info(['app', 'gitrepo'],            'app/service/gitrepo',))
-    packs.append(get_packed_app_info(['app', 'gitfeeder'],          'app/service/gitfeeder',))
-    packs.append(get_packed_app_info(['app', 'bluesteelworker'],    'app/service/bluesteelworker',))
-    packs.append(get_packed_app_info(['app', 'bluesteel'],          'app/service/bluesteel',))
-    packs.append(get_packed_app_info(['app', 'benchmark'],          'app/service/benchmark',))
-    packs.append(get_packed_app_info(['app', 'httpcommon'],         'app/util/httpcommon',))
-    packs.append(get_packed_app_info(['app', 'commandrepo'],        'app/util/commandrepo',))
-    packs.append(get_packed_app_info(['app', 'logger'],             'app/util/logger',))
+    packs.append(get_packed_app_info(['app', 'gitrepo'],            'app/logic/gitrepo',))
+    packs.append(get_packed_app_info(['app', 'gitfeeder'],          'app/logic/gitfeeder',))
+    packs.append(get_packed_app_info(['app', 'bluesteelworker'],    'app/logic/bluesteelworker',))
+    packs.append(get_packed_app_info(['app', 'bluesteel'],          'app/logic/bluesteel',))
+    packs.append(get_packed_app_info(['app', 'benchmark'],          'app/logic/benchmark',))
+    packs.append(get_packed_app_info(['app', 'httpcommon'],         'app/logic/httpcommon',))
+    packs.append(get_packed_app_info(['app', 'commandrepo'],        'app/logic/commandrepo',))
+    packs.append(get_packed_app_info(['app', 'logger'],             'app/logic/logger',))
     packs.append(get_packed_app_info(['app', 'presenter'],          'app/presenter',))
 
     test_list = []

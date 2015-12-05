@@ -4,13 +4,13 @@ from django.test import TestCase
 from django.test import Client
 from django.conf import settings
 from django.utils import timezone
-from app.util.httpcommon import res
-from app.service.gitrepo.models.GitProjectModel import GitProjectEntry
-from app.service.gitrepo.models.GitBranchModel import GitBranchEntry
-from app.service.gitrepo.models.GitBranchMergeTargetModel import GitBranchMergeTargetEntry
-from app.service.gitrepo.models.GitCommitModel import GitCommitEntry
-from app.service.gitrepo.models.GitUserModel import GitUserEntry
-from app.service.gitrepo.models.GitDiffModel import GitDiffEntry
+from app.logic.httpcommon import res
+from app.logic.gitrepo.models.GitProjectModel import GitProjectEntry
+from app.logic.gitrepo.models.GitBranchModel import GitBranchEntry
+from app.logic.gitrepo.models.GitBranchMergeTargetModel import GitBranchMergeTargetEntry
+from app.logic.gitrepo.models.GitCommitModel import GitCommitEntry
+from app.logic.gitrepo.models.GitUserModel import GitUserEntry
+from app.logic.gitrepo.models.GitDiffModel import GitDiffEntry
 from datetime import timedelta
 import json
 

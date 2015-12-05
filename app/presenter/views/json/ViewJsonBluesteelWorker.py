@@ -6,11 +6,11 @@ from django.middleware import csrf
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
-from app.service.bluesteelworker.models.WorkerModel import WorkerEntry
+from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
 from app.presenter.schemas import BluesteelWorkerSchemas
 from app.presenter.views.helpers import ViewUrlGenerator
-from app.util.httpcommon import res
-from app.util.httpcommon import val
+from app.logic.httpcommon import res
+from app.logic.httpcommon import val
 import os
 import zipfile
 
@@ -45,7 +45,7 @@ def get_worker(request):
     """ Returns the worker scripts compressed in a zip file """
     if request.method == 'GET':
         path_final = zip_folder_and_return_path(
-            os.path.join(settings.BASE_DIR, '..', 'app', 'service', 'bluesteelworker', 'download'),
+            os.path.join(settings.BASE_DIR, '..', 'app', 'logic', 'bluesteelworker', 'download'),
             os.path.join(settings.TMP_ROOT, 'zip'),
             'BluesteelWorker.zip'
         )

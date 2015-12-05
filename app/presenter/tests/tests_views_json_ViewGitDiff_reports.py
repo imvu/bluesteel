@@ -4,19 +4,19 @@ from django.test import TestCase
 from django.test import Client
 from django.conf import settings
 from django.utils import timezone
-from app.service.gitrepo.models.GitProjectModel import GitProjectEntry
-from app.service.gitrepo.models.GitUserModel import GitUserEntry
-from app.service.gitrepo.models.GitCommitModel import GitCommitEntry
-from app.service.gitrepo.models.GitParentModel import GitParentEntry
-from app.service.gitrepo.models.GitDiffModel import GitDiffEntry
-from app.service.gitrepo.models.GitBranchModel import GitBranchEntry
-from app.service.gitrepo.models.GitBranchTrailModel import GitBranchTrailEntry
-from app.service.gitfeeder.helper import FeederTestHelper
-from app.util.commandrepo.models.CommandGroupModel import CommandGroupEntry
-from app.util.commandrepo.models.CommandSetModel import CommandSetEntry
-from app.util.commandrepo.models.CommandModel import CommandEntry
-from app.util.commandrepo.models.CommandResultModel import CommandResultEntry
-from app.util.httpcommon import res
+from app.logic.gitrepo.models.GitProjectModel import GitProjectEntry
+from app.logic.gitrepo.models.GitUserModel import GitUserEntry
+from app.logic.gitrepo.models.GitCommitModel import GitCommitEntry
+from app.logic.gitrepo.models.GitParentModel import GitParentEntry
+from app.logic.gitrepo.models.GitDiffModel import GitDiffEntry
+from app.logic.gitrepo.models.GitBranchModel import GitBranchEntry
+from app.logic.gitrepo.models.GitBranchTrailModel import GitBranchTrailEntry
+from app.logic.gitfeeder.helper import FeederTestHelper
+from app.logic.commandrepo.models.CommandGroupModel import CommandGroupEntry
+from app.logic.commandrepo.models.CommandSetModel import CommandSetEntry
+from app.logic.commandrepo.models.CommandModel import CommandEntry
+from app.logic.commandrepo.models.CommandResultModel import CommandResultEntry
+from app.logic.httpcommon import res
 from datetime import timedelta
 import json
 import os

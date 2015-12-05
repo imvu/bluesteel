@@ -1,7 +1,7 @@
 """ Presenter views, main page functions """
 
 from app.presenter.views.helpers import ViewPrepareObjects
-from app.util.httpcommon import res
+from app.logic.httpcommon import res
 
 def get_main(request):
     """ Returns html for the main page """

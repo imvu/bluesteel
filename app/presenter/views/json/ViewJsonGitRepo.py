@@ -1,9 +1,9 @@
 """ Git Feed views """
 
-from app.util.httpcommon import res
-from app.service.gitrepo.models.GitProjectModel import GitProjectEntry
-from app.service.gitrepo.models.GitBranchModel import GitBranchEntry
-from app.service.gitrepo.models.GitBranchMergeTargetModel import GitBranchMergeTargetEntry
+from app.logic.httpcommon import res
+from app.logic.gitrepo.models.GitProjectModel import GitProjectEntry
+from app.logic.gitrepo.models.GitBranchModel import GitBranchEntry
+from app.logic.gitrepo.models.GitBranchMergeTargetModel import GitBranchMergeTargetEntry
 
 
 def get_branch_list(request, project_id):

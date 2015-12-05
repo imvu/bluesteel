@@ -2,14 +2,14 @@
 
 from django.test import TestCase
 from django.test import Client
-from app.service.benchmark.controllers.BenchmarkDefinitionController import BenchmarkDefinitionController
-from app.service.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
-from app.service.bluesteel.controllers.BluesteelLayoutController import BluesteelLayoutController
-from app.service.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
-from app.service.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
-from app.util.commandrepo.models.CommandSetModel import CommandSetEntry
-from app.util.commandrepo.models.CommandModel import CommandEntry
-from app.util.httpcommon import res
+from app.logic.benchmark.controllers.BenchmarkDefinitionController import BenchmarkDefinitionController
+from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
+from app.logic.bluesteel.controllers.BluesteelLayoutController import BluesteelLayoutController
+from app.logic.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
+from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
+from app.logic.commandrepo.models.CommandSetModel import CommandSetEntry
+from app.logic.commandrepo.models.CommandModel import CommandEntry
+from app.logic.httpcommon import res
 import json
 
 class BenchmarkDefinitionViewJsonTestCase(TestCase):

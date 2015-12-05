@@ -2,13 +2,13 @@
 
 from app.presenter.views.helpers import ViewUrlGenerator
 from app.presenter.schemas import BluesteelSchemas
-from app.service.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
-from app.service.bluesteel.controllers.BluesteelProjectController import BluesteelProjectController
-from app.service.bluesteel.controllers.BluesteelLayoutController import BluesteelLayoutController
-from app.util.commandrepo.models.CommandGroupModel import CommandGroupEntry
-from app.util.commandrepo.controllers.CommandController import CommandController
-from app.util.httpcommon import res
-from app.util.httpcommon import val
+from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
+from app.logic.bluesteel.controllers.BluesteelProjectController import BluesteelProjectController
+from app.logic.bluesteel.controllers.BluesteelLayoutController import BluesteelLayoutController
+from app.logic.commandrepo.models.CommandGroupModel import CommandGroupEntry
+from app.logic.commandrepo.controllers.CommandController import CommandController
+from app.logic.httpcommon import res
+from app.logic.httpcommon import val
 
 def save_project(request, project_id):
     """ Save project properties """

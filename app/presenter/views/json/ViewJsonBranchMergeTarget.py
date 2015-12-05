@@ -1,12 +1,12 @@
 """ Git BranchMergetTarget views """
 
-from app.util.httpcommon import res, val
-from app.util.logger.models.LogModel import LogEntry
-from app.service.gitrepo.models.GitProjectModel import GitProjectEntry
-from app.service.gitrepo.models.GitBranchModel import GitBranchEntry
-from app.service.gitrepo.models.GitBranchTrailModel import GitBranchTrailEntry
-from app.service.gitrepo.models.GitBranchMergeTargetModel import GitBranchMergeTargetEntry
-from app.service.gitrepo.controllers.GitController import GitController
+from app.logic.httpcommon import res, val
+from app.logic.logger.models.LogModel import LogEntry
+from app.logic.gitrepo.models.GitProjectModel import GitProjectEntry
+from app.logic.gitrepo.models.GitBranchModel import GitBranchEntry
+from app.logic.gitrepo.models.GitBranchTrailModel import GitBranchTrailEntry
+from app.logic.gitrepo.models.GitBranchMergeTargetModel import GitBranchMergeTargetEntry
+from app.logic.gitrepo.controllers.GitController import GitController
 from app.presenter.schemas import GitRepoSchemas
 
 

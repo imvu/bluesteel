@@ -74,7 +74,7 @@ urlpatterns = patterns(
         'app.presenter.views.json.ViewJsonBenchmarkDefinitions.view_save_benchmark_definition'),
 
     url(r'^bluesteelworker/download/$',
-        'app.presenter.views.json.ViewsJsonBluesteelWorker.get_worker'),
+        'app.presenter.views.json.ViewJsonBluesteelWorker.get_worker'),
 
     # Using a UUID regex for a uuid3 version
     # [0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}
