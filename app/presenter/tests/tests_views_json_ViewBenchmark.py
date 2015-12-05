@@ -78,10 +78,10 @@ class BenchmarkViewTestCase(TestCase):
         pass
 
     def test_acqiere_execution_is_none_because_no_definition(self):
-        resp = self.client.post('/benchmark/execution/acquire/')
+        resp = self.client.post('/main/execution/acquire/')
 
         resp = self.client.post(
-            '/benchmark/execution/acquire/',
+            '/main/execution/acquire/',
             data = json.dumps({}),
             content_type='application/json')
 
@@ -102,7 +102,7 @@ class BenchmarkViewTestCase(TestCase):
 
         # First
         resp = self.client.post(
-            '/benchmark/execution/acquire/',
+            '/main/execution/acquire/',
             data = json.dumps({}),
             content_type='application/json')
 
@@ -117,7 +117,7 @@ class BenchmarkViewTestCase(TestCase):
 
         # Second
         resp = self.client.post(
-            '/benchmark/execution/acquire/',
+            '/main/execution/acquire/',
             data = json.dumps({}),
             content_type='application/json')
 
@@ -132,7 +132,7 @@ class BenchmarkViewTestCase(TestCase):
 
         # Third
         resp = self.client.post(
-            '/benchmark/execution/acquire/',
+            '/main/execution/acquire/',
             data = json.dumps({}),
             content_type='application/json')
 
@@ -147,7 +147,7 @@ class BenchmarkViewTestCase(TestCase):
 
         # Nothing else
         resp = self.client.post(
-            '/benchmark/execution/acquire/',
+            '/main/execution/acquire/',
             data = json.dumps({}),
             content_type='application/json')
 

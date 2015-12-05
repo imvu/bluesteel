@@ -3,6 +3,9 @@
 # Anomalous backslash in string: '\.'. String constant might be missing an r prefix.
 # pylint: disable=W1401
 
+# (duplicate-code)
+# pylint: disable=R0801
+
 SAVE_LAYOUT = {
     '$schema': 'http://json-schema.org/draft-03/schema#',
     'type' : 'object',
@@ -42,8 +45,8 @@ SAVE_PROJECT = {
             'type' : 'array',
             'minItems' : 1,
             'items' : {
-                'type' : 'string',
                 'minLength' : 1,
+                'type' : 'string',
                 'maxLength' : 255,
             },
         },
@@ -60,9 +63,9 @@ SAVE_PROJECT = {
             'type' : 'array',
             'minItems' : 1,
             'items' : {
-                'type' : 'string',
                 'minLength' : 1,
                 'maxLength' : 255,
+                'type' : 'string',
             },
         },
     },

@@ -99,4 +99,7 @@ urlpatterns = patterns(
     url(r'^branch/merge/target/project/(?P<project_id>\d+)/$',
         'app.presenter.views.json.ViewJsonBranchMergeTarget.set_branch_merge_target'),
 
+    url(r'^execution/acquire/$',
+        'app.presenter.views.json.ViewJsonBenchmark.acquire_benchmark_execution'),
+
 )

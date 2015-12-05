@@ -1,5 +1,8 @@
 """ Git Feeder Schema """
 
+# (duplicate-code)
+# pylint: disable=R0801
+
 GIT_FEEDER_SCHEMA = {
     '$schema': 'http://json-schema.org/draft-03/schema#',
     'type' : 'object',

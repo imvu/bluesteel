@@ -19,9 +19,6 @@ urlpatterns = patterns(
     url(r'^main/',
         include('app.presenter.urls')),
 
-    url(r'^benchmark/',
-        include('app.service.benchmark.urls')),
-
     # url(r'^$',
     #     RedirectView.as_view(url='/<url_here>/')),
 )

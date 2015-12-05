@@ -1,5 +1,8 @@
 """ Git Repo Schemas """
 
+# (duplicate-code)
+# pylint: disable=R0801
+
 # 1.- They can include slash / for hierarchical (directory) grouping, but no slash-separated component can
 #     begin with a dot . or end with the sequence .lock.
 #   must not contain /.
