@@ -79,16 +79,16 @@ urlpatterns = patterns(
     # Using a UUID regex for a uuid3 version
     # [0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}
     url(r'^bluesteelworker/(?P<worker_uuid>[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/$',
-        'app.presenter.views.json.ViewsJsonBluesteelWorker.get_worker_info'),
+        'app.presenter.views.json.ViewJsonBluesteelWorker.get_worker_info'),
 
     url(r'^bluesteelworker/create/',
-        'app.presenter.views.json.ViewsJsonBluesteelWorker.create_worker_info'),
+        'app.presenter.views.json.ViewJsonBluesteelWorker.create_worker_info'),
 
     url(r'^bluesteelworker/login/',
-        'app.presenter.views.json.ViewsJsonBluesteelWorker.login_worker_info'),
+        'app.presenter.views.json.ViewJsonBluesteelWorker.login_worker_info'),
 
     url(r'^bluesteelworker/(?P<worker_id>\d+)/update/activity/',
-        'app.presenter.views.json.ViewsJsonBluesteelWorker.update_worker_activity'),
+        'app.presenter.views.json.ViewJsonBluesteelWorker.update_worker_activity'),
 
     url(r'^feed/commit/project/(?P<project_id>\d+)/$',
         'app.presenter.views.json.ViewJsonGitFeeder.post_commits'),
