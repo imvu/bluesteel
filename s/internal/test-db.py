@@ -6,7 +6,7 @@ import platform
 import sys
 
 def main():
-    command = ['./manage.py', 'migrate', '--settings=stronghold.settings.testing']
+    command = ['./manage.py', 'migrate', '--settings=bluesteel.settings.testing']
 
     try:
         out_str = subprocess.check_output(command)

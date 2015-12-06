@@ -69,9 +69,9 @@ PASSWORD_HASHERS = (
     'django.contrib.auth.hashers.MD5PasswordHasher',
 )
 
-ROOT_URLCONF = 'stronghold.urls'
+ROOT_URLCONF = 'bluesteel.urls'
 
-WSGI_APPLICATION = 'stronghold.wsgi.application'
+WSGI_APPLICATION = 'bluesteel.wsgi.application'
 
 
 # Database
@@ -126,5 +126,5 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 25
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend' # development backend
 EMAIL_FILE_PATH = os.path.abspath(os.path.join(BASE_DIR, '..', 'tmp', 'mail'))
-DEFAULT_FROM_EMAIL = 'stronghold@stronghold.com'
+DEFAULT_FROM_EMAIL = 'bluesteel@bluesteel.com'
 

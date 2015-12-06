@@ -1,5 +1,5 @@
 """
-Django production settings for rowpow project.
+Django development settings for rowpow project.
 
 For more information on this file, see
 https://docs.djangoproject.com/en/1.6/topics/settings/
@@ -27,9 +27,9 @@ DEBUG = True
 
 TEMPLATE_DEBUG = True
 
-ALLOWED_HOSTS = [
-    '.com'
-]
+ALLOWED_HOSTS = []
+
+
 # Application definition
 
 INSTALLED_APPS = (
@@ -75,9 +75,9 @@ PASSWORD_HASHERS = (
     'django.contrib.auth.hashers.CryptPasswordHasher',
 )
 
-ROOT_URLCONF = 'stronghold.urls'
+ROOT_URLCONF = 'bluesteel.urls'
 
-WSGI_APPLICATION = 'stronghold.wsgi.application'
+WSGI_APPLICATION = 'bluesteel.wsgi.application'
 
 
 # Database
@@ -128,8 +128,8 @@ STATIC_URL = '/static/'
 TMP_ROOT = os.path.abspath(os.path.join(BASE_DIR, '..', 'tmp'))
 
 EMAIL_USE_TLS = False
-EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST = 'smtp.corp.imvu.com'
 EMAIL_PORT = 25
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend' # production backend
-DEFAULT_FROM_EMAIL = 'stronghold@stronghold.com'
-
+EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend' # development backend
+EMAIL_FILE_PATH = os.path.abspath(os.path.join(BASE_DIR, '..', 'tmp', 'mail'))
+DEFAULT_FROM_EMAIL = 'bluesteel@bluesteel.com'
