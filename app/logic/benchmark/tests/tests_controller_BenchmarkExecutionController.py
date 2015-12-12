@@ -1,6 +1,8 @@
 """ BenchmarkExecution Controller tests """
 
 from django.test import TestCase
+from django.contrib.auth.models import User
+from django.contrib.auth.models import AnonymousUser 
 from app.logic.benchmark.controllers.BenchmarkExecutionController import BenchmarkExecutionController
 from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
 from app.logic.benchmark.models.BenchmarkExecutionModel import BenchmarkExecutionEntry
@@ -15,11 +17,18 @@ from app.logic.commandrepo.models.CommandResultModel import CommandResultEntry
 from app.logic.commandrepo.models.CommandSetModel import CommandSetEntry
 from app.logic.commandrepo.models.CommandGroupModel import CommandGroupEntry
 from app.logic.commandrepo.helper import TestCommandHelper
+from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
 from django.utils import timezone
 
 class BenchmarkExecutionControllerTestCase(TestCase):
 
     def setUp(self):
+        self.user1 = User.objects.create_user('user1@test.com', 'user1@test.com', 'pass')
+        self.user1.save()
+
+        self.user2 = User.objects.create_user('user2@test.com', 'user2@test.com', 'pass')
+        self.user2.save()
+
         self.git_project1 = GitProjectEntry.objects.create(url='http://test/')
 
         self.git_user1 = GitUserEntry.objects.create(
@@ -74,251 +83,165 @@ class BenchmarkExecutionControllerTestCase(TestCase):
             git_project=self.git_project1,
         )
 
-    def tearDown(self):
-        pass
-
-    def test_earliest_available_execution_returns_none_if_no_definitions(self):
-        self.assertEqual(0, BenchmarkDefinitionEntry.objects.all().count())
-        self.assertEqual(None, BenchmarkExecutionController.get_earliest_available_execution())
-
-    def test_earliest_available_execution_with_definition_1_and_commit_3(self):
-        benchmark_definition = BenchmarkDefinitionEntry.objects.create(
-            name='BenchmarkDefinition',
-            layout=self.bluesteel_layout,
-            project=self.bluesteel_project,
-            command_set=self.command_set,
-        )
-
-        execution = BenchmarkExecutionController.get_earliest_available_execution()
-
-        self.assertEqual(benchmark_definition, execution.definition)
-        self.assertEqual('0000300003000030000300003000030000300003', execution.commit.commit_hash)
-        self.assertEqual(BenchmarkExecutionEntry.IN_PROGRESS, execution.status)
-
-    def test_ran_twice_with_commit_3_first_and_commit_2_second(self):
-        benchmark_definition = BenchmarkDefinitionEntry.objects.create(
-            name='BenchmarkDefinition',
-            layout=self.bluesteel_layout,
-            project=self.bluesteel_project,
-            command_set=self.command_set,
-        )
-
-        execution1 = BenchmarkExecutionController.get_earliest_available_execution()
-
-        self.assertEqual(benchmark_definition, execution1.definition)
-        self.assertEqual('0000300003000030000300003000030000300003', execution1.commit.commit_hash)
-        self.assertEqual(BenchmarkExecutionEntry.IN_PROGRESS, execution1.status)
-
-        execution2 = BenchmarkExecutionController.get_earliest_available_execution()
-
-        self.assertEqual(benchmark_definition, execution2.definition)
-        self.assertEqual('0000200002000020000200002000020000200002', execution2.commit.commit_hash)
-        self.assertEqual(BenchmarkExecutionEntry.IN_PROGRESS, execution2.status)
-
-    def test_earliest_available_with_preexisting_executions(self):
-        benchmark_definition = BenchmarkDefinitionEntry.objects.create(
-            name='BenchmarkDefinition',
-            layout=self.bluesteel_layout,
-            project=self.bluesteel_project,
-            command_set=self.command_set,
-        )
-
-        report = CommandSetEntry.objects.create(group=None)
-
-        execution_commit_2 = BenchmarkExecutionEntry.objects.create(
-            definition=benchmark_definition,
-            commit=self.commit2,
-            report=report,
-            invalidated=False,
-            revision_target=benchmark_definition.revision,
-            status=BenchmarkExecutionEntry.FINISHED
-        )
-
-        execution1 = BenchmarkExecutionController.get_earliest_available_execution()
-
-        self.assertEqual(benchmark_definition, execution1.definition)
-        self.assertEqual('0000300003000030000300003000030000300003', execution1.commit.commit_hash)
-        self.assertEqual(BenchmarkExecutionEntry.IN_PROGRESS, execution1.status)
-
-        execution2 = BenchmarkExecutionController.get_earliest_available_execution()
-
-        self.assertEqual(benchmark_definition, execution2.definition)
-        self.assertEqual('0000100001000010000100001000010000100001', execution2.commit.commit_hash)
-        self.assertEqual(BenchmarkExecutionEntry.IN_PROGRESS, execution2.status)
-
-    def test_earliest_available_with_many_definitions_and_preexisting_executions(self):
-        benchmark_definition1 = BenchmarkDefinitionEntry.objects.create(
+        self.benchmark_definition1 = BenchmarkDefinitionEntry.objects.create(
             name='BenchmarkDefinition1',
-            layout=self.bluesteel_layout,
-            project=self.bluesteel_project,
-            command_set=self.command_set,
-        )
-
-        benchmark_definition2 = BenchmarkDefinitionEntry.objects.create(
-            name='BenchmarkDefinition2',
-            layout=self.bluesteel_layout,
-            project=self.bluesteel_project,
-            command_set=self.command_set,
-        )
-
-        report = CommandSetEntry.objects.create(group=None)
-
-        execution_commit_3_def_1 = BenchmarkExecutionEntry.objects.create(
-            definition=benchmark_definition1,
-            commit=self.commit3,
-            report=report,
-            invalidated=False,
-            revision_target=benchmark_definition1.revision,
-            status=BenchmarkExecutionEntry.FINISHED
-        )
-
-        execution_commit_3_def_2 = BenchmarkExecutionEntry.objects.create(
-            definition=benchmark_definition2,
-            commit=self.commit3,
-            report=report,
-            invalidated=False,
-            revision_target=benchmark_definition2.revision,
-            status=BenchmarkExecutionEntry.FINISHED
-        )
-
-        execution_commit_2_def_1 = BenchmarkExecutionEntry.objects.create(
-            definition=benchmark_definition1,
-            commit=self.commit2,
-            report=report,
-            invalidated=False,
-            revision_target=benchmark_definition1.revision,
-            status=BenchmarkExecutionEntry.FINISHED
-        )
-
-        execution1 = BenchmarkExecutionController.get_earliest_available_execution()
-
-        self.assertEqual(benchmark_definition2, execution1.definition)
-        self.assertEqual('0000200002000020000200002000020000200002', execution1.commit.commit_hash)
-        self.assertEqual(BenchmarkExecutionEntry.IN_PROGRESS, execution1.status)
-
-        execution2 = BenchmarkExecutionController.get_earliest_available_execution()
-
-        self.assertEqual(benchmark_definition1, execution2.definition)
-        self.assertEqual('0000100001000010000100001000010000100001', execution2.commit.commit_hash)
-        self.assertEqual(BenchmarkExecutionEntry.IN_PROGRESS, execution2.status)
-
-        execution3 = BenchmarkExecutionController.get_earliest_available_execution()
-
-        self.assertEqual(benchmark_definition2, execution3.definition)
-        self.assertEqual('0000100001000010000100001000010000100001', execution3.commit.commit_hash)
-        self.assertEqual(BenchmarkExecutionEntry.IN_PROGRESS, execution3.status)
-
-        execution4 = BenchmarkExecutionController.get_earliest_available_execution()
-
-        self.assertEqual(None, execution4)
-
-
-    def test_earliest_available_invalidated(self):
-        benchmark_definition = BenchmarkDefinitionEntry.objects.create(
-            name='BenchmarkDefinition',
-            layout=self.bluesteel_layout,
-            project=self.bluesteel_project,
-            command_set=self.command_set,
-        )
-
-        report = CommandSetEntry.objects.create(group=None)
-
-        execution_commit_3 = BenchmarkExecutionEntry.objects.create(
-            definition=benchmark_definition,
-            commit=self.commit3,
-            report=report,
-            invalidated=True,
-            revision_target=benchmark_definition.revision,
-            status=BenchmarkExecutionEntry.FINISHED
-        )
-
-        execution1 = BenchmarkExecutionController.get_earliest_available_execution()
-
-        self.assertEqual(benchmark_definition, execution1.definition)
-        self.assertEqual('0000300003000030000300003000030000300003', execution1.commit.commit_hash)
-        self.assertEqual(BenchmarkExecutionEntry.IN_PROGRESS, execution1.status)
-        self.assertEqual(False, execution1.invalidated)
-
-        execution2 = BenchmarkExecutionController.get_earliest_available_execution()
-
-        self.assertEqual(benchmark_definition, execution2.definition)
-        self.assertEqual('0000200002000020000200002000020000200002', execution2.commit.commit_hash)
-        self.assertEqual(BenchmarkExecutionEntry.IN_PROGRESS, execution2.status)
-
-    def test_earliest_available_ready(self):
-        benchmark_definition = BenchmarkDefinitionEntry.objects.create(
-            name='BenchmarkDefinition',
-            layout=self.bluesteel_layout,
-            project=self.bluesteel_project,
-            command_set=self.command_set,
-        )
-
-        report = CommandSetEntry.objects.create(group=None)
-
-        execution_commit_3 = BenchmarkExecutionEntry.objects.create(
-            definition=benchmark_definition,
-            commit=self.commit3,
-            report=report,
-            invalidated=False,
-            revision_target=benchmark_definition.revision,
-            status=BenchmarkExecutionEntry.FINISHED
-        )
-
-        execution_commit_2 = BenchmarkExecutionEntry.objects.create(
-            definition=benchmark_definition,
-            commit=self.commit2,
-            report=report,
-            invalidated=False,
-            revision_target=benchmark_definition.revision,
-            status=BenchmarkExecutionEntry.READY
-        )
-
-        execution1 = BenchmarkExecutionController.get_earliest_available_execution()
-
-        self.assertEqual(benchmark_definition, execution1.definition)
-        self.assertEqual('0000200002000020000200002000020000200002', execution1.commit.commit_hash)
-        self.assertEqual(BenchmarkExecutionEntry.IN_PROGRESS, execution1.status)
-        self.assertEqual(False, execution1.invalidated)
-
-        execution2 = BenchmarkExecutionController.get_earliest_available_execution()
-
-        self.assertEqual(benchmark_definition, execution2.definition)
-        self.assertEqual('0000100001000010000100001000010000100001', execution2.commit.commit_hash)
-        self.assertEqual(BenchmarkExecutionEntry.IN_PROGRESS, execution2.status)
-
-
-    def test_earliest_available_revision_mismatch(self):
-        benchmark_definition = BenchmarkDefinitionEntry.objects.create(
-            name='BenchmarkDefinition',
             layout=self.bluesteel_layout,
             project=self.bluesteel_project,
             command_set=self.command_set,
             revision=28,
         )
 
-        report = CommandSetEntry.objects.create(group=None)
-
-        execution_commit_2 = BenchmarkExecutionEntry.objects.create(
-            definition=benchmark_definition,
-            commit=self.commit2,
-            report=report,
-            invalidated=True,
-            revision_target=0,
-            status=BenchmarkExecutionEntry.FINISHED
+        self.benchmark_definition2 = BenchmarkDefinitionEntry.objects.create(
+            name='BenchmarkDefinition2',
+            layout=self.bluesteel_layout,
+            project=self.bluesteel_project,
+            command_set=self.command_set,
+            revision=3,
         )
 
-        execution1 = BenchmarkExecutionController.get_earliest_available_execution()
+        self.worker1 = WorkerEntry.objects.create(
+            name='worker-name-1',
+            uuid='uuid-worker-1',
+            operative_system='osx',
+            description='long-description-1',
+            user=self.user1,
+            git_feeder=False
+        )
 
-        self.assertEqual(benchmark_definition, execution1.definition)
-        self.assertEqual('0000300003000030000300003000030000300003', execution1.commit.commit_hash)
-        self.assertEqual(BenchmarkExecutionEntry.IN_PROGRESS, execution1.status)
-        self.assertEqual(False, execution1.invalidated)
-        self.assertEqual(28, execution1.revision_target)
+        self.worker2 = WorkerEntry.objects.create(
+            name='worker-name-2',
+            uuid='uuid-worker-2',
+            operative_system='osx',
+            description='long-description-2',
+            user=self.user2,
+            git_feeder=False
+        )
 
-        execution2 = BenchmarkExecutionController.get_earliest_available_execution()
+        self.report1 = CommandSetEntry.objects.create(group=None)
+        self.report2 = CommandSetEntry.objects.create(group=None)
+        self.report3 = CommandSetEntry.objects.create(group=None)
 
-        self.assertEqual(benchmark_definition, execution2.definition)
-        self.assertEqual('0000200002000020000200002000020000200002', execution2.commit.commit_hash)
-        self.assertEqual(BenchmarkExecutionEntry.IN_PROGRESS, execution2.status)
-        self.assertEqual(False, execution2.invalidated)
-        self.assertEqual(28, execution2.revision_target)
+        self.benchmark_execution1 = BenchmarkExecutionEntry.objects.create(
+            definition=self.benchmark_definition1,
+            commit=self.commit1,
+            worker=self.worker1,
+            report=self.report1,
+            invalidated=False,
+            revision_target=28,
+            status=BenchmarkExecutionEntry.READY,
+        )
+
+        self.benchmark_execution2 = BenchmarkExecutionEntry.objects.create(
+            definition=self.benchmark_definition1,
+            commit=self.commit2,
+            worker=self.worker1,
+            report=self.report2,
+            invalidated=False,
+            revision_target=28,
+            status=BenchmarkExecutionEntry.READY,
+        )
+
+        self.benchmark_execution3 = BenchmarkExecutionEntry.objects.create(
+            definition=self.benchmark_definition2,
+            commit=self.commit1,
+            worker=self.worker2,
+            report=self.report3,
+            invalidated=False,
+            revision_target=2,
+            status=BenchmarkExecutionEntry.READY,
+        )
+
+    def tearDown(self):
+        pass
+
+    def test_earliest_available_execution_of_user_1_is_execution_2(self):
+        execution = BenchmarkExecutionController.get_earliest_available_execution(self.user1)
+
+        self.assertNotEqual(None, execution)
+        self.assertEqual(BenchmarkExecutionEntry.IN_PROGRESS, execution.status)
+        self.assertEqual(False, execution.invalidated)
+        self.assertEqual(28, self.benchmark_definition1.revision)
+        self.assertEqual(28, execution.revision_target)
+        self.assertEqual('BenchmarkDefinition1', execution.definition.name)
+        self.assertEqual('0000200002000020000200002000020000200002', execution.commit.commit_hash)
+        self.assertEqual('worker-name-1', execution.worker.name)
+
+    def test_two_executions_available_of_user_1_are_execution_2_and_then_1(self):
+        execution = BenchmarkExecutionController.get_earliest_available_execution(self.user1)
+
+        self.assertNotEqual(None, execution)
+        self.assertEqual(BenchmarkExecutionEntry.IN_PROGRESS, execution.status)
+        self.assertEqual(False, execution.invalidated)
+        self.assertEqual(28, self.benchmark_definition1.revision)
+        self.assertEqual(28, execution.revision_target)
+        self.assertEqual('BenchmarkDefinition1', execution.definition.name)
+        self.assertEqual('0000200002000020000200002000020000200002', execution.commit.commit_hash)
+        self.assertEqual('worker-name-1', execution.worker.name)
+
+        execution = BenchmarkExecutionController.get_earliest_available_execution(self.user1)
+
+        self.assertNotEqual(None, execution)
+        self.assertEqual(BenchmarkExecutionEntry.IN_PROGRESS, execution.status)
+        self.assertEqual(False, execution.invalidated)
+        self.assertEqual(28, self.benchmark_definition1.revision)
+        self.assertEqual(28, execution.revision_target)
+        self.assertEqual('BenchmarkDefinition1', execution.definition.name)
+        self.assertEqual('0000100001000010000100001000010000100001', execution.commit.commit_hash)
+        self.assertEqual('worker-name-1', execution.worker.name)
+
+    def test_third_execution_available_does_not_exist_after_all_taken(self):
+        execution = BenchmarkExecutionController.get_earliest_available_execution(self.user1)
+        self.assertNotEqual(None, execution)
+
+        execution = BenchmarkExecutionController.get_earliest_available_execution(self.user1)
+        self.assertNotEqual(None, execution)
+
+        execution = BenchmarkExecutionController.get_earliest_available_execution(self.user1)
+        self.assertEqual(None, execution)
+        
+
+    def test_earliest_available_execution_of_user_2_is_execution_3(self):
+        execution = BenchmarkExecutionController.get_earliest_available_execution(self.user2)
+
+        self.assertNotEqual(None, execution)
+        self.assertEqual(self.benchmark_execution3, execution)
+        self.assertEqual(BenchmarkExecutionEntry.IN_PROGRESS, execution.status)
+        self.assertEqual(False, execution.invalidated)
+        self.assertEqual(3, self.benchmark_definition2.revision)
+        self.assertEqual(3, execution.revision_target)
+        self.assertEqual('BenchmarkDefinition2', execution.definition.name)
+        self.assertEqual('0000100001000010000100001000010000100001', execution.commit.commit_hash)
+        self.assertEqual('worker-name-2', execution.worker.name)
+            
+
+    def test_earliest_available_is_an_invalidated_one(self):
+        self.benchmark_execution1.invalidated = True
+        self.benchmark_execution1.save()
+        self.benchmark_execution1.status = BenchmarkExecutionEntry.FINISHED
+        self.benchmark_execution2.status = BenchmarkExecutionEntry.FINISHED
+        self.benchmark_execution2.save()
+
+        execution = BenchmarkExecutionController.get_earliest_available_execution(self.user1)
+
+        self.assertNotEqual(None, execution)
+        self.assertEqual(self.benchmark_execution1, execution)
+        self.assertEqual(BenchmarkExecutionEntry.IN_PROGRESS, execution.status)
+        self.assertEqual(False, execution.invalidated)
+        self.assertEqual(28, self.benchmark_definition1.revision)
+        self.assertEqual(28, execution.revision_target)
+        self.assertEqual('BenchmarkDefinition1', execution.definition.name)
+        self.assertEqual('0000100001000010000100001000010000100001', execution.commit.commit_hash)
+        self.assertEqual('worker-name-1', execution.worker.name)
+
+    def test_user_anonymous_allways_get_none_benchmark_execution(self):
+        anonymous = AnonymousUser()
+        execution1 = BenchmarkExecutionController.get_earliest_available_execution(anonymous)
+        execution2 = BenchmarkExecutionController.get_earliest_available_execution(anonymous)
+        execution3 = BenchmarkExecutionController.get_earliest_available_execution(anonymous)
+
+        self.assertEqual(None, execution1)
+        self.assertEqual(None, execution2)
+        self.assertEqual(None, execution3)
+
+
+

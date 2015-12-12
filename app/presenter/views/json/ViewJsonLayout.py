@@ -16,9 +16,6 @@ def post_create_new_layout(request):
         data = {}
         data['layout'] = new_layout.as_object()
         data['layout'] = ViewPrepareObjects.prepare_layout_for_html(data['layout'])
-
-        print data
-
         return res.get_response(200, 'New layout created', data)
     else:
         return res.get_only_post_allowed({})

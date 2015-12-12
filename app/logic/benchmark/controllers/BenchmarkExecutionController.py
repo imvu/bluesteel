@@ -1,57 +1,36 @@
 """ Benchmark Execution Controller file """
 
-from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
+from django.db.models import Q, F
 from app.logic.benchmark.models.BenchmarkExecutionModel import BenchmarkExecutionEntry
-from app.logic.gitrepo.models.GitCommitModel import GitCommitEntry
-from app.logic.commandrepo.models.CommandSetModel import CommandSetEntry
+from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
 
 class BenchmarkExecutionController(object):
     """ BenchmarkExecution controller with helper functions """
 
     @staticmethod
-    def get_earliest_available_execution():
-        """
-        Will return the earliest benchmark execution available to be executed.
-        From all the definitions, we select the earliest commit with no execution or
-        an execution that it is READY or INVALIDATED.
-        It will return None if there is no execution available.
-        """
-        # This function might be very slow !!!
-
-        bench_def_entries = BenchmarkDefinitionEntry.objects.all().order_by('created_at')
-        bench_def_count = len(bench_def_entries)
-
-        if bench_def_count == 0:
+    def get_earliest_available_execution(worker_user):
+        """ Returns the earliest available execution possible """
+        if worker_user.is_anonymous():
             return None
 
-        commits = GitCommitEntry.objects.all().order_by('-author_date')
+        worker_entry = WorkerEntry.objects.filter(user=worker_user).first()
+        if worker_entry is None:
+            return None
 
-        for commit in commits:
-            for bench_def in bench_def_entries:
-                execution = BenchmarkExecutionEntry.objects.filter(commit=commit, definition=bench_def).first()
-                if execution is None:
-                    report = CommandSetEntry.objects.create(group=None)
+        q_ready = Q(status=BenchmarkExecutionEntry.READY)
+        q_invalidated = Q(invalidated=True)
+        q_revision = ~Q(revision_target=F('definition__revision'))
 
-                    entry = BenchmarkExecutionEntry.objects.create(
-                        definition=bench_def,
-                        commit=commit,
-                        report=report,
-                        revision_target=bench_def.revision,
-                        status=BenchmarkExecutionEntry.IN_PROGRESS
-                    )
-                    return entry
+        execution = BenchmarkExecutionEntry.objects.filter(
+            worker=worker_entry).filter(q_ready | q_invalidated | q_revision).order_by('-created_at').first()
 
-                else:
-                    inv = execution.invalidated
-                    state = execution.status == BenchmarkExecutionEntry.READY
-                    rev = execution.revision_target != bench_def.revision
+        if execution is None:
+            return None
+        else:
+            execution.invalidated = False
+            execution.status = BenchmarkExecutionEntry.IN_PROGRESS
+            execution.revision_target = execution.definition.revision
+            execution.save()
+            return execution
 
-                    if inv or state or rev:
-                        execution.invalidated = False
-                        execution.status = BenchmarkExecutionEntry.IN_PROGRESS
-                        execution.revision_target = bench_def.revision
-                        execution.save()
-                        return execution
-
-        return None
 

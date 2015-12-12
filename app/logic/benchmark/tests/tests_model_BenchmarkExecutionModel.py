@@ -2,6 +2,7 @@
 
 from django.test import TestCase
 from django.utils import timezone
+from django.contrib.auth.models import User
 from app.logic.benchmark.models.BenchmarkExecutionModel import BenchmarkExecutionEntry
 from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
 from app.logic.gitrepo.models.GitProjectModel import GitProjectEntry
@@ -9,6 +10,7 @@ from app.logic.gitrepo.models.GitUserModel import GitUserEntry
 from app.logic.gitrepo.models.GitCommitModel import GitCommitEntry
 from app.logic.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
 from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
+from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
 from app.logic.commandrepo.models.CommandGroupModel import CommandGroupEntry
 from app.logic.commandrepo.models.CommandSetModel import CommandSetEntry
 from datetime import timedelta
@@ -16,6 +18,9 @@ from datetime import timedelta
 class BenchmarkExecutionEntryTestCase(TestCase):
 
     def setUp(self):
+        self.user1 = User.objects.create_user('user1@test.com', 'user1@test.com', 'pass')
+        self.user1.save()
+
         self.git_project = GitProjectEntry.objects.create(url='http://test/')
         self.git_user = GitUserEntry.objects.create(
             project=self.git_project,
@@ -58,6 +63,15 @@ class BenchmarkExecutionEntryTestCase(TestCase):
             command_set=self.command_set,
         )
 
+        self.worker = WorkerEntry.objects.create(
+            name='worker-name',
+            uuid='uuid-worker',
+            operative_system='unix',
+            description='long description',
+            user=self.user1,
+            git_feeder=False
+        )
+
 
     def tearDown(self):
         pass
@@ -66,6 +80,7 @@ class BenchmarkExecutionEntryTestCase(TestCase):
         entry = BenchmarkExecutionEntry.objects.create(
             definition=self.benchmark_definition,
             commit=self.git_commit,
+            worker=self.worker,
             report=self.command_set,
             invalidated=False,
             status=BenchmarkExecutionEntry.STATUS_TYPE[1][0]
@@ -83,5 +98,11 @@ class BenchmarkExecutionEntryTestCase(TestCase):
         self.assertEqual(True, obj['invalidated'])
         self.assertEqual(1, obj['status']['index'])
         self.assertEqual('In_Progress', obj['status']['name'])
+        self.assertEqual(1, obj['worker']['id'])
+        self.assertEqual('worker-name', obj['worker']['name'])
+        self.assertEqual('uuid-worker', obj['worker']['uuid'])
+        self.assertEqual('unix', obj['worker']['operative_system'])
+        self.assertEqual('long description', obj['worker']['description'])
+        self.assertEqual(False, obj['worker']['git_feeder'])
 
 

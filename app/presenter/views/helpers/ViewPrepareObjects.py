@@ -126,3 +126,11 @@ def prepare_branches_for_html(project_id, branches):
         branch['url']['single'] = ViewUrlGenerator.get_project_branch_single_url(project_id, branch['id'])
         ret_branches.append(branch)
     return ret_branches
+
+def prepare_benchmark_execution_for_html(execution):
+    """ Parepares an execution object to json, ie: serializing date times :D """
+
+    obj = execution
+    obj['worker']['last_update'] = str(execution['worker']['last_update'])
+    return obj
+

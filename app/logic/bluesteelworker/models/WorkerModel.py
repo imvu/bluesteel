@@ -29,6 +29,6 @@ class WorkerEntry(models.Model):
         obj['operative_system'] = self.operative_system
         obj['description'] = self.description
         obj['git_feeder'] = self.git_feeder
-        obj['last_update'] = timezone.now() - self.updated_at
-        obj['activity'] = obj['last_update'] < datetime.timedelta(seconds=30)
+        obj['last_update'] = self.updated_at
+        obj['activity'] = (timezone.now() - self.updated_at) < datetime.timedelta(seconds=30)
         return obj

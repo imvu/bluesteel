@@ -14,8 +14,6 @@ def get_projects(request):
 
         projects = []
         for project in project_entries:
-            print project.as_object()
-
             obj = {}
             obj['name'] = project.name
             obj['url'] = {}

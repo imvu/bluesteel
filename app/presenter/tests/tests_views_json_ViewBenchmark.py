@@ -3,9 +3,12 @@
 from django.test import TestCase
 from django.test import Client
 from django.utils import timezone
+from django.contrib.auth.models import User
 from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
+from app.logic.benchmark.models.BenchmarkExecutionModel import BenchmarkExecutionEntry
 from app.logic.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
 from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
+from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
 from app.logic.gitrepo.models.GitProjectModel import GitProjectEntry
 from app.logic.gitrepo.models.GitUserModel import GitUserEntry
 from app.logic.gitrepo.models.GitCommitModel import GitCommitEntry
@@ -19,6 +22,9 @@ class BenchmarkViewTestCase(TestCase):
 
     def setUp(self):
         self.client = Client()
+
+        self.user1 = User.objects.create_user('user1@test.com', 'user1@test.com', 'pass')
+        self.user1.save()
 
         self.git_project1 = GitProjectEntry.objects.create(url='http://test/')
 
@@ -74,6 +80,46 @@ class BenchmarkViewTestCase(TestCase):
             git_project=self.git_project1,
         )
 
+        self.benchmark_definition1 = BenchmarkDefinitionEntry.objects.create(
+            name='BenchmarkDefinition1',
+            layout=self.bluesteel_layout,
+            project=self.bluesteel_project,
+            command_set=self.command_set,
+            revision=28,
+        )
+
+        self.worker1 = WorkerEntry.objects.create(
+            name='worker-name-1',
+            uuid='uuid-worker-1',
+            operative_system='osx',
+            description='long-description-1',
+            user=self.user1,
+            git_feeder=False
+        )
+
+        self.report1 = CommandSetEntry.objects.create(group=None)
+        self.report2 = CommandSetEntry.objects.create(group=None)
+
+        self.benchmark_execution1 = BenchmarkExecutionEntry.objects.create(
+            definition=self.benchmark_definition1,
+            commit=self.commit1,
+            worker=self.worker1,
+            report=self.report1,
+            invalidated=False,
+            revision_target=28,
+            status=BenchmarkExecutionEntry.READY,
+        )
+
+        self.benchmark_execution2 = BenchmarkExecutionEntry.objects.create(
+            definition=self.benchmark_definition1,
+            commit=self.commit2,
+            worker=self.worker1,
+            report=self.report2,
+            invalidated=False,
+            revision_target=28,
+            status=BenchmarkExecutionEntry.READY,
+        )
+
     def tearDown(self):
         pass
 
@@ -93,29 +139,9 @@ class BenchmarkViewTestCase(TestCase):
 
 
     def test_three_executions_acqiered_with_one_definition(self):
-        benchmark_definition = BenchmarkDefinitionEntry.objects.create(
-            name='BenchmarkDefinition',
-            layout=self.bluesteel_layout,
-            project=self.bluesteel_project,
-            command_set=self.command_set,
-        )
+        self.client.login(username='user1@test.com', password='pass')
 
         # First
-        resp = self.client.post(
-            '/main/execution/acquire/',
-            data = json.dumps({}),
-            content_type='application/json')
-
-        res.check_cross_origin_headers(self, resp)
-        resp_obj = json.loads(resp.content)
-
-        self.assertEqual(200, resp_obj['status'])
-        self.assertEqual(1, resp_obj['data']['status']['index'])
-        self.assertEqual('In_Progress', resp_obj['data']['status']['name'])
-        self.assertEqual('0000300003000030000300003000030000300003', resp_obj['data']['commit'])
-        self.assertEqual(False, resp_obj['data']['invalidated'])
-
-        # Second
         resp = self.client.post(
             '/main/execution/acquire/',
             data = json.dumps({}),
@@ -130,7 +156,7 @@ class BenchmarkViewTestCase(TestCase):
         self.assertEqual('0000200002000020000200002000020000200002', resp_obj['data']['commit'])
         self.assertEqual(False, resp_obj['data']['invalidated'])
 
-        # Third
+        # Second
         resp = self.client.post(
             '/main/execution/acquire/',
             data = json.dumps({}),

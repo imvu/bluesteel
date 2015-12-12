@@ -16,6 +16,7 @@ class BenchmarkExecutionEntry(models.Model):
 
     definition = models.ForeignKey('benchmark.BenchmarkDefinitionEntry', related_name='benchmark_exec_definition')
     commit = models.ForeignKey('gitrepo.GitCommitEntry', related_name='benchmark_exec_commit')
+    worker = models.ForeignKey('bluesteelworker.WorkerEntry', related_name='benchmark_exec_worker', null=True)
     report = models.ForeignKey('commandrepo.CommandSetEntry', related_name='benchmark_exec_command_set')
     invalidated = models.BooleanField(default=False)
     revision_target = models.IntegerField(default=-1)
@@ -33,6 +34,7 @@ class BenchmarkExecutionEntry(models.Model):
         obj = {}
         obj['definition'] = self.definition.as_object()
         obj['commit'] = self.commit.commit_hash
+        obj['worker'] = self.worker.as_object()
         obj['report'] = self.report.as_object()
         obj['invalidated'] = self.definition.revision != self.revision_target
         obj['status'] = {}
