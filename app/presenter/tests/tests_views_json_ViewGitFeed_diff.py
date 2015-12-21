@@ -36,16 +36,7 @@ class GitFeedViewsDiffTestCase(TestCase):
         self.commit1 = FeederTestHelper.create_commit(1, [], 'user1', 'user1@test.com', self.commit_time, self.commit_time)
         self.commit2 = FeederTestHelper.create_commit(2, [], 'user1', 'user1@test.com', self.commit_time, self.commit_time)
 
-        self.merge_target = FeederTestHelper.create_merge_target(
-            'master',
-            FeederTestHelper.hash_string(1),
-            'master',
-            FeederTestHelper.hash_string(1),
-            FeederTestHelper.hash_string(1),
-            'merge-target-content'
-        )
-
-        self.branch1 = FeederTestHelper.create_branch('master', 1, [FeederTestHelper.hash_string(1)], self.merge_target)
+        self.branch1 = FeederTestHelper.create_branch('master', 1, 'master', 1, 1, [1], 'merge-target-content')
 
     def tearDown(self):
         pass
@@ -59,8 +50,8 @@ class GitFeedViewsDiffTestCase(TestCase):
         feed_data['branches'] = []
         feed_data['branches'].append(self.branch1)
         feed_data['diffs'] = []
-        feed_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(1), FeederTestHelper.hash_string(1), 'diff-1'))
-        feed_data['diffs'].append(FeederTestHelper.create_diff(self.commit2['hash'], self.commit1['hash'], 'diff-2-1'))
+        feed_data['diffs'].append(FeederTestHelper.create_diff(1, 1, 'diff-1'))
+        feed_data['diffs'].append(FeederTestHelper.create_diff(2, 1, 'diff-2-1'))
 
         post_data = FeederTestHelper.create_feed_data_and_report(
             feed_data,
@@ -107,8 +98,8 @@ class GitFeedViewsDiffTestCase(TestCase):
         feed_data['branches'] = []
         feed_data['branches'].append(self.branch1)
         feed_data['diffs'] = []
-        feed_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(1), FeederTestHelper.hash_string(1), 'diff-1'))
-        feed_data['diffs'].append(FeederTestHelper.create_diff('0000300003000030000300003000030000300003', self.commit2['hash'], 'diff-3-2'))
+        feed_data['diffs'].append(FeederTestHelper.create_diff(1, 1, 'diff-1'))
+        feed_data['diffs'].append(FeederTestHelper.create_diff(3, 2, 'diff-3-2'))
 
         post_data = FeederTestHelper.create_feed_data_and_report(
             feed_data,
@@ -136,8 +127,8 @@ class GitFeedViewsDiffTestCase(TestCase):
         feed_data['branches'] = []
         feed_data['branches'].append(self.branch1)
         feed_data['diffs'] = []
-        feed_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(1), FeederTestHelper.hash_string(1), 'diff-1'))
-        feed_data['diffs'].append(FeederTestHelper.create_diff('0000200002000020000200002000020000200002', FeederTestHelper.hash_string(0), 'diff-3-2'))
+        feed_data['diffs'].append(FeederTestHelper.create_diff(1, 1, 'diff-1'))
+        feed_data['diffs'].append(FeederTestHelper.create_diff(2, 0, 'diff-3-2'))
 
         post_data = FeederTestHelper.create_feed_data_and_report(
             feed_data,

@@ -3,6 +3,9 @@
 from django.db.models import Q, F
 from app.logic.benchmark.models.BenchmarkExecutionModel import BenchmarkExecutionEntry
 from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
+from app.logic.commandrepo.models.CommandGroupModel import CommandGroupEntry
+from app.logic.commandrepo.models.CommandSetModel import CommandSetEntry
+from app.logic.commandrepo.controllers.CommandController import CommandController
 
 class BenchmarkExecutionController(object):
     """ BenchmarkExecution controller with helper functions """
@@ -33,4 +36,27 @@ class BenchmarkExecutionController(object):
             execution.save()
             return execution
 
+    @staticmethod
+    def create_benchmark_executions(commit_entry, bench_def_entries, worker_entries):
+        """ Create all the executions necessary from a given commit, definitions and workers """
+        command_group = CommandGroupEntry.objects.create()
+        command_set = CommandSetEntry.objects.create(group=command_group)
 
+        for bench_def in bench_def_entries:
+            for worker in worker_entries:
+                BenchmarkExecutionEntry.objects.create(
+                    definition=bench_def,
+                    commit=commit_entry,
+                    worker=worker,
+                    report=command_set,
+                )
+
+    @staticmethod
+    def delete_benchmark_executions(benchmark_definition):
+        """ Deletes benchmark executions based on benchmark definitions """
+
+        exec_entries = BenchmarkExecutionEntry.objects.filter(definition=benchmark_definition)
+
+        for exec_entry in exec_entries:
+            CommandController.delete_command_group_by_id(exec_entry.report.group.id)
+            exec_entry.delete()

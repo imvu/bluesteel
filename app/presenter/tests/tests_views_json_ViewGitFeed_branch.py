@@ -41,16 +41,7 @@ class GitFeedViewsBranchTestCase(TestCase):
         commit_time = str(timezone.now().isoformat())
         commit1 = FeederTestHelper.create_commit(1, [], 'user1', 'user1@test.com', commit_time, commit_time)
 
-        merge_target = FeederTestHelper.create_merge_target(
-            'master',
-            FeederTestHelper.hash_string(2),
-            'master',
-            FeederTestHelper.hash_string(2),
-            FeederTestHelper.hash_string(2),
-            'merge-target-content'
-        )
-
-        branch1 = FeederTestHelper.create_branch('master', 2, [FeederTestHelper.hash_string(2)], merge_target)
+        branch1 = FeederTestHelper.create_branch('master', 2, 'master', 2, 1, [2, 1], 'merge-target-content')
 
         feed_data = {}
         feed_data['commits'] = []
@@ -58,7 +49,7 @@ class GitFeedViewsBranchTestCase(TestCase):
         feed_data['branches'] = []
         feed_data['branches'].append(branch1)
         feed_data['diffs'] = []
-        feed_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(1), FeederTestHelper.hash_string(1), 'diff-1'))
+        feed_data['diffs'].append(FeederTestHelper.create_diff(1, 1, 'diff-1'))
 
         post_data = FeederTestHelper.create_feed_data_and_report(
             feed_data,
@@ -95,18 +86,9 @@ class GitFeedViewsBranchTestCase(TestCase):
             )
 
         commit_time = str(timezone.now().isoformat())
-        commit1 = FeederTestHelper.create_commit(2, [FeederTestHelper.hash_string(1)], 'user1', 'user1@test.com', commit_time, commit_time)
+        commit1 = FeederTestHelper.create_commit(2, [1], 'user1', 'user1@test.com', commit_time, commit_time)
 
-        merge_target = FeederTestHelper.create_merge_target(
-            'master',
-            FeederTestHelper.hash_string(2),
-            'master',
-            FeederTestHelper.hash_string(2),
-            FeederTestHelper.hash_string(2),
-            'merge-target-content'
-        )
-
-        branch1 = FeederTestHelper.create_branch('master', 2, [FeederTestHelper.hash_string(2), FeederTestHelper.hash_string(1)], merge_target)
+        branch1 = FeederTestHelper.create_branch('master', 2, 'master', 2, 2, [2, 1], 'merge-target-content')
 
         feed_data = {}
         feed_data['commits'] = []
@@ -114,7 +96,7 @@ class GitFeedViewsBranchTestCase(TestCase):
         feed_data['branches'] = []
         feed_data['branches'].append(branch1)
         feed_data['diffs'] = []
-        feed_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(2), FeederTestHelper.hash_string(1), 'diff-2-1'))
+        feed_data['diffs'].append(FeederTestHelper.create_diff(2, 1, 'diff-2-1'))
 
         post_data = FeederTestHelper.create_feed_data_and_report(
             feed_data,
@@ -169,19 +151,10 @@ class GitFeedViewsBranchTestCase(TestCase):
     def test_branch_trails(self):
         commit_time = str(timezone.now().isoformat())
         commit1 = FeederTestHelper.create_commit(1, [], 'user1', 'user1@test.com', commit_time, commit_time)
-        commit2 = FeederTestHelper.create_commit(2, [FeederTestHelper.hash_string(1)], 'user1', 'user1@test.com', commit_time, commit_time)
-        commit3 = FeederTestHelper.create_commit(3, [FeederTestHelper.hash_string(2)], 'user1', 'user1@test.com', commit_time, commit_time)
+        commit2 = FeederTestHelper.create_commit(2, [1], 'user1', 'user1@test.com', commit_time, commit_time)
+        commit3 = FeederTestHelper.create_commit(3, [2], 'user1', 'user1@test.com', commit_time, commit_time)
 
-        merge_target = FeederTestHelper.create_merge_target(
-            'master',
-            FeederTestHelper.hash_string(3),
-            'master',
-            FeederTestHelper.hash_string(3),
-            FeederTestHelper.hash_string(3),
-            'merge-target-content'
-        )
-
-        branch1 = FeederTestHelper.create_branch('master', 3, [FeederTestHelper.hash_string(3), FeederTestHelper.hash_string(2), FeederTestHelper.hash_string(1)], merge_target)
+        branch1 = FeederTestHelper.create_branch('master', 3, 'master', 3, 1, [3, 2, 1], 'merge-target-content')
 
         feed_data = {}
         feed_data['commits'] = []
@@ -191,9 +164,9 @@ class GitFeedViewsBranchTestCase(TestCase):
         feed_data['branches'] = []
         feed_data['branches'].append(branch1)
         feed_data['diffs'] = []
-        feed_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(1), FeederTestHelper.hash_string(1), 'diff-1'))
-        feed_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(2), FeederTestHelper.hash_string(1), 'diff-2-1'))
-        feed_data['diffs'].append(FeederTestHelper.create_diff(FeederTestHelper.hash_string(3), FeederTestHelper.hash_string(2), 'diff-3-2'))
+        feed_data['diffs'].append(FeederTestHelper.create_diff(1, 1, 'diff-1'))
+        feed_data['diffs'].append(FeederTestHelper.create_diff(2, 1, 'diff-2-1'))
+        feed_data['diffs'].append(FeederTestHelper.create_diff(3, 2, 'diff-3-2'))
 
         post_data = FeederTestHelper.create_feed_data_and_report(
             feed_data,
