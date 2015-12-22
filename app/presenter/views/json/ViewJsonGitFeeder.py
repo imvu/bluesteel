@@ -5,6 +5,7 @@ from app.logic.httpcommon import val
 from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
 from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
 from app.logic.benchmark.controllers.BenchmarkExecutionController import BenchmarkExecutionController
+from app.logic.gitrepo.models.GitCommitModel import GitCommitEntry
 from app.logic.gitrepo.models.GitProjectModel import GitProjectEntry
 from app.logic.gitfeeder.controllers.GitFeederController import GitFeederController
 from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
@@ -67,7 +68,11 @@ def post_commits(request, project_id):
         worker_entries = WorkerEntry.objects.all()
 
         for commit in commits:
-            BenchmarkExecutionController.create_benchmark_executions(commit, bench_def_entries, worker_entries)
+            commit_entry = GitCommitEntry.objects.filter(commit_hash=commit['hash'], project=project_entry).first()
+            if not commit_entry:
+                continue
+
+            BenchmarkExecutionController.create_benchmark_executions(commit_entry, bench_def_entries, worker_entries)
 
         return res.get_response(200, 'Commits added correctly', {})
     else:
