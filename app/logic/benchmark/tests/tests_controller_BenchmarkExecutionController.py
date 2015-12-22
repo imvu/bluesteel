@@ -243,14 +243,14 @@ class BenchmarkExecutionControllerTestCase(TestCase):
         self.assertEqual(None, execution2)
         self.assertEqual(None, execution3)
 
-    def test_create_benchmark_executions_from_commit_definition_and_worker(self):
+    def test_create_bench_executions_from_commit_definition_and_worker(self):
         exec_entries = BenchmarkExecutionEntry.objects.all()
         for exec_entry in exec_entries:
             exec_entries.delete()
 
         self.assertEqual(0, BenchmarkExecutionEntry.objects.all().count())
 
-        BenchmarkExecutionController.create_benchmark_executions_from_commit(
+        BenchmarkExecutionController.create_bench_executions_from_commit(
             self.commit1,
             [self.benchmark_definition1],
             [self.worker1]
@@ -262,14 +262,14 @@ class BenchmarkExecutionControllerTestCase(TestCase):
             worker=self.worker1,
             definition=self.benchmark_definition1).count())
 
-    def test_create_benchmark_executions_from_commit_definitions_and_workers(self):
+    def test_create_bench_executions_from_commit_definitions_and_workers(self):
         exec_entries = BenchmarkExecutionEntry.objects.all()
         for exec_entry in exec_entries:
             exec_entries.delete()
 
         self.assertEqual(0, BenchmarkExecutionEntry.objects.all().count())
 
-        BenchmarkExecutionController.create_benchmark_executions_from_commit(
+        BenchmarkExecutionController.create_bench_executions_from_commit(
             self.commit1,
             [self.benchmark_definition1, self.benchmark_definition2],
             [self.worker1, self.worker2]
@@ -293,6 +293,84 @@ class BenchmarkExecutionControllerTestCase(TestCase):
             worker=self.worker2,
             definition=self.benchmark_definition2).count())
 
+    def test_create_bench_executions_from_worker_definitions_and_commits(self):
+        exec_entries = BenchmarkExecutionEntry.objects.all()
+        for exec_entry in exec_entries:
+            exec_entries.delete()
+
+        self.assertEqual(0, BenchmarkExecutionEntry.objects.all().count())
+
+        BenchmarkExecutionController.create_bench_executions_from_worker(
+            self.worker1,
+            [self.commit1, self.commit2, self.commit3],
+            [self.benchmark_definition1, self.benchmark_definition2]
+        )
+
+        self.assertEqual(6, BenchmarkExecutionEntry.objects.all().count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(
+            commit=self.commit1,
+            worker=self.worker1,
+            definition=self.benchmark_definition1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(
+            commit=self.commit2,
+            worker=self.worker1,
+            definition=self.benchmark_definition1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(
+            commit=self.commit3,
+            worker=self.worker1,
+            definition=self.benchmark_definition1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(
+            commit=self.commit1,
+            worker=self.worker1,
+            definition=self.benchmark_definition2).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(
+            commit=self.commit2,
+            worker=self.worker1,
+            definition=self.benchmark_definition2).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(
+            commit=self.commit3,
+            worker=self.worker1,
+            definition=self.benchmark_definition2).count())
+
+    def test_create_bench_executions_from_definition_commits_and_workers(self):
+        exec_entries = BenchmarkExecutionEntry.objects.all()
+        for exec_entry in exec_entries:
+            exec_entries.delete()
+
+        self.assertEqual(0, BenchmarkExecutionEntry.objects.all().count())
+
+        BenchmarkExecutionController.create_bench_executions_from_definition(
+            self.benchmark_definition1,
+            [self.commit1, self.commit2, self.commit3],
+            [self.worker1, self.worker2]
+        )
+
+        self.assertEqual(6, BenchmarkExecutionEntry.objects.all().count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(
+            commit=self.commit1,
+            worker=self.worker1,
+            definition=self.benchmark_definition1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(
+            commit=self.commit2,
+            worker=self.worker1,
+            definition=self.benchmark_definition1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(
+            commit=self.commit3,
+            worker=self.worker1,
+            definition=self.benchmark_definition1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(
+            commit=self.commit1,
+            worker=self.worker2,
+            definition=self.benchmark_definition1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(
+            commit=self.commit2,
+            worker=self.worker2,
+            definition=self.benchmark_definition1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(
+            commit=self.commit3,
+            worker=self.worker2,
+            definition=self.benchmark_definition1).count())
+
 
     def test_delete_benchmark_executions_from_definition(self):
         exec_entries = BenchmarkExecutionEntry.objects.all()
@@ -311,7 +389,7 @@ class BenchmarkExecutionControllerTestCase(TestCase):
         self.assertEqual(0, CommandGroupEntry.objects.all().count())
         self.assertEqual(0, CommandSetEntry.objects.all().count())
 
-        BenchmarkExecutionController.create_benchmark_executions_from_commit(
+        BenchmarkExecutionController.create_bench_executions_from_commit(
             self.commit1,
             [self.benchmark_definition1],
             [self.worker1]

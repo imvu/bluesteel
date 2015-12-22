@@ -72,7 +72,7 @@ def post_commits(request, project_id):
             if not commit_entry:
                 continue
 
-            BenchmarkExecutionController.create_benchmark_executions_from_commit(
+            BenchmarkExecutionController.create_bench_executions_from_commit(
                 commit_entry,
                 bench_def_entries,
                 worker_entries)
