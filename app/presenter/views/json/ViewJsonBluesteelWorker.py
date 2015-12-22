@@ -7,6 +7,9 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
+from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
+from app.logic.benchmark.controllers.BenchmarkExecutionController import BenchmarkExecutionController
+from app.logic.gitrepo.models.GitCommitModel import GitCommitEntry
 from app.presenter.schemas import BluesteelWorkerSchemas
 from app.presenter.views.helpers import ViewUrlGenerator
 from app.logic.httpcommon import res
@@ -115,6 +118,14 @@ def create_worker_info(request):
                 user=user
             )
             new_worker.save()
+
+            bench_def_entries = BenchmarkDefinitionEntry.objects.all()
+            commit_entries = GitCommitEntry.objects.all()
+
+            BenchmarkExecutionController.create_bench_executions_from_worker(
+                new_worker,
+                commit_entries,
+                bench_def_entries)
 
             ret = {}
             ret['worker'] = new_worker.as_object()
