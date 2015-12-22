@@ -37,7 +37,7 @@ class BenchmarkExecutionController(object):
             return execution
 
     @staticmethod
-    def create_benchmark_executions(commit_entry, bench_def_entries, worker_entries):
+    def create_benchmark_executions_from_commit(commit_entry, bench_def_entries, worker_entries):
         """ Create all the executions necessary from a given commit, definitions and workers """
         command_group = CommandGroupEntry.objects.create()
         command_set = CommandSetEntry.objects.create(group=command_group)

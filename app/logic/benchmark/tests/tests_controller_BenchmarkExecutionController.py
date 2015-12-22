@@ -250,7 +250,7 @@ class BenchmarkExecutionControllerTestCase(TestCase):
 
         self.assertEqual(0, BenchmarkExecutionEntry.objects.all().count())
 
-        BenchmarkExecutionController.create_benchmark_executions(
+        BenchmarkExecutionController.create_benchmark_executions_from_commit(
             self.commit1,
             [self.benchmark_definition1],
             [self.worker1]
@@ -269,7 +269,7 @@ class BenchmarkExecutionControllerTestCase(TestCase):
 
         self.assertEqual(0, BenchmarkExecutionEntry.objects.all().count())
 
-        BenchmarkExecutionController.create_benchmark_executions(
+        BenchmarkExecutionController.create_benchmark_executions_from_commit(
             self.commit1,
             [self.benchmark_definition1, self.benchmark_definition2],
             [self.worker1, self.worker2]
@@ -311,7 +311,7 @@ class BenchmarkExecutionControllerTestCase(TestCase):
         self.assertEqual(0, CommandGroupEntry.objects.all().count())
         self.assertEqual(0, CommandSetEntry.objects.all().count())
 
-        BenchmarkExecutionController.create_benchmark_executions(
+        BenchmarkExecutionController.create_benchmark_executions_from_commit(
             self.commit1,
             [self.benchmark_definition1],
             [self.worker1]
