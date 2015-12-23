@@ -18,6 +18,8 @@ from app.logic.commandrepo.models.CommandGroupModel import CommandGroupEntry
 from app.logic.commandrepo.models.CommandSetModel import CommandSetEntry
 from datetime import timedelta
 import json
+import StringIO
+import zipfile
 
 class ViewsBluesteelWorkerTestCase(TestCase):
 
@@ -44,9 +46,32 @@ class ViewsBluesteelWorkerTestCase(TestCase):
     def tearDown(self):
         pass
 
-    #  !!!!!!!!
-    #  Test bluesteelworker/download/ url !!!!!!!
-    #  !!!!!!!!
+    def test_download_worker(self):
+        resp = self.client.get('/main/bluesteelworker/download/')
+
+        self.assertEquals('attachment; filename=BluesteelWorker.zip', resp.get('Content-Disposition'))
+
+        f = StringIO.StringIO(resp.content)
+        zipped_file = zipfile.ZipFile(f, 'r')
+
+        self.assertIsNone(zipped_file.testzip())
+        self.assertIn('__init__.py', zipped_file.namelist())
+        self.assertIn('GitFetcher.py', zipped_file.namelist())
+        self.assertIn('Request.py', zipped_file.namelist())
+        self.assertIn('settings.json', zipped_file.namelist())
+        self.assertIn('Worker.py', zipped_file.namelist())
+
+        settings_file = zipped_file.open('settings.json', 'r')
+        settings = settings_file.read()
+        obj = json.loads(settings)
+
+        self.assertEqual('http://localhost:28028/main/layout/all/urls/', obj['entry_point'])
+        self.assertEqual(['..', '..', '..', '..', 'tmp', 'worker_tmp'], obj['tmp_path'])
+
+        settings_file.close()
+        zipped_file.close()
+        f.close()
+
 
     def test_get_worker_info(self):
         resp = self.client.get('/main/bluesteelworker/8a88432d-33db-4d24-a0a7-2f863e7e8e4a/')
