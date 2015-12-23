@@ -6,6 +6,9 @@ def get_main_url():
 def get_layout_all_url():
     return '/main/layout/all/'
 
+def get_layout_point_full_url(domain):
+    return 'http://{0}/main/layout/all/urls/'.format(domain)
+
 def get_layout_create_url():
     return '/main/layout/create/'
 
@@ -44,6 +47,9 @@ def get_worker_update_activity_full_url(domain, worker_id):
         domain,
         worker_id
     )
+
+def get_worker_entry_point_full_url(domain):
+    return 'http://{0}/main/bluesteelworker/bootstrap/'.format(domain)
 
 def get_worker_info_point_full_url(domain):
     return 'http://{0}/main/bluesteelworker/'.format(domain)

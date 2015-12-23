@@ -16,9 +16,10 @@ from app.logic.httpcommon import val
 def get_entry_points_urls(domain):
     """ Returns bootstrap urls for workers """
     obj = {}
-    obj['worker_info_point'] = ViewUrlGenerator.get_worker_info_point_full_url(domain)
-    obj['create_worker_info_point'] = ViewUrlGenerator.get_worker_create_point_full_url(domain)
-    obj['login_worker_point'] = ViewUrlGenerator.get_worker_login_point_full_url(domain)
+    obj['layouts_url'] = ViewUrlGenerator.get_layout_point_full_url(domain)
+    obj['worker_info_url'] = ViewUrlGenerator.get_worker_info_point_full_url(domain)
+    obj['create_worker_url'] = ViewUrlGenerator.get_worker_create_point_full_url(domain)
+    obj['login_worker_url'] = ViewUrlGenerator.get_worker_login_point_full_url(domain)
     return obj
 
 def get_worker_urls(domain, worker_id):

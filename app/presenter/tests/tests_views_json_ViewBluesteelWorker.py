@@ -65,8 +65,8 @@ class ViewsBluesteelWorkerTestCase(TestCase):
         settings = settings_file.read()
         obj = json.loads(settings)
 
-        self.assertEqual('http://localhost:28028/main/layout/all/urls/', obj['entry_point'])
-        self.assertEqual(['..', '..', '..', '..', 'tmp', 'worker_tmp'], obj['tmp_path'])
+        self.assertEqual('http://testserver/main/bluesteelworker/bootstrap/', obj['entry_point'])
+        self.assertEqual(['..', 'tmp', 'worker_tmp'], obj['tmp_path'])
 
         settings_file.close()
         zipped_file.close()
@@ -79,9 +79,10 @@ class ViewsBluesteelWorkerTestCase(TestCase):
         resp_obj = json.loads(resp.content)
 
         self.assertEqual(200, resp_obj['status'])
-        self.assertEqual('http://testserver/main/bluesteelworker/', resp_obj['data']['worker_info_point'])
-        self.assertEqual('http://testserver/main/bluesteelworker/create/', resp_obj['data']['create_worker_info_point'])
-        self.assertEqual('http://testserver/main/bluesteelworker/login/', resp_obj['data']['login_worker_point'])
+        self.assertEqual('http://testserver/main/layout/all/urls/', resp_obj['data']['layouts_url'])
+        self.assertEqual('http://testserver/main/bluesteelworker/', resp_obj['data']['worker_info_url'])
+        self.assertEqual('http://testserver/main/bluesteelworker/create/', resp_obj['data']['create_worker_url'])
+        self.assertEqual('http://testserver/main/bluesteelworker/login/', resp_obj['data']['login_worker_url'])
 
     def test_get_worker_info(self):
         resp = self.client.get('/main/bluesteelworker/8a88432d-33db-4d24-a0a7-2f863e7e8e4a/')
