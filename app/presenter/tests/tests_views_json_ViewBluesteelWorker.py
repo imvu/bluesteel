@@ -72,6 +72,16 @@ class ViewsBluesteelWorkerTestCase(TestCase):
         zipped_file.close()
         f.close()
 
+    def test_get_bootstrap_urls(self):
+        resp = self.client.get('/main/bluesteelworker/bootstrap/')
+
+        res.check_cross_origin_headers(self, resp)
+        resp_obj = json.loads(resp.content)
+
+        self.assertEqual(200, resp_obj['status'])
+        self.assertEqual('http://testserver/main/bluesteelworker/', resp_obj['data']['worker_info_point'])
+        self.assertEqual('http://testserver/main/bluesteelworker/create/', resp_obj['data']['create_worker_info_point'])
+        self.assertEqual('http://testserver/main/bluesteelworker/login/', resp_obj['data']['login_worker_point'])
 
     def test_get_worker_info(self):
         resp = self.client.get('/main/bluesteelworker/8a88432d-33db-4d24-a0a7-2f863e7e8e4a/')

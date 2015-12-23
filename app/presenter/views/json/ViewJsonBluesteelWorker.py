@@ -35,6 +35,14 @@ def zip_folder_and_return_path(path_to_compress, path_destination, name_destinat
     zip_file.close()
     return path_final
 
+def get_entry_points_urls(domain):
+    """ Returns bootstrap urls for workers """
+    obj = {}
+    obj['worker_info_point'] = ViewUrlGenerator.get_worker_info_point_full_url(domain)
+    obj['create_worker_info_point'] = ViewUrlGenerator.get_worker_create_point_full_url(domain)
+    obj['login_worker_point'] = ViewUrlGenerator.get_worker_login_point_full_url(domain)
+    return obj
+
 def get_worker_urls(domain, worker_id):
     """ Returns all the urls associated with a worker """
     obj = {}
@@ -43,6 +51,14 @@ def get_worker_urls(domain, worker_id):
         worker_id
     )
     return obj
+
+def get_bootstrap_urls(request):
+    if request.method == 'GET':
+        obj = get_entry_points_urls(request.get_host())
+        return res.get_response(200, 'Entry points', obj)
+    else:
+        return res.get_only_get_allowed({})
+
 
 def get_worker(request):
     """ Returns the worker scripts compressed in a zip file """

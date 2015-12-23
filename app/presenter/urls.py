@@ -76,6 +76,9 @@ urlpatterns = patterns(
     url(r'^bluesteelworker/download/$',
         'app.presenter.views.json.ViewJsonBluesteelWorker.get_worker'),
 
+    url(r'^bluesteelworker/bootstrap/$',
+        'app.presenter.views.json.ViewJsonBluesteelWorker.get_bootstrap_urls'),
+
     # Using a UUID regex for a uuid3 version
     # [0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}
     url(r'^bluesteelworker/(?P<worker_uuid>[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/$',

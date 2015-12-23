@@ -45,6 +45,15 @@ def get_worker_update_activity_full_url(domain, worker_id):
         worker_id
     )
 
+def get_worker_info_point_full_url(domain):
+    return 'http://{0}/main/bluesteelworker/'.format(domain)
+
+def get_worker_create_point_full_url(domain):
+    return 'http://{0}/main/bluesteelworker/create/'.format(domain)
+
+def get_worker_login_point_full_url(domain):
+    return 'http://{0}/main/bluesteelworker/login/'.format(domain)
+
 def get_change_merge_target_url(project_id):
     return '/main/branch/merge/target/project/{0}/'.format(project_id)
 
