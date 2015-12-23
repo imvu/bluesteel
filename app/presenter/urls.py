@@ -32,6 +32,9 @@ urlpatterns = patterns(
     url(r'^bluesteelworker/(?P<worker_id>\d+)/report/all/$',
         'app.presenter.views.html.ViewHtmlWorkers.get_worker_reports'),
 
+    url(r'^bluesteelworker/download/$',
+        'app.presenter.views.html.ViewHtmlBluesteelWorker.get_worker'),
+
     url(r'^definitions/all/$',
         'app.presenter.views.html.ViewHtmlBenchmarkDefinitions.get_benchmark_definitions'),
 
@@ -72,9 +75,6 @@ urlpatterns = patterns(
 
     url(r'^definition/(?P<benchmark_definition_id>\d+)/save/$',
         'app.presenter.views.json.ViewJsonBenchmarkDefinitions.view_save_benchmark_definition'),
-
-    url(r'^bluesteelworker/download/$',
-        'app.presenter.views.json.ViewJsonBluesteelWorker.get_worker'),
 
     url(r'^bluesteelworker/bootstrap/$',
         'app.presenter.views.json.ViewJsonBluesteelWorker.get_bootstrap_urls'),
