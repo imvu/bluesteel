@@ -42,7 +42,7 @@ class BenchmarkExecutionController(object):
         command_group = CommandGroupEntry.objects.create()
         command_set = CommandSetEntry.objects.create(group=command_group)
 
-        found = BenchmarkExecutionEntry.objects.filter(definition=definition, commit=commit, worker=worker)
+        found = BenchmarkExecutionEntry.objects.filter(definition=definition, commit=commit, worker=worker).first()
 
         if not found:
             BenchmarkExecutionEntry.objects.create(
