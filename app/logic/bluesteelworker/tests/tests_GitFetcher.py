@@ -143,10 +143,10 @@ class GitFetcherTestCase(TestCase):
         reports = self.fetcher.commands_clone_git_project(self.obj1)
 
         name, args, side = mock_subprocess.mock_calls[0]
-        self.assertEqual(['git','clone','https://llorensmarti@bitbucket.org/llorensmarti/test-repo.git'], args[0])
+        self.assertEqual(['git', 'clone', 'https://llorensmarti@bitbucket.org/llorensmarti/test-repo.git'], args[0])
 
         name, args, side = mock_subprocess.mock_calls[1]
-        self.assertEqual(['git','submodule','update', '--init', '--recursive'], args[0])
+        self.assertEqual(['git', 'submodule', 'update', '--init', '--recursive'], args[0])
 
         self.assertEqual(2, mock_subprocess.call_count)
 
@@ -159,12 +159,12 @@ class GitFetcherTestCase(TestCase):
         self.assertEqual(2, len(reports['commands']))
 
         self.assertEqual(0, reports['commands'][0]['result']['status'])
-        self.assertEqual(['git', 'clone', 'https://llorensmarti@bitbucket.org/llorensmarti/test-repo.git'], reports['commands'][0]['command'])
+        self.assertEqual('git clone https://llorensmarti@bitbucket.org/llorensmarti/test-repo.git', reports['commands'][0]['command'])
         self.assertEqual('', reports['commands'][0]['result']['error'])
         self.assertEqual('', reports['commands'][0]['result']['out'])
 
         self.assertEqual(0, reports['commands'][1]['result']['status'])
-        self.assertEqual(['git', 'submodule', 'update', '--init', '--recursive'], reports['commands'][1]['command'])
+        self.assertEqual('git submodule update --init --recursive', reports['commands'][1]['command'])
         self.assertEqual('', reports['commands'][1]['result']['error'])
         self.assertEqual('', reports['commands'][1]['result']['out'])
 
@@ -189,7 +189,7 @@ class GitFetcherTestCase(TestCase):
         self.assertEqual(['git', 'checkout', 'master'], args[0])
 
         name, args, side = mock_subprocess.mock_calls[4]
-        self.assertEqual(['git','submodule','update', '--init', '--recursive'], args[0])
+        self.assertEqual(['git', 'submodule', 'update', '--init', '--recursive'], args[0])
 
         self.assertEqual(5, mock_subprocess.call_count)
 
@@ -202,27 +202,27 @@ class GitFetcherTestCase(TestCase):
         self.assertEqual(5, len(reports['commands']))
 
         self.assertEqual(0, reports['commands'][0]['result']['status'])
-        self.assertEqual(['git', 'reset', '--hard', 'origin/master'], reports['commands'][0]['command'])
+        self.assertEqual('git reset --hard origin/master', reports['commands'][0]['command'])
         self.assertEqual('', reports['commands'][0]['result']['error'])
         self.assertEqual('', reports['commands'][0]['result']['out'])
 
         self.assertEqual(0, reports['commands'][1]['result']['status'])
-        self.assertEqual(['git', 'clean', '-f', '-d', '-q'], reports['commands'][1]['command'])
+        self.assertEqual('git clean -f -d -q', reports['commands'][1]['command'])
         self.assertEqual('', reports['commands'][1]['result']['error'])
         self.assertEqual('', reports['commands'][1]['result']['out'])
 
         self.assertEqual(0, reports['commands'][2]['result']['status'])
-        self.assertEqual(['git', 'pull', '-r', 'origin', 'master'], reports['commands'][2]['command'])
+        self.assertEqual('git pull -r origin master', reports['commands'][2]['command'])
         self.assertEqual('', reports['commands'][2]['result']['error'])
         self.assertEqual('', reports['commands'][2]['result']['out'])
 
         self.assertEqual(0, reports['commands'][3]['result']['status'])
-        self.assertEqual(['git', 'checkout', 'master'], reports['commands'][3]['command'])
+        self.assertEqual('git checkout master', reports['commands'][3]['command'])
         self.assertEqual('', reports['commands'][3]['result']['error'])
         self.assertEqual('', reports['commands'][3]['result']['out'])
 
         self.assertEqual(0, reports['commands'][4]['result']['status'])
-        self.assertEqual(['git','submodule','update', '--init', '--recursive'], reports['commands'][4]['command'])
+        self.assertEqual('git submodule update --init --recursive', reports['commands'][4]['command'])
         self.assertEqual('', reports['commands'][4]['result']['error'])
         self.assertEqual('', reports['commands'][4]['result']['out'])
 
@@ -247,7 +247,7 @@ class GitFetcherTestCase(TestCase):
         self.assertEqual(1, len(reports['commands']))
 
         self.assertEqual(0, reports['commands'][0]['result']['status'])
-        self.assertEqual(['git', 'branch'], reports['commands'][0]['command'])
+        self.assertEqual('git branch', reports['commands'][0]['command'])
         self.assertEqual('', reports['commands'][0]['result']['error'])
         self.assertEqual('', reports['commands'][0]['result']['out'])
 
@@ -281,7 +281,7 @@ class GitFetcherTestCase(TestCase):
 
     def test_extract_branch_names_empty_because_error(self):
         report1 = {}
-        report1['command'] = ['git', 'branch']
+        report1['command'] = 'git branch'
         report1['result'] = {}
         report1['result']['status'] = 1
         report1['result']['out'] = ''
@@ -322,22 +322,22 @@ class GitFetcherTestCase(TestCase):
         self.assertEqual(4, len(reports['commands']))
 
         self.assertEqual(0, reports['commands'][0]['result']['status'])
-        self.assertEqual(['git', 'checkout', 'master'], reports['commands'][0]['command'])
+        self.assertEqual('git checkout master', reports['commands'][0]['command'])
         self.assertEqual('', reports['commands'][0]['result']['error'])
         self.assertEqual('', reports['commands'][0]['result']['out'])
 
         self.assertEqual(0, reports['commands'][1]['result']['status'])
-        self.assertEqual(['git', 'checkout', 'branch-1'], reports['commands'][1]['command'])
+        self.assertEqual('git checkout branch-1', reports['commands'][1]['command'])
         self.assertEqual('', reports['commands'][1]['result']['error'])
         self.assertEqual('', reports['commands'][1]['result']['out'])
 
         self.assertEqual(0, reports['commands'][2]['result']['status'])
-        self.assertEqual(['git', 'checkout', 'branch-2'], reports['commands'][2]['command'])
+        self.assertEqual('git checkout branch-2', reports['commands'][2]['command'])
         self.assertEqual('', reports['commands'][2]['result']['error'])
         self.assertEqual('', reports['commands'][2]['result']['out'])
 
         self.assertEqual(0, reports['commands'][3]['result']['status'])
-        self.assertEqual(['git', 'checkout', 'branch-test-1'], reports['commands'][3]['command'])
+        self.assertEqual('git checkout branch-test-1', reports['commands'][3]['command'])
         self.assertEqual('', reports['commands'][3]['result']['error'])
         self.assertEqual('', reports['commands'][3]['result']['out'])
 
@@ -354,7 +354,7 @@ class GitFetcherTestCase(TestCase):
 
         name, args, side = mock_subprocess.mock_calls[0]
         self.assertEqual(['git', 'rev-parse', 'master'], args[0])
-        
+
         name, args, side = mock_subprocess.mock_calls[1]
         self.assertEqual(['git', 'rev-parse', 'branch-1'], args[0])
 
@@ -372,30 +372,30 @@ class GitFetcherTestCase(TestCase):
         self.assertEqual(3, len(reports['commands']))
 
         self.assertEqual(0, reports['commands'][0]['result']['status'])
-        self.assertEqual(['git', 'rev-parse', 'master'], reports['commands'][0]['command'])
+        self.assertEqual('git rev-parse master', reports['commands'][0]['command'])
         self.assertEqual('', reports['commands'][0]['result']['error'])
         self.assertEqual('', reports['commands'][0]['result']['out'])
 
         self.assertEqual(0, reports['commands'][1]['result']['status'])
-        self.assertEqual(['git', 'rev-parse', 'branch-1'], reports['commands'][1]['command'])
+        self.assertEqual('git rev-parse branch-1', reports['commands'][1]['command'])
         self.assertEqual('', reports['commands'][1]['result']['error'])
         self.assertEqual('', reports['commands'][1]['result']['out'])
 
         self.assertEqual(0, reports['commands'][2]['result']['status'])
-        self.assertEqual(['git', 'rev-parse', 'branch-2'], reports['commands'][2]['command'])
+        self.assertEqual('git rev-parse branch-2', reports['commands'][2]['command'])
         self.assertEqual('', reports['commands'][2]['result']['error'])
         self.assertEqual('', reports['commands'][2]['result']['out'])
 
     def test_extract_branch_names_and_hashes_correct(self):
         report1 = {}
-        report1['command'] = ['git', 'rev-parse', 'master']
+        report1['command'] = 'git rev-parse master'
         report1['result'] = {}
         report1['result']['status'] = 0
         report1['result']['out'] = '0000100001000010000100001000010000100001'
         report1['result']['error'] = ''
 
         report2 = {}
-        report2['command'] = ['git', 'rev-parse', 'branch-1']
+        report2['command'] = 'git rev-parse branch-1'
         report2['result'] = {}
         report2['result']['status'] = 0
         report2['result']['out'] = '0000200002000020000200002000020000200002'
@@ -438,7 +438,7 @@ class GitFetcherTestCase(TestCase):
         self.fetcher.create_tmp_folder_for_git_project(self.obj1)
         self.create_git_hidden_folder(settings.TMP_ROOT, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1')
         reports = self.fetcher.commands_get_commits_from_branch(self.obj1, branch_name)
-        
+
         name, args, side = mock_subprocess.mock_calls[0]
         self.assertEqual(['git', 'reset', '--hard'], args[0])
 
@@ -462,35 +462,35 @@ class GitFetcherTestCase(TestCase):
         self.assertEqual(4, len(reports['commands']))
 
         self.assertEqual(0, reports['commands'][0]['result']['status'])
-        self.assertEqual(['git', 'reset', '--hard'], reports['commands'][0]['command'])
+        self.assertEqual('git reset --hard', reports['commands'][0]['command'])
         self.assertEqual('', reports['commands'][0]['result']['error'])
         self.assertEqual('', reports['commands'][0]['result']['out'])
 
         self.assertEqual(0, reports['commands'][1]['result']['status'])
-        self.assertEqual(['git', 'clean', '-f', '-d', '-q'], reports['commands'][1]['command'])
+        self.assertEqual('git clean -f -d -q', reports['commands'][1]['command'])
         self.assertEqual('', reports['commands'][1]['result']['error'])
         self.assertEqual('', reports['commands'][1]['result']['out'])
 
         self.assertEqual(0, reports['commands'][2]['result']['status'])
-        self.assertEqual(['git', 'checkout', 'branch-1'], reports['commands'][2]['command'])
+        self.assertEqual('git checkout branch-1', reports['commands'][2]['command'])
         self.assertEqual('', reports['commands'][2]['result']['error'])
         self.assertEqual('', reports['commands'][2]['result']['out'])
 
         self.assertEqual(0, reports['commands'][3]['result']['status'])
-        self.assertEqual(['git', 'log', '--first-parent', '--date=iso', pretty_string], reports['commands'][3]['command'])
+        self.assertEqual('git log --first-parent --date=iso {0}'.format(pretty_string), reports['commands'][3]['command'])
         self.assertEqual('', reports['commands'][3]['result']['error'])
         self.assertEqual('', reports['commands'][3]['result']['out'])
 
     def test_extract_and_format_commits_from_report(self):
         report1 = {}
-        report1['command'] = ['git', 'rev-parse', 'master']
+        report1['command'] = 'git rev-parse master'
         report1['result'] = {}
         report1['result']['status'] = 0
         report1['result']['out'] = '0000100001000010000100001000010000100001'
         report1['result']['error'] = ''
 
         report2 = {}
-        report2['command'] = ['git', 'log', '...']
+        report2['command'] = 'git log ...'
         report2['result'] = {}
         report2['result']['status'] = 0
         report2['result']['out'] = '{\
@@ -681,7 +681,7 @@ class GitFetcherTestCase(TestCase):
         self.fetcher.create_tmp_folder_for_git_project(self.obj1)
         self.create_git_hidden_folder(settings.TMP_ROOT, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1')
         reports = self.fetcher.commands_get_fork_commit_between_branches(self.obj1, branch1, branch2)
-        
+
         name, args, side = mock_subprocess.mock_calls[0]
         self.assertEqual(['git', 'merge-base', branch1['commit_hash'], branch2['commit_hash']], args[0])
 
@@ -696,7 +696,7 @@ class GitFetcherTestCase(TestCase):
         self.assertEqual(1, len(reports['commands']))
 
         self.assertEqual(0, reports['commands'][0]['result']['status'])
-        self.assertEqual(['git', 'merge-base', branch1['commit_hash'], branch2['commit_hash']], reports['commands'][0]['command'])
+        self.assertEqual('git merge-base {0} {1}'.format(branch1['commit_hash'], branch2['commit_hash']), reports['commands'][0]['command'])
         self.assertEqual('', reports['commands'][0]['result']['error'])
         self.assertEqual('', reports['commands'][0]['result']['out'])
 
@@ -909,7 +909,7 @@ class GitFetcherTestCase(TestCase):
         self.fetcher.create_tmp_folder_for_git_project(self.obj1)
         self.create_git_hidden_folder(settings.TMP_ROOT, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1')
         reports = self.fetcher.commands_get_diff_between_commits(self.obj1, commit_1, commit_2)
-        
+
         name, args, side = mock_subprocess.mock_calls[0]
         self.assertEqual(['git', 'diff', commit_1, commit_2], args[0])
 
@@ -924,20 +924,20 @@ class GitFetcherTestCase(TestCase):
         self.assertEqual(1, len(reports['commands']))
 
         self.assertEqual(0, reports['commands'][0]['result']['status'])
-        self.assertEqual(['git', 'diff', commit_1, commit_2], reports['commands'][0]['command'])
+        self.assertEqual('git diff {0} {1}'.format(commit_1, commit_2), reports['commands'][0]['command'])
         self.assertEqual('', reports['commands'][0]['result']['error'])
         self.assertEqual('', reports['commands'][0]['result']['out'])
 
     def test_extract_diff_from_report(self):
         report1 = {}
-        report1['command'] = ['git', 'rev-parse', 'master']
+        report1['command'] = 'git rev-parse master'
         report1['result'] = {}
         report1['result']['status'] = 0
         report1['result']['out'] = '0000100001000010000100001000010000100001'
         report1['result']['error'] = ''
 
         report2 = {}
-        report2['command'] = ['git', 'diff', '...']
+        report2['command'] = 'git diff ...'
         report2['result'] = {}
         report2['result']['status'] = 0
         report2['result']['out'] = 'diff-long-long-text'

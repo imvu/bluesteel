@@ -78,7 +78,7 @@ def get_default_report():
     report['commands'] = []
 
     command = {}
-    command['command'] = ['command1', 'arg1', 'arg2']
+    command['command'] = 'command1 arg1 arg2'
     command['result'] = {}
     command['result']['error'] = 'default-error'
     command['result']['out'] = 'default-out'

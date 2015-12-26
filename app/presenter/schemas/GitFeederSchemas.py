@@ -205,10 +205,7 @@ GIT_FEEDER_SCHEMA = {
                             'required' : ['command'],
                             'properties' : {
                                 'command' : {
-                                    'type' : 'array',
-                                    'items' : {
-                                        'type' : 'string'
-                                    }
+                                    'type' : 'string',
                                 },
                                 'result' : {
                                     'type' : 'object',

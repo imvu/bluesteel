@@ -424,7 +424,7 @@ class GitFeederControllerTestCase(TestCase):
 
         self.assertEqual(1, len(group_obj['command_sets']))
         self.assertEqual(1, len(group_obj['command_sets'][0]['commands']))
-        self.assertEqual(u'["command1", "arg1", "arg2"]', group_obj['command_sets'][0]['commands'][0]['command'])
+        self.assertEqual(u'command1 arg1 arg2', group_obj['command_sets'][0]['commands'][0]['command'])
         self.assertEqual(0, group_obj['command_sets'][0]['commands'][0]['result']['status'])
         self.assertEqual(u'default-out', group_obj['command_sets'][0]['commands'][0]['result']['out'])
         self.assertEqual(u'default-error', group_obj['command_sets'][0]['commands'][0]['result']['error'])
@@ -444,7 +444,7 @@ class GitFeederControllerTestCase(TestCase):
 
         self.assertEqual(1, len(group_obj['command_sets']))
         self.assertEqual(1, len(group_obj['command_sets'][0]['commands']))
-        self.assertEqual(u'["command1", "arg1", "arg2"]', group_obj['command_sets'][0]['commands'][0]['command'])
+        self.assertEqual(u'command1 arg1 arg2', group_obj['command_sets'][0]['commands'][0]['command'])
         self.assertEqual(0, group_obj['command_sets'][0]['commands'][0]['result']['status'])
         self.assertEqual(u'default-out', group_obj['command_sets'][0]['commands'][0]['result']['out'])
         self.assertEqual(u'default-error', group_obj['command_sets'][0]['commands'][0]['result']['error'])
@@ -464,7 +464,7 @@ class GitFeederControllerTestCase(TestCase):
 
         self.assertEqual(1, len(group_obj['command_sets']))
         self.assertEqual(1, len(group_obj['command_sets'][0]['commands']))
-        self.assertEqual(u'["command1", "arg1", "arg2"]', group_obj['command_sets'][0]['commands'][0]['command'])
+        self.assertEqual(u'command1 arg1 arg2', group_obj['command_sets'][0]['commands'][0]['command'])
         self.assertEqual(0, group_obj['command_sets'][0]['commands'][0]['result']['status'])
         self.assertEqual(u'default-out', group_obj['command_sets'][0]['commands'][0]['result']['out'])
         self.assertEqual(u'default-error', group_obj['command_sets'][0]['commands'][0]['result']['error'])

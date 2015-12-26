@@ -392,7 +392,7 @@ class GitFetcher(object):
             file_stdout = open(out_file_path, 'r')
             file_stderr = open(err_file_path, 'r')
 
-            report['command'] = command
+            report['command'] = ' '.join(command)
             report['result']['out'] = file_stdout.read()
             report['result']['error'] = file_stderr.read()
             report['result']['start_time'] = start_time
@@ -549,10 +549,9 @@ class GitFetcher(object):
         branch_names = []
 
         for command in reports['commands']:
-            if command['command'][0] == 'git' and command['command'][1] == 'rev-parse' and \
-            command['result']['status'] == 0:
+            if command['command'].startswith('git rev-parse') and command['result']['status'] == 0:
                 branch = {}
-                branch['name'] = command['command'][2].strip()
+                branch['name'] = command['command'][14:].strip()
                 branch['commit_hash'] = command['result']['out'].strip()
                 branch_names.append(branch)
         return branch_names
@@ -597,7 +596,7 @@ class GitFetcher(object):
         commits = []
 
         for command in reports['commands']:
-            if command['command'][0] == 'git' and command['command'][1] == 'log' and command['result']['status'] == 0:
+            if command['command'].startswith('git log') and command['result']['status'] == 0:
                 commits_string = '[' + command['result']['out'][:-1] + ']'
                 commits_obj = json.loads(commits_string)
 
@@ -701,7 +700,7 @@ class GitFetcher(object):
         """ We extract the content of the diff from the report """
 
         for command in reports['commands']:
-            if command['command'][0] == 'git' and command['command'][1] == 'diff' and command['result']['status'] == 0:
+            if command['command'].startswith('git diff') and command['result']['status'] == 0:
                 return command['result']['out']
 
         return ''

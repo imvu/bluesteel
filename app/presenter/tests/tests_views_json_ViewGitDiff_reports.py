@@ -51,7 +51,7 @@ class GitFeedViewsReportsTestCase(TestCase):
         report['commands'] = []
 
         command = {}
-        command['command'] = ['command1', 'arg1', 'arg2']
+        command['command'] = 'command1 arg1 arg2'
         command['result'] = {}
         command['result']['error'] = 'error-text-1'
         command['result']['out'] = 'out-text-1'
@@ -85,7 +85,7 @@ class GitFeedViewsReportsTestCase(TestCase):
         self.assertEqual(reports_entry[0], sets_entry[0].group)
 
         comm_entry = CommandEntry.objects.all().first()
-        self.assertEqual('["command1", "arg1", "arg2"]', comm_entry.command)
+        self.assertEqual(u'command1 arg1 arg2', comm_entry.command)
 
         comm_result_entry = CommandResultEntry.objects.all().first()
 

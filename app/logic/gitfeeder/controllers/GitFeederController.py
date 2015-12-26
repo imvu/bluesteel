@@ -15,7 +15,6 @@ from app.logic.commandrepo.models.CommandSetModel import CommandSetEntry
 from app.logic.commandrepo.models.CommandModel import CommandEntry
 from app.logic.commandrepo.models.CommandResultModel import CommandResultEntry
 from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
-import json
 import arrow
 import pytz
 
@@ -342,7 +341,7 @@ class GitFeederController(object):
             for command in command_set['commands']:
                 comm_entry = CommandEntry.objects.create(
                     command_set=set_entry,
-                    command=json.dumps(command['command']),
+                    command=command['command'],
                 )
 
                 start_time = arrow.get(command['result']['start_time']).naive
