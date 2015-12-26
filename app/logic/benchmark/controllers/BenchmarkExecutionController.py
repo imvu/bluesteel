@@ -37,49 +37,41 @@ class BenchmarkExecutionController(object):
             return execution
 
     @staticmethod
-    def create_bench_executions_from_commit(commit_entry, bench_def_entries, worker_entries):
-        """ Create all the executions necessary from a given commit, definitions and workers """
+    def create_benchmark_execution(definition, commit, worker):
+        """ Creates a benchmark execution only if there is none equal before """
         command_group = CommandGroupEntry.objects.create()
         command_set = CommandSetEntry.objects.create(group=command_group)
 
+        found = BenchmarkExecutionEntry.objects.filter(definition=definition, commit=commit, worker=worker)
+
+        if not found:
+            BenchmarkExecutionEntry.objects.create(
+                definition=definition,
+                commit=commit,
+                worker=worker,
+                report=command_set,
+            )
+
+    @staticmethod
+    def create_bench_executions_from_commit(commit_entry, bench_def_entries, worker_entries):
+        """ Create all the executions necessary from a given commit, definitions and workers """
         for bench_def in bench_def_entries:
             for worker in worker_entries:
-                BenchmarkExecutionEntry.objects.create(
-                    definition=bench_def,
-                    commit=commit_entry,
-                    worker=worker,
-                    report=command_set,
-                )
+                BenchmarkExecutionController.create_benchmark_execution(bench_def, commit_entry, worker)
 
     @staticmethod
     def create_bench_executions_from_worker(worker_entry, commit_entries, bench_def_entries):
         """ Create all the executions necessary from a given worker, definitions and commits """
-        command_group = CommandGroupEntry.objects.create()
-        command_set = CommandSetEntry.objects.create(group=command_group)
-
         for bench_def in bench_def_entries:
             for commit in commit_entries:
-                BenchmarkExecutionEntry.objects.create(
-                    definition=bench_def,
-                    commit=commit,
-                    worker=worker_entry,
-                    report=command_set,
-                )
+                BenchmarkExecutionController.create_benchmark_execution(bench_def, commit, worker_entry)
 
     @staticmethod
     def create_bench_executions_from_definition(bench_def_entry, commit_entries, worker_entries):
         """ Create all the executions necessary from a given worker, definitions and commits """
-        command_group = CommandGroupEntry.objects.create()
-        command_set = CommandSetEntry.objects.create(group=command_group)
-
         for worker in worker_entries:
             for commit in commit_entries:
-                BenchmarkExecutionEntry.objects.create(
-                    definition=bench_def_entry,
-                    commit=commit,
-                    worker=worker,
-                    report=command_set,
-                )
+                BenchmarkExecutionController.create_benchmark_execution(bench_def_entry, commit, worker)
 
     @staticmethod
     def delete_benchmark_executions(benchmark_definition):
