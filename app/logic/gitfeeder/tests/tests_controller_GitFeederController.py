@@ -2,6 +2,8 @@
 
 from django.test import TestCase
 from django.utils import timezone
+from django.contrib.auth.models import User, AnonymousUser
+from app.logic.gitfeeder.models.FeedModel import FeedEntry
 from app.logic.gitfeeder.controllers.GitFeederController import GitFeederController
 from app.logic.gitfeeder.helper import FeederTestHelper
 from app.logic.gitrepo.models.GitProjectModel import GitProjectEntry
@@ -11,10 +13,24 @@ from app.logic.gitrepo.models.GitCommitModel import GitCommitEntry
 from app.logic.gitrepo.models.GitBranchModel import GitBranchEntry
 from app.logic.gitrepo.models.GitBranchTrailModel import GitBranchTrailEntry
 from app.logic.gitrepo.models.GitDiffModel import GitDiffEntry
+from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
 
 class GitFeederControllerTestCase(TestCase):
 
     def setUp(self):
+        self.user1 = User.objects.create_user('user1@test.com', 'user1@test.com', 'pass1')
+        self.user2 = User.objects.create_user('user2@test.com', 'user2@test.com', 'pass2')
+
+        self.worker1 = WorkerEntry.objects.create(
+            name='worker-name-1',
+            uuid='uuid-worker-1',
+            operative_system='osx',
+            description='long-description-1',
+            user=self.user1,
+            git_feeder=False
+        )
+
+
         self.time = str(timezone.now().isoformat())
         self.git_project1 = GitProjectEntry.objects.create(url='http://test/')
         self.git_user1 = GitUserEntry.objects.create(
@@ -392,3 +408,63 @@ class GitFeederControllerTestCase(TestCase):
         GitFeederController.insert_diffs([diff1], self.git_project1)
 
         self.assertEqual(0, GitDiffEntry.objects.all().count())
+
+
+    def test_insert_reports_with_existing_worker(self):
+        reports = FeederTestHelper.get_default_report()
+
+        self.assertEqual(0, FeedEntry.objects.all().count())
+
+        GitFeederController.insert_reports(self.user1, reports)
+
+        self.assertEqual(1, FeedEntry.objects.all().count())
+        self.assertEqual(1, FeedEntry.objects.filter(worker=self.worker1).count())
+
+        group_obj = FeedEntry.objects.filter(worker=self.worker1).first().command_group.as_object()
+
+        self.assertEqual(1, len(group_obj['command_sets']))
+        self.assertEqual(1, len(group_obj['command_sets'][0]['commands']))
+        self.assertEqual(u'["command1", "arg1", "arg2"]', group_obj['command_sets'][0]['commands'][0]['command'])
+        self.assertEqual(0, group_obj['command_sets'][0]['commands'][0]['result']['status'])
+        self.assertEqual(u'default-out', group_obj['command_sets'][0]['commands'][0]['result']['out'])
+        self.assertEqual(u'default-error', group_obj['command_sets'][0]['commands'][0]['result']['error'])
+
+
+    def test_insert_reports_with_user_but_not_worker(self):
+        reports = FeederTestHelper.get_default_report()
+
+        self.assertEqual(0, FeedEntry.objects.all().count())
+
+        GitFeederController.insert_reports(self.user2, reports)
+
+        self.assertEqual(1, FeedEntry.objects.all().count())
+        self.assertEqual(0, FeedEntry.objects.filter(worker=self.worker1).count())
+
+        group_obj = FeedEntry.objects.all().first().command_group.as_object()
+
+        self.assertEqual(1, len(group_obj['command_sets']))
+        self.assertEqual(1, len(group_obj['command_sets'][0]['commands']))
+        self.assertEqual(u'["command1", "arg1", "arg2"]', group_obj['command_sets'][0]['commands'][0]['command'])
+        self.assertEqual(0, group_obj['command_sets'][0]['commands'][0]['result']['status'])
+        self.assertEqual(u'default-out', group_obj['command_sets'][0]['commands'][0]['result']['out'])
+        self.assertEqual(u'default-error', group_obj['command_sets'][0]['commands'][0]['result']['error'])
+
+    def test_insert_reports_with_anonimous_user_and_not_worker(self):
+        anonymous = AnonymousUser()
+        reports = FeederTestHelper.get_default_report()
+
+        self.assertEqual(0, FeedEntry.objects.all().count())
+
+        GitFeederController.insert_reports(anonymous, reports)
+
+        self.assertEqual(1, FeedEntry.objects.all().count())
+        self.assertEqual(0, FeedEntry.objects.filter(worker=self.worker1).count())
+
+        group_obj = FeedEntry.objects.all().first().command_group.as_object()
+
+        self.assertEqual(1, len(group_obj['command_sets']))
+        self.assertEqual(1, len(group_obj['command_sets'][0]['commands']))
+        self.assertEqual(u'["command1", "arg1", "arg2"]', group_obj['command_sets'][0]['commands'][0]['command'])
+        self.assertEqual(0, group_obj['command_sets'][0]['commands'][0]['result']['status'])
+        self.assertEqual(u'default-out', group_obj['command_sets'][0]['commands'][0]['result']['out'])
+        self.assertEqual(u'default-error', group_obj['command_sets'][0]['commands'][0]['result']['error'])

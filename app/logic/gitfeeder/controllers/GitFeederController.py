@@ -2,6 +2,7 @@
 
 from django.utils import timezone
 from django.conf import settings
+from app.logic.gitfeeder.models.FeedModel import FeedEntry
 from app.logic.gitrepo.models.GitUserModel import GitUserEntry
 from app.logic.gitrepo.models.GitCommitModel import GitCommitEntry
 from app.logic.gitrepo.models.GitParentModel import GitParentEntry
@@ -13,6 +14,7 @@ from app.logic.commandrepo.models.CommandGroupModel import CommandGroupEntry
 from app.logic.commandrepo.models.CommandSetModel import CommandSetEntry
 from app.logic.commandrepo.models.CommandModel import CommandEntry
 from app.logic.commandrepo.models.CommandResultModel import CommandResultEntry
+from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
 import json
 import arrow
 import pytz
@@ -329,7 +331,10 @@ class GitFeederController(object):
         if user.is_anonymous():
             report_user = None
 
+        worker_entry = WorkerEntry.objects.filter(user=report_user).first()
         group_entry = CommandGroupEntry.objects.create(user=report_user)
+        feed_entry = FeedEntry.objects.create(command_group=group_entry, worker=worker_entry)
+        del feed_entry
 
         for command_set in reports:
             set_entry = CommandSetEntry.objects.create(group=group_entry)
