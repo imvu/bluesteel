@@ -47,6 +47,9 @@ urlpatterns = patterns(
     url(r'^feed/report/(?P<feed_report_id>\d+)/$',
         'app.presenter.views.html.ViewHtmlFeed.get_feed_report'),
 
+    url(r'^feed/fromworker/(?P<worker_id>\d+)/$',
+        'app.presenter.views.html.ViewHtmlFeed.get_feed_reports_from_worker'),
+
     # json views
 
     url(r'^layout/(?P<layout_id>\d+)/add/project/$',
