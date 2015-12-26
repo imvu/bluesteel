@@ -2,11 +2,12 @@
 
 from app.logic.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
 from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
+from app.presenter.views.helpers import ViewUrlGenerator
 from app.logic.httpcommon import res
 
 def add_project_feed_url(request, layout):
     for project in layout['projects']:
-        project['feed_url'] = request.build_absolute_uri('/gitfeeder/feed/commit/project/{0}/'.format(project['id']))
+        project['feed_url'] = ViewUrlGenerator.get_gitfeeder_full_url(request.get_host(), project['id'])
     return layout
 
 def get_all_layouts_urls(request):
@@ -18,7 +19,7 @@ def get_all_layouts_urls(request):
         data['layouts'] = []
 
         for layout in all_layouts:
-            data['layouts'].append(request.build_absolute_uri('/main/layout/{0}/'.format(layout.id)))
+            data['layouts'].append(ViewUrlGenerator.get_layout_full_url(request.get_host(), layout.id))
 
         return res.get_response(200, 'Layouts', data)
     else:

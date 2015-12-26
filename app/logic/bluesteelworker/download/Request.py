@@ -35,8 +35,8 @@ class Session(object):
         res = {}
         try:
             response = self.opener.open(request)
-        except urllib2.HTTPError:
-            res['content'] = {}
+        except urllib2.HTTPError as error:
+            res['content'] = error.read()
             res['cookie'] = ''
             res['succeed'] = False
         else:

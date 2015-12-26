@@ -58,9 +58,11 @@ class GitFetcher(object):
         """ Fetch a git project using project info """
         if not self.is_project_folder_present(project_info):
             self.create_tmp_folder_for_git_project(project_info)
-            report = self.commands_clone_git_project(project_info)
-        else:
+
+        if GitFetcher.is_git_project_folder_present(project_info):
             report = self.commands_fetch_git_project(project_info)
+        else:
+            report = self.commands_clone_git_project(project_info)
 
         self.report_stack.append(report)
         if not GitFetcher.is_report_ok(report):

@@ -6,6 +6,9 @@ def get_main_url():
 def get_layout_all_url():
     return '/main/layout/all/'
 
+def get_layout_full_url(domain, layout_id):
+    return 'http://{0}/main/layout/{1}/'.format(domain, layout_id)
+
 def get_layout_point_full_url(domain):
     return 'http://{0}/main/layout/all/urls/'.format(domain)
 
@@ -59,6 +62,9 @@ def get_worker_create_point_full_url(domain):
 
 def get_worker_login_point_full_url(domain):
     return 'http://{0}/main/bluesteelworker/login/'.format(domain)
+
+def get_gitfeeder_full_url(domain, project_id):
+    return 'http://{0}/main/feed/commit/project/{1}/'.format(domain, project_id)
 
 def get_change_merge_target_url(project_id):
     return '/main/branch/merge/target/project/{0}/'.format(project_id)

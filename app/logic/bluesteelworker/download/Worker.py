@@ -121,7 +121,7 @@ def read_settings():
     except ValueError, error:
         print error
         settings_obj['tmp_path'] = ['tmp']
-        settings_obj['entry_point'] = 'http://www.test.com'
+        settings_obj['entry_point'] = 'http://www.test.com/settings/not/available/'
     settings_file.close()
     return settings_obj
 
@@ -137,21 +137,35 @@ def get_host_info():
     )
     return obj
 
-def process_get_or_create_worker(settings, host_info, session):
+def get_bootstrap_urls(entry_point_url, session):
+    """ Gets all the important urls from Bluesteel """
+    resp = session.get(entry_point_url, {})
+
+    if resp['succeed'] and resp['content']['status'] == 200:
+        return resp['content']['data']
+    else:
+        bootstrap_urls = {}
+        bootstrap_urls['layouts_url'] = 'http://url/not/available/'
+        bootstrap_urls['worker_info_url'] = 'http://url/not/available/'
+        bootstrap_urls['create_worker_url'] = 'http://url/not/available/'
+        bootstrap_urls['login_worker_url'] = 'http://url/not/available/'
+        return bootstrap_urls
+
+def process_get_or_create_worker(bootstrap_urls, host_info, session):
     """ Gets or create a Worker, returns worker info """
-    url = '{0}{1}/'.format(settings['worker_info_point'], host_info['uuid'])
+    url = '{0}{1}/'.format(bootstrap_urls['worker_info_url'], host_info['uuid'])
     resp = session.get(url, {})
 
     if resp['content']['status'] == 400:
         print '- Creating Worker'
-        resp = session.post(settings['create_worker_info_point'], {}, json.dumps(host_info))
+        resp = session.post(bootstrap_urls['create_worker_url'], {}, json.dumps(host_info))
 
     connection_info = {}
     connection_info['succeed'] = resp['content']['status'] == 200
     connection_info['worker'] = resp['content']['data']['worker']
     return connection_info
 
-def process_connect_worker(settings, worker_info, session):
+def process_connect_worker(bootstrap_urls, worker_info, session):
     """ Make woerker login to BlueSteel """
     print '- Login Worker'
 
@@ -159,20 +173,20 @@ def process_connect_worker(settings, worker_info, session):
     login_info['username'] = worker_info['uuid'][0:30]
     login_info['password'] = worker_info['uuid']
 
-    resp = session.post(settings['login_worker_point'], {}, json.dumps(login_info))
+    resp = session.post(bootstrap_urls['login_worker_url'], {}, json.dumps(login_info))
 
     connection_info = {}
     connection_info['git_feeder'] = worker_info['git_feeder']
     connection_info['succeed'] = resp['content']['status'] == 200
     return connection_info
 
-def process_git_feed(settings, session):
+def process_git_feed(bootstrap_urls, settings, session):
     """ Fetch all layouts and feed them to BlueSteel """
     process_info = {}
     process_info['succeed'] = True
 
     print '- Getting layout list'
-    resp = session.get(settings['entry_point'], {})
+    resp = session.get(bootstrap_urls['layouts_url'], {})
     if resp['succeed'] == False:
         process_info['succeed'] = False
         return process_info
@@ -205,13 +219,13 @@ def process_git_feed(settings, session):
 
             obj_json = json.dumps(fetcher.feed_data)
 
-            print project['feed']['url']
+            # print project['feed']['url']
 
             if project['feed']['active']:
                 print '- Feeding git project'
                 resp = session.post(project['feed']['url'], {}, obj_json)
                 if resp['succeed'] == False:
-                    process_info['succeed'] = False
+                    process_info = resp
                     return process_info
 
                 ppi.pprint(resp)
@@ -225,16 +239,21 @@ def main():
     ppi = pprint.PrettyPrinter(depth=10)
 
     settings = read_settings()
+    ppi.pprint(settings)
+
     host_info = get_host_info()
     session = Request.Session()
 
+    bootstrap_urls = get_bootstrap_urls(settings['entry_point'], session)
+    ppi.pprint(bootstrap_urls)
+
 
     while True:
-        worker_info = process_get_or_create_worker(settings, host_info, session)
+        worker_info = process_get_or_create_worker(bootstrap_urls, host_info, session)
         if worker_info['succeed'] == False:
             continue
 
-        con_info = process_connect_worker(settings, worker_info['worker'], session)
+        con_info = process_connect_worker(bootstrap_urls, worker_info['worker'], session)
         if con_info['succeed'] == False:
             continue
 
@@ -249,7 +268,9 @@ def main():
             while working:
                 if con_info['git_feeder']:
                     print '- Start git feeding'
-                    process_git_feed(settings, session)
+                    process_info = process_git_feed(bootstrap_urls, settings, session)
+                    print '====== PROCESS INFO ======='
+                    ppi.pprint(process_info)
                 else:
                     print 'Is not a git feeder'
 

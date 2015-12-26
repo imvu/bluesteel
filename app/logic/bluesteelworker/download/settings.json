@@ -1,7 +1,4 @@
 {
-    "entry_point" : "http://localhost:28028/main/layout/all/urls/",
-    "worker_info_point" : "http://localhost:28028/main/bluesteelworker/",
-    "create_worker_info_point" : "http://localhost:28028/main/bluesteelworker/create/",
-    "login_worker_point" : "http://localhost:28028/main/bluesteelworker/login/",
+    "entry_point" : "http://localhost:28028/main/bluesteelworker/bootstrap/",
     "tmp_path" : ["..", "..", "..", "..", "tmp", "worker_tmp"]
 }
