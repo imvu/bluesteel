@@ -1,6 +1,9 @@
 """ Presenter Urls file """
 
 from django.conf.urls import patterns, url
+from django.contrib import admin
+
+admin.autodiscover()
 
 # pylint: disable=C0103
 urlpatterns = patterns(
