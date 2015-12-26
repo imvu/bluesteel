@@ -33,11 +33,11 @@ def get_workers(request):
 def get_worker_reports(request, worker_id):
     """ Returns html for the worker reports page """
     if request.method == 'GET':
-        workers = list(WorkerEntry.objects.filter(id=worker_id))
-        if len(workers) == 0:
+        worker = WorkerEntry.objects.filter(id=worker_id).first()
+        if not worker:
             return res.get_template_data(request, 'presenter/not_found.html', {})
 
-        report_entries = list(CommandGroupEntry.objects.filter(user=workers[0].user))
+        report_entries = CommandGroupEntry.objects.filter(user=worker.user)
         reports = []
         for report in report_entries:
             reports.append(report.as_object())

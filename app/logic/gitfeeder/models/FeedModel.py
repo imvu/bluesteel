@@ -16,6 +16,8 @@ class FeedEntry(models.Model):
     def as_object(self):
         """ Returns feed as an object """
         obj = {}
+        obj['id'] = self.id
         obj['command_group'] = self.command_group.as_object()
         obj['worker'] = self.worker.as_object()
+        obj['date'] = str(self.created_at)
         return obj

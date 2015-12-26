@@ -44,6 +44,9 @@ urlpatterns = patterns(
     url(r'^definition/(?P<definition_id>\d+)/edit/$',
         'app.presenter.views.html.ViewHtmlBenchmarkDefinitions.get_benchmark_definition_edit'),
 
+    url(r'^feed/report/(?P<feed_report_id>\d+)/$',
+        'app.presenter.views.html.ViewHtmlFeed.get_feed_report'),
+
     # json views
 
     url(r'^layout/(?P<layout_id>\d+)/add/project/$',
