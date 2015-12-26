@@ -12,21 +12,18 @@ def get_projects(request):
     if request.method == 'GET':
         project_entries = BluesteelProjectEntry.objects.all()
 
-        projects = []
+        items = []
         for project in project_entries:
             obj = {}
             obj['name'] = project.name
-            obj['url'] = {}
-            obj['url']['branches'] = ViewUrlGenerator.get_project_branches_url(project.id)
-            projects.append(obj)
+            obj['url'] = ViewUrlGenerator.get_project_branches_url(project.id)
+            items.append(obj)
 
         data = {}
-        data['projects'] = projects
+        data['items'] = items
         data['menu'] = ViewPrepareObjects.prepare_menu_for_html([])
 
-        print data
-
-        return res.get_template_data(request, 'presenter/projects.html', data)
+        return res.get_template_data(request, 'presenter/single_item_list.html', data)
     else:
         return res.get_template_data(request, 'presenter/not_found.html', {})
 

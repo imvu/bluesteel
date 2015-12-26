@@ -5,10 +5,10 @@
 {% block data_body %}
 <div class="container_small container_height">
     <ul class="no_dots no_indent">
-        {% for project in projects %}
+        {% for item in items %}
         <li>
             <div class="card white_card card_padding_small">
-                <div class="centered"><a class="title_link" href="{{project.url.branches}}">{{project.name}}</a></div>
+                <div class="centered"><a class="title_link" href="{{item.url}}">{{item.name}}</a></div>
             </div>
         </li>
         {% endfor %}
