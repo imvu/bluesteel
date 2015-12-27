@@ -99,7 +99,7 @@ def prepare_workers_for_html(workers):
 
         worker['last_update'] = str(worker['last_update'])
         worker['url'] = {}
-        worker['url']['report'] = ViewUrlGenerator.get_worker_report_url(worker['id'])
+        worker['url']['feed_report'] = ViewUrlGenerator.get_feed_report_form_worker_url(worker['id'])
         worker_items.append(worker)
 
     return worker_items

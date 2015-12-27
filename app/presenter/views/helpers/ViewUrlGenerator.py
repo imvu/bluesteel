@@ -89,3 +89,6 @@ def get_save_benchmark_definition_url(benchmark_definition_id):
 
 def get_feed_report_url(feed_id):
     return '/main/feed/report/{0}/'.format(feed_id)
+
+def get_feed_report_form_worker_url(worker_id):
+    return '/main/feed/fromworker/{0}/'.format(worker_id)

@@ -22,7 +22,11 @@
                     </li>
                     <li>
                         <div class="list_label indent_1">COMMIT FEEDER</div>
-                        <div class="normal indent_2">{{worker.git_feeder|yesno:"Yes,No"}}</div>
+                        {% if worker.git_feeder %}
+                            <div class="normal indent_2">Yes, <a class="normal_link" href="{{worker.url.feed_report}}">see feed reports</a></div>
+                        {% else %}
+                            <div class="normal indent_2">No</div>
+                        {% endif %}
                     </li>
                     <li>
                         <div class="list_label indent_1">LAST ACTIVITY</div>
