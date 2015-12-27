@@ -22,7 +22,7 @@ def get_feed_report(request, feed_report_id):
 def get_feed_reports_from_worker(request, worker_id):
     """ Returns a single item list of all the feeds produced by a worker """
     if request.method == 'GET':
-        feed_entries = FeedEntry.objects.filter(worker__id=worker_id)
+        feed_entries = FeedEntry.objects.filter(worker__id=worker_id).order_by('-created_at')
 
         items = []
         for report in feed_entries:
