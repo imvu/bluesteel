@@ -42,15 +42,16 @@ class BenchmarkExecutionController(object):
         command_group = CommandGroupEntry.objects.create()
         command_set = CommandSetEntry.objects.create(group=command_group)
 
-        found = BenchmarkExecutionEntry.objects.filter(definition=definition, commit=commit, worker=worker).first()
+        exec_entry = BenchmarkExecutionEntry.objects.filter(definition=definition, commit=commit, worker=worker).first()
 
-        if not found:
-            BenchmarkExecutionEntry.objects.create(
+        if not exec_entry:
+            exec_entry = BenchmarkExecutionEntry.objects.create(
                 definition=definition,
                 commit=commit,
                 worker=worker,
                 report=command_set,
             )
+        return exec_entry
 
     @staticmethod
     def create_bench_executions_from_commit(commit_entry, bench_def_entries, worker_entries):
@@ -82,3 +83,4 @@ class BenchmarkExecutionController(object):
         for exec_entry in exec_entries:
             CommandController.delete_command_group_by_id(exec_entry.report.group.id)
             exec_entry.delete()
+
