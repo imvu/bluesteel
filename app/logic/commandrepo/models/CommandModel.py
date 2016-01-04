@@ -13,7 +13,7 @@ class CommandEntry(models.Model):
     updated_at = models.DateTimeField(auto_now=True, editable=False)
 
     def __unicode__(self):
-        return u'Command: {0}'.format(self.command)
+        return u'Command id:{0} command:{1}'.format(self.id, self.command)
 
     def as_object(self):
         """ Returns a command entry as an object """

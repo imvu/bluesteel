@@ -1,0 +1,44 @@
+{% extends "presenter/base.html" %}
+
+{% load staticfiles %}
+
+{% block data_body %}
+<div class="container_med container_height">
+    <ul class="no_dots no_indent">
+        {% if execution %}
+            <li>
+                <div class="upper_card white_card card_padding_small">
+                    <div class="centered"><a class="title_link" href="{{definition.url.edit}}">my execution</a></div>
+                </div>
+                {% for command in execution.report.commands %}
+                <div class="middle_card white_card card_padding_large">
+                    <div class="list_label indent_1">COMMAND</div>
+                    <div class="command indent_2">{{command.command}}</div>
+
+                    {% if command.result.out.vertical_bars %}
+                        <div class="list_label indent_1">OUT</div>
+                        <canvas id="chart-{{forloop.counter0}}" width="540" height="220"></canvas>
+                        <script>chartVerticalBars('chart-{{forloop.counter0}}', {{command.result.out_json|safe}});</script>
+                    {% elif command.result.out.text %}
+                        <div class="list_label indent_1">OUT</div>
+                        <div class="command indent_2">{{command.result.out_json|safe}}</div>
+                    {% else %}
+                        <div class="command indent_2">{{command.result}}</div>
+                    {% endif %}
+                    <div class="list_label indent_1">ERROR</div>
+                    <div class="command indent_2">{{command.result.error|safe}}</div>
+                </div>
+                {% endfor %}
+
+                {% if command.result.error %}
+                    <div class="list_label indent_1">ERROR</div>
+                    <div class="command indent_2">{{command.result.error|safe}}</div>
+                {% endif %}
+
+                <div class="lower_card white_card card_padding_large">
+                </div>
+            </li>
+        {% endif %}
+    </ul>
+</div>
+{% endblock %}

@@ -132,5 +132,23 @@ def prepare_benchmark_execution_for_html(execution):
 
     obj = execution
     obj['worker']['last_update'] = str(execution['worker']['last_update'])
+
+    for command in obj['report']['commands']:
+        try:
+            print command
+            command['result']['out_json'] = command['result']['out']
+            command['result']['out'] = json.loads(command['result']['out'])
+        except ValueError as error:
+            default = {}
+            default['text'] = {}
+            default['text']['data'] = str(error)
+            command['result']['out'] = default
+
+        except KeyError as error:
+            default = {}
+            default['text'] = {}
+            default['text']['data'] = str(error)
+            command['result']['out'] = default
+
     return obj
 
