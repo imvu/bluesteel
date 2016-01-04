@@ -78,6 +78,9 @@ def get_project_branch_single_url(project_id, branch_id):
 def get_benchmark_definitions_url():
     return '/main/definitions/all/'
 
+def get_acquire_bench_exe_full_url(domain):
+    return 'http://{0}/main/execution/acquire/'.format(domain)
+
 def get_create_benchmark_definitions_url():
     return '/main/definitions/create/'
 

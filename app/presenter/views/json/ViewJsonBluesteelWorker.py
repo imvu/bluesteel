@@ -20,6 +20,7 @@ def get_entry_points_urls(domain):
     obj['worker_info_url'] = ViewUrlGenerator.get_worker_info_point_full_url(domain)
     obj['create_worker_url'] = ViewUrlGenerator.get_worker_create_point_full_url(domain)
     obj['login_worker_url'] = ViewUrlGenerator.get_worker_login_point_full_url(domain)
+    obj['acquire_benchmark_execution_url'] = ViewUrlGenerator.get_acquire_bench_exe_full_url(domain)
     return obj
 
 def get_worker_urls(domain, worker_id):

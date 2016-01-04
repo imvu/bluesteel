@@ -233,6 +233,27 @@ def process_git_feed(bootstrap_urls, settings, session):
     print '- Finshed feeding'
     return process_info
 
+def process_get_available_benchmark_execution(bootstrap_urls, session):
+    """ Will access Bluesteel to acquire the next available benchmark execution """
+    print '- Getting benchmark execution'
+
+    resp = session.post(bootstrap_urls['acquire_benchmark_execution_url'], {}, '')
+    if resp['succeed'] == False:
+        print '    - An error occurred:'
+        print resp
+        return
+
+    if resp['content']['status'] != 200:
+        return
+
+    data = resp['content']['data']
+    for command in data['definition']['command_set']['commands']:
+        print '------> ', command['command']
+
+
+def get_and_execute_task(bootstrap_urls, session):
+    process_get_available_benchmark_execution(bootstrap_urls, session)
+
 
 def main():
     """ Main """
@@ -271,10 +292,10 @@ def main():
                     process_info = process_git_feed(bootstrap_urls, settings, session)
                     print '====== PROCESS INFO ======='
                     ppi.pprint(process_info)
-                else:
-                    print 'Is not a git feeder'
 
-                time.sleep(10)
+                get_and_execute_task(bootstrap_urls, session)
+
+                time.sleep(100)
 
 
 
