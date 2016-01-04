@@ -124,19 +124,7 @@ class GitFetcherTestCase(TestCase):
         self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'log')))
         self.assertFalse(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'folder-2')))
 
-    def test_clear_log_folder(self):
-        project_path = os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1')
-        log_path = os.path.join(project_path, 'log')
-        os.makedirs(log_path)
-        file_log = open(os.path.join(log_path, 'log1.txt'), 'w')
-        file_log.close()
-
-        self.assertTrue(os.path.exists(os.path.join(log_path, 'log1.txt')))
-        self.fetcher.clear_logs_folder(project_path)
-        self.assertTrue(os.path.exists(log_path))
-        self.assertFalse(os.path.exists(os.path.join(log_path, 'log1.txt')))
-
-    @mock.patch('app.logic.bluesteelworker.download.GitFetcher.subprocess.call')
+    @mock.patch('app.logic.bluesteelworker.download.CommandExecutioner.subprocess.call')
     def test_clone_project(self, mock_subprocess):
         mock_subprocess.return_value = 0
         self.fetcher.create_tmp_folder_for_git_project(self.obj1)
@@ -153,8 +141,8 @@ class GitFetcherTestCase(TestCase):
         self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC')))
         self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'project')))
         self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'log')))
-        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'log', 'git_clone_stdout.txt')))
-        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'log', 'git_clone_stderr.txt')))
+        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'log', 'out.txt')))
+        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'log', 'err.txt')))
 
         self.assertEqual(2, len(reports['commands']))
 
@@ -169,7 +157,7 @@ class GitFetcherTestCase(TestCase):
         self.assertEqual('', reports['commands'][1]['result']['out'])
 
 
-    @mock.patch('app.logic.bluesteelworker.download.GitFetcher.subprocess.call')
+    @mock.patch('app.logic.bluesteelworker.download.CommandExecutioner.subprocess.call')
     def test_fetch_project(self, mock_subprocess):
         mock_subprocess.return_value = 0
         self.fetcher.create_tmp_folder_for_git_project(self.obj1)
@@ -196,8 +184,8 @@ class GitFetcherTestCase(TestCase):
         self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1')))
         self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'project')))
         self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'log')))
-        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'log', 'git_clone_stdout.txt')))
-        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'log', 'git_clone_stderr.txt')))
+        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'log', 'out.txt')))
+        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'log', 'err.txt')))
 
         self.assertEqual(5, len(reports['commands']))
 
@@ -226,7 +214,7 @@ class GitFetcherTestCase(TestCase):
         self.assertEqual('', reports['commands'][4]['result']['error'])
         self.assertEqual('', reports['commands'][4]['result']['out'])
 
-    @mock.patch('app.logic.bluesteelworker.download.GitFetcher.subprocess.call')
+    @mock.patch('app.logic.bluesteelworker.download.CommandExecutioner.subprocess.call')
     def test_get_branch_names(self, mock_subprocess):
         mock_subprocess.return_value = 0
         self.fetcher.create_tmp_folder_for_git_project(self.obj1)
@@ -241,8 +229,8 @@ class GitFetcherTestCase(TestCase):
         self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1')))
         self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'project')))
         self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'log')))
-        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'log', 'git_clone_stdout.txt')))
-        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'log', 'git_clone_stderr.txt')))
+        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'log', 'out.txt')))
+        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'log', 'err.txt')))
 
         self.assertEqual(1, len(reports['commands']))
 
@@ -296,7 +284,7 @@ class GitFetcherTestCase(TestCase):
 
         self.assertEqual(0, len(branch_names))
 
-    @mock.patch('app.logic.bluesteelworker.download.GitFetcher.subprocess.call')
+    @mock.patch('app.logic.bluesteelworker.download.CommandExecutioner.subprocess.call')
     def test_checkout_remote_branches_to_local(self, mock_subprocess):
         branch_names = ['origin/master', 'origin/branch-1', 'origin/branch-2', 'origin/branch-test-1']
         mock_subprocess.return_value = 0
@@ -342,7 +330,7 @@ class GitFetcherTestCase(TestCase):
         self.assertEqual('', reports['commands'][3]['result']['out'])
 
 
-    @mock.patch('app.logic.bluesteelworker.download.GitFetcher.subprocess.call')
+    @mock.patch('app.logic.bluesteelworker.download.CommandExecutioner.subprocess.call')
     def test_commands_get_branch_names_and_hashes(self, mock_subprocess):
         branch_names = ['master', 'branch-1', 'branch-2']
         mock_subprocess.return_value = 0
@@ -366,8 +354,8 @@ class GitFetcherTestCase(TestCase):
         self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC','test-repo-1')))
         self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC','test-repo-1', 'project')))
         self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC','test-repo-1', 'log')))
-        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC','test-repo-1', 'log', 'git_clone_stdout.txt')))
-        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC','test-repo-1', 'log', 'git_clone_stderr.txt')))
+        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC','test-repo-1', 'log', 'out.txt')))
+        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC','test-repo-1', 'log', 'err.txt')))
 
         self.assertEqual(3, len(reports['commands']))
 
@@ -415,7 +403,7 @@ class GitFetcherTestCase(TestCase):
         self.assertEqual('branch-1', branch_names[1]['name'])
         self.assertEqual('0000200002000020000200002000020000200002', branch_names[1]['commit_hash'])
 
-    @mock.patch('app.logic.bluesteelworker.download.GitFetcher.subprocess.call')
+    @mock.patch('app.logic.bluesteelworker.download.CommandExecutioner.subprocess.call')
     def test_commands_get_commits_from_branch(self, mock_subprocess):
         branch_name = 'branch-1'
         branch_hash = '0000100001000010000100001000010000100001'
@@ -456,8 +444,8 @@ class GitFetcherTestCase(TestCase):
         self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC','test-repo-1')))
         self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC','test-repo-1', 'project')))
         self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC','test-repo-1', 'log')))
-        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC','test-repo-1', 'log', 'git_clone_stdout.txt')))
-        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC','test-repo-1', 'log', 'git_clone_stderr.txt')))
+        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC','test-repo-1', 'log', 'out.txt')))
+        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC','test-repo-1', 'log', 'err.txt')))
 
         self.assertEqual(4, len(reports['commands']))
 
@@ -667,7 +655,7 @@ class GitFetcherTestCase(TestCase):
         self.assertEqual('0000100001000010000100001000010000100001', res[0]['hash'])
         self.assertEqual('0000200002000020000200002000020000200002', res[1]['hash'])
 
-    @mock.patch('app.logic.bluesteelworker.download.GitFetcher.subprocess.call')
+    @mock.patch('app.logic.bluesteelworker.download.CommandExecutioner.subprocess.call')
     def test_commands_get_shared_commit_between_branches(self, mock_subprocess):
         branch1 = {}
         branch1['name'] = 'branch-1'
@@ -690,8 +678,8 @@ class GitFetcherTestCase(TestCase):
         self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1')))
         self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'project')))
         self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'log')))
-        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'log', 'git_clone_stdout.txt')))
-        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'log', 'git_clone_stderr.txt')))
+        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'log', 'out.txt')))
+        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'log', 'err.txt')))
 
         self.assertEqual(1, len(reports['commands']))
 
@@ -900,7 +888,7 @@ class GitFetcherTestCase(TestCase):
 
         self.assertEqual('', res)
 
-    @mock.patch('app.logic.bluesteelworker.download.GitFetcher.subprocess.call')
+    @mock.patch('app.logic.bluesteelworker.download.CommandExecutioner.subprocess.call')
     def test_commands_get_diff_between_commits(self, mock_subprocess):
         commit_1 = '0000100001000010000100001000010000100001'
         commit_2 = '0000200002000020000200002000020000200002'
@@ -918,8 +906,8 @@ class GitFetcherTestCase(TestCase):
         self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1')))
         self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'project')))
         self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'log')))
-        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'log', 'git_clone_stdout.txt')))
-        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'log', 'git_clone_stderr.txt')))
+        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'log', 'out.txt')))
+        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'log', 'err.txt')))
 
         self.assertEqual(1, len(reports['commands']))
 
