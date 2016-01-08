@@ -3,6 +3,7 @@
 # Disable warning for relative imports
 # pylint: disable=W0403
 
+from CommandExecutioner import CommandExecutioner
 import GitFetcher
 import Request
 import os
@@ -72,6 +73,9 @@ def command_string_to_vector(command):
     return command.split()
 
 
+def get_cwd():
+    return os.path.dirname(os.path.abspath(__file__))
+
 def fragment_layout_in_project_infos(layout, tmp_path):
     """ Fragment a layout objects on individual project objects """
     project_to_feed = layout['project_index_path']
@@ -87,7 +91,7 @@ def fragment_layout_in_project_infos(layout, tmp_path):
         obj['feed']['active'] = index == project_to_feed
         obj['git'] = {}
         obj['git']['project'] = {}
-        obj['git']['project']['current_working_directory'] = os.path.dirname(os.path.abspath(__file__))
+        obj['git']['project']['current_working_directory'] = get_cwd()
         obj['git']['project']['tmp_directory'] = tmp_path
         obj['git']['project']['archive'] = layout['uuid']
         obj['git']['project']['name'] = project['uuid']
@@ -180,10 +184,11 @@ def process_connect_worker(bootstrap_urls, worker_info, session):
     connection_info['succeed'] = resp['content']['status'] == 200
     return connection_info
 
-def process_git_feed(bootstrap_urls, settings, session):
-    """ Fetch all layouts and feed them to BlueSteel """
+def extract_projects_from_layouts(bootstrap_urls, settings, session):
+    """ Read layouts from Bluesteel and return all the projects availables """
     process_info = {}
     process_info['succeed'] = True
+    process_info['projects'] = []
 
     print '- Getting layout list'
     resp = session.get(bootstrap_urls['layouts_url'], {})
@@ -204,33 +209,47 @@ def process_git_feed(bootstrap_urls, settings, session):
             print 'Layout not active!'
             continue
 
-
         print '- Fragmenting layout'
-        projects = fragment_layout_in_project_infos(layout, settings['tmp_path'])
+        project_fragments = fragment_layout_in_project_infos(layout, settings['tmp_path'])
 
-        for project in projects:
-            fetcher = GitFetcher.GitFetcher()
+        for project in project_fragments:
+            process_info['projects'].append(project)
 
-            print '- Fetching git project'
-            fetcher.fetch_git_project(project)
+    return process_info
 
-            ppi = pprint.PrettyPrinter(depth=10)
-            # ppi.pprint(fetcher.feed_data)
 
-            obj_json = json.dumps(fetcher.feed_data)
+def process_git_fetch_and_feed(bootstrap_urls, settings, session, feed):
+    """ Fetch all layouts and feed them to BlueSteel """
+    process_info = {}
+    process_info['succeed'] = True
 
-            # print project['feed']['url']
+    res = extract_projects_from_layouts(bootstrap_urls, settings, session)
+    if not res['succeed']:
+        process_info['succeed'] = False
+        return process_info
 
-            if project['feed']['active']:
-                print '- Feeding git project'
-                resp = session.post(project['feed']['url'], {}, obj_json)
-                if resp['succeed'] == False:
-                    process_info = resp
-                    return process_info
+    for project in res['projects']:
+        print '- Fetching git project'
+        fetcher = GitFetcher.GitFetcher()
+        fetcher.fetch_git_project(project)
 
-                ppi.pprint(resp)
+        # ppi = pprint.PrettyPrinter(depth=10)
+        # ppi.pprint(fetcher.feed_data)
 
-    print '- Finshed feeding'
+        obj_json = json.dumps(fetcher.feed_data)
+
+        # print project['feed']['url']
+
+        if project['feed']['active'] and feed:
+            print '- Feeding git project'
+            resp = session.post(project['feed']['url'], {}, obj_json)
+            if not resp['succeed']:
+                process_info = resp
+                return process_info
+
+            # ppi.pprint(resp)
+
+    print '- Finshed fetching and feeding'
     return process_info
 
 def process_get_available_benchmark_execution(bootstrap_urls, session):
@@ -241,18 +260,51 @@ def process_get_available_benchmark_execution(bootstrap_urls, session):
     if resp['succeed'] == False:
         print '    - An error occurred:'
         print resp
-        return
+        return None
 
     if resp['content']['status'] != 200:
-        return
+        print '- Get available benchmark failed'
+        return None
 
     data = resp['content']['data']
-    for command in data['definition']['command_set']['commands']:
-        print '------> ', command['command']
+    return data
+    # for command in data['definition']['command_set']['commands']:
+    #     print '------> ', command['command']
 
 
-def get_and_execute_task(bootstrap_urls, session):
-    process_get_available_benchmark_execution(bootstrap_urls, session)
+def process_get_and_execute_task(bootstrap_urls, settings, session):
+    """ It request a benchmark execution and executes it, it returns a report from that """
+    bench_exec = process_get_available_benchmark_execution(bootstrap_urls, session)
+
+    if not bench_exec:
+        return
+
+    commands = []
+    for command in bench_exec['definition']['command_set']['commands']:
+        commands.append(command['command'])
+
+    layout_uuid = bench_exec['definition']['layout']['uuid']
+    project_uuid = bench_exec['definition']['project']['uuid']
+
+    tmp_path_list = settings['tmp_path'][:]
+    tmp_path_list.append('bench_exec')
+
+    project_cwd_list = settings['tmp_path'][:]
+    project_cwd_list.append(layout_uuid)
+    project_cwd_list.append(project_uuid)
+
+    tmp_path = reduce(os.path.join, tmp_path_list)
+    project_cwd = reduce(os.path.join, project_cwd_list)
+
+    print '++ commands: ', commands
+    print '++ layout: ', layout_uuid
+    print '++ project: ', project_uuid
+    print '++ project cwd: ', project_cwd
+
+    res = CommandExecutioner.execute_command_list(commands, tmp_path, project_cwd)
+    print '!!--- ', res
+
+    return res
 
 
 def main():
@@ -287,15 +339,16 @@ def main():
         if con_info['succeed']:
             working = True
             while working:
-                if con_info['git_feeder']:
-                    print '- Start git feeding'
-                    process_info = process_git_feed(bootstrap_urls, settings, session)
-                    print '====== PROCESS INFO ======='
-                    ppi.pprint(process_info)
+                process_git_fetch_and_feed(
+                    bootstrap_urls,
+                    settings,
+                    session,
+                    con_info['git_feeder'])
 
-                get_and_execute_task(bootstrap_urls, session)
+                process_get_and_execute_task(bootstrap_urls, settings, session)
 
-                time.sleep(100)
+
+                time.sleep(1000)
 
 
 

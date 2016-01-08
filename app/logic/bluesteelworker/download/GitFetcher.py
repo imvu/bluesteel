@@ -1,7 +1,9 @@
 """ Git Fetcher code """
 
+# Disable warning for relative imports
+# pylint: disable=W0403
 
-from app.logic.bluesteelworker.download.CommandExecutioner import CommandExecutioner
+from CommandExecutioner import CommandExecutioner
 import os
 import shutil
 import json

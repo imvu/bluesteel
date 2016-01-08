@@ -4,6 +4,7 @@ import os
 import subprocess
 import shutil
 import datetime
+import types
 
 class CommandExecutioner(object):
     """ This code helps us with executing a list of commands and return its outputs. """
@@ -36,17 +37,27 @@ class CommandExecutioner(object):
             report['result']['status'] = 0
 
             start_time = datetime.datetime.utcnow().isoformat()
+            normalized_cwd = os.path.normpath(project_cwd)
+            exception_msg = ''
 
-            status = subprocess.call(
-                command,
-                stdout=file_stdout,
-                stderr=file_stderr,
-                cwd=os.path.normpath(project_cwd)
-            )
+            if isinstance(command, types.StringTypes):
+                command = command.split(' ')
+
+            try:
+                subprocess.check_call(
+                    command,
+                    stdout=file_stdout,
+                    stderr=file_stderr,
+                    cwd=normalized_cwd
+                )
+                report['result']['status'] = 0
+            except subprocess.CalledProcessError as error:
+                report['result']['status'] = error.returncode
+            except OSError as error:
+                report['result']['status'] = -1
+                exception_msg = '{0}\n'.format(str(error))
 
             finish_time = datetime.datetime.utcnow().isoformat()
-
-            report['result']['status'] = status
 
             file_stdout.close()
             file_stderr.close()
@@ -56,7 +67,7 @@ class CommandExecutioner(object):
 
             report['command'] = ' '.join(command)
             report['result']['out'] = file_stdout.read()
-            report['result']['error'] = file_stderr.read()
+            report['result']['error'] = '{0}{1}'.format(exception_msg, file_stderr.read())
             report['result']['start_time'] = start_time
             report['result']['finish_time'] = finish_time
 

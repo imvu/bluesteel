@@ -24,7 +24,7 @@ class CommandResultEntry(models.Model):
         obj['out'] = self.out
         obj['error'] = self.error
         obj['status'] = self.status
-        obj['start_time'] = self.start_time
-        obj['finish_time'] = self.finish_time
+        obj['start_time'] = str(self.start_time)
+        obj['finish_time'] = str(self.finish_time)
         return obj
 
