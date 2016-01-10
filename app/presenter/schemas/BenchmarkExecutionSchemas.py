@@ -31,45 +31,49 @@ SAVE_BENCHMARK_EXECUTION = {
                                 'type' : 'number'
                             },
                             'out' : {
-                                'type' : 'object',
-                                'oneOf' : [{
+                                'type' : 'array',
+                                'min' : 1,
+                                'items' : {
                                     'type' : 'object',
-                                    'additionalProperties': False,
-                                    'required': ['text'],
-                                    'properties' : {
-                                        'text' : {
-                                            'type' : 'object',
-                                            'additionalProperties' : False,
-                                            'required' : ['data'],
-                                            'properties' : {
-                                                'data' : {
-                                                    'type' : 'string',
-                                                    'minLength' : 1,
-                                                },
-                                            },
-                                        },
-                                    },
-                                }, {
-                                    'type' : 'object',
-                                    'additionalProperties': False,
-                                    'required': ['vertical_bars'],
-                                    'properties' : {
-                                        'vertical_bars' : {
-                                            'type' : 'object',
-                                            'additionalProperties' : False,
-                                            'required' : ['data'],
-                                            'properties' : {
-                                                'data' : {
-                                                    'type' : 'array',
-                                                    'min' : 1,
-                                                    'items' : {
-                                                        'type' : 'number'
+                                    'oneOf' : [{
+                                        'type' : 'object',
+                                        'additionalProperties': False,
+                                        'required': ['text'],
+                                        'properties' : {
+                                            'text' : {
+                                                'type' : 'object',
+                                                'additionalProperties' : False,
+                                                'required' : ['data'],
+                                                'properties' : {
+                                                    'data' : {
+                                                        'type' : 'string',
+                                                        'minLength' : 1,
                                                     },
                                                 },
                                             },
                                         },
-                                    },
-                                }]
+                                    }, {
+                                        'type' : 'object',
+                                        'additionalProperties': False,
+                                        'required': ['vertical_bars'],
+                                        'properties' : {
+                                            'vertical_bars' : {
+                                                'type' : 'object',
+                                                'additionalProperties' : False,
+                                                'required' : ['data'],
+                                                'properties' : {
+                                                    'data' : {
+                                                        'type' : 'array',
+                                                        'min' : 1,
+                                                        'items' : {
+                                                            'type' : 'number'
+                                                        },
+                                                    },
+                                                },
+                                            },
+                                        },
+                                    }]
+                                }
                             },
                             'error' : {
                                 'type' : 'string',

@@ -34,6 +34,11 @@ div.centered
     text-align: center;
 }
 
+div.break_line
+{
+    white-space: pre-line;
+}
+
 div.command
 {
     font-family: "Courier New", Courier, monospace;

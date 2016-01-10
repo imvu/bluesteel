@@ -129,26 +129,48 @@ def prepare_branches_for_html(project_id, branches):
 
 def prepare_benchmark_execution_for_html(execution):
     """ Parepares an execution object to json, ie: serializing date times :D """
-
     obj = execution
     obj['worker']['last_update'] = str(execution['worker']['last_update'])
-
-    for command in obj['report']['commands']:
-        try:
-            print command
-            command['result']['out_json'] = command['result']['out']
-            command['result']['out'] = json.loads(command['result']['out'])
-        except ValueError as error:
-            default = {}
-            default['text'] = {}
-            default['text']['data'] = str(error)
-            command['result']['out'] = default
-
-        except KeyError as error:
-            default = {}
-            default['text'] = {}
-            default['text']['data'] = str(error)
-            command['result']['out'] = default
-
     return obj
+
+def prepare_results_from_bench_exec_to_html(execution):
+    """ Extract results from a benchmark execution """
+    results = []
+
+    for command in execution['report']['commands']:
+
+        com = {}
+        com['command'] = command['command']
+        com['status'] = command['result'].get('status', 0)
+        com['error'] = command['result'].get('error', '')
+        com['out'] = []
+
+        out_json = []
+
+        try:
+            out_json = json.loads(command['result'].get('out', '[]'))
+        except ValueError as error:
+            res = {}
+            res['text'] = {}
+            res['text']['data'] = '{0}\n{1}'.format(
+                str(error),
+                command['result']['out'])
+            out_json.append(res)
+        except KeyError as error:
+            res = {}
+            res['text'] = {}
+            res['text']['data'] = '{0}\n{1}'.format(
+                str(error),
+                command['result']['out'])
+            out_json.append(res)
+
+        for ent in out_json:
+            tmp = {}
+            tmp['obj'] = ent
+            tmp['json'] = json.dumps(ent)
+            com['out'].append(tmp)
+
+        results.append(com)
+
+    return results
 

@@ -73,11 +73,9 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
                 'command' : 'command-vertical-bars',
                 'result' : {
                     'status' : 0,
-                    'out' : {
-                        'vertical_bars' : {
-                            'data' : [1, 2, 3, 4, 5]
-                        },
-                    },
+                    'out' : [
+                        {'vertical_bars' : {'data' : [1, 2, 3, 4, 5]}}
+                    ],
                     'error' : '',
                     'start_time' : str(timezone.now()),
                     'finish_time' : str(timezone.now())
@@ -131,7 +129,8 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
 
         obj = json.loads(CommandResultEntry.objects.all().first().out)
 
-        self.assertEqual([1, 2, 3, 4, 5], obj['vertical_bars']['data'])
+        self.assertEqual(1, len(obj))
+        self.assertEqual([1, 2, 3, 4, 5], obj[0]['vertical_bars']['data'])
 
 
     def test_save_benchmark_execution_text(self):
@@ -145,11 +144,10 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
                 'command' : 'command-text',
                 'result' : {
                     'status' : 0,
-                    'out' : {
-                        'text' : {
-                            'data' : 'this is a text, very long'
-                        },
-                    },
+                    'out' : [
+                        {'text' : {'data' : 'this is a text, very long'}},
+                        {'text' : {'data' : 'this is a text, different'}}
+                    ],
                     'error' : '',
                     'start_time' : str(timezone.now()),
                     'finish_time' : str(timezone.now())
@@ -203,7 +201,9 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
 
         obj = json.loads(CommandResultEntry.objects.all().first().out)
 
-        self.assertEqual('this is a text, very long', obj['text']['data'])
+        self.assertEqual(2, len(obj))
+        self.assertEqual('this is a text, very long', obj[0]['text']['data'])
+        self.assertEqual('this is a text, different', obj[1]['text']['data'])
 
     def test_save_benchmark_execution_no_recognized(self):
         execution = BenchmarkExecutionController.create_benchmark_execution(
@@ -216,9 +216,9 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
                 'command' : 'command-text',
                 'result' : {
                     'status' : 0,
-                    'out' : {
-                        'other-thing' : 'not-recognized',
-                    },
+                    'out' : [
+                        {'other-thing' : 'not-recognized'}
+                    ],
                     'error' : '',
                     'start_time' : str(timezone.now()),
                     'finish_time' : str(timezone.now())
