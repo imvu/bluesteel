@@ -155,4 +155,22 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
         self.assertEqual('No JSON object could be decoded\nthis is a plain text and it is not json!', results[0]['out'][0]['obj']['text']['data'])
         self.assertEqual('{"text": {"data": "No JSON object could be decoded\\nthis is a plain text and it is not json!"}}', results[0]['out'][0]['json'])
 
+    def test_prepare_objects_from_benchmark_execution_with_command_substitution(self):
+        obj = [{'vertical_bars' : {'data' : [1, 2, 3, 4, 5]}}]
 
+        command_set = self.create_command_result('command-1 {commit}', 0, obj, 'no error')
+
+        exec_entry = BenchmarkExecutionEntry.objects.create(
+            definition=self.benchmark_definition1,
+            commit=self.commit1,
+            worker=self.worker1,
+            report=command_set)
+
+        exec_obj = exec_entry.as_object()
+        results = ViewPrepareObjects.prepare_results_from_bench_exec_to_html(exec_obj)
+
+        self.assertEqual('command-1 0000100001000010000100001000010000100001', results[0]['command'])
+        self.assertEqual(0, results[0]['status'])
+        self.assertEqual('no error', results[0]['error'])
+        self.assertEqual([1, 2, 3, 4, 5], results[0]['out'][0]['obj']['vertical_bars']['data'])
+        self.assertEqual('{"vertical_bars": {"data": [1, 2, 3, 4, 5]}}', results[0]['out'][0]['json'])

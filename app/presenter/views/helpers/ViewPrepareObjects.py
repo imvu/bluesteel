@@ -147,6 +147,8 @@ def prepare_results_from_bench_exec_to_html(execution):
         com['error'] = command['result'].get('error', '')
         com['out'] = []
 
+        com['command'] = command['command'].replace('{commit}', execution['commit'])
+
         out_json = []
 
         try:
