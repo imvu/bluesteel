@@ -127,10 +127,12 @@ def prepare_branches_for_html(project_id, branches):
         ret_branches.append(branch)
     return ret_branches
 
-def prepare_benchmark_execution_for_html(execution):
+def prepare_benchmark_execution_for_html(execution, domain):
     """ Parepares an execution object to json, ie: serializing date times :D """
     obj = execution
     obj['worker']['last_update'] = str(execution['worker']['last_update'])
+    obj['url'] = {}
+    obj['url']['save'] = ViewUrlGenerator.get_save_bench_exe_full_url(domain, obj['id'])
     return obj
 
 def prepare_results_from_bench_exec_to_html(execution):

@@ -355,6 +355,7 @@ class GitFetcher(object):
             project_info['git']['clone']['commands'],
             paths['log'],
             paths['project'],
+            True
         )
         return reports
 
@@ -368,6 +369,7 @@ class GitFetcher(object):
             project_info['git']['fetch']['commands'],
             paths['log'],
             project_cwd,
+            True
         )
         return reports
 
@@ -382,6 +384,7 @@ class GitFetcher(object):
             commands,
             paths['log'],
             project_cwd,
+            True
         )
         return reports
 
@@ -417,6 +420,7 @@ class GitFetcher(object):
             commands,
             paths['log'],
             project_cwd,
+            True
         )
         return reports
 
@@ -454,6 +458,7 @@ class GitFetcher(object):
             commands,
             paths['log'],
             project_cwd,
+            True
         )
         return reports
 
@@ -472,6 +477,7 @@ class GitFetcher(object):
             commands,
             paths['log'],
             project_cwd,
+            True
         )
         return reports
 
@@ -518,6 +524,7 @@ class GitFetcher(object):
             commands,
             paths['log'],
             project_cwd,
+            True
         )
         return reports
 
@@ -565,6 +572,7 @@ class GitFetcher(object):
             commands,
             paths['log'],
             project_cwd,
+            True
         )
         return reports
 
@@ -621,6 +629,7 @@ class GitFetcher(object):
             commands,
             paths['log'],
             project_cwd,
+            True
         )
         return reports
 

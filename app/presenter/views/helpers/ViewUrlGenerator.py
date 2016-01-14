@@ -81,6 +81,9 @@ def get_benchmark_definitions_url():
 def get_acquire_bench_exe_full_url(domain):
     return 'http://{0}/main/execution/acquire/'.format(domain)
 
+def get_save_bench_exe_full_url(domain, bench_id):
+    return 'http://{0}/main/execution/{1}/save/'.format(domain, bench_id)
+
 def get_create_benchmark_definitions_url():
     return '/main/definitions/create/'
 

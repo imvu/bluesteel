@@ -32,6 +32,7 @@ class BenchmarkExecutionEntry(models.Model):
     def as_object(self):
         """ Returns Benchmark execution as an object """
         obj = {}
+        obj['id'] = self.id
         obj['definition'] = self.definition.as_object()
         obj['commit'] = self.commit.commit_hash
         obj['worker'] = self.worker.as_object()

@@ -43,7 +43,8 @@ class CommandExecutionerTestCase(TestCase):
         CommandExecutioner.execute_command_list(
             commands,
             os.path.join(self.tmp_folder, 'log'),
-            'project_cwd')
+            'project_cwd',
+            True)
 
         name, args, side = mock_subprocess.mock_calls[0]
         self.assertEqual(['ls'], args[0])

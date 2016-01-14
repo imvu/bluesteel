@@ -12,7 +12,9 @@ def acquire_benchmark_execution(request):
         if next_execution is None:
             return res.get_response(404, 'Next Execution not found', {})
         else:
-            execution = ViewPrepareObjects.prepare_benchmark_execution_for_html(next_execution.as_object())
+            execution = ViewPrepareObjects.prepare_benchmark_execution_for_html(
+                next_execution.as_object(),
+                request.get_host())
             return res.get_response(200, 'Next Execution', execution)
     else:
         return res.get_only_post_allowed({})

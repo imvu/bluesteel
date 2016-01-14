@@ -17,7 +17,7 @@ class CommandExecutioner(object):
         os.makedirs(output_folder_path)
 
     @staticmethod
-    def execute_command_list(command_list, output_folder_path, project_cwd):
+    def execute_command_list(command_list, output_folder_path, project_cwd, exit_on_fail):
         """ Executes a list of commands, if the command fails it returns inmediately """
         reports = {}
         reports['commands'] = []
@@ -76,7 +76,7 @@ class CommandExecutioner(object):
             file_stdout.close()
             file_stderr.close()
 
-            if report['result']['status'] != 0:
+            if report['result']['status'] != 0 and exit_on_fail:
                 break
 
         return reports

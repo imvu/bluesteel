@@ -272,19 +272,15 @@ def process_get_available_benchmark_execution(bootstrap_urls, session):
     #     print '------> ', command['command']
 
 
-def process_get_and_execute_task(bootstrap_urls, settings, session):
-    """ It request a benchmark execution and executes it, it returns a report from that """
-    bench_exec = process_get_available_benchmark_execution(bootstrap_urls, session)
-
-    if not bench_exec:
-        return
+def process_execute_task(settings, benchmark_execution):
+    """ It executes a benchmark execution, it returns a report from that """
 
     commands = []
-    for command in bench_exec['definition']['command_set']['commands']:
+    for command in benchmark_execution['definition']['command_set']['commands']:
         commands.append(command['command'])
 
-    layout_uuid = bench_exec['definition']['layout']['uuid']
-    project_uuid = bench_exec['definition']['project']['uuid']
+    layout_uuid = benchmark_execution['definition']['layout']['uuid']
+    project_uuid = benchmark_execution['definition']['project']['uuid']
 
     tmp_path_list = settings['tmp_path'][:]
     tmp_path_list.append('bench_exec')
@@ -296,15 +292,70 @@ def process_get_and_execute_task(bootstrap_urls, settings, session):
     tmp_path = reduce(os.path.join, tmp_path_list)
     project_cwd = reduce(os.path.join, project_cwd_list)
 
-    print '++ commands: ', commands
-    print '++ layout: ', layout_uuid
-    print '++ project: ', project_uuid
-    print '++ project cwd: ', project_cwd
+    # print '++ commands: ', commands
+    # print '++ layout: ', layout_uuid
+    # print '++ project: ', project_uuid
+    # print '++ project cwd: ', project_cwd
 
-    res = CommandExecutioner.execute_command_list(commands, tmp_path, project_cwd)
-    print '!!--- ', res
+    res = CommandExecutioner.execute_command_list(
+        commands,
+        tmp_path,
+        project_cwd,
+        False)
 
+    print '---> ', res
     return res
+
+def prepare_results_before_feed(results):
+    """ Reads the output of all the executed commands and prepares the info to feed """
+    ret = {}
+    ret['command_set'] = []
+
+    for command in results['commands']:
+        obj = {}
+        obj['command'] = command['command']
+        obj['result'] = {}
+        obj['result']['status'] = command['result'].get('status', 0)
+        obj['result']['error'] = command['result'].get('error', '')
+        obj['result']['start_time'] = command['result']['start_time']
+        obj['result']['finish_time'] = command['result']['finish_time']
+
+        out_json = []
+
+        try:
+            out_json = json.loads(command['result'].get('out', '[]'))
+        except ValueError as error:
+            res = {}
+            res['text'] = {}
+            res['text']['data'] = '{0}\n{1}'.format(
+                str(error),
+                command['result']['out'])
+            out_json.append(res)
+        except KeyError as error:
+            res = {}
+            res['text'] = {}
+            res['text']['data'] = '{0}\n{1}'.format(
+                str(error),
+                command['result']['out'])
+            out_json.append(res)
+
+        if not isinstance(out_json, list):
+            out_json = [out_json]
+
+        obj['result']['out'] = out_json
+        ret['command_set'].append(obj)
+    return ret
+
+
+def process_feed_benchmark_execution_results(session, results, bench_exec):
+    """ Takes the results of the executed commands and feed them to BlueSteel """
+    results_to_feed = prepare_results_before_feed(results)
+
+    print bench_exec['url']['save']
+    json_res = json.dumps(results_to_feed)
+
+    resp = session.post(bench_exec['url']['save'], {}, json_res)
+    return resp
 
 
 def main():
@@ -345,8 +396,19 @@ def main():
                     session,
                     con_info['git_feeder'])
 
-                process_get_and_execute_task(bootstrap_urls, settings, session)
+                bench_exec = process_get_available_benchmark_execution(bootstrap_urls, session)
 
+                if not bench_exec:
+                    continue
+
+                res = process_execute_task(settings, bench_exec)
+                save_ret = process_feed_benchmark_execution_results(
+                    session,
+                    res,
+                    bench_exec)
+
+                print '+++++======save======+++++'
+                print save_ret
 
                 time.sleep(1000)
 
