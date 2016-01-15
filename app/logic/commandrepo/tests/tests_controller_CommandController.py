@@ -68,3 +68,42 @@ class CommandControllerTestCase(TestCase):
         self.assertEqual(1, CommandSetEntry.objects.all().count())
         self.assertEqual(3, CommandEntry.objects.all().count())
         self.assertEqual(0, CommandResultEntry.objects.all().count())
+
+    def test_delete_commands_from_command_set(self):
+        group = TestCommandHelper.create_default_group()
+
+        comm_set = CommandSetEntry.objects.create(
+            group=group,
+            name='name_set',
+            order=0
+        )
+
+        CommandEntry.objects.create(
+            command_set=comm_set,
+            command='command1',
+            order=0
+        )
+
+        CommandEntry.objects.create(
+            command_set=comm_set,
+            command='command2',
+            order=1
+        )
+
+        CommandEntry.objects.create(
+            command_set=comm_set,
+            command='command3',
+            order=2
+        )
+
+        self.assertEqual(1, CommandGroupEntry.objects.all().count())
+        self.assertEqual(1, CommandSetEntry.objects.all().count())
+        self.assertEqual(3, CommandEntry.objects.all().count())
+        self.assertEqual(0, CommandResultEntry.objects.all().count())
+
+        CommandController.delete_commands_of_command_set(comm_set)
+
+        self.assertEqual(1, CommandGroupEntry.objects.all().count())
+        self.assertEqual(1, CommandSetEntry.objects.all().count())
+        self.assertEqual(0, CommandEntry.objects.all().count())
+        self.assertEqual(0, CommandResultEntry.objects.all().count())

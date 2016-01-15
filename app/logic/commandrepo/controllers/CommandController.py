@@ -53,6 +53,14 @@ class CommandController(object):
 
         command_entry.delete()
 
+    @staticmethod
+    def delete_commands_of_command_set(command_set_entry):
+        """ Delete all the commands on a command set """
+        command_entries = CommandEntry.objects.filter(command_set=command_set_entry)
+
+        for command in command_entries:
+            command.delete()
+
 
     @staticmethod
     def add_full_command_set(command_group, name, order, list_commands):

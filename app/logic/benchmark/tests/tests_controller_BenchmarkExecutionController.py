@@ -2,7 +2,7 @@
 
 from django.test import TestCase
 from django.contrib.auth.models import User
-from django.contrib.auth.models import AnonymousUser 
+from django.contrib.auth.models import AnonymousUser
 from app.logic.benchmark.controllers.BenchmarkExecutionController import BenchmarkExecutionController
 from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
 from app.logic.benchmark.models.BenchmarkExecutionModel import BenchmarkExecutionEntry
@@ -485,3 +485,87 @@ class BenchmarkExecutionControllerTestCase(TestCase):
         self.assertEqual(0, CommandSetEntry.objects.all().count())
         self.assertEqual(0, CommandEntry.objects.all().count())
         self.assertEqual(0, CommandResultEntry.objects.all().count())
+
+    def test_save_benchmark_execution(self):
+        CommandEntry.objects.create(
+            command_set=self.report3,
+            command='command-custom-1',
+            order=0
+        )
+
+        CommandEntry.objects.create(
+            command_set=self.report3,
+            command='command-custom-2',
+            order=1
+        )
+
+        CommandEntry.objects.create(
+            command_set=self.report3,
+            command='command-custom-3',
+            order=2
+        )
+
+        self.assertEqual(3, CommandEntry.objects.filter(command_set=self.report3).count())
+        self.assertEqual(0, CommandResultEntry.objects.filter(command__command_set=self.report3).count())
+        self.assertEqual('command-custom-1', CommandEntry.objects.filter(command_set=self.report3, order=0).first().command)
+        self.assertEqual('command-custom-2', CommandEntry.objects.filter(command_set=self.report3, order=1).first().command)
+        self.assertEqual('command-custom-3', CommandEntry.objects.filter(command_set=self.report3, order=2).first().command)
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(definition=self.benchmark_definition2).count())
+
+        result1 = {}
+        result1['out'] = 'out1'
+        result1['error'] = 'error1'
+        result1['status'] = 1
+        result1['start_time'] = timezone.now()
+        result1['finish_time'] = timezone.now()
+
+        result2 = {}
+        result2['out'] = 'out2'
+        result2['error'] = 'error2'
+        result2['status'] = 2
+        result2['start_time'] = timezone.now()
+        result2['finish_time'] = timezone.now()
+
+        result3 = {}
+        result3['out'] = 'out3'
+        result3['error'] = 'error3'
+        result3['status'] = 3
+        result3['start_time'] = timezone.now()
+        result3['finish_time'] = timezone.now()
+
+        command1 = {}
+        command1['command'] = 'command-new-1'
+        command1['result'] = result1
+
+        command2 = {}
+        command2['command'] = 'command-new-2'
+        command2['result'] = result2
+
+        command3 = {}
+        command3['command'] = 'command-new-3'
+        command3['result'] = result3
+
+        report = {}
+        report['command_set'] = [command1, command2, command3]
+
+        BenchmarkExecutionController.save_bench_execution(self.benchmark_execution3, report)
+
+        com1 = CommandEntry.objects.filter(command_set=self.report3, order=0).first()
+        com2 = CommandEntry.objects.filter(command_set=self.report3, order=1).first()
+        com3 = CommandEntry.objects.filter(command_set=self.report3, order=2).first()
+
+        self.assertEqual(3, CommandEntry.objects.filter(command_set=self.report3).count())
+        self.assertEqual('command-new-1', CommandEntry.objects.filter(command_set=self.report3, order=0).first().command)
+        self.assertEqual('command-new-2', CommandEntry.objects.filter(command_set=self.report3, order=1).first().command)
+        self.assertEqual('command-new-3', CommandEntry.objects.filter(command_set=self.report3, order=2).first().command)
+        self.assertEqual(3, CommandResultEntry.objects.filter(command__command_set=self.report3).count())
+        self.assertEqual('"out1"', CommandResultEntry.objects.filter(command=com1).first().out)
+        self.assertEqual('error1', CommandResultEntry.objects.filter(command=com1).first().error)
+        self.assertEqual(1, CommandResultEntry.objects.filter(command=com1).first().status)
+        self.assertEqual('"out2"', CommandResultEntry.objects.filter(command=com2).first().out)
+        self.assertEqual('error2', CommandResultEntry.objects.filter(command=com2).first().error)
+        self.assertEqual(2, CommandResultEntry.objects.filter(command=com2).first().status)
+        self.assertEqual('"out3"', CommandResultEntry.objects.filter(command=com3).first().out)
+        self.assertEqual('error3', CommandResultEntry.objects.filter(command=com3).first().error)
+        self.assertEqual(3, CommandResultEntry.objects.filter(command=com3).first().status)
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(definition=self.benchmark_definition2).count())

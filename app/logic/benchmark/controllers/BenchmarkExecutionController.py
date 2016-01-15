@@ -5,7 +5,10 @@ from app.logic.benchmark.models.BenchmarkExecutionModel import BenchmarkExecutio
 from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
 from app.logic.commandrepo.models.CommandGroupModel import CommandGroupEntry
 from app.logic.commandrepo.models.CommandSetModel import CommandSetEntry
+from app.logic.commandrepo.models.CommandModel import CommandEntry
+from app.logic.commandrepo.models.CommandResultModel import CommandResultEntry
 from app.logic.commandrepo.controllers.CommandController import CommandController
+import json
 
 class BenchmarkExecutionController(object):
     """ BenchmarkExecution controller with helper functions """
@@ -73,6 +76,29 @@ class BenchmarkExecutionController(object):
         for worker in worker_entries:
             for commit in commit_entries:
                 BenchmarkExecutionController.create_benchmark_execution(bench_def_entry, commit, worker)
+
+    @staticmethod
+    def save_bench_execution(bench_exec_entry, data):
+        """ Save the report inside the benchmark execution without deleting command set object """
+        CommandController.delete_commands_of_command_set(bench_exec_entry.report)
+
+        for index, command in enumerate(data['command_set']):
+            command_entry = CommandEntry.objects.create(
+                command_set=bench_exec_entry.report,
+                command=command['command'],
+                order=index)
+
+            result = command['result']
+
+            CommandResultEntry.objects.create(
+                command=command_entry,
+                out=json.dumps(result['out']),
+                error=result['error'],
+                status=result['status'],
+                start_time=result['start_time'],
+                finish_time=result['finish_time'])
+
+        bench_exec_entry.save()
 
     @staticmethod
     def delete_benchmark_executions(benchmark_definition):
