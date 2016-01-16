@@ -58,3 +58,22 @@ def view_save_benchmark_definition(request, benchmark_definition_id):
             return res.get_response(200, 'Benchmark Definition saved', {})
     else:
         return res.get_only_post_allowed({})
+
+def view_delete_benchmark_definition(request, benchmark_definition_id):
+    """ Delete benchmark definition properties """
+    if request.method == 'POST':
+        ret = BenchmarkDefinitionController.delete_benchmark_definition(
+            benchmark_definition_id=benchmark_definition_id
+        )
+
+        data = {}
+        data['url'] = {}
+        data['url']['definition'] = ViewUrlGenerator.get_benchmark_definitions_url()
+        data['benchmark_definition_id'] = benchmark_definition_id
+
+        if ret:
+            return res.get_response(200, 'Benchmark Defintion deleted', data)
+        else:
+            return res.get_response(404, 'Benchmark Definition not found', data)
+    else:
+        return res.get_only_post_allowed({})

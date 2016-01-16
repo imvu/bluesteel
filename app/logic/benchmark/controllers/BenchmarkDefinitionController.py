@@ -107,3 +107,15 @@ class BenchmarkDefinitionController(object):
                 return False
 
         return True
+
+    @staticmethod
+    def delete_benchmark_definition(benchmark_definition_id):
+        """ Deletes benchmark defintion from its id """
+
+        bench_def_entry = BenchmarkDefinitionEntry.objects.filter(id=benchmark_definition_id).first()
+
+        if bench_def_entry:
+            bench_def_entry.delete()
+            return True
+        else:
+            return False

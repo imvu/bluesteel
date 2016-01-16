@@ -5,6 +5,7 @@ from django.test import Client
 from django.contrib.auth.models import User
 from django.utils import timezone
 from app.logic.benchmark.controllers.BenchmarkDefinitionController import BenchmarkDefinitionController
+from app.logic.benchmark.controllers.BenchmarkExecutionController import BenchmarkExecutionController
 from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
 from app.logic.benchmark.models.BenchmarkExecutionModel import BenchmarkExecutionEntry
 from app.logic.bluesteel.controllers.BluesteelLayoutController import BluesteelLayoutController
@@ -148,3 +149,25 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
         self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='command-29').count())
         self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='command-30').count())
         self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='command-31').count())
+
+
+    def test_delete_benchmark_definition_also_deletes_benchmark_executions(self):
+        layout = BluesteelLayoutController.create_new_default_layout()
+        definition = BenchmarkDefinitionController.create_default_benchmark_definition()
+
+        BenchmarkExecutionController.create_benchmark_execution(definition, self.commit1, self.worker1)
+        BenchmarkExecutionController.create_benchmark_execution(definition, self.commit2, self.worker1)
+        BenchmarkExecutionController.create_benchmark_execution(definition, self.commit3, self.worker1)
+        BenchmarkExecutionController.create_benchmark_execution(definition, self.commit1, self.worker2)
+        BenchmarkExecutionController.create_benchmark_execution(definition, self.commit2, self.worker2)
+        BenchmarkExecutionController.create_benchmark_execution(definition, self.commit3, self.worker2)
+
+        self.assertEqual(6, BenchmarkExecutionEntry.objects.all().count())
+
+        resp = self.client.post(
+            '/main/definition/{0}/delete/'.format(definition.id),
+            data = '',
+            content_type='application/json')
+
+        self.assertEqual(0, BenchmarkDefinitionEntry.objects.all().count())
+        self.assertEqual(0, BenchmarkExecutionEntry.objects.all().count())
