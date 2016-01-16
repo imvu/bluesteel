@@ -73,12 +73,11 @@ class BenchmarkDefinitionController(object):
             benchmark_def_entry.save()
             return None
 
-        CommandController.delete_command_set_by_id(benchmark_def_entry.command_set.id)
-        new_com_set = CommandController.add_full_command_set(None, 'bench-com-set', 0, command_list)
+        CommandController.delete_commands_of_command_set(benchmark_def_entry.command_set)
+        CommandController.add_commands_to_command_set(benchmark_def_entry.command_set, command_list)
 
         benchmark_def_entry.layout = layout_entry
         benchmark_def_entry.project = project_entry
-        benchmark_def_entry.command_set = new_com_set
         benchmark_def_entry.revision = benchmark_def_entry.revision + 1
         benchmark_def_entry.save()
 

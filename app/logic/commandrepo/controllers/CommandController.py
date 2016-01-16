@@ -74,3 +74,13 @@ class CommandController(object):
                 order=index)
 
         return set_entry
+
+    @staticmethod
+    def add_commands_to_command_set(command_set_entry, list_commands):
+        """ Adds commands to an existing command set entry """
+
+        for index, command in enumerate(list_commands):
+            CommandEntry.objects.create(
+                command_set=command_set_entry,
+                command=command,
+                order=index)
