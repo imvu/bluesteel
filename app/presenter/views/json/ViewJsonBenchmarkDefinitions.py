@@ -3,13 +3,24 @@
 from app.presenter.views.helpers import ViewUrlGenerator
 from app.presenter.schemas import BenchmarkDefinitionSchemas
 from app.logic.benchmark.controllers.BenchmarkDefinitionController import BenchmarkDefinitionController
+from app.logic.benchmark.controllers.BenchmarkExecutionController import BenchmarkExecutionController
+from app.logic.gitrepo.models.GitCommitModel import GitCommitEntry
+from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
 from app.logic.httpcommon import res, val
 
 def create_new_benchmark_definition(request):
     """ Creates a new benchmark defintion """
     if request.method == 'POST':
 
-        BenchmarkDefinitionController.create_default_benchmark_definition()
+        bench_def = BenchmarkDefinitionController.create_default_benchmark_definition()
+
+        commit_entries = GitCommitEntry.objects.all()
+        worker_entries = WorkerEntry.objects.all()
+        BenchmarkExecutionController.create_bench_executions_from_definition(
+            bench_def_entry=bench_def,
+            commit_entries=commit_entries,
+            worker_entries=worker_entries
+        )
 
         data = {}
         data['redirect'] = ViewUrlGenerator.get_benchmark_definitions_url()

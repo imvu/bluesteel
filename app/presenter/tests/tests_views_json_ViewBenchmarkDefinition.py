@@ -2,13 +2,20 @@
 
 from django.test import TestCase
 from django.test import Client
+from django.contrib.auth.models import User
+from django.utils import timezone
 from app.logic.benchmark.controllers.BenchmarkDefinitionController import BenchmarkDefinitionController
 from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
+from app.logic.benchmark.models.BenchmarkExecutionModel import BenchmarkExecutionEntry
 from app.logic.bluesteel.controllers.BluesteelLayoutController import BluesteelLayoutController
 from app.logic.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
 from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
+from app.logic.gitrepo.models.GitProjectModel import GitProjectEntry
+from app.logic.gitrepo.models.GitUserModel import GitUserEntry
+from app.logic.gitrepo.models.GitCommitModel import GitCommitEntry
 from app.logic.commandrepo.models.CommandSetModel import CommandSetEntry
 from app.logic.commandrepo.models.CommandModel import CommandEntry
+from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
 from app.logic.httpcommon import res
 import json
 
@@ -16,9 +23,91 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
 
     def setUp(self):
         self.client = Client()
+        self.user1 = User.objects.create_user('user1@test.com', 'user1@test.com', 'pass')
+
+        self.git_project1 = GitProjectEntry.objects.create(url='http://test/')
+
+        self.git_user1 = GitUserEntry.objects.create(
+            project=self.git_project1,
+            name='user1',
+            email='user1@test.com'
+        )
+
+        self.commit1 = GitCommitEntry.objects.create(
+            project=self.git_project1,
+            commit_hash='0000100001000010000100001000010000100001',
+            author=self.git_user1,
+            author_date=timezone.now(),
+            committer=self.git_user1,
+            committer_date=timezone.now()
+        )
+
+        self.commit2 = GitCommitEntry.objects.create(
+            project=self.git_project1,
+            commit_hash='0000200002000020000200002000020000200002',
+            author=self.git_user1,
+            author_date=timezone.now(),
+            committer=self.git_user1,
+            committer_date=timezone.now()
+        )
+
+        self.commit3 = GitCommitEntry.objects.create(
+            project=self.git_project1,
+            commit_hash='0000300003000030000300003000030000300003',
+            author=self.git_user1,
+            author_date=timezone.now(),
+            committer=self.git_user1,
+            committer_date=timezone.now()
+        )
+
+        self.worker1 = WorkerEntry.objects.create(
+            name='worker-name-1',
+            uuid='uuid-worker-1',
+            operative_system='osx',
+            description='long-description-1',
+            user=self.user1,
+            git_feeder=False
+        )
+
+        self.worker2 = WorkerEntry.objects.create(
+            name='worker-name-2',
+            uuid='uuid-worker-2',
+            operative_system='osx',
+            description='long-description-2',
+            user=self.user1,
+            git_feeder=False
+        )
 
     def tearDown(self):
         pass
+
+    def test_create_benchmark_definition(self):
+        layout = BluesteelLayoutController.create_new_default_layout()
+
+        self.assertEqual(0, BenchmarkDefinitionEntry.objects.all().count())
+        self.assertEqual(0, BenchmarkExecutionEntry.objects.all().count())
+
+        resp = self.client.post(
+            '/main/definitions/create/',
+            data = '',
+            content_type='application/json')
+
+        res.check_cross_origin_headers(self, resp)
+        resp_obj = json.loads(resp.content)
+
+        self.assertEqual(200, resp_obj['status'])
+
+        definition = BenchmarkDefinitionEntry.objects.all().first()
+
+        self.assertEqual(1, BenchmarkDefinitionEntry.objects.all().count())
+        self.assertEqual(6, BenchmarkExecutionEntry.objects.all().count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit1, definition=definition, worker=self.worker1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit2, definition=definition, worker=self.worker1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit3, definition=definition, worker=self.worker1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit1, definition=definition, worker=self.worker2).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit2, definition=definition, worker=self.worker2).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit3, definition=definition, worker=self.worker2).count())
+
 
     def test_save_benchmark_definition(self):
         layout = BluesteelLayoutController.create_new_default_layout()
