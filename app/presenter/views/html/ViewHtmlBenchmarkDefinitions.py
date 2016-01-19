@@ -78,6 +78,7 @@ def get_benchmark_definition_edit(request, definition_id):
     obj = def_entry.as_object()
     obj['url'] = {}
     obj['url']['save'] = ViewUrlGenerator.get_save_benchmark_definition_url(def_entry.id)
+    obj['url']['delete'] = ViewUrlGenerator.get_confirm_delete_benchmark_def_url(def_entry.id)
     obj['url']['project_info'] = ViewUrlGenerator.get_editable_projects_info_url()
     obj['layout_selection'] = get_layout_selection(def_entry.layout)
     obj['project_selection'] = get_project_selection(def_entry.layout, def_entry.project)
@@ -85,3 +86,24 @@ def get_benchmark_definition_edit(request, definition_id):
     data['definition'] = obj
 
     return res.get_template_data(request, 'presenter/benchmark_definition_edit.html', data)
+
+
+def get_benchmark_definition_confirm_delete(request, definition_id):
+    """ Confirm benchmark definition deletion """
+    if request.method == 'GET':
+        bench_def = BenchmarkDefinitionEntry.objects.filter(id=definition_id).first()
+        if bench_def == None:
+            return res.get_template_data(request, 'presenter/not_found.html', {})
+
+        data = {}
+        data['confirm'] = {}
+        data['confirm']['title'] = 'Delete Benchmark Definition'
+        data['confirm']['text'] = 'Are you sure you want to delete this Benchmark Definition ?'
+        data['confirm']['url'] = {}
+        data['confirm']['url']['accept'] = ViewUrlGenerator.get_delete_benchmark_definition_url(bench_def.id)
+        data['confirm']['url']['cancel'] = ViewUrlGenerator.get_edit_benchmark_definition_url(bench_def.id)
+        data['menu'] = ViewPrepareObjects.prepare_menu_for_html([])
+
+        return res.get_template_data(request, 'presenter/confirm.html', data)
+    else:
+        return res.get_only_get_allowed({})

@@ -1,7 +1,6 @@
 """ Presenter json views, layout page functions """
 
 from app.presenter.views.helpers import ViewUrlGenerator
-from app.presenter.views.helpers import ViewPrepareObjects
 from app.presenter.schemas import BluesteelSchemas
 from app.logic.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
 from app.logic.bluesteel.controllers.BluesteelLayoutController import BluesteelLayoutController
@@ -14,8 +13,10 @@ def post_create_new_layout(request):
         new_layout = BluesteelLayoutController.create_new_default_layout()
 
         data = {}
-        data['layout'] = new_layout.as_object()
-        data['layout'] = ViewPrepareObjects.prepare_layout_for_html(data['layout'])
+        # data['layout'] = new_layout.as_object()
+        # data['layout'] = ViewPrepareObjects.prepare_layout_for_html(data['layout'])
+        data['redirect'] = ViewUrlGenerator.get_layout_edit_url(new_layout.id)
+
         return res.get_response(200, 'New layout created', data)
     else:
         return res.get_only_post_allowed({})

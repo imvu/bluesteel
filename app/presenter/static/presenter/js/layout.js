@@ -1,22 +1,3 @@
-create_new_layout = function(thisObj, url) {
-    var cookie = getValueFromCookie('csrftoken');
-
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", url, true);
-    xhr.setRequestHeader('X-CSRFToken', cookie);
-    xhr.onloadend = function(response) {
-        var res_obj = JSON.parse(xhr.response);
-
-        if (res_obj['status'] === 200) {
-            console.log(res_obj);
-            window.location=res_obj['data']['layout']['url']['edit'];
-        } else {
-        }
-    }
-    xhr.send("");
-    thisObj.onclick = function() {};
-}
-
 removeListElement = function(idElementToRemove) {
     var elementToRemove = document.getElementById(idElementToRemove);
     var parent = elementToRemove.parentNode;
@@ -126,7 +107,7 @@ saveLayout = function(idFormLayout) {
     xhr.send(JSON.stringify(obj));
 }
 
-deleteLayout = function(url) {
+executeAndRedirect = function(url, stringToSend) {
     var cookie = getValueFromCookie('csrftoken');
 
     var xhr = new XMLHttpRequest();
@@ -136,49 +117,10 @@ deleteLayout = function(url) {
         var res_obj = JSON.parse(xhr.response);
 
         if (res_obj['status'] === 200) {
-            console.log('layout deleted!');
             window.location=res_obj['data']['redirect'];
         } else {
-            console.log('error happened!', res_obj);
+            console.log(res_obj);
         }
     }
-    xhr.send("");
-}
-
-addProjectToLayout = function(addProjectUrl) {
-    var cookie = getValueFromCookie('csrftoken');
-
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", addProjectUrl, true);
-    xhr.setRequestHeader('X-CSRFToken', cookie);
-    xhr.onloadend = function(response) {
-        var res_obj = JSON.parse(xhr.response);
-
-        if (res_obj['status'] === 200) {
-            console.log('default project created!');
-            window.location=res_obj['data']['redirect'];
-        } else {
-            console.log('error happened!', res_obj);
-        }
-    }
-    xhr.send("");
-}
-
-deleteProject = function(deleteProjectUrl) {
-    var cookie = getValueFromCookie('csrftoken');
-
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", deleteProjectUrl, true);
-    xhr.setRequestHeader('X-CSRFToken', cookie);
-    xhr.onloadend = function(response) {
-        var res_obj = JSON.parse(xhr.response);
-
-        if (res_obj['status'] === 200) {
-            console.log('project deleted!');
-            window.location=res_obj['data']['redirect'];
-        } else {
-            console.log('error happened!', res_obj);
-        }
-    }
-    xhr.send("");
+    xhr.send(stringToSend);
 }

@@ -93,6 +93,12 @@ def get_edit_benchmark_definition_url(benchmark_definition_id):
 def get_save_benchmark_definition_url(benchmark_definition_id):
     return '/main/definition/{0}/save/'.format(benchmark_definition_id)
 
+def get_confirm_delete_benchmark_def_url(benchmark_definition_id):
+    return '/main/definition/{0}/confirm/delete/'.format(benchmark_definition_id)
+
+def get_delete_benchmark_definition_url(benchmark_definition_id):
+    return '/main/definition/{0}/delete/'.format(benchmark_definition_id)
+
 def get_feed_report_url(feed_id):
     return '/main/feed/report/{0}/'.format(feed_id)
 

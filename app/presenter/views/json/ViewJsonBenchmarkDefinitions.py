@@ -67,8 +67,7 @@ def view_delete_benchmark_definition(request, benchmark_definition_id):
         )
 
         data = {}
-        data['url'] = {}
-        data['url']['definition'] = ViewUrlGenerator.get_benchmark_definitions_url()
+        data['redirect'] = ViewUrlGenerator.get_benchmark_definitions_url()
         data['benchmark_definition_id'] = benchmark_definition_id
 
         if ret:

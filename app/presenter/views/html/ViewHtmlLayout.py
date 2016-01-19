@@ -21,7 +21,7 @@ def get_layouts(request):
     control['name'] = '  Add Layout'
     control['link'] = ViewUrlGenerator.get_layout_create_url()
     control['icon'] = 'fa fa-plus'
-    control['onclick'] = 'create_new_layout(this, \'{0}\');'.format(control['link'])
+    control['onclick'] = 'executeAndRedirect(\'{0}\', \'\');'.format(control['link'])
 
     data = {}
     data['layout_list'] = layout_list

@@ -138,7 +138,7 @@
                 </li>
                 <li class="horizontal">
                     <button     class="btn_rect danger"
-                                onclick="deleteProject('{{project.url.delete}}');"
+                                onclick="executeAndRedirect('{{project.url.delete}}', '');"
                     >Delete</button>
                 </li>
             </ul>
@@ -148,7 +148,7 @@
         <ul class="no_dots no_indent vertical_margin horizontal_list">
             <li class="horizontal">
                 <button     class="btn_round light"
-                            onclick="addProjectToLayout('{{layout.url.add_project}}');"
+                            onclick="executeAndRedirect('{{layout.url.add_project}}', '');"
                 >Add Project</button>
             </li>
         </ul>

@@ -57,6 +57,26 @@ saveBenchmarkDefinition = function(idFormBenchmarkDefinition) {
     xhr.send(JSON.stringify(obj));
 }
 
+deleteBenchmarkDefinition = function(delete_url) {
+
+    var cookie = getValueFromCookie('csrftoken');
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", delete_url, true);
+    xhr.setRequestHeader('X-CSRFToken', cookie);
+    xhr.onloadend = function(response) {
+        var res_obj = JSON.parse(xhr.response);
+
+        if (res_obj['status'] === 200) {
+            console.log('benchmark definition saved!');
+            window.location=res_obj['data']['redirect'];
+        } else {
+            console.log('error happened!', res_obj['data']);
+        }
+    }
+    xhr.send(JSON.stringify(obj));
+}
+
 changeSelectProjectInfo = function(thisObj, url_editable, projectSelectTagId) {
     var cookie = getValueFromCookie('csrftoken');
 
