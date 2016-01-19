@@ -36,25 +36,7 @@ saveBenchmarkDefinition = function(idFormBenchmarkDefinition) {
         }
     }
 
-    console.log(obj);
-    console.log(form.action);
-
-    var cookie = getValueFromCookie('csrftoken');
-
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", form.action, true);
-    xhr.setRequestHeader('X-CSRFToken', cookie);
-    xhr.onloadend = function(response) {
-        var res_obj = JSON.parse(xhr.response);
-
-        if (res_obj['status'] === 200) {
-            console.log('benchmark definition saved!');
-        } else {
-            console.log('error happened!', res_obj['data']);
-        }
-        location.reload();
-    }
-    xhr.send(JSON.stringify(obj));
+    executeAndReload(form.action, JSON.stringify(obj));
 }
 
 deleteBenchmarkDefinition = function(delete_url) {

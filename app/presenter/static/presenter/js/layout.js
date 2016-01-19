@@ -63,22 +63,7 @@ saveProject = function(idFormProject) {
         }
     }
 
-    var cookie = getValueFromCookie('csrftoken');
-
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", form.action, true);
-    xhr.setRequestHeader('X-CSRFToken', cookie);
-    xhr.onloadend = function(response) {
-        var res_obj = JSON.parse(xhr.response);
-
-        if (res_obj['status'] === 200) {
-            console.log('project saved!');
-        } else {
-            console.log('error happened!', res_obj['data']);
-        }
-        location.reload();
-    }
-    xhr.send(JSON.stringify(obj));
+    executeAndReload(form.action, JSON.stringify(obj));
 }
 
 saveLayout = function(idFormLayout) {
@@ -89,38 +74,5 @@ saveLayout = function(idFormLayout) {
     obj['active'] = (form.elements['layout_active'].value == 1) ? true : false;
     obj['project_index_path'] = parseInt(form.elements['layout_project_index_path'].value);
 
-    var cookie = getValueFromCookie('csrftoken');
-
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", form.action, true);
-    xhr.setRequestHeader('X-CSRFToken', cookie);
-    xhr.onloadend = function(response) {
-        var res_obj = JSON.parse(xhr.response);
-
-        if (res_obj['status'] === 200) {
-            console.log('layout saved!');
-            location.reload();
-        } else {
-            console.log('error happened!', res_obj);
-        }
-    }
-    xhr.send(JSON.stringify(obj));
-}
-
-executeAndRedirect = function(url, stringToSend) {
-    var cookie = getValueFromCookie('csrftoken');
-
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", url, true);
-    xhr.setRequestHeader('X-CSRFToken', cookie);
-    xhr.onloadend = function(response) {
-        var res_obj = JSON.parse(xhr.response);
-
-        if (res_obj['status'] === 200) {
-            window.location=res_obj['data']['redirect'];
-        } else {
-            console.log(res_obj);
-        }
-    }
-    xhr.send(stringToSend);
+    executeAndReload(form.action, JSON.stringify(obj));
 }
