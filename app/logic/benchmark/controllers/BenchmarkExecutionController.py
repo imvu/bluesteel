@@ -98,6 +98,7 @@ class BenchmarkExecutionController(object):
                 start_time=result['start_time'],
                 finish_time=result['finish_time'])
 
+        bench_exec_entry.status = BenchmarkExecutionEntry.FINISHED
         bench_exec_entry.save()
 
     @staticmethod

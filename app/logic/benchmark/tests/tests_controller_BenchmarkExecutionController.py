@@ -511,6 +511,7 @@ class BenchmarkExecutionControllerTestCase(TestCase):
         self.assertEqual('command-custom-2', CommandEntry.objects.filter(command_set=self.report3, order=1).first().command)
         self.assertEqual('command-custom-3', CommandEntry.objects.filter(command_set=self.report3, order=2).first().command)
         self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(definition=self.benchmark_definition2).count())
+        self.assertEqual(BenchmarkExecutionEntry.READY, BenchmarkExecutionEntry.objects.filter(definition=self.benchmark_definition2).first().status)
 
         result1 = {}
         result1['out'] = 'out1'
@@ -569,3 +570,4 @@ class BenchmarkExecutionControllerTestCase(TestCase):
         self.assertEqual('error3', CommandResultEntry.objects.filter(command=com3).first().error)
         self.assertEqual(3, CommandResultEntry.objects.filter(command=com3).first().status)
         self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(definition=self.benchmark_definition2).count())
+        self.assertEqual(BenchmarkExecutionEntry.FINISHED, BenchmarkExecutionEntry.objects.filter(definition=self.benchmark_definition2).first().status)
