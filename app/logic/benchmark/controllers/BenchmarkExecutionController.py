@@ -111,3 +111,42 @@ class BenchmarkExecutionController(object):
             CommandController.delete_command_group_by_id(exec_entry.report.group.id)
             exec_entry.delete()
 
+    @staticmethod
+    def add_bench_exec_completed_to_branches(branches):
+        """ Iterates over branches and add how completed a commit is """
+
+        for branch in branches:
+            for commit in branch['commits']:
+                count = BenchmarkExecutionEntry.objects.filter(commit__commit_hash=commit['hash']).count()
+
+                ready = BenchmarkExecutionEntry.objects.filter(
+                    commit__commit_hash=commit['hash'],
+                    invalidated=False,
+                    status=BenchmarkExecutionEntry.READY
+                ).count()
+
+                in_progress = BenchmarkExecutionEntry.objects.filter(
+                    commit__commit_hash=commit['hash'],
+                    invalidated=False,
+                    status=BenchmarkExecutionEntry.IN_PROGRESS
+                ).count()
+
+                finished = BenchmarkExecutionEntry.objects.filter(
+                    commit__commit_hash=commit['hash'],
+                    invalidated=False,
+                    status=BenchmarkExecutionEntry.FINISHED
+                ).count()
+
+                commit['benchmark_completed'] = {}
+                commit['benchmark_completed']['count'] = count
+                commit['benchmark_completed']['ready'] = ready
+                commit['benchmark_completed']['in_progress'] = in_progress
+                commit['benchmark_completed']['finished'] = finished
+
+                if count == 0:
+                    commit['benchmark_completed']['completed'] = 0
+                else:
+                    commit['benchmark_completed']['completed'] = int((float(finished) / float(count)) * 100.0)
+
+        return branches
+

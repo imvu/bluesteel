@@ -571,3 +571,132 @@ class BenchmarkExecutionControllerTestCase(TestCase):
         self.assertEqual(3, CommandResultEntry.objects.filter(command=com3).first().status)
         self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(definition=self.benchmark_definition2).count())
         self.assertEqual(BenchmarkExecutionEntry.FINISHED, BenchmarkExecutionEntry.objects.filter(definition=self.benchmark_definition2).first().status)
+
+    def test_add_completed_benchmarks_to_branches_obj(self):
+
+        # self.benchmark_execution1 = BenchmarkExecutionEntry.objects.create(
+        #     definition=self.benchmark_definition1,
+        #     commit=self.commit1,
+        #     worker=self.worker1,
+        #     report=self.report1,
+        #     invalidated=False,
+        #     revision_target=28,
+        #     status=BenchmarkExecutionEntry.READY,
+        # )
+
+        # self.benchmark_execution2 = BenchmarkExecutionEntry.objects.create(
+        #     definition=self.benchmark_definition1,
+        #     commit=self.commit2,
+        #     worker=self.worker1,
+        #     report=self.report2,
+        #     invalidated=False,
+        #     revision_target=28,
+        #     status=BenchmarkExecutionEntry.READY,
+        # )
+
+        be1_3_1 = BenchmarkExecutionEntry.objects.create(
+            definition=self.benchmark_definition1,
+            commit=self.commit3,
+            worker=self.worker1,
+            report=self.report2,
+            invalidated=False,
+            revision_target=28,
+            status=BenchmarkExecutionEntry.FINISHED,
+        )
+
+        be1_1_2 = BenchmarkExecutionEntry.objects.create(
+            definition=self.benchmark_definition1,
+            commit=self.commit1,
+            worker=self.worker2,
+            report=self.report2,
+            invalidated=True,
+            revision_target=28,
+            status=BenchmarkExecutionEntry.FINISHED,
+        )
+
+        be1_2_2 = BenchmarkExecutionEntry.objects.create(
+            definition=self.benchmark_definition1,
+            commit=self.commit2,
+            worker=self.worker2,
+            report=self.report2,
+            invalidated=False,
+            revision_target=28,
+            status=BenchmarkExecutionEntry.IN_PROGRESS,
+        )
+
+        be1_3_2 = BenchmarkExecutionEntry.objects.create(
+            definition=self.benchmark_definition1,
+            commit=self.commit3,
+            worker=self.worker2,
+            report=self.report2,
+            invalidated=False,
+            revision_target=28,
+            status=BenchmarkExecutionEntry.READY,
+        )
+
+        # self.benchmark_execution3 = BenchmarkExecutionEntry.objects.create(
+        #     definition=self.benchmark_definition2,
+        #     commit=self.commit1,
+        #     worker=self.worker2,
+        #     report=self.report3,
+        #     invalidated=False,
+        #     revision_target=2,
+        #     status=BenchmarkExecutionEntry.READY,
+        # )
+
+        be2_2_2 = BenchmarkExecutionEntry.objects.create(
+            definition=self.benchmark_definition2,
+            commit=self.commit2,
+            worker=self.worker2,
+            report=self.report3,
+            invalidated=False,
+            revision_target=2,
+            status=BenchmarkExecutionEntry.FINISHED,
+        )
+
+        be2_3_2 = BenchmarkExecutionEntry.objects.create(
+            definition=self.benchmark_definition2,
+            commit=self.commit3,
+            worker=self.worker2,
+            report=self.report3,
+            invalidated=False,
+            revision_target=2,
+            status=BenchmarkExecutionEntry.FINISHED,
+        )
+
+
+        branch = {}
+        branch['name'] = 'branch-name'
+        branch['id'] = 28
+        branch['merge_target'] = {}
+        branch['branch_info'] = ''
+        branch['commits'] = [
+            {'hash' : '0000100001000010000100001000010000100001'},
+            {'hash' : '0000200002000020000200002000020000200002'},
+            {'hash' : '0000300003000030000300003000030000300003'}
+        ]
+
+        branches = [branch]
+
+        branches = BenchmarkExecutionController.add_bench_exec_completed_to_branches(branches)
+
+        self.assertEqual(3, len(branches[0]['commits']))
+        self.assertEqual('0000100001000010000100001000010000100001', branches[0]['commits'][0]['hash'])
+        self.assertEqual(3, branches[0]['commits'][0]['benchmark_completed']['count'])
+        self.assertEqual(2, branches[0]['commits'][0]['benchmark_completed']['ready'])
+        self.assertEqual(0, branches[0]['commits'][0]['benchmark_completed']['finished'])
+        self.assertEqual(0, branches[0]['commits'][0]['benchmark_completed']['in_progress'])
+        self.assertEqual(0, branches[0]['commits'][0]['benchmark_completed']['completed'])
+
+        self.assertEqual(3, branches[0]['commits'][1]['benchmark_completed']['count'])
+        self.assertEqual(1, branches[0]['commits'][1]['benchmark_completed']['ready'])
+        self.assertEqual(1, branches[0]['commits'][1]['benchmark_completed']['finished'])
+        self.assertEqual(1, branches[0]['commits'][1]['benchmark_completed']['in_progress'])
+        self.assertEqual(33, branches[0]['commits'][1]['benchmark_completed']['completed'])
+
+        self.assertEqual(3, branches[0]['commits'][2]['benchmark_completed']['count'])
+        self.assertEqual(1, branches[0]['commits'][2]['benchmark_completed']['ready'])
+        self.assertEqual(2, branches[0]['commits'][2]['benchmark_completed']['finished'])
+        self.assertEqual(0, branches[0]['commits'][2]['benchmark_completed']['in_progress'])
+        self.assertEqual(66, branches[0]['commits'][2]['benchmark_completed']['completed'])
+
