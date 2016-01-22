@@ -410,7 +410,7 @@ def main():
                 print '+++++======save======+++++'
                 print save_ret
 
-                time.sleep(1000)
+                time.sleep(1)
 
 
 

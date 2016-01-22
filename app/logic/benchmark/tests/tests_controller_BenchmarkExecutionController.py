@@ -650,7 +650,7 @@ class BenchmarkExecutionControllerTestCase(TestCase):
             worker=self.worker2,
             report=self.report3,
             invalidated=False,
-            revision_target=2,
+            revision_target=3,
             status=BenchmarkExecutionEntry.FINISHED,
         )
 
@@ -682,21 +682,7 @@ class BenchmarkExecutionControllerTestCase(TestCase):
 
         self.assertEqual(3, len(branches[0]['commits']))
         self.assertEqual('0000100001000010000100001000010000100001', branches[0]['commits'][0]['hash'])
-        self.assertEqual(3, branches[0]['commits'][0]['benchmark_completed']['count'])
-        self.assertEqual(2, branches[0]['commits'][0]['benchmark_completed']['ready'])
-        self.assertEqual(0, branches[0]['commits'][0]['benchmark_completed']['finished'])
-        self.assertEqual(0, branches[0]['commits'][0]['benchmark_completed']['in_progress'])
-        self.assertEqual(0, branches[0]['commits'][0]['benchmark_completed']['completed'])
-
-        self.assertEqual(3, branches[0]['commits'][1]['benchmark_completed']['count'])
-        self.assertEqual(1, branches[0]['commits'][1]['benchmark_completed']['ready'])
-        self.assertEqual(1, branches[0]['commits'][1]['benchmark_completed']['finished'])
-        self.assertEqual(1, branches[0]['commits'][1]['benchmark_completed']['in_progress'])
-        self.assertEqual(33, branches[0]['commits'][1]['benchmark_completed']['completed'])
-
-        self.assertEqual(3, branches[0]['commits'][2]['benchmark_completed']['count'])
-        self.assertEqual(1, branches[0]['commits'][2]['benchmark_completed']['ready'])
-        self.assertEqual(2, branches[0]['commits'][2]['benchmark_completed']['finished'])
-        self.assertEqual(0, branches[0]['commits'][2]['benchmark_completed']['in_progress'])
-        self.assertEqual(66, branches[0]['commits'][2]['benchmark_completed']['completed'])
+        self.assertEqual(0, branches[0]['commits'][0]['benchmark_completed'])
+        self.assertEqual(33, branches[0]['commits'][1]['benchmark_completed'])
+        self.assertEqual(33, branches[0]['commits'][2]['benchmark_completed'])
 
