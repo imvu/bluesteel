@@ -4,6 +4,7 @@ from app.presenter.views.helpers import ViewUrlGenerator
 from app.presenter.views.helpers import ViewPrepareObjects
 from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
 from app.logic.bluesteel.controllers.BluesteelProjectController import BluesteelProjectController
+from app.logic.benchmark.controllers.BenchmarkExecutionController import BenchmarkExecutionController
 from app.logic.gitrepo.models.GitBranchModel import GitBranchEntry
 from app.logic.httpcommon import res
 
@@ -35,6 +36,7 @@ def get_project_branches(request, project_id):
             return res.get_template_data(request, 'presenter/not_found.html', {})
 
         branches = BluesteelProjectController.get_project_git_branch_data(project_entry)
+        branches = BenchmarkExecutionController.add_bench_exec_completed_to_branches(branches)
 
         data = {}
         data['branches'] = ViewPrepareObjects.prepare_branches_for_html(project_entry.id, branches)
