@@ -60,6 +60,7 @@ def get_project_single_branch(request, project_id, branch_id):
             return res.get_template_data(request, 'presenter/not_found.html', {})
 
         branches = BluesteelProjectController.get_project_single_git_branch_data(project_entry, branch_entry)
+        branches = BenchmarkExecutionController.add_bench_exec_completed_to_branches(branches)
 
         data = {}
         data['branches'] = ViewPrepareObjects.prepare_branches_for_html(project_entry.id, branches)
