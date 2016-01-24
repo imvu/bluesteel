@@ -43,8 +43,13 @@ SAVE_BENCHMARK_EXECUTION = {
                                             'text' : {
                                                 'type' : 'object',
                                                 'additionalProperties' : False,
-                                                'required' : ['data'],
+                                                'required' : ['id', 'data'],
                                                 'properties' : {
+                                                    'id' : {
+                                                        'type' : 'string',
+                                                        'minLength' : 1,
+                                                        'maxLength' : 16,
+                                                    },
                                                     'data' : {
                                                         'type' : 'string',
                                                         'minLength' : 1,
@@ -60,8 +65,13 @@ SAVE_BENCHMARK_EXECUTION = {
                                             'vertical_bars' : {
                                                 'type' : 'object',
                                                 'additionalProperties' : False,
-                                                'required' : ['data'],
+                                                'required' : ['id', 'data'],
                                                 'properties' : {
+                                                    'id' : {
+                                                        'type' : 'string',
+                                                        'minLength' : 1,
+                                                        'maxLength' : 16,
+                                                    },
                                                     'data' : {
                                                         'type' : 'array',
                                                         'min' : 1,

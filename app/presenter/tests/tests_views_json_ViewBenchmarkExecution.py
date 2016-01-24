@@ -74,7 +74,7 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
                 'result' : {
                     'status' : 0,
                     'out' : [
-                        {'vertical_bars' : {'data' : [1, 2, 3, 4, 5]}}
+                        {'vertical_bars' : {'id' : 'id1', 'data' : [1, 2, 3, 4, 5]}}
                     ],
                     'error' : '',
                     'start_time' : str(timezone.now()),
@@ -145,8 +145,8 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
                 'result' : {
                     'status' : 0,
                     'out' : [
-                        {'text' : {'data' : 'this is a text, very long'}},
-                        {'text' : {'data' : 'this is a text, different'}}
+                        {'text' : {'id' : 'id1', 'data' : 'this is a text, very long'}},
+                        {'text' : {'id' : 'id2', 'data' : 'this is a text, different'}}
                     ],
                     'error' : '',
                     'start_time' : str(timezone.now()),
