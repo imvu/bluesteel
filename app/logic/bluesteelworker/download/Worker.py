@@ -311,7 +311,7 @@ def prepare_results_before_feed(results):
     ret = {}
     ret['command_set'] = []
 
-    for command in results['commands']:
+    for index, command in enumerate(results['commands']):
         obj = {}
         obj['command'] = command['command']
         obj['result'] = {}
@@ -326,15 +326,17 @@ def prepare_results_before_feed(results):
             out_json = json.loads(command['result'].get('out', '[]'))
         except ValueError as error:
             res = {}
-            res['text'] = {}
-            res['text']['data'] = '{0}\n{1}'.format(
+            res['id'] = 'error-{0}'.format(index)
+            res['visual_type'] = 'text'
+            res['data'] = '{0}\n{1}'.format(
                 str(error),
                 command['result']['out'])
             out_json.append(res)
         except KeyError as error:
             res = {}
-            res['text'] = {}
-            res['text']['data'] = '{0}\n{1}'.format(
+            res['id'] = 'error-{0}'.format(index)
+            res['visual_type'] = 'text'
+            res['data'] = '{0}\n{1}'.format(
                 str(error),
                 command['result']['out'])
             out_json.append(res)

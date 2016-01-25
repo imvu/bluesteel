@@ -74,7 +74,7 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
                 'result' : {
                     'status' : 0,
                     'out' : [
-                        {'vertical_bars' : {'id' : 'id1', 'data' : [1, 2, 3, 4, 5]}}
+                        {'visual_type' : 'vertical_bars', 'id' : 'id1', 'data' : [1, 2, 3, 4, 5]}
                     ],
                     'error' : '',
                     'start_time' : str(timezone.now()),
@@ -130,7 +130,7 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
         obj = json.loads(CommandResultEntry.objects.all().first().out)
 
         self.assertEqual(1, len(obj))
-        self.assertEqual([1, 2, 3, 4, 5], obj[0]['vertical_bars']['data'])
+        self.assertEqual([1, 2, 3, 4, 5], obj[0]['data'])
 
 
     def test_save_benchmark_execution_text(self):
@@ -145,8 +145,8 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
                 'result' : {
                     'status' : 0,
                     'out' : [
-                        {'text' : {'id' : 'id1', 'data' : 'this is a text, very long'}},
-                        {'text' : {'id' : 'id2', 'data' : 'this is a text, different'}}
+                        {'visual_type' : 'text', 'id' : 'id1', 'data' : 'this is a text, very long'},
+                        {'visual_type' : 'text', 'id' : 'id2', 'data' : 'this is a text, different'}
                     ],
                     'error' : '',
                     'start_time' : str(timezone.now()),
@@ -202,8 +202,116 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
         obj = json.loads(CommandResultEntry.objects.all().first().out)
 
         self.assertEqual(2, len(obj))
-        self.assertEqual('this is a text, very long', obj[0]['text']['data'])
-        self.assertEqual('this is a text, different', obj[1]['text']['data'])
+        self.assertEqual('this is a text, very long', obj[0]['data'])
+        self.assertEqual('this is a text, different', obj[1]['data'])
+
+    def test_save_benchmark_stores_the_correct_json(self):
+        execution = BenchmarkExecutionController.create_benchmark_execution(
+            self.benchmark_definition1,
+            self.commit1,
+            self.worker1)
+
+        obj = {
+            'command_set' : [{
+                'command' : 'command-vertical-bars',
+                'result' : {
+                    'status' : 0,
+                    'out' : [
+                        {'visual_type' : 'vertical_bars', 'id' : 'id1', 'data' : [1, 2, 3, 4, 5]},
+                        {'visual_type' : 'text', 'id' : 'id2', 'data' : 'this is a text, very long'}
+                    ],
+                    'error' : '',
+                    'start_time' : str(timezone.now()),
+                    'finish_time' : str(timezone.now())
+                },
+            }]
+        }
+
+        resp = self.client.post(
+            '/main/execution/{0}/save/'.format(execution.id),
+            data = json.dumps(obj),
+            content_type='application/json')
+
+        res.check_cross_origin_headers(self, resp)
+        resp_obj = json.loads(resp.content)
+
+        self.assertEqual(200, resp_obj['status'])
+
+        execution = BenchmarkExecutionEntry.objects.filter(definition=self.benchmark_definition1).first()
+        obj = json.loads(CommandResultEntry.objects.all().first().out)
+
+        self.assertEqual(2, len(obj))
+        self.assertEqual('id1', obj[0]['id'])
+        self.assertEqual('vertical_bars', obj[0]['visual_type'])
+        self.assertEqual([1, 2, 3, 4, 5], obj[0]['data'])
+        self.assertEqual('id2', obj[1]['id'])
+        self.assertEqual('text', obj[1]['visual_type'])
+        self.assertEqual('this is a text, very long', obj[1]['data'])
+
+    def test_save_fails_because_same_id_found_on_out_data(self):
+        execution = BenchmarkExecutionController.create_benchmark_execution(
+            self.benchmark_definition1,
+            self.commit1,
+            self.worker1)
+
+        obj = {
+            'command_set' : [{
+                'command' : 'command-text',
+                'result' : {
+                    'status' : 0,
+                    'out' : [
+                        {'visual_type' : 'text', 'id' : 'id1', 'data' : 'this is a text, very long'},
+                        {'visual_type' : 'text', 'id' : 'id2', 'data' : 'this is a text, different1'},
+                        {'visual_type' : 'text', 'id' : 'id3', 'data' : 'this is a text, different2'},
+                        {'visual_type' : 'text', 'id' : 'id1', 'data' : 'this is a text, different3'}
+                    ],
+                    'error' : '',
+                    'start_time' : str(timezone.now()),
+                    'finish_time' : str(timezone.now())
+                },
+            }]
+        }
+
+        self.assertEqual(13, CommandEntry.objects.all().count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='git clone http://www.test.com').count())
+        self.assertEqual(2, CommandEntry.objects.filter(command='git checkout master').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='git reset --hard origin/master').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='git clean -f -d -q').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='git fetch --all').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='git pull -r origin master').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='git submodule sync').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='git submodule update --init --recursive').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='git pull -r').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='command-1').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='command-2').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='command-3').count())
+        self.assertEqual(0, CommandResultEntry.objects.all().count())
+
+        resp = self.client.post(
+            '/main/execution/{0}/save/'.format(execution.id),
+            data = json.dumps(obj),
+            content_type='application/json')
+
+        res.check_cross_origin_headers(self, resp)
+        resp_obj = json.loads(resp.content)
+
+        self.assertEqual(400, resp_obj['status'])
+
+        self.assertEqual(13, CommandEntry.objects.all().count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='git clone http://www.test.com').count())
+        self.assertEqual(2, CommandEntry.objects.filter(command='git checkout master').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='git reset --hard origin/master').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='git clean -f -d -q').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='git fetch --all').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='git pull -r origin master').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='git submodule sync').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='git submodule update --init --recursive').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='git pull -r').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='command-1').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='command-2').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='command-3').count())
+        self.assertEqual(0, CommandResultEntry.objects.all().count())
+
 
     def test_save_benchmark_execution_no_recognized(self):
         execution = BenchmarkExecutionController.create_benchmark_execution(

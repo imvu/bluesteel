@@ -38,47 +38,41 @@ SAVE_BENCHMARK_EXECUTION = {
                                     'oneOf' : [{
                                         'type' : 'object',
                                         'additionalProperties': False,
-                                        'required': ['text'],
+                                        'required': ['id', 'visual_type', 'data'],
                                         'properties' : {
-                                            'text' : {
-                                                'type' : 'object',
-                                                'additionalProperties' : False,
-                                                'required' : ['id', 'data'],
-                                                'properties' : {
-                                                    'id' : {
-                                                        'type' : 'string',
-                                                        'minLength' : 1,
-                                                        'maxLength' : 16,
-                                                    },
-                                                    'data' : {
-                                                        'type' : 'string',
-                                                        'minLength' : 1,
-                                                    },
-                                                },
+                                            'visual_type' : {
+                                                'type' : 'string',
+                                                'enum' : ['text'],
+                                            },
+                                            'id' : {
+                                                'type' : 'string',
+                                                'minLength' : 1,
+                                                'maxLength' : 16,
+                                            },
+                                            'data' : {
+                                                'type' : 'string',
+                                                'minLength' : 1,
                                             },
                                         },
                                     }, {
                                         'type' : 'object',
                                         'additionalProperties': False,
-                                        'required': ['vertical_bars'],
+                                        'required': ['id', 'visual_type', 'data'],
                                         'properties' : {
-                                            'vertical_bars' : {
-                                                'type' : 'object',
-                                                'additionalProperties' : False,
-                                                'required' : ['id', 'data'],
-                                                'properties' : {
-                                                    'id' : {
-                                                        'type' : 'string',
-                                                        'minLength' : 1,
-                                                        'maxLength' : 16,
-                                                    },
-                                                    'data' : {
-                                                        'type' : 'array',
-                                                        'min' : 1,
-                                                        'items' : {
-                                                            'type' : 'number'
-                                                        },
-                                                    },
+                                            'visual_type' : {
+                                                'type' : 'string',
+                                                'enum' : ['vertical_bars'],
+                                            },
+                                            'id' : {
+                                                'type' : 'string',
+                                                'minLength' : 1,
+                                                'maxLength' : 16,
+                                            },
+                                            'data' : {
+                                                'type' : 'array',
+                                                'min' : 1,
+                                                'items' : {
+                                                    'type' : 'number'
                                                 },
                                             },
                                         },

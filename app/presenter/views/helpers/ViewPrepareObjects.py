@@ -139,7 +139,7 @@ def prepare_results_from_bench_exec_to_html(execution):
     """ Extract results from a benchmark execution """
     results = []
 
-    for command in execution['report']['commands']:
+    for index, command in enumerate(execution['report']['commands']):
 
         com = {}
         com['command'] = command['command']
@@ -155,15 +155,17 @@ def prepare_results_from_bench_exec_to_html(execution):
             out_json = json.loads(command['result'].get('out', '[]'))
         except ValueError as error:
             res = {}
-            res['text'] = {}
-            res['text']['data'] = '{0}\n{1}'.format(
+            res['id'] = 'error-{0}'.format(index)
+            res['visual_type'] = 'text'
+            res['data'] = '{0}\n{1}'.format(
                 str(error),
                 command['result']['out'])
             out_json.append(res)
         except KeyError as error:
             res = {}
-            res['text'] = {}
-            res['text']['data'] = '{0}\n{1}'.format(
+            res['id'] = 'error-{0}'.format(index)
+            res['visual_type'] = 'text'
+            res['data'] = '{0}\n{1}'.format(
                 str(error),
                 command['result']['out'])
             out_json.append(res)
