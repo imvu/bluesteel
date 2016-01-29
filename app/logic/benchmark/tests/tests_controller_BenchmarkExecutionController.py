@@ -12,6 +12,8 @@ from app.logic.bluesteel.controllers.BluesteelProjectController import Bluesteel
 from app.logic.gitrepo.models.GitProjectModel import GitProjectEntry
 from app.logic.gitrepo.models.GitUserModel import GitUserEntry
 from app.logic.gitrepo.models.GitCommitModel import GitCommitEntry
+from app.logic.gitrepo.models.GitBranchModel import GitBranchEntry
+from app.logic.gitrepo.models.GitBranchTrailModel import GitBranchTrailEntry
 from app.logic.commandrepo.models.CommandModel import CommandEntry
 from app.logic.commandrepo.models.CommandResultModel import CommandResultEntry
 from app.logic.commandrepo.models.CommandSetModel import CommandSetEntry
@@ -19,6 +21,7 @@ from app.logic.commandrepo.models.CommandGroupModel import CommandGroupEntry
 from app.logic.commandrepo.helper import TestCommandHelper
 from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
 from django.utils import timezone
+import json
 
 class BenchmarkExecutionControllerTestCase(TestCase):
 

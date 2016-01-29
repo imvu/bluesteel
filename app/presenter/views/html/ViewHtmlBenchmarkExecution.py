@@ -18,3 +18,4 @@ def get_benchmark_execution(request, bench_exec_id):
     data['results'] = ViewPrepareObjects.prepare_results_from_bench_exec_to_html(obj)
 
     return res.get_template_data(request, 'presenter/benchmark_execution.html', data)
+
