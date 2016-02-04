@@ -97,8 +97,8 @@ class GitFeedViewsReportsTestCase(TestCase):
 
 
     def test_many_reports(self):
-        report_1 = FeederTestHelper.get_default_report()
-        report_2 = FeederTestHelper.get_default_report()
+        report_1 = FeederTestHelper.get_default_report(1)
+        report_2 = FeederTestHelper.get_default_report(1)
 
         obj = {}
         obj['reports'] = report_1

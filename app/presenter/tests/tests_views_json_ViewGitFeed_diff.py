@@ -55,7 +55,7 @@ class GitFeedViewsDiffTestCase(TestCase):
 
         post_data = FeederTestHelper.create_feed_data_and_report(
             feed_data,
-            FeederTestHelper.get_default_report()
+            FeederTestHelper.get_default_report(1)
         )
 
         resp = self.client.post(
@@ -103,7 +103,7 @@ class GitFeedViewsDiffTestCase(TestCase):
 
         post_data = FeederTestHelper.create_feed_data_and_report(
             feed_data,
-            FeederTestHelper.get_default_report()
+            FeederTestHelper.get_default_report(1)
         )
 
         resp = self.client.post(
@@ -132,7 +132,7 @@ class GitFeedViewsDiffTestCase(TestCase):
 
         post_data = FeederTestHelper.create_feed_data_and_report(
             feed_data,
-            FeederTestHelper.get_default_report()
+            FeederTestHelper.get_default_report(1)
         )
 
         resp = self.client.post(

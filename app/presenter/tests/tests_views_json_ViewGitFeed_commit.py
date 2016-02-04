@@ -64,7 +64,7 @@ class GitFeedViewsCommitTestCase(TestCase):
 
         post_data = FeederTestHelper.create_feed_data_and_report(
             feed_data,
-            FeederTestHelper.get_default_report()
+            FeederTestHelper.get_default_report(1)
         )
 
         resp = self.client.post(
@@ -99,7 +99,7 @@ class GitFeedViewsCommitTestCase(TestCase):
 
         post_data = FeederTestHelper.create_feed_data_and_report(
             feed_data,
-            FeederTestHelper.get_default_report()
+            FeederTestHelper.get_default_report(1)
         )
 
         self.client.login(username='user1@test.com', password='pass1')
@@ -140,7 +140,7 @@ class GitFeedViewsCommitTestCase(TestCase):
 
         post_data = FeederTestHelper.create_feed_data_and_report(
             feed_data,
-            FeederTestHelper.get_default_report()
+            FeederTestHelper.get_default_report(1)
         )
 
         resp = self.client.post(
@@ -184,7 +184,7 @@ class GitFeedViewsCommitTestCase(TestCase):
 
         post_data = FeederTestHelper.create_feed_data_and_report(
             feed_data,
-            FeederTestHelper.get_default_report()
+            FeederTestHelper.get_default_report(1)
         )
 
         resp = self.client.post(
@@ -222,7 +222,7 @@ class GitFeedViewsCommitTestCase(TestCase):
 
         post_data = FeederTestHelper.create_feed_data_and_report(
             feed_data,
-            FeederTestHelper.get_default_report()
+            FeederTestHelper.get_default_report(1)
         )
 
         resp = self.client.post(
@@ -266,7 +266,7 @@ class GitFeedViewsCommitTestCase(TestCase):
 
         post_data = FeederTestHelper.create_feed_data_and_report(
             feed_data,
-            FeederTestHelper.get_default_report()
+            FeederTestHelper.get_default_report(1)
         )
 
         resp = self.client.post(
@@ -299,7 +299,7 @@ class GitFeedViewsCommitTestCase(TestCase):
 
         post_data = FeederTestHelper.create_feed_data_and_report(
             feed_data,
-            FeederTestHelper.get_default_report()
+            FeederTestHelper.get_default_report(1)
         )
 
         resp = self.client.post(
@@ -338,7 +338,7 @@ class GitFeedViewsCommitTestCase(TestCase):
 
         post_data = FeederTestHelper.create_feed_data_and_report(
             feed_data,
-            FeederTestHelper.get_default_report()
+            FeederTestHelper.get_default_report(1)
         )
 
         resp = self.client.post(
@@ -369,7 +369,7 @@ class GitFeedViewsCommitTestCase(TestCase):
 
         post_data = FeederTestHelper.create_feed_data_and_report(
             feed_data,
-            FeederTestHelper.get_default_report()
+            FeederTestHelper.get_default_report(1)
         )
 
         resp = self.client.post(
@@ -476,7 +476,7 @@ class GitFeedViewsCommitTestCase(TestCase):
 
         post_data = FeederTestHelper.create_feed_data_and_report(
             feed_data,
-            FeederTestHelper.get_default_report()
+            FeederTestHelper.get_default_report(1)
         )
 
         self.assertEqual(0, BenchmarkExecutionEntry.objects.all().count())

@@ -411,7 +411,7 @@ class GitFeederControllerTestCase(TestCase):
 
 
     def test_insert_reports_with_existing_worker(self):
-        reports = FeederTestHelper.get_default_report()
+        reports = FeederTestHelper.get_default_report(1)
 
         self.assertEqual(0, FeedEntry.objects.all().count())
 
@@ -424,14 +424,15 @@ class GitFeederControllerTestCase(TestCase):
 
         self.assertEqual(1, len(group_obj['command_sets']))
         self.assertEqual(1, len(group_obj['command_sets'][0]['commands']))
-        self.assertEqual(u'command1 arg1 arg2', group_obj['command_sets'][0]['commands'][0]['command'])
+        self.assertEqual(u'command0 arg1 arg2', group_obj['command_sets'][0]['commands'][0]['command'])
+        self.assertEqual(0, group_obj['command_sets'][0]['commands'][0]['order'])
         self.assertEqual(0, group_obj['command_sets'][0]['commands'][0]['result']['status'])
         self.assertEqual(u'default-out', group_obj['command_sets'][0]['commands'][0]['result']['out'])
         self.assertEqual(u'default-error', group_obj['command_sets'][0]['commands'][0]['result']['error'])
 
 
     def test_insert_reports_with_user_but_not_worker(self):
-        reports = FeederTestHelper.get_default_report()
+        reports = FeederTestHelper.get_default_report(2)
 
         self.assertEqual(0, FeedEntry.objects.all().count())
 
@@ -443,15 +444,22 @@ class GitFeederControllerTestCase(TestCase):
         group_obj = FeedEntry.objects.all().first().command_group.as_object()
 
         self.assertEqual(1, len(group_obj['command_sets']))
-        self.assertEqual(1, len(group_obj['command_sets'][0]['commands']))
-        self.assertEqual(u'command1 arg1 arg2', group_obj['command_sets'][0]['commands'][0]['command'])
+        self.assertEqual(2, len(group_obj['command_sets'][0]['commands']))
+        self.assertEqual(u'command0 arg1 arg2', group_obj['command_sets'][0]['commands'][0]['command'])
+        self.assertEqual(0, group_obj['command_sets'][0]['commands'][0]['order'])
         self.assertEqual(0, group_obj['command_sets'][0]['commands'][0]['result']['status'])
         self.assertEqual(u'default-out', group_obj['command_sets'][0]['commands'][0]['result']['out'])
         self.assertEqual(u'default-error', group_obj['command_sets'][0]['commands'][0]['result']['error'])
 
+        self.assertEqual(u'command1 arg1 arg2', group_obj['command_sets'][0]['commands'][1]['command'])
+        self.assertEqual(1, group_obj['command_sets'][0]['commands'][1]['order'])
+        self.assertEqual(0, group_obj['command_sets'][0]['commands'][1]['result']['status'])
+        self.assertEqual(u'default-out', group_obj['command_sets'][0]['commands'][1]['result']['out'])
+        self.assertEqual(u'default-error', group_obj['command_sets'][0]['commands'][1]['result']['error'])
+
     def test_insert_reports_with_anonimous_user_and_not_worker(self):
         anonymous = AnonymousUser()
-        reports = FeederTestHelper.get_default_report()
+        reports = FeederTestHelper.get_default_report(3)
 
         self.assertEqual(0, FeedEntry.objects.all().count())
 
@@ -463,8 +471,21 @@ class GitFeederControllerTestCase(TestCase):
         group_obj = FeedEntry.objects.all().first().command_group.as_object()
 
         self.assertEqual(1, len(group_obj['command_sets']))
-        self.assertEqual(1, len(group_obj['command_sets'][0]['commands']))
-        self.assertEqual(u'command1 arg1 arg2', group_obj['command_sets'][0]['commands'][0]['command'])
+        self.assertEqual(3, len(group_obj['command_sets'][0]['commands']))
+        self.assertEqual(u'command0 arg1 arg2', group_obj['command_sets'][0]['commands'][0]['command'])
+        self.assertEqual(0, group_obj['command_sets'][0]['commands'][0]['order'])
         self.assertEqual(0, group_obj['command_sets'][0]['commands'][0]['result']['status'])
         self.assertEqual(u'default-out', group_obj['command_sets'][0]['commands'][0]['result']['out'])
         self.assertEqual(u'default-error', group_obj['command_sets'][0]['commands'][0]['result']['error'])
+
+        self.assertEqual(u'command1 arg1 arg2', group_obj['command_sets'][0]['commands'][1]['command'])
+        self.assertEqual(1, group_obj['command_sets'][0]['commands'][1]['order'])
+        self.assertEqual(0, group_obj['command_sets'][0]['commands'][1]['result']['status'])
+        self.assertEqual(u'default-out', group_obj['command_sets'][0]['commands'][1]['result']['out'])
+        self.assertEqual(u'default-error', group_obj['command_sets'][0]['commands'][1]['result']['error'])
+
+        self.assertEqual(u'command2 arg1 arg2', group_obj['command_sets'][0]['commands'][2]['command'])
+        self.assertEqual(2, group_obj['command_sets'][0]['commands'][2]['order'])
+        self.assertEqual(0, group_obj['command_sets'][0]['commands'][2]['result']['status'])
+        self.assertEqual(u'default-out', group_obj['command_sets'][0]['commands'][2]['result']['out'])
+        self.assertEqual(u'default-error', group_obj['command_sets'][0]['commands'][2]['result']['error'])

@@ -70,22 +70,22 @@ def create_feed_data_and_report(feed_data, reports):
     obj['reports'] = reports
     return obj
 
-def get_default_report():
+def get_default_report(command_count):
     """ Returns a default correct report """
     reports = []
 
     report = {}
     report['commands'] = []
 
-    command = {}
-    command['command'] = 'command1 arg1 arg2'
-    command['result'] = {}
-    command['result']['error'] = 'default-error'
-    command['result']['out'] = 'default-out'
-    command['result']['status'] = 0
-    command['result']['start_time'] = datetime.datetime.utcnow().isoformat()
-    command['result']['finish_time'] = datetime.datetime.utcnow().isoformat()
-
-    report['commands'].append(command)
+    for count in range(command_count):
+        command = {}
+        command['command'] = 'command{0} arg1 arg2'.format(count)
+        command['result'] = {}
+        command['result']['error'] = 'default-error'
+        command['result']['out'] = 'default-out'
+        command['result']['status'] = 0
+        command['result']['start_time'] = datetime.datetime.utcnow().isoformat()
+        command['result']['finish_time'] = datetime.datetime.utcnow().isoformat()
+        report['commands'].append(command)
     reports.append(report)
     return reports

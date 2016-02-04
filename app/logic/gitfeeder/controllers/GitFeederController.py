@@ -335,13 +335,17 @@ class GitFeederController(object):
         feed_entry = FeedEntry.objects.create(command_group=group_entry, worker=worker_entry)
         del feed_entry
 
-        for command_set in reports:
-            set_entry = CommandSetEntry.objects.create(group=group_entry)
+        for index, command_set in enumerate(reports):
+            set_entry = CommandSetEntry.objects.create(
+                group=group_entry,
+                order=index
+            )
 
-            for command in command_set['commands']:
+            for index, command in enumerate(command_set['commands']):
                 comm_entry = CommandEntry.objects.create(
                     command_set=set_entry,
                     command=command['command'],
+                    order=index
                 )
 
                 start_time = arrow.get(command['result']['start_time']).naive
