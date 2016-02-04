@@ -7,6 +7,7 @@ from CommandExecutioner import CommandExecutioner
 import os
 import shutil
 import json
+import datetime
 
 class GitFetcher(object):
     """
@@ -49,10 +50,17 @@ class GitFetcher(object):
                 return False
 
         # Pack all the feed data
-        self.feed_data['feed_data'] = {}
-        self.feed_data['feed_data']['commits'] = self.unique_commmits
-        self.feed_data['feed_data']['branches'] = self.branch_list
-        self.feed_data['feed_data']['diffs'] = self.diff_list
+        contains_data = True
+        contains_data = contains_data and (len(self.unique_commmits) > 0)
+        contains_data = contains_data and (len(self.branch_list) > 0)
+        contains_data = contains_data and (len(self.diff_list) > 0)
+
+        if contains_data:
+            self.feed_data['feed_data'] = {}
+            self.feed_data['feed_data']['commits'] = self.unique_commmits
+            self.feed_data['feed_data']['branches'] = self.branch_list
+            self.feed_data['feed_data']['diffs'] = self.diff_list
+
         self.feed_data['reports'] = self.report_stack
         return True
 
@@ -79,6 +87,16 @@ class GitFetcher(object):
             return False
 
         self.remote_branch_names = self.extract_remote_branch_names_from_reports(remote_branches_report)
+
+        if len(self.remote_branch_names) == 0:
+            no_branches_report = GitFetcher.create_report(
+                'No command executed',
+                0,
+                'No remote branches found, looks strange',
+                ''
+            )
+            self.report_stack.append(no_branches_report)
+
         return True
 
     def step_transform_remote_to_local_branch(self, project_info):
@@ -232,6 +250,24 @@ class GitFetcher(object):
             branch_data['trail'] = branch['trail']
             self.branch_list.append(branch_data)
         return True
+
+    @staticmethod
+    def create_report(command, status, out, error):
+        """ Generates a manual report in case we does not have one yet """
+        report1 = {}
+        report1['command'] = command
+        report1['result'] = {}
+        report1['result']['status'] = status
+        report1['result']['out'] = out
+        report1['result']['error'] = error
+        report1['result']['start_time'] = datetime.datetime.utcnow().isoformat()
+        report1['result']['finish_time'] = datetime.datetime.utcnow().isoformat()
+
+        obj = {}
+        obj['status'] = True
+        obj['commands'] = []
+        obj['commands'].append(report1)
+        return obj
 
     @staticmethod
     def is_report_ok(report):
@@ -394,7 +430,7 @@ class GitFetcher(object):
         remote_branch_names = []
 
         for command in reports['commands']:
-            if command['command'] == ['git', 'branch', '-r'] and command['result']['status'] == 0:
+            if command['command'] == 'git branch -r' and command['result']['status'] == 0:
                 names = command['result']['out'].split('\n')
                 for name in names:
                     name = name.strip()
@@ -430,7 +466,7 @@ class GitFetcher(object):
         branch_names = []
 
         for command in reports['commands']:
-            if command['command'] == ['git', 'branch'] and command['result']['status'] == 0:
+            if command['command'] == 'git branch' and command['result']['status'] == 0:
                 names = command['result']['out'].split('\n')
                 for name in names:
                     name = name.replace('*', '')

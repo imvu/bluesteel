@@ -239,17 +239,39 @@ class GitFetcherTestCase(TestCase):
         self.assertEqual('', reports['commands'][0]['result']['error'])
         self.assertEqual('', reports['commands'][0]['result']['out'])
 
+    def test_extract_remote_branch_names_from_reports(self):
+        # {'commands': [{'command': u'git branch -r', 'result': {'status': 0, 'finish_time': '2016-02-04T06:54:18.163479', 'start_time': '2016-02-04T06:54:18.157050', 'error': '', 'out': '  origin/HEAD -> origin/master\n  origin/branch-1\n  origin/branch-2\n  origin/branch-test-1\n  origin/master\n'}}]}
+
+        report1 = {}
+        report1['command'] = 'git branch -r'
+        report1['result'] = {}
+        report1['result']['status'] = 0
+        report1['result']['out'] = '  origin/HEAD -> origin/master\n  origin/branch-1\n  origin/branch-2\n  origin/branch-test-1\n  origin/master\n'
+        report1['result']['error'] = ''
+
+        obj = {}
+        obj['status'] = True
+        obj['commands'] = []
+        obj['commands'].append(report1)
+
+        branch_names = self.fetcher.extract_remote_branch_names_from_reports(obj)
+
+        self.assertEqual(4, len(branch_names))
+        self.assertEqual('origin/branch-1', branch_names[0])
+        self.assertEqual('origin/branch-2', branch_names[1])
+        self.assertEqual('origin/branch-test-1', branch_names[2])
+        self.assertEqual('origin/master', branch_names[3])
 
     def test_extract_branch_names_correct(self):
         report1 = {}
-        report1['command'] = ['git', 'branch']
+        report1['command'] = 'git branch'
         report1['result'] = {}
         report1['result']['status'] = 0
         report1['result']['out'] = ' * master\n branch-1\n\n'
         report1['result']['error'] = ''
 
         report2 = {}
-        report2['command'] = ['git', 'status']
+        report2['command'] = 'git status'
         report2['result'] = {}
         report2['result']['status'] = 0
         report2['result']['out'] = 'Hey!!!'
