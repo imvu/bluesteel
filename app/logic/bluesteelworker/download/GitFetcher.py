@@ -169,6 +169,7 @@ class GitFetcher(object):
 
     def step_setup_diff_on_merge_target(self, project_info):
         """ Add the diff related with the merge_target info """
+
         for branch in self.branches_data:
             diff_target_report = self.commands_get_diff_between_commits(
                 project_info,
@@ -629,7 +630,12 @@ class GitFetcher(object):
         for known_branch in known_branches:
             if branch['name'] == known_branch['name']:
                 merge_target['target_branch']['name'] = known_branch['merge_target']['target_branch']['name']
-                commit_hash = known_branch['merge_target']['target_branch']['commit_hash']
+                # We get the latest commit hash from the target branch instead of the know branch commit hash, because
+                # it can be old
+                commit_hash = GitFetcher.get_latests_commit_of_branch(
+                    merge_target['target_branch']['name'],
+                    branch_list
+                )
                 merge_target['target_branch']['commit_hash'] = commit_hash
                 return merge_target
 
@@ -642,6 +648,13 @@ class GitFetcher(object):
         merge_target['target_branch']['name'] = branch['name']
         merge_target['target_branch']['commit_hash'] = branch['commit_hash']
         return merge_target
+
+    @staticmethod
+    def get_latests_commit_of_branch(branch_name, branch_list):
+        for branch in branch_list:
+            if branch['name'] == branch_name:
+                return branch['commit_hash']
+        return ''
 
     @staticmethod
     def get_fork_point_between_branches(branch_target, branch_origin):

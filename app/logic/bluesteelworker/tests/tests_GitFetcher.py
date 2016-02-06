@@ -743,10 +743,14 @@ class GitFetcherTestCase(TestCase):
 
         branch_extracted_2 = {}
         branch_extracted_2['name'] = 'b-e-2'
-        branch_extracted_2['comit_hash'] = '0000500005000050000500005000050000500005'
+        branch_extracted_2['commit_hash'] = '0000500005000050000500005000050000500005'
+
+        branch_extracted_3 = {}
+        branch_extracted_3['name'] = 'b-k-2-5'
+        branch_extracted_3['commit_hash'] = '0000700007000070000700007000070000700007'
 
         known_branches = [branch_known_1, branch_known_2]
-        extracted_branches = [branch_extracted_1, branch_extracted_2]
+        extracted_branches = [branch_extracted_1, branch_extracted_2, branch_extracted_3]
 
         res = self.fetcher.get_merge_target_from_branch_list(branch_merge_target, extracted_branches, known_branches)
 
@@ -754,6 +758,51 @@ class GitFetcherTestCase(TestCase):
         self.assertEqual('0000300003000030000300003000030000300003', res['current_branch']['commit_hash'])
         self.assertEqual('b-k-2-5', res['target_branch']['name'])
         self.assertEqual('0000700007000070000700007000070000700007', res['target_branch']['commit_hash'])
+
+    def test_get_merge_target_from_branch_list_found_in_known_but_keep_latest_commit(self):
+        branch_merge_target = {}
+        branch_merge_target['name'] = 'b-k-1'
+        branch_merge_target['commit_hash'] = '0000300003000030000300003000030000300003'
+
+        branch_known_1 = {}
+        branch_known_1['name'] = 'master'
+        branch_known_1['commit_hash'] = '0000200002000020000200002000020000200002'
+        branch_known_1['merge_target'] = {}
+        branch_known_1['merge_target']['current_branch'] = {}
+        branch_known_1['merge_target']['current_branch']['name'] = 'master'
+        branch_known_1['merge_target']['current_branch']['commit_hash'] = '0000200002000020000200002000020000200002'
+        branch_known_1['merge_target']['target_branch'] = {}
+        branch_known_1['merge_target']['target_branch']['name'] = 'master'
+        branch_known_1['merge_target']['target_branch']['commit_hash'] = '0000200002000020000200002000020000200002'
+
+        branch_known_2 = {}
+        branch_known_2['name'] = 'b-k-1'
+        branch_known_2['commit_hash'] = '0000300003000030000300003000030000300003'
+        branch_known_2['merge_target'] = {}
+        branch_known_2['merge_target']['current_branch'] = {}
+        branch_known_2['merge_target']['current_branch']['name'] = 'b-k-1'
+        branch_known_2['merge_target']['current_branch']['commit_hash'] = '0000300003000030000300003000030000300003'
+        branch_known_2['merge_target']['target_branch'] = {}
+        branch_known_2['merge_target']['target_branch']['name'] = 'master'
+        branch_known_2['merge_target']['target_branch']['commit_hash'] = '0000200002000020000200002000020000200002'
+
+        branch_extracted_1 = {}
+        branch_extracted_1['name'] = 'master'
+        branch_extracted_1['commit_hash'] = '0000900009000090000900009000090000900009'
+
+        branch_extracted_2 = {}
+        branch_extracted_2['name'] = 'b-k-1'
+        branch_extracted_2['comit_hash'] = '0000300003000030000300003000030000300003'
+
+        known_branches = [branch_known_1, branch_known_2]
+        extracted_branches = [branch_extracted_1, branch_extracted_2]
+
+        res = self.fetcher.get_merge_target_from_branch_list(branch_merge_target, extracted_branches, known_branches)
+
+        self.assertEqual('b-k-1', res['current_branch']['name'])
+        self.assertEqual('0000300003000030000300003000030000300003', res['current_branch']['commit_hash'])
+        self.assertEqual('master', res['target_branch']['name'])
+        self.assertEqual('0000900009000090000900009000090000900009', res['target_branch']['commit_hash'])
 
     def test_get_merge_target_from_branch_list_found_in_extracted(self):
         branch_merge_target = {}
