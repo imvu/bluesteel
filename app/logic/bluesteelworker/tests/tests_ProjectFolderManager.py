@@ -65,58 +65,109 @@ class GitFetcherTestCase(TestCase):
         if os.path.exists(self.tmp_folder):
             shutil.rmtree(self.tmp_folder)
 
-    def create_git_hidden_folder(self, root, tmp, archive, name_project):
-        path = os.path.join(root, tmp, archive, name_project, 'project', name_project, '.git')
-        os.makedirs(path)
+    def create_project_folders(self):
+        paths = ProjectFolderManager.get_folder_paths(
+            self.tmp_folder,
+            ['tmp', 'folder', 'list'],
+            'archive-name',
+            'project-name',
+        )
 
-    def test_get_project_folder_project_1(self):
-        path = '{0}/{1}/{2}'.format(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC')
-        self.assertEqual(path, ProjectFolderManager.get_archive_folder_path(self.obj1))
+        ProjectFolderManager.create_tmp_folder_for_git_project(paths)
+        return paths
 
-    def test_get_project_folder_project_2(self):
-        path = '{0}/{1}/{2}'.format(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC')
-        self.assertEqual(path, ProjectFolderManager.get_archive_folder_path(self.obj2))
+    def create_project_folders_with_git_hidden_folder(self):
+        paths = ProjectFolderManager.get_folder_paths(
+            self.tmp_folder,
+            ['tmp', 'folder', 'list'],
+            'archive-name',
+            'project-name',
+        )
+
+        ProjectFolderManager.create_tmp_folder_for_git_project(paths)
+        os.makedirs(os.path.join(paths['project'], 'test-repo/.git'))
+        return paths
+
+    def test_generated_folder_paths_are_correct(self):
+        paths = ProjectFolderManager.get_folder_paths(
+            self.tmp_folder,
+            ['tmp', 'folder', 'list'],
+            'archive-name',
+            'project-name',
+        )
+
+        self.assertEqual(os.path.join(self.tmp_folder, 'tmp/folder/list'), paths['temp'])
+        self.assertEqual(os.path.join(self.tmp_folder, 'tmp/folder/list/archive-name'), paths['archive'])
+        self.assertEqual(os.path.join(self.tmp_folder, 'tmp/folder/list/archive-name/project-name'), paths['project_name'])
+        self.assertEqual(os.path.join(self.tmp_folder, 'tmp/folder/list/archive-name/project-name/project'), paths['project'])
+        self.assertEqual(os.path.join(self.tmp_folder, 'tmp/folder/list/archive-name/project-name/log'), paths['log'])
 
     def test_is_project_folder_present(self):
-        os.makedirs(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'project'))
-        self.assertTrue(ProjectFolderManager.is_project_folder_present(self.obj1))
+        paths = self.create_project_folders()
+        self.assertTrue(ProjectFolderManager.is_project_folder_present(paths))
 
     def test_is_not_project_folder_present(self):
-        os.makedirs(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1'))
-        self.assertFalse(ProjectFolderManager.is_project_folder_present(self.obj1))
+        paths = {}
+        paths['project'] = os.path.join(self.tmp_folder, 'folder/that/does/not/exist')
+
+        self.assertFalse(ProjectFolderManager.is_project_folder_present(paths))
 
     def test_is_git_project_folder_present(self):
-        os.makedirs(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'project', 'test-repo', '.git'))
-        self.assertTrue(ProjectFolderManager.is_git_project_folder_present(self.obj1))
+        paths = self.create_project_folders_with_git_hidden_folder()
+        self.assertTrue(ProjectFolderManager.is_git_project_folder_present(paths))
 
     def test_is_not_git_project_folder_present(self):
-        os.makedirs(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC'))
-        self.assertFalse(ProjectFolderManager.is_git_project_folder_present(self.obj1))
+        paths = ProjectFolderManager.get_folder_paths(
+            self.tmp_folder,
+            ['tmp', 'folder', 'list'],
+            'archive-name',
+            'project-name',
+        )
+
+        self.assertFalse(ProjectFolderManager.is_git_project_folder_present(paths))
 
     def test_is_log_project_folder_present(self):
-        os.makedirs(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'log'))
-        self.assertTrue(ProjectFolderManager.is_log_project_folder_present(self.obj1))
+        paths = self.create_project_folders()
+        self.assertTrue(ProjectFolderManager.is_log_project_folder_present(paths))
 
     def test_is_not_log_project_folder_present(self):
-        os.makedirs(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC'))
-        self.assertFalse(ProjectFolderManager.is_log_project_folder_present(self.obj1))
+        paths = ProjectFolderManager.get_folder_paths(
+            self.tmp_folder,
+            ['tmp', 'folder', 'list'],
+            'archive-name',
+            'project-name',
+        )
+
+        self.assertFalse(ProjectFolderManager.is_log_project_folder_present(paths))
 
     def test_create_tmp_folder_for_git_project(self):
-        ProjectFolderManager.create_tmp_folder_for_git_project(self.obj1)
-        ProjectFolderManager.create_tmp_folder_for_git_project(self.obj2)
-        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC')))
-        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1')))
-        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'project')))
-        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'log')))
-        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-2')))
-        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-2', 'project')))
-        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-2', 'log')))
+        paths = ProjectFolderManager.get_folder_paths(
+            self.tmp_folder,
+            ['tmp', 'folder', 'list'],
+            'archive-name',
+            'project-name',
+        )
+
+        ProjectFolderManager.create_tmp_folder_for_git_project(paths)
+        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp/folder/list', 'archive-name')))
+        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp/folder/list', 'archive-name', 'project-name')))
+        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp/folder/list', 'archive-name', 'project-name', 'project')))
+        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp/folder/list', 'archive-name', 'project-name', 'log')))
 
     def test_create_tmp_folder_remove_previous_folder(self):
-        os.makedirs(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'folder-2'))
-        ProjectFolderManager.create_tmp_folder_for_git_project(self.obj1)
-        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder')))
-        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC')))
-        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'project')))
-        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'log')))
-        self.assertFalse(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'folder-2')))
+        os.makedirs(os.path.join(self.tmp_folder, 'tmp/folder/list', 'archive-name', 'project-name', 'folder-to-be-removed'))
+
+        paths = ProjectFolderManager.get_folder_paths(
+            self.tmp_folder,
+            ['tmp', 'folder', 'list'],
+            'archive-name',
+            'project-name',
+        )
+
+        ProjectFolderManager.create_tmp_folder_for_git_project(paths)
+        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp/folder/list', 'archive-name')))
+        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp/folder/list', 'archive-name', 'project-name')))
+        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp/folder/list', 'archive-name', 'project-name', 'project')))
+        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp/folder/list', 'archive-name', 'project-name', 'log')))
+        self.assertFalse(os.path.exists(os.path.join(self.tmp_folder, 'tmp/folder/list', 'archive-name', 'project-name', 'folder-to-be-removed')))
+

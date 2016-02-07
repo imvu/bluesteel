@@ -11,26 +11,6 @@ class ProjectFolderManager(object):
         return os.sep.join(folders_list)
 
     @staticmethod
-    def get_temp_folder_path(project_info):
-        return ProjectFolderManager.get_tmp_directory_from_list_folders(project_info['git']['project']['tmp_directory'])
-
-    @staticmethod
-    def get_archive_folder_path(project_info):
-        current = project_info['git']['project']['current_working_directory']
-        folder = ProjectFolderManager.get_temp_folder_path(project_info)
-        archive = project_info['git']['project']['archive']
-        return os.path.join(current, folder, archive)
-
-    @staticmethod
-    def get_git_project_folder_path(project_info):
-        """ Returns path for the git project """
-        current = project_info['git']['project']['current_working_directory']
-        folder = ProjectFolderManager.get_temp_folder_path(project_info)
-        archive = project_info['git']['project']['archive']
-        project_name = project_info['git']['project']['name']
-        return os.path.join(current, folder, archive, project_name, 'project', project_name)
-
-    @staticmethod
     def get_cwd_of_first_git_project_found_in(directory):
         """ Searches for the first .git folder on the project path and returns its location """
         for root, dirs, files in os.walk(directory):
@@ -41,13 +21,12 @@ class ProjectFolderManager(object):
         return None
 
     @staticmethod
-    def get_folder_paths(project_info):
+    def get_folder_paths(cwd, tmp_folders_list, archive_name, project_name):
         """ Returns an object with all the paths needed on a project """
-        project_name = project_info['git']['project']['name']
 
         obj = {}
-        obj['temp'] = str(ProjectFolderManager.get_temp_folder_path(project_info))
-        obj['archive'] = str(ProjectFolderManager.get_archive_folder_path(project_info))
+        obj['temp'] = str(os.path.join(cwd, ProjectFolderManager.get_tmp_directory_from_list_folders(tmp_folders_list)))
+        obj['archive'] = str(os.path.join(obj['temp'], archive_name))
         obj['project_name'] = str(os.path.join(obj['archive'], project_name))
         obj['project'] = str(os.path.join(obj['project_name'], 'project'))
         obj['log'] = str(os.path.join(obj['project_name'], 'log'))
@@ -60,10 +39,8 @@ class ProjectFolderManager(object):
         return obj
 
     @staticmethod
-    def is_project_folder_present(project_info):
+    def is_project_folder_present(paths):
         """ Checks if the folder structure exists """
-        paths = ProjectFolderManager.get_folder_paths(project_info)
-
         if paths['project'] == None:
             return False
 
@@ -72,9 +49,8 @@ class ProjectFolderManager(object):
         return True
 
     @staticmethod
-    def is_git_project_folder_present(project_info):
+    def is_git_project_folder_present(paths):
         """ Checks if the folder structure exists """
-        paths = ProjectFolderManager.get_folder_paths(project_info)
         if not os.path.exists(paths['project']):
             return False
 
@@ -85,18 +61,15 @@ class ProjectFolderManager(object):
         return True
 
     @staticmethod
-    def is_log_project_folder_present(project_info):
+    def is_log_project_folder_present(paths):
         """ Checks if the folder structure exists """
-        paths = ProjectFolderManager.get_folder_paths(project_info)
         if not os.path.exists(paths['log']):
             return False
         return True
 
     @staticmethod
-    def create_tmp_folder_for_git_project(project_info):
+    def create_tmp_folder_for_git_project(paths):
         """ Creates git rpoject folder structure """
-        paths = ProjectFolderManager.get_folder_paths(project_info)
-
         if os.path.exists(paths['project_name']):
             shutil.rmtree(paths['project_name'])
 

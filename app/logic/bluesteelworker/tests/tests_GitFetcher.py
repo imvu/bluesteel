@@ -73,10 +73,22 @@ class GitFetcherTestCase(TestCase):
         path = os.path.join(root, tmp, archive, name_project, 'project', name_project, '.git')
         os.makedirs(path)
 
+    def create_paths(self, obj):
+        paths = ProjectFolderManager.get_folder_paths(
+            obj['git']['project']['current_working_directory'],
+            obj['git']['project']['tmp_directory'],
+            obj['git']['project']['archive'],
+            obj['git']['project']['name'],
+        )
+
+        ProjectFolderManager.create_tmp_folder_for_git_project(paths)
+        os.makedirs(os.path.join(paths['project'], 'test-repo/.git'))
+        return paths
+
     @mock.patch('app.logic.bluesteelworker.download.CommandExecutioner.subprocess.call')
     def test_clone_project(self, mock_subprocess):
         mock_subprocess.return_value = 0
-        ProjectFolderManager.create_tmp_folder_for_git_project(self.obj1)
+        self.create_paths(self.obj1)
         reports = self.fetcher.commands_clone_git_project(self.obj1)
 
         name, args, side = mock_subprocess.mock_calls[0]
@@ -109,7 +121,7 @@ class GitFetcherTestCase(TestCase):
     @mock.patch('app.logic.bluesteelworker.download.CommandExecutioner.subprocess.call')
     def test_fetch_project(self, mock_subprocess):
         mock_subprocess.return_value = 0
-        ProjectFolderManager.create_tmp_folder_for_git_project(self.obj1)
+        self.create_paths(self.obj1)
         self.create_git_hidden_folder(settings.TMP_ROOT, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1')
         reports = self.fetcher.commands_fetch_git_project(self.obj1)
 
@@ -166,7 +178,7 @@ class GitFetcherTestCase(TestCase):
     @mock.patch('app.logic.bluesteelworker.download.CommandExecutioner.subprocess.call')
     def test_get_branch_names(self, mock_subprocess):
         mock_subprocess.return_value = 0
-        ProjectFolderManager.create_tmp_folder_for_git_project(self.obj1)
+        self.create_paths(self.obj1)
         self.create_git_hidden_folder(settings.TMP_ROOT, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1')
         reports = self.fetcher.commands_get_branch_names(self.obj1)
 
@@ -259,7 +271,7 @@ class GitFetcherTestCase(TestCase):
     def test_checkout_remote_branches_to_local(self, mock_subprocess):
         branch_names = ['origin/master', 'origin/branch-1', 'origin/branch-2', 'origin/branch-test-1']
         mock_subprocess.return_value = 0
-        ProjectFolderManager.create_tmp_folder_for_git_project(self.obj1)
+        self.create_paths(self.obj1)
         self.create_git_hidden_folder(settings.TMP_ROOT, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1')
 
         reports = self.fetcher.checkout_remote_branches_to_local(self.obj1, branch_names)
@@ -305,7 +317,7 @@ class GitFetcherTestCase(TestCase):
     def test_commands_get_branch_names_and_hashes(self, mock_subprocess):
         branch_names = ['master', 'branch-1', 'branch-2']
         mock_subprocess.return_value = 0
-        ProjectFolderManager.create_tmp_folder_for_git_project(self.obj1)
+        self.create_paths(self.obj1)
         self.create_git_hidden_folder(settings.TMP_ROOT, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1')
         self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC','test-repo-1', 'project', 'test-repo-1', '.git')))
 
@@ -394,7 +406,7 @@ class GitFetcherTestCase(TestCase):
         pretty_string = '--pretty=format:{0},'.format(json.dumps(pretty_format))
 
         mock_subprocess.return_value = 0
-        ProjectFolderManager.create_tmp_folder_for_git_project(self.obj1)
+        self.create_paths(self.obj1)
         self.create_git_hidden_folder(settings.TMP_ROOT, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1')
         reports = self.fetcher.commands_get_commits_from_branch(self.obj1, branch_name)
 
@@ -637,7 +649,7 @@ class GitFetcherTestCase(TestCase):
         branch2['commit_hash'] = '0000200002000020000200002000020000200002'
 
         mock_subprocess.return_value = 0
-        ProjectFolderManager.create_tmp_folder_for_git_project(self.obj1)
+        self.create_paths(self.obj1)
         self.create_git_hidden_folder(settings.TMP_ROOT, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1')
         reports = self.fetcher.commands_get_fork_commit_between_branches(self.obj1, branch1, branch2)
 
@@ -914,7 +926,7 @@ class GitFetcherTestCase(TestCase):
         commit_2 = '0000200002000020000200002000020000200002'
 
         mock_subprocess.return_value = 0
-        ProjectFolderManager.create_tmp_folder_for_git_project(self.obj1)
+        self.create_paths(self.obj1)
         self.create_git_hidden_folder(settings.TMP_ROOT, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1')
         reports = self.fetcher.commands_get_diff_between_commits(self.obj1, commit_1, commit_2)
 

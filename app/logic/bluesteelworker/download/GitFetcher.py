@@ -288,7 +288,12 @@ class GitFetcher(object):
     @staticmethod
     def commands_clone_git_project(project_info):
         """ clone a git repo """
-        paths = ProjectFolderManager.get_folder_paths(project_info)
+        paths = ProjectFolderManager.get_folder_paths(
+            project_info['git']['project']['current_working_directory'],
+            project_info['git']['project']['tmp_directory'],
+            project_info['git']['project']['archive'],
+            project_info['git']['project']['name']
+        )
 
         reports = CommandExecutioner.execute_command_list(
             project_info['git']['clone']['commands'],
@@ -301,7 +306,12 @@ class GitFetcher(object):
     @staticmethod
     def commands_fetch_git_project(project_info):
         """ fetch a git repo """
-        paths = ProjectFolderManager.get_folder_paths(project_info)
+        paths = ProjectFolderManager.get_folder_paths(
+            project_info['git']['project']['current_working_directory'],
+            project_info['git']['project']['tmp_directory'],
+            project_info['git']['project']['archive'],
+            project_info['git']['project']['name']
+        )
         project_cwd = ProjectFolderManager.get_cwd_of_first_git_project_found_in(paths['project'])
 
         reports = CommandExecutioner.execute_command_list(
@@ -315,7 +325,12 @@ class GitFetcher(object):
     @staticmethod
     def commands_get_remote_branch_names(project_info):
         """ Returns all remote branches names """
-        paths = ProjectFolderManager.get_folder_paths(project_info)
+        paths = ProjectFolderManager.get_folder_paths(
+            project_info['git']['project']['current_working_directory'],
+            project_info['git']['project']['tmp_directory'],
+            project_info['git']['project']['archive'],
+            project_info['git']['project']['name']
+        )
         project_cwd = ProjectFolderManager.get_cwd_of_first_git_project_found_in(paths['project'])
 
         commands = [[u'git', u'branch', u'-r']]
@@ -349,7 +364,12 @@ class GitFetcher(object):
     @staticmethod
     def commands_get_branch_names(project_info):
         """ Returns all local branches """
-        paths = ProjectFolderManager.get_folder_paths(project_info)
+        paths = ProjectFolderManager.get_folder_paths(
+            project_info['git']['project']['current_working_directory'],
+            project_info['git']['project']['tmp_directory'],
+            project_info['git']['project']['archive'],
+            project_info['git']['project']['name']
+        )
         project_cwd = ProjectFolderManager.get_cwd_of_first_git_project_found_in(paths['project'])
 
         command = ['git', 'branch']
@@ -381,7 +401,12 @@ class GitFetcher(object):
     @staticmethod
     def checkout_remote_branches_to_local(project_info, remote_branch_names):
         """ Check out all the remote branches to local ones """
-        paths = ProjectFolderManager.get_folder_paths(project_info)
+        paths = ProjectFolderManager.get_folder_paths(
+            project_info['git']['project']['current_working_directory'],
+            project_info['git']['project']['tmp_directory'],
+            project_info['git']['project']['archive'],
+            project_info['git']['project']['name']
+        )
         project_cwd = ProjectFolderManager.get_cwd_of_first_git_project_found_in(paths['project'])
 
         commands = []
@@ -404,7 +429,12 @@ class GitFetcher(object):
     @staticmethod
     def commands_get_branch_names_and_hashes(project_info, branch_names):
         """ Fetch the hash of every branch name """
-        paths = ProjectFolderManager.get_folder_paths(project_info)
+        paths = ProjectFolderManager.get_folder_paths(
+            project_info['git']['project']['current_working_directory'],
+            project_info['git']['project']['tmp_directory'],
+            project_info['git']['project']['archive'],
+            project_info['git']['project']['name']
+        )
         project_cwd = ProjectFolderManager.get_cwd_of_first_git_project_found_in(paths['project'])
 
         commands = []
@@ -436,7 +466,12 @@ class GitFetcher(object):
     @staticmethod
     def commands_get_commits_from_branch(project_info, branch_name):
         """ Get all commits from a branch, only first parent """
-        paths = ProjectFolderManager.get_folder_paths(project_info)
+        paths = ProjectFolderManager.get_folder_paths(
+            project_info['git']['project']['current_working_directory'],
+            project_info['git']['project']['tmp_directory'],
+            project_info['git']['project']['archive'],
+            project_info['git']['project']['name']
+        )
         project_cwd = ProjectFolderManager.get_cwd_of_first_git_project_found_in(paths['project'])
 
         pretty_format = {}
@@ -502,7 +537,12 @@ class GitFetcher(object):
     @staticmethod
     def commands_get_fork_commit_between_branches(project_info, branch1, branch2):
         """ Get the common ancestor commit between two branches """
-        paths = ProjectFolderManager.get_folder_paths(project_info)
+        paths = ProjectFolderManager.get_folder_paths(
+            project_info['git']['project']['current_working_directory'],
+            project_info['git']['project']['tmp_directory'],
+            project_info['git']['project']['archive'],
+            project_info['git']['project']['name']
+        )
         project_cwd = ProjectFolderManager.get_cwd_of_first_git_project_found_in(paths['project'])
 
         commands = [['git', 'merge-base', branch1['commit_hash'], branch2['commit_hash']]]
@@ -571,7 +611,12 @@ class GitFetcher(object):
     @staticmethod
     def commands_get_diff_between_commits(project_info, commit_hash_1, commit_hash_2):
         """ Get the diff between 2 commits """
-        paths = ProjectFolderManager.get_folder_paths(project_info)
+        paths = ProjectFolderManager.get_folder_paths(
+            project_info['git']['project']['current_working_directory'],
+            project_info['git']['project']['tmp_directory'],
+            project_info['git']['project']['archive'],
+            project_info['git']['project']['name']
+        )
         project_cwd = ProjectFolderManager.get_cwd_of_first_git_project_found_in(paths['project'])
 
         commands = [['git', 'diff', commit_hash_1, commit_hash_2]]
