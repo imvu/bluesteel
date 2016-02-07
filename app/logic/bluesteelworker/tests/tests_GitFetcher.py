@@ -5,6 +5,7 @@ from django.conf import settings
 from django.utils import timezone
 from django.utils.six import StringIO
 from app.logic.bluesteelworker.download.GitFetcher import GitFetcher
+from app.logic.bluesteelworker.download.ProjectFolderManager import ProjectFolderManager
 from datetime import timedelta
 import os
 import json
@@ -72,62 +73,10 @@ class GitFetcherTestCase(TestCase):
         path = os.path.join(root, tmp, archive, name_project, 'project', name_project, '.git')
         os.makedirs(path)
 
-    def test_get_project_folder_project_1(self):
-        path = '{0}/{1}/{2}'.format(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC')
-        self.assertEqual(path, self.fetcher.get_archive_folder_path(self.obj1))
-
-    def test_get_project_folder_project_1(self):
-        path = '{0}/{1}/{2}'.format(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC')
-        self.assertEqual(path, self.fetcher.get_archive_folder_path(self.obj2))
-
-    def test_is_project_folder_present(self):
-        os.makedirs(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'project'))
-        self.assertTrue(self.fetcher.is_project_folder_present(self.obj1))
-
-    def test_is_not_project_folder_present(self):
-        os.makedirs(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1'))
-        self.assertFalse(self.fetcher.is_project_folder_present(self.obj1))
-
-    def test_is_git_project_folder_present(self):
-        os.makedirs(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'project', 'test-repo', '.git'))
-        self.assertTrue(GitFetcher.is_git_project_folder_present(self.obj1))
-
-    def test_is_not_git_project_folder_present(self):
-        os.makedirs(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC'))
-        self.assertFalse(GitFetcher.is_git_project_folder_present(self.obj1))
-
-    def test_is_log_project_folder_present(self):
-        os.makedirs(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'log'))
-        self.assertTrue(self.fetcher.is_log_project_folder_present(self.obj1))
-
-    def test_is_not_log_project_folder_present(self):
-        os.makedirs(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC'))
-        self.assertFalse(self.fetcher.is_log_project_folder_present(self.obj1))
-
-    def test_create_tmp_folder_for_git_project(self):
-        self.fetcher.create_tmp_folder_for_git_project(self.obj1)
-        self.fetcher.create_tmp_folder_for_git_project(self.obj2)
-        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC')))
-        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1')))
-        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'project')))
-        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'log')))
-        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-2')))
-        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-2', 'project')))
-        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-2', 'log')))
-
-    def test_create_tmp_folder_remove_previous_folder(self):
-        os.makedirs(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'folder-2'))
-        self.fetcher.create_tmp_folder_for_git_project(self.obj1)
-        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder')))
-        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC')))
-        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'project')))
-        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'log')))
-        self.assertFalse(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'folder-2')))
-
     @mock.patch('app.logic.bluesteelworker.download.CommandExecutioner.subprocess.call')
     def test_clone_project(self, mock_subprocess):
         mock_subprocess.return_value = 0
-        self.fetcher.create_tmp_folder_for_git_project(self.obj1)
+        ProjectFolderManager.create_tmp_folder_for_git_project(self.obj1)
         reports = self.fetcher.commands_clone_git_project(self.obj1)
 
         name, args, side = mock_subprocess.mock_calls[0]
@@ -160,7 +109,7 @@ class GitFetcherTestCase(TestCase):
     @mock.patch('app.logic.bluesteelworker.download.CommandExecutioner.subprocess.call')
     def test_fetch_project(self, mock_subprocess):
         mock_subprocess.return_value = 0
-        self.fetcher.create_tmp_folder_for_git_project(self.obj1)
+        ProjectFolderManager.create_tmp_folder_for_git_project(self.obj1)
         self.create_git_hidden_folder(settings.TMP_ROOT, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1')
         reports = self.fetcher.commands_fetch_git_project(self.obj1)
 
@@ -217,7 +166,7 @@ class GitFetcherTestCase(TestCase):
     @mock.patch('app.logic.bluesteelworker.download.CommandExecutioner.subprocess.call')
     def test_get_branch_names(self, mock_subprocess):
         mock_subprocess.return_value = 0
-        self.fetcher.create_tmp_folder_for_git_project(self.obj1)
+        ProjectFolderManager.create_tmp_folder_for_git_project(self.obj1)
         self.create_git_hidden_folder(settings.TMP_ROOT, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1')
         reports = self.fetcher.commands_get_branch_names(self.obj1)
 
@@ -310,7 +259,7 @@ class GitFetcherTestCase(TestCase):
     def test_checkout_remote_branches_to_local(self, mock_subprocess):
         branch_names = ['origin/master', 'origin/branch-1', 'origin/branch-2', 'origin/branch-test-1']
         mock_subprocess.return_value = 0
-        self.fetcher.create_tmp_folder_for_git_project(self.obj1)
+        ProjectFolderManager.create_tmp_folder_for_git_project(self.obj1)
         self.create_git_hidden_folder(settings.TMP_ROOT, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1')
 
         reports = self.fetcher.checkout_remote_branches_to_local(self.obj1, branch_names)
@@ -356,7 +305,7 @@ class GitFetcherTestCase(TestCase):
     def test_commands_get_branch_names_and_hashes(self, mock_subprocess):
         branch_names = ['master', 'branch-1', 'branch-2']
         mock_subprocess.return_value = 0
-        self.fetcher.create_tmp_folder_for_git_project(self.obj1)
+        ProjectFolderManager.create_tmp_folder_for_git_project(self.obj1)
         self.create_git_hidden_folder(settings.TMP_ROOT, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1')
         self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC','test-repo-1', 'project', 'test-repo-1', '.git')))
 
@@ -445,7 +394,7 @@ class GitFetcherTestCase(TestCase):
         pretty_string = '--pretty=format:{0},'.format(json.dumps(pretty_format))
 
         mock_subprocess.return_value = 0
-        self.fetcher.create_tmp_folder_for_git_project(self.obj1)
+        ProjectFolderManager.create_tmp_folder_for_git_project(self.obj1)
         self.create_git_hidden_folder(settings.TMP_ROOT, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1')
         reports = self.fetcher.commands_get_commits_from_branch(self.obj1, branch_name)
 
@@ -688,7 +637,7 @@ class GitFetcherTestCase(TestCase):
         branch2['commit_hash'] = '0000200002000020000200002000020000200002'
 
         mock_subprocess.return_value = 0
-        self.fetcher.create_tmp_folder_for_git_project(self.obj1)
+        ProjectFolderManager.create_tmp_folder_for_git_project(self.obj1)
         self.create_git_hidden_folder(settings.TMP_ROOT, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1')
         reports = self.fetcher.commands_get_fork_commit_between_branches(self.obj1, branch1, branch2)
 
@@ -965,7 +914,7 @@ class GitFetcherTestCase(TestCase):
         commit_2 = '0000200002000020000200002000020000200002'
 
         mock_subprocess.return_value = 0
-        self.fetcher.create_tmp_folder_for_git_project(self.obj1)
+        ProjectFolderManager.create_tmp_folder_for_git_project(self.obj1)
         self.create_git_hidden_folder(settings.TMP_ROOT, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1')
         reports = self.fetcher.commands_get_diff_between_commits(self.obj1, commit_1, commit_2)
 
