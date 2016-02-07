@@ -4,6 +4,7 @@
 # pylint: disable=W0403
 
 from CommandExecutioner import CommandExecutioner
+from ProjectFolderManager import ProjectFolderManager
 import GitFetcher
 import Request
 import os
@@ -282,25 +283,19 @@ def process_execute_task(settings, benchmark_execution):
     layout_uuid = benchmark_execution['definition']['layout']['uuid']
     project_uuid = benchmark_execution['definition']['project']['uuid']
 
-    tmp_path_list = settings['tmp_path'][:]
-    tmp_path_list.append('bench_exec')
+    paths = ProjectFolderManager.get_folder_paths(
+        get_cwd(),
+        settings['tmp_path'][:],
+        layout_uuid,
+        project_uuid,
+    )
 
-    project_cwd_list = settings['tmp_path'][:]
-    project_cwd_list.append(layout_uuid)
-    project_cwd_list.append(project_uuid)
-
-    tmp_path = reduce(os.path.join, tmp_path_list)
-    project_cwd = reduce(os.path.join, project_cwd_list)
-
-    # print '++ commands: ', commands
-    # print '++ layout: ', layout_uuid
-    # print '++ project: ', project_uuid
-    # print '++ project cwd: ', project_cwd
+    git_path = ProjectFolderManager.get_cwd_of_first_git_project_found_in(paths['project'])
 
     res = CommandExecutioner.execute_command_list(
         commands,
-        tmp_path,
-        project_cwd,
+        paths['log'],
+        git_path,
         False)
 
     print '---> ', res

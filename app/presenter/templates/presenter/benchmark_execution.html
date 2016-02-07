@@ -27,6 +27,7 @@
                         <br/>
                         {% for entry in res.out %}
                             {% if entry.obj.visual_type == 'vertical_bars' %}
+                                <div class="command indent_2">{{entry.obj.id}}</div>
                                 <canvas id="chart-{{forloop.counter0}}" width="540" height="220"></canvas>
                                 <script>chartVerticalBars('chart-{{forloop.counter0}}', {{entry.json|safe}});</script>
                             {% elif entry.obj.visual_type == 'text' %}
@@ -40,8 +41,10 @@
                             {% endif %}
                         {% endfor %}
 
-                        <div class="list_label indent_1">ERROR</div>
-                        <div class="command indent_2">{{res.error}}</div>
+                        {% if res.error %}
+                            <div class="list_label indent_1">ERROR</div>
+                            <div class="command indent_2">{{res.error}}</div>
+                        {% endif %}
                     </div>
 
                 {% endfor %}

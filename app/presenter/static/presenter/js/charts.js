@@ -1,7 +1,7 @@
 
 chartVerticalBars = function(objId, data) {
     var labels = []
-    for (var i = 0; i < data['vertical_bars']['data'].length; i++) {
+    for (var i = 0; i < data['data'].length; i++) {
         labels.push(i.toString());
     }
 
@@ -14,7 +14,7 @@ chartVerticalBars = function(objId, data) {
             'strokeColor': "rgba(220,220,220,0.8)",
             'highlightFill': "steelblue",
             'highlightStroke': "rgba(220,220,220,1)",
-            'data' : data['vertical_bars']['data']
+            'data' : data['data']
         },
     ]
 
