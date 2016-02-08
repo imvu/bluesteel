@@ -58,6 +58,11 @@ div.indent_2
     padding-left: 20px;
 }
 
+div.indent_3
+{
+    padding-left: 30px;
+}
+
 div.inline
 {
     display: inline-block;

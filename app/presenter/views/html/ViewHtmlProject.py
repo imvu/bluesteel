@@ -5,6 +5,8 @@ from app.presenter.views.helpers import ViewPrepareObjects
 from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
 from app.logic.bluesteel.controllers.BluesteelProjectController import BluesteelProjectController
 from app.logic.benchmark.controllers.BenchmarkExecutionController import BenchmarkExecutionController
+from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
+from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
 from app.logic.gitrepo.models.GitBranchModel import GitBranchEntry
 from app.logic.httpcommon import res
 
@@ -69,5 +71,52 @@ def get_project_single_branch(request, project_id, branch_id):
         data['menu'] = ViewPrepareObjects.prepare_menu_for_html([])
 
         return res.get_template_data(request, 'presenter/project_branches.html', data)
+    else:
+        return res.get_template_data(request, 'presenter/not_found.html', {})
+
+
+def get_project_single_branch_links(request, project_id, branch_id):
+    """ Display single branch links """
+    if request.method == 'GET':
+        branch_entry = GitBranchEntry.objects.filter(id=branch_id, project__id=project_id).first()
+        if branch_entry == None:
+            return res.get_template_data(request, 'presenter/not_found.html', {})
+
+        def_entries = BenchmarkDefinitionEntry.objects.all()
+        worker_entries = WorkerEntry.objects.all()
+
+        # project_entry, branch_entry, bench_def_entry, worker_entry
+
+        links = []
+
+        for def_entry in def_entries:
+            definition = {}
+            definition['name'] = def_entry.name
+            definition['id'] = def_entry.id
+            definition['workers'] = []
+
+            for worker_entry in worker_entries:
+                worker = {}
+                worker['name'] = worker_entry.name
+                worker['uuid'] = worker_entry.uuid
+                worker['stacked_benchmarks'] = ViewUrlGenerator.get_benchmark_execution_stacked(
+                    project_id,
+                    branch_id,
+                    def_entry.id,
+                    worker_entry.id
+                )
+                definition['workers'].append(worker)
+
+            links.append(definition)
+
+        data = {}
+        data['branch'] = {}
+        data['branch']['name'] = branch_entry.name
+        data['branch']['url'] = {}
+        data['branch']['url']['single'] = ViewUrlGenerator.get_project_branch_single_url(project_id, branch_id)
+        data['branch']['links'] = links
+        data['menu'] = ViewPrepareObjects.prepare_menu_for_html([])
+
+        return res.get_template_data(request, 'presenter/project_branch_links.html', data)
     else:
         return res.get_template_data(request, 'presenter/not_found.html', {})

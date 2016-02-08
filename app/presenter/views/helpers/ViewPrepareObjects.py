@@ -124,6 +124,7 @@ def prepare_branches_for_html(project_id, branches):
     for branch in branches:
         branch['url'] = {}
         branch['url']['single'] = ViewUrlGenerator.get_project_branch_single_url(project_id, branch['id'])
+        branch['url']['links'] = ViewUrlGenerator.get_project_branch_single_links_url(project_id, branch['id'])
         ret_branches.append(branch)
     return ret_branches
 

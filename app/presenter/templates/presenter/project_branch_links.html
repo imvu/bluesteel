@@ -1,0 +1,32 @@
+{% extends "presenter/base.html" %}
+
+{% load staticfiles %}
+
+{% block data_body %}
+<ul class="no_dots no_indent horizontal_list">
+        <li class="horizontal">
+            <div class="container_med container_height">
+                <ul class="no_dots no_indent">
+                    <li>
+                        <div class="upper_card white_card card_padding_small">
+                            <div><a class="title_link" href="{{branch.url.single}}">{{branch.name}}</a></div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="lower_card white_card card_padding_small">
+                            <div class="list_label indent_1">SINGLE VIEW</div>
+                            <div class="normal indent_2"><a class="normal_link" href="{{branch.url.single}}">See single view</a></div>
+                            <div class="list_label indent_1">STACKED BENCHMARKS</div>
+                            {% for definition in branch.links %}
+                                <div class="normal indent_2">Benchmark Definition: {{definition.name}} ({{definition.id}})</div>
+                                {% for worker in definition.workers %}
+                                    <div class="normal indent_3"><a class="normal_link" href="{{worker.stacked_benchmarks}}">See executions on {{worker.name}} ({{worker.uuid}})</a></div>
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </li>
+</ul>
+{% endblock %}
