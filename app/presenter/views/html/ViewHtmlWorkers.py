@@ -17,7 +17,7 @@ def get_workers(request):
         control = {}
         control['name'] = '  Download Worker'
         control['link'] = ViewUrlGenerator.get_download_worker_url()
-        control['icon'] = 'fa fa-plus'
+        control['icon'] = 'fa fa-arrow-down'
         control['onclick'] = 'window.location="{0}"'.format(control['link'])
 
         data = {}
