@@ -82,7 +82,7 @@ def get_project_branch_single_links_url(project_id, branch_id):
 def get_benchmark_definitions_url():
     return '/main/definitions/all/'
 
-def get_benchmark_execution_stacked(project_entry, branch_entry, bench_def_entry, worker_entry):
+def get_benchmark_execution_stacked_url(project_entry, branch_entry, bench_def_entry, worker_entry):
     return '/main/execution/stacked/project/{0}/branch/{1}/definition/{2}/worker/{3}/'.format(
         project_entry,
         branch_entry,

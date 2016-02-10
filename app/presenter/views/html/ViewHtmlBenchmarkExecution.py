@@ -1,7 +1,12 @@
 """ Presenter views, benchmark execution page functions """
 
 from app.presenter.views.helpers import ViewPrepareObjects
+from app.logic.benchmark.controllers.BenchmarkExecutionController import BenchmarkExecutionController
 from app.logic.benchmark.models.BenchmarkExecutionModel import BenchmarkExecutionEntry
+from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
+from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
+from app.logic.gitrepo.models.GitBranchModel import GitBranchEntry
+from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
 from app.logic.httpcommon import res
 
 def get_benchmark_execution(request, bench_exec_id):
@@ -19,3 +24,39 @@ def get_benchmark_execution(request, bench_exec_id):
 
     return res.get_template_data(request, 'presenter/benchmark_execution.html', data)
 
+def get_benchmark_executions_stacked(request, project_id, branch_id, definition_id, worker_id):
+    """ Display single branch links """
+    if request.method == 'GET':
+        project = BluesteelProjectEntry.objects.filter(id=project_id).first()
+        if project == None:
+            return res.get_template_data(request, 'presenter/not_found.html', {})
+
+        branch = GitBranchEntry.objects.filter(id=branch_id, project=project.git_project.id).first()
+        if branch == None:
+            return res.get_template_data(request, 'presenter/not_found.html', {})
+
+        definition = BenchmarkDefinitionEntry.objects.filter(id=definition_id, project=project).first()
+        if definition == None:
+            return res.get_template_data(request, 'presenter/not_found.html', {})
+
+        worker = WorkerEntry.objects.filter(id=worker_id).first()
+        if worker == None:
+            return res.get_template_data(request, 'presenter/not_found.html', {})
+
+        executions = BenchmarkExecutionController.get_benchmark_execution_from_branch(
+            project,
+            branch,
+            definition,
+            worker
+        )
+
+        executions = ViewPrepareObjects.prepare_stacked_executions_for_html(executions)
+        print executions
+
+        data = {}
+        data['stacked_executions'] = executions
+        data['menu'] = ViewPrepareObjects.prepare_menu_for_html([])
+
+        return res.get_template_data(request, 'presenter/benchmark_execution_stacked.html', data)
+    else:
+        return res.get_template_data(request, 'presenter/not_found.html', {})

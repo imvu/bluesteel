@@ -155,10 +155,40 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
         self.assertEqual('No JSON object could be decoded\nthis is a plain text and it is not json!', results[0]['out'][0]['obj']['data'])
         self.assertEqual('{"visual_type": "text", "data": "No JSON object could be decoded\\nthis is a plain text and it is not json!", "id": "error-0"}', results[0]['out'][0]['json'])
 
+
+    def test_prepare_bench_execution_returns_commands_with_substituted_text(self):
+        obj = [{'visual_type' : 'vertical_bars', 'id' : 'id1', 'data' : [1, 2, 3, 4, 5]}]
+
+        com_entries = CommandEntry.objects.filter(command_set=self.benchmark_definition1.command_set)
+        for com_entry in com_entries:
+            com_entry.command = '{0} {1}'.format(com_entry.command, '{commit}')
+            com_entry.save()
+
+        command_set = self.create_command_result('command-1 0000100001000010000100001000010000100001', 0, obj, 'no error')
+
+        exec_entry = BenchmarkExecutionEntry.objects.create(
+            definition=self.benchmark_definition1,
+            commit=self.commit1,
+            worker=self.worker1,
+            report=command_set)
+
+        exec_obj = exec_entry.as_object()
+        bench_exe = ViewPrepareObjects.prepare_benchmark_execution_for_html(exec_obj, 'http://my.domain.com')
+
+        self.assertEqual('command-1 0000100001000010000100001000010000100001', bench_exe['definition']['command_set']['commands'][0]['command'])
+        self.assertEqual('command-2 0000100001000010000100001000010000100001', bench_exe['definition']['command_set']['commands'][1]['command'])
+        self.assertEqual('command-3 0000100001000010000100001000010000100001', bench_exe['definition']['command_set']['commands'][2]['command'])
+
+
     def test_prepare_objects_from_benchmark_execution_with_command_substitution(self):
         obj = [{'visual_type' : 'vertical_bars', 'id' : 'id1', 'data' : [1, 2, 3, 4, 5]}]
 
-        command_set = self.create_command_result('command-1 {commit}', 0, obj, 'no error')
+        com_entries = CommandEntry.objects.filter(command_set=self.benchmark_definition1.command_set)
+        for com_entry in com_entries:
+            com_entry.command = '{0} {1}'.format(com_entry.command, '{commit}')
+            com_entry.save()
+
+        command_set = self.create_command_result('command-1 0000100001000010000100001000010000100001', 0, obj, 'no error')
 
         exec_entry = BenchmarkExecutionEntry.objects.create(
             definition=self.benchmark_definition1,

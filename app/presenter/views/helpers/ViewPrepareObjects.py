@@ -134,6 +134,10 @@ def prepare_benchmark_execution_for_html(execution, domain):
     obj['worker']['last_update'] = str(execution['worker']['last_update'])
     obj['url'] = {}
     obj['url']['save'] = ViewUrlGenerator.get_save_bench_exe_full_url(domain, obj['id'])
+
+    for command in execution['definition']['command_set']['commands']:
+        command['command'] = command['command'].replace('{commit}', execution['commit'])
+
     return obj
 
 def prepare_results_from_bench_exec_to_html(execution):
@@ -147,8 +151,6 @@ def prepare_results_from_bench_exec_to_html(execution):
         com['status'] = command['result'].get('status', 0)
         com['error'] = command['result'].get('error', '')
         com['out'] = []
-
-        com['command'] = command['command'].replace('{commit}', execution['commit'])
 
         out_json = []
 
@@ -181,3 +183,56 @@ def prepare_results_from_bench_exec_to_html(execution):
 
     return results
 
+def prepare_stacked_executions_for_html(executions):
+    """ Prepare stacked execitions of html """
+    results = []
+    for key in executions:
+        item = {}
+        item['id'] = key
+        item['data'] = executions[key]
+        item['json'] = json.dumps(item['data'])
+        results.append(item)
+
+    return results
+
+
+    # for index, command in enumerate(execution['report']['commands']):
+
+    #     com = {}
+    #     com['command'] = command['command']
+    #     com['status'] = command['result'].get('status', 0)
+    #     com['error'] = command['result'].get('error', '')
+    #     com['out'] = []
+
+    #     com['command'] = command['command'].replace('{commit}', execution['commit'])
+
+    #     out_json = []
+
+    #     try:
+    #         out_json = json.loads(command['result'].get('out', '[]'))
+    #     except ValueError as error:
+    #         res = {}
+    #         res['id'] = 'error-{0}'.format(index)
+    #         res['visual_type'] = 'text'
+    #         res['data'] = '{0}\n{1}'.format(
+    #             str(error),
+    #             command['result']['out'])
+    #         out_json.append(res)
+    #     except KeyError as error:
+    #         res = {}
+    #         res['id'] = 'error-{0}'.format(index)
+    #         res['visual_type'] = 'text'
+    #         res['data'] = '{0}\n{1}'.format(
+    #             str(error),
+    #             command['result']['out'])
+    #         out_json.append(res)
+
+    #     for ent in out_json:
+    #         tmp = {}
+    #         tmp['obj'] = ent
+    #         tmp['json'] = json.dumps(ent)
+    #         com['out'].append(tmp)
+
+    #     results.append(com)
+
+    # return results

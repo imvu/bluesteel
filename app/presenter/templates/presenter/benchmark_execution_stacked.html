@@ -1,0 +1,33 @@
+{% extends "presenter/base.html" %}
+
+{% load staticfiles %}
+
+{% block data_body %}
+<div class="container_med container_height">
+    <ul class="no_dots no_indent">
+        {% if stacked_executions %}
+            <li>
+                <div class="upper_card white_card card_padding_small">
+                    <div class="centered">my execution</div>
+                </div>
+                {% for exec in stacked_executions %}
+                    {% if forloop.last %}
+                        <div class="lower_card white_card card_padding_large">
+                    {% else %}
+                        <div class="middle_card white_card card_padding_large">
+                    {% endif %}
+
+                        <div class="list_label indent_1">STACKED BENCHMARK</div>
+                        <div class="command indent_2">{{exec.id}}</div>
+                        <br/>
+                        <canvas id="stacked-chart-{{forloop.counter0}}" width="540" height="220"></canvas>
+                        <script>stackedchartVerticalBars('stacked-chart-{{forloop.counter0}}', {{exec.json|safe}});</script>
+                        <br/>
+                    </div>
+
+                {% endfor %}
+            </li>
+        {% endif %}
+    </ul>
+</div>
+{% endblock %}

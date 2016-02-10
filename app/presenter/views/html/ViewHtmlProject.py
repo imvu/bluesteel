@@ -99,7 +99,7 @@ def get_project_single_branch_links(request, project_id, branch_id):
                 worker = {}
                 worker['name'] = worker_entry.name
                 worker['uuid'] = worker_entry.uuid
-                worker['stacked_benchmarks'] = ViewUrlGenerator.get_benchmark_execution_stacked(
+                worker['stacked_benchmarks'] = ViewUrlGenerator.get_benchmark_execution_stacked_url(
                     project_id,
                     branch_id,
                     def_entry.id,

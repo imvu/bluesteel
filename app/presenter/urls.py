@@ -6,6 +6,10 @@ from django.contrib import admin
 admin.autodiscover()
 
 # pylint: disable=C0103
+
+# disable lines too long
+# pylint: disable=C0301
+
 urlpatterns = patterns(
     '',
     url(r'^view/$',
@@ -52,6 +56,9 @@ urlpatterns = patterns(
 
     url(r'^execution/(?P<bench_exec_id>\d+)/$',
         'app.presenter.views.html.ViewHtmlBenchmarkExecution.get_benchmark_execution'),
+
+    url(r'^execution/stacked/project/(?P<project_id>\d+)/branch/(?P<branch_id>\d+)/definition/(?P<definition_id>\d+)/worker/(?P<worker_id>\d+)/$',
+        'app.presenter.views.html.ViewHtmlBenchmarkExecution.get_benchmark_executions_stacked'),
 
     url(r'^feed/report/(?P<feed_report_id>\d+)/$',
         'app.presenter.views.html.ViewHtmlFeed.get_feed_report'),
