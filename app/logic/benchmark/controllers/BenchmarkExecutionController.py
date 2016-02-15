@@ -73,8 +73,11 @@ class BenchmarkExecutionController(object):
             ).first()
 
             slot = {}
-            slot['benchmark_execution'] = {}
+            slot['exists'] = False
+            slot['benchmark_execution_id'] = 0
+            slot['report'] = {}
             slot['current_branch'] = False
+            slot['commit'] = ''
 
             if not benchmark_entry:
                 bench_data.append(slot)
@@ -83,8 +86,11 @@ class BenchmarkExecutionController(object):
             if fork_point_hash == benchmark_entry.commit.commit_hash:
                 past_fork_point = True
 
-            slot['benchmark_execution'] = benchmark_entry.as_object()
+            slot['exists'] = True
+            slot['benchmark_execution_id'] = benchmark_entry.id
+            slot['report'] = benchmark_entry.report.as_object()
             slot['current_branch'] = not past_fork_point
+            slot['commit'] = benchmark_entry.commit.commit_hash
             bench_data.append(slot)
         return bench_data
 
@@ -96,10 +102,10 @@ class BenchmarkExecutionController(object):
 
         bench_data = {}
         for index, data in enumerate(stacked_benchmark_data):
-            if data['benchmark_execution'] == {}:
+            if not data['exists']:
                 continue
 
-            for command in data['benchmark_execution']['report']['commands']:
+            for command in data['report']['commands']:
                 res = json.loads(command['result']['out'])
 
                 for exec_item in res:
@@ -115,7 +121,7 @@ class BenchmarkExecutionController(object):
 
                     obj = {}
                     obj['average'] = BenchmarkExecutionController.get_average(exec_item['data'])
-                    obj['benchmark_execution_id'] = data['benchmark_execution']['id']
+                    obj['benchmark_execution_id'] = data['benchmark_execution_id']
                     if data['current_branch']:
                         obj['bar_type'] = 'current_branch'
                     else:
