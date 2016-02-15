@@ -43,15 +43,16 @@ def get_benchmark_executions_stacked(request, project_id, branch_id, definition_
         if worker == None:
             return res.get_template_data(request, 'presenter/not_found.html', {})
 
-        executions = BenchmarkExecutionController.get_benchmark_execution_from_branch(
+        data = BenchmarkExecutionController.get_stacked_executions_from_branch(
             project,
             branch,
             definition,
             worker
         )
 
+        executions = BenchmarkExecutionController.get_stacked_data_separated_by_id(data)
+
         executions = ViewPrepareObjects.prepare_stacked_executions_for_html(executions)
-        print executions
 
         data = {}
         data['stacked_executions'] = executions

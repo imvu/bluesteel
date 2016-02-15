@@ -9,6 +9,7 @@ from app.logic.commandrepo.models.CommandModel import CommandEntry
 from app.logic.commandrepo.models.CommandResultModel import CommandResultEntry
 from app.logic.commandrepo.controllers.CommandController import CommandController
 from app.logic.gitrepo.models.GitBranchTrailModel import GitBranchTrailEntry
+from app.logic.gitrepo.models.GitBranchMergeTargetModel import GitBranchMergeTargetEntry
 import json
 
 class BenchmarkExecutionController(object):
@@ -41,54 +42,85 @@ class BenchmarkExecutionController(object):
             return execution
 
     @staticmethod
-    def get_benchmark_execution_from_branch(project_entry, branch_entry, bench_def_entry, worker_entry):
+    def get_average(vector):
+        """ Returns the average of a vector values """
+        average = 0.0
+        for value in vector:
+            average += float(value)
+        return average / float(len(vector))
+
+    @staticmethod
+    def get_stacked_executions_from_branch(project_entry, branch_entry, bench_def_entry, worker_entry):
         """ Returns all benchmarks for a given branch """
         branch_trails = GitBranchTrailEntry.objects.filter(project=project_entry, branch=branch_entry).order_by('order')
-        bench_data = {}
+        bench_data = []
 
-        for index, trail in enumerate(branch_trails):
+        fork_point_hash = ''
+        past_fork_point = False
+
+        merge_target = GitBranchMergeTargetEntry.objects.filter(
+            project=project_entry,
+            current_branch=branch_entry).first()
+
+        if merge_target and merge_target.current_branch != merge_target.target_branch:
+            fork_point_hash = merge_target.fork_point.commit_hash
+
+        for trail in branch_trails:
             benchmark_entry = BenchmarkExecutionEntry.objects.filter(
                 definition=bench_def_entry,
                 commit=trail.commit,
                 worker=worker_entry
             ).first()
 
+            slot = {}
+            slot['benchmark_execution'] = {}
+            slot['current_branch'] = False
+
             if not benchmark_entry:
+                bench_data.append(slot)
                 continue
 
-            report_obj = benchmark_entry.report.as_object()
+            if fork_point_hash == benchmark_entry.commit.commit_hash:
+                past_fork_point = True
 
-            for command in report_obj['commands']:
-                out_obj = json.loads(command['result']['out'])
-                for bench_res in out_obj:
-                    if bench_res['visual_type'] == 'vertical_bars':
-                        if bench_res['id'] not in bench_data:
-                            bench_data[bench_res['id']] = []
-
-                        slot = {}
-                        slot['index'] = index
-                        slot['data'] = bench_res['data']
-                        slot['benchmark_execution_id'] = benchmark_entry.id
-                        bench_data[bench_res['id']].append(slot)
+            slot['benchmark_execution'] = benchmark_entry.as_object()
+            slot['current_branch'] = not past_fork_point
+            bench_data.append(slot)
+        return bench_data
 
 
-        for key in bench_data:
-            data = [{
-                'average' : 0.0,
-                'benchmark_execution_id' : 0
-            }] * len(branch_trails)
 
-            for slot in bench_data[key]:
-                average = 0.0
-                for value in slot['data']:
-                    average += float(value)
-                average = average / float(len(slot['data']))
-                data[slot['index']] = {
-                    'average' : average,
-                    'benchmark_execution_id' : slot['benchmark_execution_id']
-                }
+    @staticmethod
+    def get_stacked_data_separated_by_id(stacked_benchmark_data):
+        """ Returns all benchmarks for a given branch """
 
-            bench_data[key] = data
+        bench_data = {}
+        for index, data in enumerate(stacked_benchmark_data):
+            if data['benchmark_execution'] == {}:
+                continue
+
+            for command in data['benchmark_execution']['report']['commands']:
+                res = json.loads(command['result']['out'])
+
+                for exec_item in res:
+                    if exec_item['visual_type'] != 'vertical_bars':
+                        continue
+
+                    if exec_item['id'] not in bench_data:
+                        bench_data[exec_item['id']] = [{
+                            'average' : 0.0,
+                            'benchmark_execution_id' : 0,
+                            'bar_type' : 'invalidated'
+                        }] * len(stacked_benchmark_data)
+
+                    obj = {}
+                    obj['average'] = BenchmarkExecutionController.get_average(exec_item['data'])
+                    obj['benchmark_execution_id'] = data['benchmark_execution']['id']
+                    if data['current_branch']:
+                        obj['bar_type'] = 'current_branch'
+                    else:
+                        obj['bar_type'] = 'other_branch'
+                    bench_data[exec_item['id']][index] = obj
 
         return bench_data
 

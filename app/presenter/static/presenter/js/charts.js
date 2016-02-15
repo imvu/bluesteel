@@ -122,4 +122,19 @@ stackedchartVerticalBars = function(objId, data) {
 
     var ctx = document.getElementById(objId).getContext('2d');
     var myBarChart = new Chart(ctx).Bar(chartData, options);
+
+
+    for (var i = 0; i < data.length; i++) {
+        labels.push(data[i]['benchmark_execution_id'].toString());
+
+        if (data[i]['bar_type'] === 'current_branch') {
+            myBarChart.datasets[0].bars[i].fillColor = "#B0C4DE";
+        } else if (data[i]['bar_type'] === 'other_branch') {
+            myBarChart.datasets[0].bars[i].fillColor = "#dbe4f0";
+            //#dbe4f0
+            //#c9d7e8
+        }
+    }
+
+    myBarChart.update();
 }
