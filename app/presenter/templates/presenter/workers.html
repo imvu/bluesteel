@@ -33,10 +33,10 @@
                         <div class="normal indent_2">
                             {% if worker.activity %}
                             <div class="normal inline color_correct"><i class="fa fa-check-circle"></i></div>
-                            <div class="normal inline">{{worker.last_update}} ago</div>
+                            <div class="normal inline">{{worker.last_update.year}}-{{worker.last_update.month}}-{{worker.last_update.day}}, {{worker.last_update.hour}}:{{worker.last_update.minute}}:{{worker.last_update.second}}</div>
                             {% else %}
                             <div class="normal inline color_error"><i class="fa fa-exclamation-circle"></i></i></div>
-                            <div class="normal inline color_error">{{worker.last_update}} ago</div>
+                            <div class="normal inline color_error">{{worker.last_update.year}}-{{worker.last_update.month}}-{{worker.last_update.day}}, {{worker.last_update.hour}}:{{worker.last_update.minute}}:{{worker.last_update.second}}</div>
                             {% endif %}
                         </div>
                     </li>

@@ -97,7 +97,6 @@ def prepare_workers_for_html(workers):
 
     for worker in workers:
 
-        worker['last_update'] = str(worker['last_update'])
         worker['url'] = {}
         worker['url']['feed_report'] = ViewUrlGenerator.get_feed_report_form_worker_url(worker['id'])
         worker_items.append(worker)
@@ -131,7 +130,6 @@ def prepare_branches_for_html(project_id, branches):
 def prepare_benchmark_execution_for_html(execution, domain):
     """ Parepares an execution object to json, ie: serializing date times :D """
     obj = execution
-    obj['worker']['last_update'] = str(execution['worker']['last_update'])
     obj['url'] = {}
     obj['url']['save'] = ViewUrlGenerator.get_save_bench_exe_full_url(domain, obj['id'])
 
