@@ -62,8 +62,10 @@ chartVerticalBars = function(objId, data) {
 
 stackedchartVerticalBars = function(objId, data) {
     var labels = []
+    var test = []
     for (var i = 0; i < data.length; i++) {
         labels.push(data[i]['benchmark_execution_id'].toString());
+        test.push(labels[i] + "--test");
     }
 
     var values = [];
@@ -73,6 +75,7 @@ stackedchartVerticalBars = function(objId, data) {
 
     var chartData = {}
     chartData['labels'] = labels
+    chartData['test'] = test
     chartData['datasets'] = [
         {
             'label' : 'chartDataSet',
@@ -134,7 +137,14 @@ stackedchartVerticalBars = function(objId, data) {
             //#dbe4f0
             //#c9d7e8
         }
+        myBarChart.datasets[0].bars[i].benchmarkExecutionUrl = data[i]['benchmark_execution_url'];
     }
 
     myBarChart.update();
+
+    document.getElementById(objId).onclick = function(evt){
+        var activeBars = myBarChart.getBarsAtEvent(evt);
+        console.log("activeBars", activeBars);
+        window.location = activeBars[0].benchmarkExecutionUrl
+    }.bind(myBarChart);
 }

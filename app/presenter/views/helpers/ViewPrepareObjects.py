@@ -181,13 +181,19 @@ def prepare_results_from_bench_exec_to_html(execution):
 
     return results
 
-def prepare_stacked_executions_for_html(executions):
+def prepare_stacked_executions_for_html(domain, executions):
     """ Prepare stacked execitions of html """
     results = []
     for key in executions:
         item = {}
         item['id'] = key
         item['data'] = executions[key]
+
+        for bench_data in item['data']:
+            bench_data['benchmark_execution_url'] = ViewUrlGenerator.get_benchmark_execution_full_url(
+                domain,
+                bench_data['benchmark_execution_id'])
+
         item['json'] = json.dumps(item['data'])
         results.append(item)
 

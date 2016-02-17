@@ -52,7 +52,7 @@ def get_benchmark_executions_stacked(request, project_id, branch_id, definition_
 
         executions = BenchmarkExecutionController.get_stacked_data_separated_by_id(data)
 
-        executions = ViewPrepareObjects.prepare_stacked_executions_for_html(executions)
+        executions = ViewPrepareObjects.prepare_stacked_executions_for_html(request.get_host(), executions)
 
         data = {}
         data['stacked_executions'] = executions
