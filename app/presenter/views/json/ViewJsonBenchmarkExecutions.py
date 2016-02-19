@@ -50,3 +50,18 @@ def save_benchmark_execution(request, benchmark_execution_id):
         return res.get_response(200, 'Benchmark Execution saved', {})
     else:
         return res.get_response(400, 'Only post allowed', {})
+
+
+def invalidate_benchmark_execution(request, benchmark_execution_id):
+    """ Check and save a benchmark execution data into the db """
+    if request.method == 'POST':
+        bench_exec_entry = BenchmarkExecutionEntry.objects.filter(id=benchmark_execution_id).first()
+        if bench_exec_entry == None:
+            return res.get_response(404, 'Bench Execution Entry not found', {})
+
+        bench_exec_entry.invalidated = True
+        bench_exec_entry.save()
+
+        return res.get_response(200, 'Benchmark Execution invalidated', {})
+    else:
+        return res.get_response(400, 'Only post allowed', {})

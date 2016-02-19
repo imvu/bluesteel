@@ -11,12 +11,7 @@
                     <div class="centered"><a class="title_link" href="{{definition.url.edit}}">my execution</a></div>
                 </div>
                 {% for res in results %}
-                    {% if forloop.last %}
-                        <div class="lower_card white_card card_padding_large">
-                    {% else %}
-                        <div class="middle_card white_card card_padding_large">
-                    {% endif %}
-
+                    <div class="middle_card white_card card_padding_large">
                         <div class="list_label indent_1">COMMAND</div>
                         <div class="command indent_2">{{res.command}}</div>
                         <br/>
@@ -45,9 +40,20 @@
                             <div class="list_label indent_1">ERROR</div>
                             <div class="command indent_2">{{res.error}}</div>
                         {% endif %}
-                    </div>
 
+                </div>
                 {% endfor %}
+                <div class="lower_card white_card card_padding_large">
+                    <ul class="no_dots no_indent vertical_margin horizontal_list">
+                        <li class="horizontal">
+                            <button     class="btn_rect danger"
+                                        type='button'
+                                        id='invalidate_button'
+                                        onclick="executeAndDisableButton('{{url.invalidate}}' ,'invalidate_button', 'Invalidated');"
+                            >Invalidate Execution</button>
+                        </li>
+                    </ul>
+                </div>
             </li>
         {% endif %}
     </ul>

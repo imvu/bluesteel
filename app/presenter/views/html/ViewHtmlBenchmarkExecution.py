@@ -1,6 +1,7 @@
 """ Presenter views, benchmark execution page functions """
 
 from app.presenter.views.helpers import ViewPrepareObjects
+from app.presenter.views.helpers import ViewUrlGenerator
 from app.logic.benchmark.controllers.BenchmarkExecutionController import BenchmarkExecutionController
 from app.logic.benchmark.models.BenchmarkExecutionModel import BenchmarkExecutionEntry
 from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
@@ -21,6 +22,8 @@ def get_benchmark_execution(request, bench_exec_id):
 
     obj = exec_entry.as_object()
     data['results'] = ViewPrepareObjects.prepare_results_from_bench_exec_to_html(obj)
+    data['url'] = {}
+    data['url']['invalidate'] = ViewUrlGenerator.get_benchmark_execution_invalidate_url(exec_entry.id)
 
     return res.get_template_data(request, 'presenter/benchmark_execution.html', data)
 

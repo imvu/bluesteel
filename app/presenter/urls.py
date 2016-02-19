@@ -107,6 +107,8 @@ urlpatterns = patterns(
     url(r'^execution/(?P<benchmark_execution_id>\d+)/save/$',
         'app.presenter.views.json.ViewJsonBenchmarkExecutions.save_benchmark_execution'),
 
+    url(r'^execution/(?P<benchmark_execution_id>\d+)/invalidate/$',
+        'app.presenter.views.json.ViewJsonBenchmarkExecutions.invalidate_benchmark_execution'),
 
     url(r'^bluesteelworker/bootstrap/$',
         'app.presenter.views.json.ViewJsonBluesteelWorker.get_bootstrap_urls'),

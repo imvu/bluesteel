@@ -182,3 +182,19 @@ class BenchmarkViewTestCase(TestCase):
 
         self.assertEqual(404, resp_obj['status'])
 
+
+    def test_benchmark_execution_invalidate(self):
+        self.assertEqual(False, self.benchmark_execution1.invalidated)
+        self.assertEqual(False, self.benchmark_execution2.invalidated)
+
+        resp = self.client.post(
+            '/main/execution/{0}/invalidate/'.format(self.benchmark_execution1.id),
+            data = json.dumps({}),
+            content_type='application/json')
+
+        res.check_cross_origin_headers(self, resp)
+        resp_obj = json.loads(resp.content)
+
+        self.assertEqual(200, resp_obj['status'])
+        self.assertEqual(True, BenchmarkExecutionEntry.objects.filter(id=self.benchmark_execution1.id).first().invalidated)
+        self.assertEqual(False, BenchmarkExecutionEntry.objects.filter(id=self.benchmark_execution2.id).first().invalidated)
