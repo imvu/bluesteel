@@ -106,3 +106,35 @@ class BenchmarkExecutionEntryTestCase(TestCase):
         self.assertEqual(False, obj['worker']['git_feeder'])
 
 
+    def test_benchmark_execution_invalidated_by_bool_property(self):
+        self.benchmark_definition.revision = 28
+        self.benchmark_definition.save()
+
+        entry = BenchmarkExecutionEntry.objects.create(
+            definition=self.benchmark_definition,
+            commit=self.git_commit,
+            worker=self.worker,
+            report=self.command_set,
+            invalidated=True,
+            status=BenchmarkExecutionEntry.STATUS_TYPE[1][0],
+            revision_target=28
+        )
+
+        self.assertEqual(True, entry.is_invalidated())
+
+    def test_benchmark_execution_invalidated_by_revision(self):
+        self.benchmark_definition.revision = 29
+        self.benchmark_definition.save()
+
+        entry = BenchmarkExecutionEntry.objects.create(
+            definition=self.benchmark_definition,
+            commit=self.git_commit,
+            worker=self.worker,
+            report=self.command_set,
+            invalidated=False,
+            status=BenchmarkExecutionEntry.STATUS_TYPE[1][0],
+            revision_target=28
+        )
+
+        self.assertEqual(True, entry.is_invalidated())
+

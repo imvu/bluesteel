@@ -37,12 +37,16 @@ class BenchmarkExecutionEntry(models.Model):
         obj['commit'] = self.commit.commit_hash
         obj['worker'] = self.worker.as_object()
         obj['report'] = self.report.as_object()
-        obj['invalidated'] = self.definition.revision != self.revision_target
+        obj['invalidated'] = self.is_invalidated()
         obj['status'] = {}
         obj['status']['index'] = self.status
         obj['status']['name'] = self.STATUS_TYPE[obj['status']['index']][1]
         return obj
 
+
+    def is_invalidated(self):
+        """ Returns true if Benchmark execution is invalidated """
+        return self.definition.revision != self.revision_target or self.invalidated
 
 
 
