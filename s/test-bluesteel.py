@@ -29,6 +29,7 @@ def get_test_list():
     packs.append(get_packed_app_info(['app', 'httpcommon'],         'app/logic/httpcommon',))
     packs.append(get_packed_app_info(['app', 'commandrepo'],        'app/logic/commandrepo',))
     packs.append(get_packed_app_info(['app', 'logger'],             'app/logic/logger',))
+    packs.append(get_packed_app_info(['app', 'mailing'],            'app/logic/mailing',))
     packs.append(get_packed_app_info(['app', 'presenter'],          'app/presenter',))
 
     test_list = []

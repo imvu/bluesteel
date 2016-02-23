@@ -48,6 +48,7 @@ INSTALLED_APPS = (
     'app.logic.commandrepo',
     'app.logic.fontawesome',
     'app.logic.logger',
+    'app.logic.mailing',
     'app.presenter',
 )
 

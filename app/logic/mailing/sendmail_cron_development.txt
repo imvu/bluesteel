@@ -1,0 +1,1 @@
+*/1 * * * *  cd ~/imvu-solutions/rowpow-environment && ~/imvu-solutions/rowpow-environment/bin/python ~/imvu-solutions/rowpow-environment/rowpow/manage.py sendmail --settings=rowpow.settings.development >> ~/auto-update.log 2>&1
