@@ -23,6 +23,7 @@ saveBenchmarkDefinition = function(idFormBenchmarkDefinition) {
     console.log(form.elements);
 
     obj = {};
+    obj['name'] = form.elements['name_active'].value;
     obj['layout_id'] = parseInt(form.elements['layout_active'].value);
     obj['project_id'] = parseInt(form.elements['project_active'].value);
     obj['command_list'] = [];

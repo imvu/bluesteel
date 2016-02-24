@@ -45,18 +45,20 @@ class BenchmarkDefinitionController(object):
         return definition
 
     @staticmethod
-    def save_benchmark_definition(benchmark_definition_id, layout_id, project_id, command_list):
+    def save_benchmark_definition(name, benchmark_definition_id, layout_id, project_id, command_list):
         """ Save benchmark definition with the new data provided, returns None if error """
+        benchmark_def_entry = BenchmarkDefinitionEntry.objects.filter(id=benchmark_definition_id).first()
+
+        if benchmark_def_entry == None:
+            return None
+
         if BenchmarkDefinitionController.is_benchmark_definition_equivalent(
                 benchmark_definition_id,
                 layout_id,
                 project_id,
                 command_list):
-            return None
-
-        benchmark_def_entry = BenchmarkDefinitionEntry.objects.filter(id=benchmark_definition_id).first()
-
-        if benchmark_def_entry == None:
+            benchmark_def_entry.name = name
+            benchmark_def_entry.save()
             return None
 
         layout_entry = BluesteelLayoutEntry.objects.filter(id=layout_id).first()
@@ -68,6 +70,7 @@ class BenchmarkDefinitionController(object):
 
         if project_entry == None:
             project_entry = BluesteelProjectEntry.objects.filter(layout=layout_entry).first()
+            benchmark_def_entry.name = name
             benchmark_def_entry.layout = layout_entry
             benchmark_def_entry.project = project_entry
             benchmark_def_entry.save()
@@ -76,6 +79,7 @@ class BenchmarkDefinitionController(object):
         CommandController.delete_commands_of_command_set(benchmark_def_entry.command_set)
         CommandController.add_commands_to_command_set(benchmark_def_entry.command_set, command_list)
 
+        benchmark_def_entry.name = name
         benchmark_def_entry.layout = layout_entry
         benchmark_def_entry.project = project_entry
         benchmark_def_entry.revision = benchmark_def_entry.revision + 1

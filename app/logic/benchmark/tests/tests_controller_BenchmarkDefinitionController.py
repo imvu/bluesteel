@@ -86,18 +86,20 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
         self.assertEqual(3, CommandEntry.objects.filter(command_set=definition.command_set).count())
         self.assertEqual(0, CommandResultEntry.objects.all().count())
         self.assertEqual(0, definition.revision)
+        self.assertEqual('default-name', definition.name)
 
         commands = []
         commands.append('command-28')
         commands.append('command-29')
         commands.append('command-30')
 
-        definition = BenchmarkDefinitionController.save_benchmark_definition(definition.id, new_layout.id, project.id, commands)
+        definition = BenchmarkDefinitionController.save_benchmark_definition('new-name', definition.id, new_layout.id, project.id, commands)
 
         self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='command-28').count())
         self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='command-29').count())
         self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='command-30').count())
         self.assertEqual(1, definition.revision)
+        self.assertEqual('new-name', definition.name)
 
     def test_save_same_benchmark_definition_does_not_increment_revision(self):
         self.assertEqual(0, CommandGroupEntry.objects.all().count())
@@ -117,13 +119,14 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
         self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='command-3').count())
         self.assertEqual(0, CommandResultEntry.objects.all().count())
         self.assertEqual(0, definition.revision)
+        self.assertEqual('default-name', definition.name)
 
         commands = []
         commands.append('command-1')
         commands.append('command-2')
         commands.append('command-3')
 
-        result = BenchmarkDefinitionController.save_benchmark_definition(definition.id, new_layout.id, project.id, commands)
+        result = BenchmarkDefinitionController.save_benchmark_definition('default-name', definition.id, new_layout.id, project.id, commands)
         definition = BenchmarkDefinitionEntry.objects.all().first()
 
         self.assertEqual(None, result)
@@ -131,6 +134,7 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
         self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='command-2').count())
         self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='command-3').count())
         self.assertEqual(0, definition.revision)
+        self.assertEqual('default-name', definition.name)
 
     def test_save_benchmark_definition_does_not_delete_benchmarks_executions(self):
         user1 = User.objects.create_user('user1@test.com', 'user1@test.com', 'pass')
@@ -208,12 +212,14 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
         commands.append('command-new-4')
         commands.append('command-new-5')
 
+        self.assertEqual('BenchmarkDefinition1', benchmark_definition1.name)
         self.assertEqual(1, BenchmarkExecutionEntry.objects.all().count())
         self.assertEqual(benchmark_execution1, BenchmarkExecutionEntry.objects.all().first())
         self.assertEqual(0, CommandEntry.objects.filter(command_set=benchmark_definition1.command_set).count())
 
-        result = BenchmarkDefinitionController.save_benchmark_definition(benchmark_definition1.id, bluesteel_layout.id, bluesteel_project.id, commands)
+        result = BenchmarkDefinitionController.save_benchmark_definition('BenchmarkDefinition1-1', benchmark_definition1.id, bluesteel_layout.id, bluesteel_project.id, commands)
 
+        self.assertEqual('BenchmarkDefinition1-1', result.name)
         self.assertEqual(1, BenchmarkExecutionEntry.objects.all().count())
         self.assertEqual(benchmark_execution1, BenchmarkExecutionEntry.objects.all().first())
         self.assertEqual(5, CommandEntry.objects.filter(command_set=benchmark_definition1.command_set).count())
@@ -228,14 +234,24 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
         project = BluesteelProjectController.create_default_project(layout, 'project', 0)
         definition = BenchmarkDefinitionController.create_default_benchmark_definition()
 
-        self.assertEqual(False, BenchmarkDefinitionController.is_benchmark_definition_equivalent(definition.id, 2028, project.id, []))
+        commands = []
+        commands.append('command-1')
+        commands.append('command-2')
+        commands.append('command-3')
+
+        self.assertEqual(False, BenchmarkDefinitionController.is_benchmark_definition_equivalent(definition.id, 2028, project.id, commands))
 
     def test_is_benchmark_definition_equivalent_project(self):
         layout = BluesteelLayoutEntry.objects.create(name='default-name')
         project = BluesteelProjectController.create_default_project(layout, 'project', 0)
         definition = BenchmarkDefinitionController.create_default_benchmark_definition()
 
-        self.assertEqual(False, BenchmarkDefinitionController.is_benchmark_definition_equivalent(definition.id, layout.id, 2028, []))
+        commands = []
+        commands.append('command-1')
+        commands.append('command-2')
+        commands.append('command-3')
+
+        self.assertEqual(False, BenchmarkDefinitionController.is_benchmark_definition_equivalent(definition.id, layout.id, 2028, commands))
 
     def test_is_benchmark_definition_equivalent_commands(self):
         layout = BluesteelLayoutEntry.objects.create(name='default-name')

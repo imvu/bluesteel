@@ -114,6 +114,7 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
         layout = BluesteelLayoutController.create_new_default_layout()
         definition = BenchmarkDefinitionController.create_default_benchmark_definition()
 
+        self.assertEqual('default-name', definition.name)
         self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='command-1').count())
         self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='command-2').count())
         self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='command-3').count())
@@ -121,6 +122,7 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
         project = BluesteelProjectEntry.objects.filter(layout=layout).first()
 
         obj = {}
+        obj['name'] = 'new-name-1'
         obj['layout_id'] = layout.id
         obj['project_id'] = project.id
         obj['command_list'] = []
@@ -140,6 +142,8 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
         self.assertEqual(200, resp_obj['status'])
 
         definition = BenchmarkDefinitionEntry.objects.filter(id=definition.id).first()
+
+        self.assertEqual('new-name-1', definition.name)
 
         self.assertEqual(0, CommandEntry.objects.filter(command_set=definition.command_set, command='command-1').count())
         self.assertEqual(0, CommandEntry.objects.filter(command_set=definition.command_set, command='command-2').count())

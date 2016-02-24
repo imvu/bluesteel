@@ -7,8 +7,13 @@ SAVE_BENCHMARK_DEFINITION = {
     '$schema': 'http://json-schema.org/draft-03/schema#',
     'type' : 'object',
     'additionalProperties': False,
-    'required': ['layout_id', 'project_id', 'command_list'],
+    'required': ['name', 'layout_id', 'project_id', 'command_list'],
     'properties' : {
+        'name' : {
+            'type' : 'string',
+            'maxLength' : 128,
+            'minLength' : 1,
+        },
         'layout_id' : {
             'type' : 'number',
             'min' : 1,
