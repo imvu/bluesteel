@@ -1,83 +1,41 @@
 """ Common code for pagination """
 
-from django.core.paginator import Paginator
-from app.logic.httpcommon.Page import Page
+def get_pagination_indices(page, half_range, maximum_pages):
+    """ Returns all the pagination indices """
 
-def is_pagination_out_of_bounds(element_list, page):
-    """ Checks if pagination info is out of bounds """
-    if len(element_list) == 0:
-        return True
+    max_pages = max(1, maximum_pages)
+    current_page = min(max(1, page.page_index), max_pages)
+    start_range = max(1, page.page_index - half_range)
+    whole_range = min(max_pages, (int(half_range) * 2) + 1)
 
-    if page.items_per_page < 1:
-        return True
-
-    pager = Paginator(element_list, page.items_per_page)
-
-    if (page.page_index < 1) or (page.page_index > pager.num_pages):
-        return True
-    return False
-
-def get_empty_navigation_obj():
-    """ Returns a default-empty navigation object """
-    pagination_obj = {}
-    pagination_obj['next'] = ''
-    pagination_obj['prev'] = ''
-    pagination_obj['pages'] = []
-    return pagination_obj
-
-def get_navigation_links(element_list, page, page_link_count, url):
-    """ Returns a list of pages to navigate from current page """
-    page_link_count = int(page_link_count)
-
-    pagination_obj = get_empty_navigation_obj()
-
-    if is_pagination_out_of_bounds(element_list, page):
-        return pagination_obj
-
-    pager = Paginator(element_list, page.items_per_page)
-    half_range = int(page_link_count / 2)
-    page_index_start = 0
-    page_index_end = 0
     if (page.page_index - half_range) < 1:
-        page_index_start = 1
-        page_index_end = page_index_start + min((page_link_count - 1), pager.num_pages)
-    elif page.page_index + half_range > pager.num_pages:
-        page_index_start = max(1, pager.num_pages - (page_link_count - 1))
-        page_index_end = pager.num_pages
-    else:
-        page_index_start = page.page_index - half_range
-        page_index_end = page.page_index + half_range
+        start_range = max(1, page.page_index - half_range)
 
-    page_range = pager.page_range[page_index_start - 1:page_index_end]
+    if page.page_index + half_range > max_pages:
+        start_range = max(1, max_pages - (whole_range - 1))
 
-    page_info_list = []
-    for index in page_range:
-        page_info = {}
-        page_info['index'] = index
-        if index == page.page_index:
-            page_info['url'] = ''
-        else:
-            tmp_page = Page(page.items_per_page, index)
-            page_info['url'] = append_pag_info(url, tmp_page, page_link_count)
-        page_info_list.append(page_info)
+    pagination = {}
+    pagination['prev'] = max(1, current_page - 1)
+    pagination['current'] = current_page
+    pagination['next'] = min(max_pages, current_page + 1)
+    pagination['page_indices'] = range(start_range, start_range + whole_range)
+    return pagination
 
-    current_page = pager.page(page.page_index)
+def get_pagination_urls(pagination, url):
+    """ Return a pagination object with urls """
 
-    if current_page.has_previous():
-        tmp_page = Page(page.items_per_page, current_page.previous_page_number())
-        pagination_obj['prev'] = append_pag_info(
-            url,
-            tmp_page,
-            page_link_count
-        )
+    pag_url = {}
+    pag_url['prev'] = '{0}page/{1}/'.format(url, pagination['prev'])
+    pag_url['current'] = '{0}page/{1}/'.format(url, pagination['current'])
+    pag_url['next'] = '{0}page/{1}/'.format(url, pagination['next'])
+    pag_url['pages'] = []
 
-    if current_page.has_next():
-        tmp_page = Page(page.items_per_page, current_page.next_page_number())
-        pagination_obj['next'] = append_pag_info(url, tmp_page, page_link_count)
+    for page_index in pagination['page_indices']:
+        pag = {}
+        pag['url'] = '{0}page/{1}/'.format(url, page_index)
+        pag['index'] = page_index
+        pag['is_current'] = page_index == pagination['current']
+        pag_url['pages'].append(pag)
 
-    pagination_obj['pages'] = page_info_list
+    return pag_url
 
-    return pagination_obj
-
-def append_pag_info(url, page, dot_count):
-    return '{0}page/{1}/{2}/dots/{3}/'.format(url, page.items_per_page, page.page_index, dot_count)

@@ -17,134 +17,89 @@ class ViewPagTestCase(TestCase):
     def tearDown(self):
         pass
 
-    def test_pagination_out_of_bounds_elements_zero(self):
-        page = Page(3, 1)
-        self.assertEqual(True, pag.is_pagination_out_of_bounds([], page))
+    def test_pagination_indices_start_out_of_bounds(self):
+        pagination = pag.get_pagination_indices(Page(1, 2), 2, 10)
 
-    def test_pagination_out_of_bounds_items_per_page_zero(self):
-        page = Page(0, 1)
-        self.assertEqual(True, pag.is_pagination_out_of_bounds([1,2,3,4], page))
+        self.assertEqual(1, pagination['prev'])
+        self.assertEqual(2, pagination['current'])
+        self.assertEqual(3, pagination['next'])
+        self.assertEqual([1,2,3,4,5], pagination['page_indices'])
 
-    def test_pagination_out_of_bounds_page_index_zero(self):
-        page = Page(3, 0)
-        self.assertEqual(True, pag.is_pagination_out_of_bounds([1,2,3,4], page))
+    def test_pagination_indices_start_inbounds(self):
+        pagination = pag.get_pagination_indices(Page(1, 4), 2, 10)
 
-    def test_pagination_out_of_bounds_page_index_greater_than_pages(self):
-        page = Page(3, 25)
-        self.assertEqual(True, pag.is_pagination_out_of_bounds([1,2,3,4], page))
+        self.assertEqual(3, pagination['prev'])
+        self.assertEqual(4, pagination['current'])
+        self.assertEqual(5, pagination['next'])
+        self.assertEqual([2,3,4,5,6], pagination['page_indices'])
 
-    def test_pagination_out_of_bounds_correct(self):
-        page = Page(3, 1)
-        self.assertEqual(False, pag.is_pagination_out_of_bounds([1,2,3,4], page))
+    def test_pagination_indices_start_close_to_upper_bound(self):
+        pagination = pag.get_pagination_indices(Page(1, 9), 2, 10)
+
+        self.assertEqual(8, pagination['prev'])
+        self.assertEqual(9, pagination['current'])
+        self.assertEqual(10, pagination['next'])
+        self.assertEqual([6,7,8,9,10], pagination['page_indices'])
+
+    def test_pagination_indices_start_out_of_bounds_small(self):
+        pagination = pag.get_pagination_indices(Page(1, 2), 2, 4)
+
+        self.assertEqual(1, pagination['prev'])
+        self.assertEqual(2, pagination['current'])
+        self.assertEqual(3, pagination['next'])
+        self.assertEqual([1,2,3,4], pagination['page_indices'])
+
+    def test_pagination_indices_start_close_to_upper_bounds_small(self):
+        pagination = pag.get_pagination_indices(Page(1, 3), 2, 4)
+
+        self.assertEqual(2, pagination['prev'])
+        self.assertEqual(3, pagination['current'])
+        self.assertEqual(4, pagination['next'])
+        self.assertEqual([1,2,3,4], pagination['page_indices'])
+
+    def test_pagination_indices_only_one_page(self):
+        pagination = pag.get_pagination_indices(Page(1, 3), 2, 1)
+
+        self.assertEqual(1, pagination['prev'])
+        self.assertEqual(1, pagination['current'])
+        self.assertEqual(1, pagination['next'])
+        self.assertEqual([1], pagination['page_indices'])
+
+    def test_pagination_page_index_out_upper_bound(self):
+        pagination = pag.get_pagination_indices(Page(1, 12), 2, 10)
+
+        self.assertEqual(9, pagination['prev'])
+        self.assertEqual(10, pagination['current'])
+        self.assertEqual(10, pagination['next'])
+        self.assertEqual([6,7,8,9,10], pagination['page_indices'])
+
+    def test_pagination_page_index_out_bottom_bound(self):
+        pagination = pag.get_pagination_indices(Page(1, -1), 2, 10)
+
+        self.assertEqual(1, pagination['prev'])
+        self.assertEqual(1, pagination['current'])
+        self.assertEqual(2, pagination['next'])
+        self.assertEqual([1,2,3,4,5], pagination['page_indices'])
 
     def test_pagination_normal_range(self):
-        element_list = range(15)
-        page = Page(2, 3)
+        pagination = pag.get_pagination_indices(Page(2, 3), 2, 15)
+        pag_url = pag.get_pagination_urls(pagination, '/view/main/')
 
-        page_link_list = pag.get_navigation_links(
-            element_list=element_list,
-            page=page,
-            page_link_count=3,
-            url='/view/main/'
-        )
-
-        self.assertEqual('/view/main/page/2/2/dots/3/', page_link_list['prev'])
-        self.assertEqual('/view/main/page/2/2/dots/3/', page_link_list['pages'][0]['url'])
-        self.assertEqual(2, page_link_list['pages'][0]['index'])
-        self.assertEqual('', page_link_list['pages'][1]['url'])
-        self.assertEqual(3, page_link_list['pages'][1]['index'])
-        self.assertEqual('/view/main/page/2/4/dots/3/', page_link_list['pages'][2]['url'])
-        self.assertEqual(4, page_link_list['pages'][2]['index'])
-        self.assertEqual('/view/main/page/2/4/dots/3/', page_link_list['next'])
-
-    def test_pagination_range_clamped_on_zero(self):
-        element_list = range(15)
-        page = Page(1, 1)
-
-        page_link_list = pag.get_navigation_links(
-            element_list=element_list,
-            page=page,
-            page_link_count=3,
-            url='/view/main/'
-        )
-
-        self.assertEqual('', page_link_list['prev'])
-        self.assertEqual('', page_link_list['pages'][0]['url'])
-        self.assertEqual(1, page_link_list['pages'][0]['index'])
-        self.assertEqual('/view/main/page/1/2/dots/3/', page_link_list['pages'][1]['url'])
-        self.assertEqual(2, page_link_list['pages'][1]['index'])
-        self.assertEqual('/view/main/page/1/3/dots/3/', page_link_list['pages'][2]['url'])
-        self.assertEqual(3, page_link_list['pages'][2]['index'])
-        self.assertEqual('/view/main/page/1/2/dots/3/', page_link_list['next'])
-
-    def test_pagination_range_clamped_on_max_pages(self):
-        element_list = range(6)
-        page = Page(1, 6)
-
-        page_link_list = pag.get_navigation_links(
-            element_list=element_list,
-            page=page,
-            page_link_count=3,
-            url='/view/main/'
-        )
-
-        self.assertEqual('/view/main/page/1/5/dots/3/', page_link_list['prev'])
-        self.assertEqual('/view/main/page/1/4/dots/3/', page_link_list['pages'][0]['url'])
-        self.assertEqual(4, page_link_list['pages'][0]['index'])
-        self.assertEqual('/view/main/page/1/5/dots/3/', page_link_list['pages'][1]['url'])
-        self.assertEqual(5, page_link_list['pages'][1]['index'])
-        self.assertEqual('', page_link_list['pages'][2]['url'])
-        self.assertEqual(6, page_link_list['pages'][2]['index'])
-        self.assertEqual('', page_link_list['next'])
-
-    def test_pagination_range_out_of_bounds_zero(self):
-        element_list = range(15)
-        page = Page(1, 0)
-
-        page_link_list = pag.get_navigation_links(
-            element_list=element_list,
-            page=page,
-            page_link_count=3,
-            url='/view/main/'
-        )
-
-        self.assertEqual(0, len(page_link_list['pages']))
-        self.assertEqual('', page_link_list['next'])
-        self.assertEqual('', page_link_list['prev'])
-
-    def test_pagination_range_out_of_bounds_max(self):
-        element_list = range(6)
-        page = Page(1, 8)
-
-        page_link_list = pag.get_navigation_links(
-            element_list=element_list,
-            page=page,
-            page_link_count=3,
-            url='/view/main/'
-        )
-
-        self.assertEqual(0, len(page_link_list['pages']))
-        self.assertEqual('', page_link_list['next'])
-        self.assertEqual('', page_link_list['prev'])
-
-    def test_pagination_page_link_count_greater_than_len_items(self):
-        element_list = range(3)
-        page = Page(1, 1)
-
-        page_link_list = pag.get_navigation_links(
-            element_list=element_list,
-            page=page,
-            page_link_count=5,
-            url='/view/main/'
-        )
-
-        self.assertEqual(3, len(page_link_list['pages']))
-        self.assertEqual('/view/main/page/1/2/dots/5/', page_link_list['next'])
-        self.assertEqual('', page_link_list['prev'])
-        self.assertEqual('', page_link_list['pages'][0]['url'])
-        self.assertEqual(1, page_link_list['pages'][0]['index'])
-        self.assertEqual('/view/main/page/1/2/dots/5/', page_link_list['pages'][1]['url'])
-        self.assertEqual(2, page_link_list['pages'][1]['index'])
-        self.assertEqual('/view/main/page/1/3/dots/5/', page_link_list['pages'][2]['url'])
-        self.assertEqual(3, page_link_list['pages'][2]['index'])
-
+        self.assertEqual('/view/main/page/2/', pag_url['prev'])
+        self.assertEqual('/view/main/page/3/', pag_url['current'])
+        self.assertEqual('/view/main/page/4/', pag_url['next'])
+        self.assertEqual('/view/main/page/1/', pag_url['pages'][0]['url'])
+        self.assertEqual('/view/main/page/2/', pag_url['pages'][1]['url'])
+        self.assertEqual('/view/main/page/3/', pag_url['pages'][2]['url'])
+        self.assertEqual('/view/main/page/4/', pag_url['pages'][3]['url'])
+        self.assertEqual('/view/main/page/5/', pag_url['pages'][4]['url'])
+        self.assertEqual(1, pag_url['pages'][0]['index'])
+        self.assertEqual(2, pag_url['pages'][1]['index'])
+        self.assertEqual(3, pag_url['pages'][2]['index'])
+        self.assertEqual(4, pag_url['pages'][3]['index'])
+        self.assertEqual(5, pag_url['pages'][4]['index'])
+        self.assertEqual(False, pag_url['pages'][0]['is_current'])
+        self.assertEqual(False, pag_url['pages'][1]['is_current'])
+        self.assertEqual(True,  pag_url['pages'][2]['is_current'])
+        self.assertEqual(False, pag_url['pages'][3]['is_current'])
+        self.assertEqual(False, pag_url['pages'][4]['is_current'])

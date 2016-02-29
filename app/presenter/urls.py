@@ -15,7 +15,7 @@ urlpatterns = patterns(
     url(r'^view/$',
         'app.presenter.views.html.ViewHtmlMain.get_main'),
 
-    url(r'^layout/all/$',
+    url(r'^layout/all/page/(?P<page_index>\d+)/$',
         'app.presenter.views.html.ViewHtmlLayout.get_layouts'),
 
     url(r'^layout/edit/(?P<layout_id>\d+)/$',

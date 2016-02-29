@@ -4,6 +4,9 @@ from django.core.paginator import Paginator
 from app.logic.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
 from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
 from app.logic.bluesteel.controllers.BluesteelProjectController import BluesteelProjectController
+from app.logic.httpcommon import pag
+
+PAGINATION_HALF_RANGE = 2
 
 class BluesteelLayoutController(object):
     """ BluesteelLayout controller with helper functions """
@@ -31,11 +34,12 @@ class BluesteelLayoutController(object):
         pager = Paginator(layout_entries, page.items_per_page)
         current_page = pager.page(page.page_index)
         layout_entries = current_page.object_list
+        page_indices = pag.get_pagination_indices(page, PAGINATION_HALF_RANGE, pager.num_pages)
 
         layouts = []
         for layout in layout_entries:
             layouts.append(layout.as_object())
-        return layouts
+        return (layouts, page_indices)
 
     @staticmethod
     def create_new_default_layout():

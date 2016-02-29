@@ -5,14 +5,14 @@ from app.presenter.views.helpers import ViewPrepareObjects
 from app.logic.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
 from app.logic.bluesteel.controllers.BluesteelLayoutController import BluesteelLayoutController
 from app.logic.httpcommon.Page import Page
-from app.logic.httpcommon import res
+from app.logic.httpcommon import res, pag
 
 LAYOUT_ITEMS_PER_PAGE = 30
 
-def get_layouts(request):
+def get_layouts(request, page_index):
     """ Returns html for the layout page """
-    page = Page(LAYOUT_ITEMS_PER_PAGE, 1)
-    layout_list = BluesteelLayoutController.get_paginated_layouts_as_objects(page)
+    page = Page(LAYOUT_ITEMS_PER_PAGE, page_index)
+    layout_list, page_indices = BluesteelLayoutController.get_paginated_layouts_as_objects(page)
 
     for layout in layout_list:
         layout = ViewPrepareObjects.prepare_layout_for_html(layout)
@@ -23,9 +23,14 @@ def get_layouts(request):
     control['icon'] = 'fa fa-plus'
     control['onclick'] = 'executeAndRedirect(\'{0}\', \'\');'.format(control['link'])
 
+    pagination = pag.get_pagination_urls(page_indices, ViewUrlGenerator.get_layout_all_url())
+
+    print pagination
+
     data = {}
     data['layout_list'] = layout_list
     data['menu'] = ViewPrepareObjects.prepare_menu_for_html([])
+    data['pagination'] = pagination
     data['controls'] = []
     data['controls'].append(control)
 

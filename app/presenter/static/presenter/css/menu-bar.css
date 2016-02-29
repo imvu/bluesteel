@@ -76,3 +76,48 @@ a.control_item_link:hover
     color: lightgray;
     cursor: pointer;
 }
+
+div.pagination_bar_container
+{
+    height: 45px;
+    background: transparent;
+    /*background: red;*/
+}
+
+li.page_item
+{
+    background: transparent;
+    display: inline-block;
+    margin-left: 5px;
+    margin-right: 5px;
+    text-align: vertical;
+}
+
+a.page_item_link
+{
+    width: 25px;
+    font-family: arial, sans-serif;
+    color: lightgray;
+    background: white;
+    text-decoration: none;
+    line-height: 45px;
+    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    cursor: pointer;
+    border-radius: 3px;
+    border-style: none;
+}
+
+a.page_item_link_selected
+{
+    color: white;
+    background: steelblue;
+}
+
+a.page_item_link:hover
+{
+    color: white;
+    background: lightsteelblue;
+    cursor: pointer;
+}

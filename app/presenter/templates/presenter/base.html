@@ -55,6 +55,26 @@
         </div>
     {% endif %}
 
+    {% if pagination %}
+    <div class="pagination_bar_container">
+        <div class="menu_item_container">
+            <ul class="horizontal_list no_margin no_padding">
+                <li class="page_item">
+                    <a class="page_item_link" href="{{pagination.prev}}">prev</a>
+                </li>
+                {% for page in pagination.pages %}
+                    <li class="page_item">
+                        <a class="page_item_link  {{page.is_current|yesno:'page_item_link_selected,'}}" href="{{page.url}}">{{page.index}}</a>
+                    </li>
+                {% endfor %}
+                <li class="page_item">
+                    <a class="page_item_link" href="{{pagination.next}}">next</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    {% endif %}
+
     {% block data_body %}{% endblock %}
 
     <footer>

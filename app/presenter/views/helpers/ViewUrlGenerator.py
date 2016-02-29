@@ -6,6 +6,9 @@ def get_main_url():
 def get_layout_all_url():
     return '/main/layout/all/'
 
+def get_layout_url(layout_id):
+    return '/main/layout/{0}/'.format(layout_id)
+
 def get_layout_full_url(domain, layout_id):
     return 'http://{0}/main/layout/{1}/'.format(domain, layout_id)
 
