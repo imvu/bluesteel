@@ -67,7 +67,7 @@ def prepare_menu_for_html(menu):
     item_3 = {}
     item_3['name'] = 'Projects'
     item_3['icon'] = ''
-    item_3['link'] = '/main/projects/'
+    item_3['link'] = '/main/project/all/page/1/'
 
     item_4 = {}
     item_4['name'] = 'Workers'

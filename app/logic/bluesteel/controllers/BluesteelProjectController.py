@@ -1,5 +1,7 @@
 """ BluesteelProject Controller file """
 
+from django.core.paginator import Paginator
+from app.logic.httpcommon import pag
 from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
 from app.logic.gitrepo.models.GitProjectModel import GitProjectEntry
 from app.logic.gitrepo.controllers.GitController import GitController
@@ -8,8 +10,25 @@ from app.logic.commandrepo.models.CommandSetModel import CommandSetEntry
 from app.logic.commandrepo.models.CommandGroupModel import CommandGroupEntry
 from app.logic.commandrepo.controllers.CommandController import CommandController
 
+PAGINATION_HALF_RANGE = 2
+
 class BluesteelProjectController(object):
     """ BluesteelProject controller with helper functions """
+
+    @staticmethod
+    def get_paginated_projects_as_objects(page):
+        """ Returns paginated list of projects """
+        project_entries = BluesteelProjectEntry.objects.all().order_by('-created_at')
+
+        pager = Paginator(project_entries, page.items_per_page)
+        current_page = pager.page(page.page_index)
+        project_entries = current_page.object_list
+        page_indices = pag.get_pagination_indices(page, PAGINATION_HALF_RANGE, pager.num_pages)
+
+        projects = []
+        for project in project_entries:
+            projects.append(project.as_object())
+        return (projects, page_indices)
 
     @staticmethod
     def create_command(command_set, order, command):

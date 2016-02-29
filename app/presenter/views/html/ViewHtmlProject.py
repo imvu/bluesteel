@@ -8,23 +8,30 @@ from app.logic.benchmark.controllers.BenchmarkExecutionController import Benchma
 from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
 from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
 from app.logic.gitrepo.models.GitBranchModel import GitBranchEntry
-from app.logic.httpcommon import res
+from app.logic.httpcommon import res, pag
+from app.logic.httpcommon.Page import Page
 
-def get_projects(request):
+PROJECTS_ITEMS_PER_PAGE = 6
+
+def get_projects(request, page_index):
     """ Display all branch names """
     if request.method == 'GET':
-        project_entries = BluesteelProjectEntry.objects.all()
+        page = Page(PROJECTS_ITEMS_PER_PAGE, page_index)
+        projects, page_indices = BluesteelProjectController.get_paginated_projects_as_objects(page)
 
         items = []
-        for project in project_entries:
+        for project in projects:
             obj = {}
-            obj['name'] = project.name
-            obj['url'] = ViewUrlGenerator.get_project_branches_url(project.id)
+            obj['name'] = project['name']
+            obj['url'] = ViewUrlGenerator.get_project_branches_url(project['id'])
             items.append(obj)
+
+        pagination = pag.get_pagination_urls(page_indices, ViewUrlGenerator.get_project_all_url())
 
         data = {}
         data['items'] = items
         data['menu'] = ViewPrepareObjects.prepare_menu_for_html([])
+        data['pagination'] = pagination
 
         return res.get_template_data(request, 'presenter/single_item_list.html', data)
     else:

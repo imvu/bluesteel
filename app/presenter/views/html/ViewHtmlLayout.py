@@ -25,8 +25,6 @@ def get_layouts(request, page_index):
 
     pagination = pag.get_pagination_urls(page_indices, ViewUrlGenerator.get_layout_all_url())
 
-    print pagination
-
     data = {}
     data['layout_list'] = layout_list
     data['menu'] = ViewPrepareObjects.prepare_menu_for_html([])
