@@ -57,7 +57,6 @@ class BluesteelProjectControllerTestCase(TestCase):
         project_6 = BluesteelProjectController.create_default_project(layout=layout_entry, name='project-name-6', order=23)
         project_7 = BluesteelProjectController.create_default_project(layout=layout_entry, name='project-name-7', order=22)
 
-
         projects_1, page_indices_1 = BluesteelProjectController.get_paginated_projects_as_objects(Page(3, 1))
         projects_2, page_indices_2 = BluesteelProjectController.get_paginated_projects_as_objects(Page(3, 2))
         projects_3, page_indices_3 = BluesteelProjectController.get_paginated_projects_as_objects(Page(3, 3))

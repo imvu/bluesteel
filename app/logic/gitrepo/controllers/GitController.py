@@ -1,5 +1,7 @@
 """ Git Controller file """
 
+from django.core.paginator import Paginator
+from app.logic.httpcommon import pag
 from app.logic.gitrepo.models.GitParentModel import GitParentEntry
 from app.logic.gitrepo.models.GitCommitModel import GitCommitEntry
 from app.logic.gitrepo.models.GitUserModel import GitUserEntry
@@ -8,6 +10,7 @@ from app.logic.gitrepo.models.GitBranchTrailModel import GitBranchTrailEntry
 from app.logic.gitrepo.models.GitDiffModel import GitDiffEntry
 from app.logic.gitrepo.models.GitBranchMergeTargetModel import GitBranchMergeTargetEntry
 
+PAGINATION_HALF_RANGE = 2
 
 class GitController(object):
     """ Git Controller offers functions to modify the state of git models """
@@ -114,6 +117,19 @@ class GitController(object):
         """ Returns branch data trimmed by its merge target information """
         branches = GitBranchEntry.objects.filter(project=project)
         return GitController.get_branches_trimmed_by_merge_target(project, branches)
+
+    @staticmethod
+    def get_pgtd_branches_trimmed_by_merge_target(page, project):
+        """ Returns paginated branch data trimmed by its merge target information """
+        branches = GitBranchEntry.objects.filter(project=project)
+
+        pager = Paginator(branches, page.items_per_page)
+        current_page = pager.page(page.page_index)
+        branches = current_page.object_list
+        page_indices = pag.get_pagination_indices(page, PAGINATION_HALF_RANGE, pager.num_pages)
+
+        branches = GitController.get_branches_trimmed_by_merge_target(project, branches)
+        return branches, page_indices
 
     @staticmethod
     def get_single_branch_trimmed_by_merge_target(project, branch):

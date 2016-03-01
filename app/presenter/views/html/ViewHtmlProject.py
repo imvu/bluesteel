@@ -11,7 +11,7 @@ from app.logic.gitrepo.models.GitBranchModel import GitBranchEntry
 from app.logic.httpcommon import res, pag
 from app.logic.httpcommon.Page import Page
 
-PROJECTS_ITEMS_PER_PAGE = 6
+PROJECTS_ITEMS_PER_PAGE = 3
 
 def get_projects(request, page_index):
     """ Display all branch names """
@@ -23,7 +23,7 @@ def get_projects(request, page_index):
         for project in projects:
             obj = {}
             obj['name'] = project['name']
-            obj['url'] = ViewUrlGenerator.get_project_branches_url(project['id'])
+            obj['url'] = ViewUrlGenerator.get_project_branches_url(project['id']) + 'page/1/'
             items.append(obj)
 
         pagination = pag.get_pagination_urls(page_indices, ViewUrlGenerator.get_project_all_url())
@@ -37,21 +37,28 @@ def get_projects(request, page_index):
     else:
         return res.get_template_data(request, 'presenter/not_found.html', {})
 
-def get_project_branches(request, project_id):
+def get_project_branches(request, project_id, page_index):
     """ Display all the branches of a project """
     if request.method == 'GET':
         project_entry = BluesteelProjectEntry.objects.filter(id=project_id).first()
         if project_entry == None:
             return res.get_template_data(request, 'presenter/not_found.html', {})
 
-        branches = BluesteelProjectController.get_project_git_branch_data(project_entry)
+        page = Page(PROJECTS_ITEMS_PER_PAGE, page_index)
+        branches, page_indices = BluesteelProjectController.get_project_git_branch_data(page, project_entry)
         branches = BenchmarkExecutionController.add_bench_exec_completed_to_branches(branches)
+
+        pagination = pag.get_pagination_urls(
+            page_indices,
+            ViewUrlGenerator.get_project_branches_url(project_entry.id)
+        )
 
         data = {}
         data['branches'] = ViewPrepareObjects.prepare_branches_for_html(project_entry.id, branches)
         data['url'] = {}
         data['url']['change_merge_target'] = ViewUrlGenerator.get_change_merge_target_url(project_entry.id)
         data['menu'] = ViewPrepareObjects.prepare_menu_for_html([])
+        data['pagination'] = pagination
 
         return res.get_template_data(request, 'presenter/project_branches.html', data)
     else:
