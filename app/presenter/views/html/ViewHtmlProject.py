@@ -8,7 +8,7 @@ from app.logic.benchmark.controllers.BenchmarkExecutionController import Benchma
 from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
 from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
 from app.logic.gitrepo.models.GitBranchModel import GitBranchEntry
-from app.logic.httpcommon import res, pag
+from app.logic.httpcommon import res
 from app.logic.httpcommon.Page import Page
 
 PROJECTS_ITEMS_PER_PAGE = 3
@@ -23,7 +23,7 @@ def get_projects(request, page_index):
         for project in projects:
             obj = {}
             obj['name'] = project['name']
-            obj['url'] = ViewUrlGenerator.get_project_branches_url(project['id']) + 'page/1/'
+            obj['url'] = ViewUrlGenerator.get_project_branches_url(project['id'], 1)
             items.append(obj)
 
         pagination = ViewPrepareObjects.prepare_pagination_project(page_indices)
@@ -48,10 +48,7 @@ def get_project_branches(request, project_id, page_index):
         branches, page_indices = BluesteelProjectController.get_project_git_branch_data(page, project_entry)
         branches = BenchmarkExecutionController.add_bench_exec_completed_to_branches(branches)
 
-        pagination = pag.get_pagination_urls(
-            page_indices,
-            ViewUrlGenerator.get_project_branches_url(project_entry.id)
-        )
+        pagination = ViewPrepareObjects.prepare_pagination_branches(project_entry.id, page_indices)
 
         data = {}
         data['branches'] = ViewPrepareObjects.prepare_branches_for_html(project_entry.id, branches)
