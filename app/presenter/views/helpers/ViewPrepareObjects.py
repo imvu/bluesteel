@@ -91,6 +91,22 @@ def prepare_pagination_branches(project_id, page_indices):
         pagination['pages'].append(pag)
     return pagination
 
+def prepare_pagination_workers(page_indices):
+    """ Creates pagination object for workers from indices """
+    pagination = {}
+    pagination['prev'] = ViewUrlGenerator.get_worker_all_url(page_indices['prev'])
+    pagination['current'] = ViewUrlGenerator.get_worker_all_url(page_indices['current'])
+    pagination['next'] = ViewUrlGenerator.get_worker_all_url(page_indices['next'])
+
+    pagination['pages'] = []
+    for index in page_indices['page_indices']:
+        pag = {}
+        pag['index'] = index
+        pag['url'] = ViewUrlGenerator.get_worker_all_url(index)
+        pag['is_current'] = (index == page_indices['current'])
+        pagination['pages'].append(pag)
+    return pagination
+
 def prepare_project_for_html(project):
     """ Adds information to project objects for template interaction """
     project['url'] = {}
@@ -115,12 +131,12 @@ def prepare_menu_for_html(menu):
     item_3 = {}
     item_3['name'] = 'Projects'
     item_3['icon'] = ''
-    item_3['link'] = '/main/project/all/page/1/'
+    item_3['link'] = ViewUrlGenerator.get_project_all_url(1)
 
     item_4 = {}
     item_4['name'] = 'Workers'
     item_4['icon'] = ''
-    item_4['link'] = '/main/workers/'
+    item_4['link'] = ViewUrlGenerator.get_worker_all_url(1)
 
     item_5 = {}
     item_5['name'] = 'Definitions'

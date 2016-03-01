@@ -45,6 +45,9 @@ def get_save_project_url(project_id):
 def get_delete_project_url(project_id):
     return '/main/project/{0}/delete/'.format(project_id)
 
+def get_worker_all_url(page_index):
+    return '/main/worker/all/page/{0}/'.format(page_index)
+
 def get_download_worker_url():
     return '/main/bluesteelworker/download/'
 

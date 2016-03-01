@@ -1,15 +1,27 @@
 """ Presenter views, Wrokers page functions """
 
+from django.core.paginator import Paginator
 from app.presenter.views.helpers import ViewUrlGenerator
 from app.presenter.views.helpers import ViewPrepareObjects
 from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
 from app.logic.commandrepo.models.CommandGroupModel import CommandGroupEntry
-from app.logic.httpcommon import res
+from app.logic.httpcommon import res, pag
+from app.logic.httpcommon.Page import Page
 
-def get_workers(request):
+WORKER_ITEMS_PER_PAGE = 6
+PAGINATION_HALF_RANGE = 2
+
+def get_workers(request, page_index):
     """ Returns html for the workers page """
     if request.method == 'GET':
         worker_entries = WorkerEntry.objects.all()
+
+        page = Page(WORKER_ITEMS_PER_PAGE, page_index)
+        pager = Paginator(worker_entries, page.items_per_page)
+        current_page = pager.page(page.page_index)
+        worker_entries = current_page.object_list
+        page_indices = pag.get_pagination_indices(page, PAGINATION_HALF_RANGE, pager.num_pages)
+
         workers = []
         for entry in worker_entries:
             workers.append(entry.as_object())
@@ -20,8 +32,11 @@ def get_workers(request):
         control['icon'] = 'fa fa-arrow-down'
         control['onclick'] = 'window.location="{0}"'.format(control['link'])
 
+        pagination = ViewPrepareObjects.prepare_pagination_workers(page_indices)
+
         data = {}
         data['menu'] = ViewPrepareObjects.prepare_menu_for_html([])
+        data['pagination'] = pagination
         data['workers'] = ViewPrepareObjects.prepare_workers_for_html(workers)
         data['controls'] = []
         data['controls'].append(control)

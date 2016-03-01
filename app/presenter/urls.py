@@ -36,7 +36,7 @@ urlpatterns = patterns(
     url(r'^project/(?P<project_id>\d+)/branch/(?P<branch_id>\d+)/links/$',
         'app.presenter.views.html.ViewHtmlProject.get_project_single_branch_links'),
 
-    url(r'^workers/$',
+    url(r'^worker/all/page/(?P<page_index>\d+)/$',
         'app.presenter.views.html.ViewHtmlWorkers.get_workers'),
 
     url(r'^bluesteelworker/(?P<worker_id>\d+)/report/all/$',
