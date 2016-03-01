@@ -31,7 +31,7 @@ def delete(request, layout_id):
         BluesteelLayoutController.delete_layout(layout_entry)
 
         data = {}
-        data['redirect'] = ViewUrlGenerator.get_layout_all_url()
+        data['redirect'] = ViewUrlGenerator.get_layout_all_url(1)
         return res.get_response(200, 'Layout deleted', data)
     else:
         return res.get_only_post_allowed({})

@@ -5,7 +5,7 @@ from app.presenter.views.helpers import ViewPrepareObjects
 from app.logic.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
 from app.logic.bluesteel.controllers.BluesteelLayoutController import BluesteelLayoutController
 from app.logic.httpcommon.Page import Page
-from app.logic.httpcommon import res, pag
+from app.logic.httpcommon import res
 
 LAYOUT_ITEMS_PER_PAGE = 30
 
@@ -23,7 +23,7 @@ def get_layouts(request, page_index):
     control['icon'] = 'fa fa-plus'
     control['onclick'] = 'executeAndRedirect(\'{0}\', \'\');'.format(control['link'])
 
-    pagination = pag.get_pagination_urls(page_indices, ViewUrlGenerator.get_layout_all_url())
+    pagination = ViewPrepareObjects.prepare_pagination_layout(page_indices)
 
     data = {}
     data['layout_list'] = layout_list

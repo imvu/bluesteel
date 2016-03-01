@@ -3,8 +3,8 @@
 def get_main_url():
     return '/main/view/'
 
-def get_layout_all_url():
-    return '/main/layout/all/'
+def get_layout_all_url(page_index):
+    return '/main/layout/all/page/{0}/'.format(page_index)
 
 def get_layout_url(layout_id):
     return '/main/layout/{0}/'.format(layout_id)
