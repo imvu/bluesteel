@@ -59,6 +59,22 @@ def prepare_pagination_layout(page_indices):
         pagination['pages'].append(pag)
     return pagination
 
+def prepare_pagination_project(page_indices):
+    """ Creates pagination object for layout from indices """
+    pagination = {}
+    pagination['prev'] = ViewUrlGenerator.get_project_all_url(page_indices['prev'])
+    pagination['current'] = ViewUrlGenerator.get_project_all_url(page_indices['current'])
+    pagination['next'] = ViewUrlGenerator.get_project_all_url(page_indices['next'])
+
+    pagination['pages'] = []
+    for index in page_indices['page_indices']:
+        pag = {}
+        pag['index'] = index
+        pag['url'] = ViewUrlGenerator.get_project_all_url(index)
+        pag['is_current'] = (index == page_indices['current'])
+        pagination['pages'].append(pag)
+    return pagination
+
 def prepare_project_for_html(project):
     """ Adds information to project objects for template interaction """
     project['url'] = {}

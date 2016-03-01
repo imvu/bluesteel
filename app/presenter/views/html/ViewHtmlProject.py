@@ -26,7 +26,7 @@ def get_projects(request, page_index):
             obj['url'] = ViewUrlGenerator.get_project_branches_url(project['id']) + 'page/1/'
             items.append(obj)
 
-        pagination = pag.get_pagination_urls(page_indices, ViewUrlGenerator.get_project_all_url())
+        pagination = ViewPrepareObjects.prepare_pagination_project(page_indices)
 
         data = {}
         data['items'] = items

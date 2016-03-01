@@ -30,8 +30,8 @@ def get_delete_layout_url(layout_id):
 def get_confirm_delete_layout_url(layout_id):
     return '/main/layout/{0}/confirm/delete/'.format(layout_id)
 
-def get_project_all_url():
-    return '/main/project/all/'
+def get_project_all_url(page_index):
+    return '/main/project/all/page/{0}/'.format(page_index)
 
 def get_add_default_project_url(layout_id):
     return '/main/layout/{0}/add/project/'.format(layout_id)
