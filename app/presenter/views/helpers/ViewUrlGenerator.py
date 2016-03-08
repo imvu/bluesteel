@@ -88,8 +88,8 @@ def get_project_branch_single_links_url(project_id, branch_id):
     return '/main/project/{0}/branch/{1}/links/'.format(project_id, branch_id)
 
 
-def get_benchmark_definitions_url():
-    return '/main/definitions/all/'
+def get_benchmark_definitions_url(page_index):
+    return '/main/definitions/all/page/{0}/'.format(page_index)
 
 def get_benchmark_execution_full_url(domain, bench_id):
     return 'http://{0}/main/execution/{1}/'.format(domain, bench_id)

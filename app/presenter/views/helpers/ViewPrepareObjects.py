@@ -123,6 +123,22 @@ def prepare_pagination_feed_reports(worker_id, page_indices):
         pagination['pages'].append(pag)
     return pagination
 
+def prepare_pagination_bench_definitions(page_indices):
+    """ Creates pagination object for workers from indices """
+    pagination = {}
+    pagination['prev'] = ViewUrlGenerator.get_benchmark_definitions_url(page_indices['prev'])
+    pagination['current'] = ViewUrlGenerator.get_benchmark_definitions_url(page_indices['current'])
+    pagination['next'] = ViewUrlGenerator.get_benchmark_definitions_url(page_indices['next'])
+
+    pagination['pages'] = []
+    for index in page_indices['page_indices']:
+        pag = {}
+        pag['index'] = index
+        pag['url'] = ViewUrlGenerator.get_benchmark_definitions_url(index)
+        pag['is_current'] = (index == page_indices['current'])
+        pagination['pages'].append(pag)
+    return pagination
+
 def prepare_project_for_html(project):
     """ Adds information to project objects for template interaction """
     project['url'] = {}
@@ -157,7 +173,7 @@ def prepare_menu_for_html(menu):
     item_5 = {}
     item_5['name'] = 'Definitions'
     item_5['icon'] = ''
-    item_5['link'] = ViewUrlGenerator.get_benchmark_definitions_url()
+    item_5['link'] = ViewUrlGenerator.get_benchmark_definitions_url(1)
 
     menu_items.append(item_1)
     menu_items.append(item_2)

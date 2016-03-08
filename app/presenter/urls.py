@@ -45,7 +45,7 @@ urlpatterns = patterns(
     url(r'^bluesteelworker/download/$',
         'app.presenter.views.html.ViewHtmlBluesteelWorker.get_worker'),
 
-    url(r'^definitions/all/$',
+    url(r'^definitions/all/page/(?P<page_index>\d+)/$',
         'app.presenter.views.html.ViewHtmlBenchmarkDefinitions.get_benchmark_definitions'),
 
     url(r'^definition/(?P<definition_id>\d+)/edit/$',

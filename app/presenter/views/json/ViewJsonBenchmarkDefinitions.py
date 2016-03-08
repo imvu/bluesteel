@@ -23,7 +23,7 @@ def create_new_benchmark_definition(request):
         )
 
         data = {}
-        data['redirect'] = ViewUrlGenerator.get_benchmark_definitions_url()
+        data['redirect'] = ViewUrlGenerator.get_benchmark_definitions_url(1)
 
         return res.get_response(200, 'Benchmark definition created', data)
     else:
@@ -68,7 +68,7 @@ def view_delete_benchmark_definition(request, benchmark_definition_id):
         )
 
         data = {}
-        data['redirect'] = ViewUrlGenerator.get_benchmark_definitions_url()
+        data['redirect'] = ViewUrlGenerator.get_benchmark_definitions_url(1)
         data['benchmark_definition_id'] = benchmark_definition_id
 
         if ret:
