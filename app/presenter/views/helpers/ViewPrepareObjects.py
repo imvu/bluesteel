@@ -107,6 +107,22 @@ def prepare_pagination_workers(page_indices):
         pagination['pages'].append(pag)
     return pagination
 
+def prepare_pagination_feed_reports(worker_id, page_indices):
+    """ Creates pagination object for workers from indices """
+    pagination = {}
+    pagination['prev'] = ViewUrlGenerator.get_feed_report_form_worker_url(worker_id, page_indices['prev'])
+    pagination['current'] = ViewUrlGenerator.get_feed_report_form_worker_url(worker_id, page_indices['current'])
+    pagination['next'] = ViewUrlGenerator.get_feed_report_form_worker_url(worker_id, page_indices['next'])
+
+    pagination['pages'] = []
+    for index in page_indices['page_indices']:
+        pag = {}
+        pag['index'] = index
+        pag['url'] = ViewUrlGenerator.get_feed_report_form_worker_url(worker_id, index)
+        pag['is_current'] = (index == page_indices['current'])
+        pagination['pages'].append(pag)
+    return pagination
+
 def prepare_project_for_html(project):
     """ Adds information to project objects for template interaction """
     project['url'] = {}
@@ -162,7 +178,7 @@ def prepare_workers_for_html(workers):
     for worker in workers:
 
         worker['url'] = {}
-        worker['url']['feed_report'] = ViewUrlGenerator.get_feed_report_form_worker_url(worker['id'])
+        worker['url']['feed_report'] = ViewUrlGenerator.get_feed_report_form_worker_url(worker['id'], 1)
         worker_items.append(worker)
 
     return worker_items
