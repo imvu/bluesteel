@@ -29,6 +29,12 @@ div.normal
     text-align: left;
 }
 
+div.big_text
+{
+    font-size: 20px;
+    line-height: 30px;
+}
+
 div.centered
 {
     text-align: center;
@@ -69,6 +75,11 @@ div.inline
 }
 
 div.color_correct
+{
+    color: steelblue;
+}
+
+span.color_correct
 {
     color: steelblue;
 }
