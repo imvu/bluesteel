@@ -20,7 +20,7 @@
                             {% for definition in branch.links %}
                                 <div class="normal indent_2">Benchmark Definition: {{definition.name}} ({{definition.id}})</div>
                                 {% for worker in definition.workers %}
-                                    <div class="normal indent_3"><a class="normal_link" href="{{worker.stacked_benchmarks}}">See executions on {{worker.name}} ({{worker.uuid}})</a></div>
+                                    <div class="normal indent_3"><a class="normal_link" href="{{worker.stacked_benchmarks}}">{{worker.name}} ({{worker.uuid}})</a></div>
                                 {% endfor %}
                             {% endfor %}
                         </div>

@@ -11,7 +11,7 @@ from app.logic.gitrepo.models.GitBranchModel import GitBranchEntry
 from app.logic.httpcommon import res
 from app.logic.httpcommon.Page import Page
 
-PROJECTS_ITEMS_PER_PAGE = 3
+PROJECTS_ITEMS_PER_PAGE = 6
 
 def get_projects(request, page_index):
     """ Display all branch names """
