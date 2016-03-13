@@ -55,7 +55,7 @@
         </div>
     {% endif %}
 
-    {% if pagination %}
+    {% if pagination and pagination.pages and pagination.pages|length > 1 %}
     <div class="pagination_bar_container">
         <div class="menu_item_container">
             <ul class="horizontal_list no_margin no_padding">
