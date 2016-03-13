@@ -141,6 +141,68 @@ class ViewsBluesteelWorkerTestCase(TestCase):
         self.assertEqual('8a88432d-33db-4d24-a0a7-000000', user_entry.username)
         self.assertEqual(0, BenchmarkExecutionEntry.objects.all().count())
 
+    def test_firsst_created_worker_is_git_feeder_by_default(self):
+        self.worker_1.delete()
+        self.assertEqual(0, WorkerEntry.objects.all().count())
+
+        post_data1 = {}
+        post_data1['uuid'] = '8a88432d-33db-4d24-a0a7-0000007e8e4a'
+        post_data1['operative_system'] = 'osx'
+        post_data1['host_name'] = 'host-name-1'
+
+        post_data2 = {}
+        post_data2['uuid'] = '8a88432d-33db-4d24-a0a7-000000111111'
+        post_data2['operative_system'] = 'linux'
+        post_data2['host_name'] = 'host-name-2'
+
+        post_str1 = json.dumps(post_data1)
+        post_str2 = json.dumps(post_data2)
+
+        resp1 = self.client.post(
+            '/main/bluesteelworker/create/',
+            data=post_str1,
+            content_type='text/plain'
+        )
+
+        res.check_cross_origin_headers(self, resp1)
+        resp1_obj = json.loads(resp1.content)
+
+        self.assertEqual(200, resp1_obj['status'])
+        self.assertEqual('8a88432d-33db-4d24-a0a7-0000007e8e4a', resp1_obj['data']['worker']['uuid'])
+        self.assertEqual('osx', resp1_obj['data']['worker']['operative_system'])
+        self.assertEqual('host-name-1', resp1_obj['data']['worker']['name'])
+        self.assertEqual('http://testserver/main/bluesteelworker/2/update/activity/', resp1_obj['data']['worker']['url']['update_activity_point'])
+
+        entry1 = WorkerEntry.objects.all().filter(id=resp1_obj['data']['worker']['id']).first()
+
+        self.assertEqual('8a88432d-33db-4d24-a0a7-0000007e8e4a', entry1.uuid)
+        self.assertEqual('osx', entry1.operative_system)
+        self.assertEqual('host-name-1', entry1.name)
+        self.assertEqual(True, entry1.git_feeder)
+
+        resp2 = self.client.post(
+            '/main/bluesteelworker/create/',
+            data=post_str2,
+            content_type='text/plain'
+        )
+
+        res.check_cross_origin_headers(self, resp2)
+        resp2_obj = json.loads(resp2.content)
+
+        self.assertEqual(200, resp2_obj['status'])
+        self.assertEqual('8a88432d-33db-4d24-a0a7-000000111111', resp2_obj['data']['worker']['uuid'])
+        self.assertEqual('linux', resp2_obj['data']['worker']['operative_system'])
+        self.assertEqual('host-name-2', resp2_obj['data']['worker']['name'])
+        self.assertEqual('http://testserver/main/bluesteelworker/3/update/activity/', resp2_obj['data']['worker']['url']['update_activity_point'])
+
+        entry2 = WorkerEntry.objects.all().filter(id=resp2_obj['data']['worker']['id']).first()
+
+        self.assertEqual('8a88432d-33db-4d24-a0a7-000000111111', entry2.uuid)
+        self.assertEqual('linux', entry2.operative_system)
+        self.assertEqual('host-name-2', entry2.name)
+        self.assertEqual(False, entry2.git_feeder)
+
+
     def test_create_new_worker_also_creates_benchmark_executions(self):
         command_group = CommandGroupEntry.objects.create()
         command_set = CommandSetEntry.objects.create(

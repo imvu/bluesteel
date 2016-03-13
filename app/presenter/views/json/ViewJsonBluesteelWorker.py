@@ -89,11 +89,14 @@ def create_worker_info(request):
                 )
                 user.save()
 
+            worker_count = WorkerEntry.objects.all().count()
+
             new_worker = WorkerEntry.objects.create(
                 uuid=obj['uuid'],
                 name=obj['host_name'],
                 operative_system=obj['operative_system'],
-                user=user
+                user=user,
+                git_feeder=(worker_count == 0)
             )
             new_worker.save()
 
