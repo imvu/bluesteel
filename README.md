@@ -4,6 +4,10 @@
 
 - BlueSteel is a tool to help track your project performance per commit and per branch.
 
+### License ###
+
+This project is released under the terms of the license specified in the project's repository or if not specified, under the MIT License.
+
 ### Preparation ###
 
 - install Python 2.7.10
