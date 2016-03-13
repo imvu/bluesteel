@@ -19,6 +19,6 @@ urlpatterns = patterns(
     url(r'^main/',
         include('app.presenter.urls')),
 
-    # url(r'^$',
-    #     RedirectView.as_view(url='/<url_here>/')),
+    url(r'^$',
+        RedirectView.as_view(url='main/view/')),
 )
