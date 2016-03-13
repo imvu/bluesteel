@@ -6,7 +6,7 @@
 
 ### License ###
 
-This project is released under the terms of the license specified in the project's repository or if not specified, under the MIT License.
+- This project is released under the terms of the license specified in the project's repository or if not specified, under the MIT License.
 
 ### Preparation ###
 
