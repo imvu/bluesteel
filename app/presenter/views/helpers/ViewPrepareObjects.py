@@ -195,6 +195,7 @@ def prepare_workers_for_html(workers):
 
         worker['url'] = {}
         worker['url']['feed_report'] = ViewUrlGenerator.get_feed_report_form_worker_url(worker['id'], 1)
+        worker['url']['edit'] = ViewUrlGenerator.get_worker_edit_url(worker['id'])
         worker_items.append(worker)
 
     return worker_items

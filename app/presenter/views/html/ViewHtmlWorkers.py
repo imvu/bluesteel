@@ -45,6 +45,21 @@ def get_workers(request, page_index):
     else:
         return res.get_only_get_allowed({})
 
+def get_worker_edit(request, worker_id):
+    """ Returns worker edit page to modify some workers properties """
+    if request.method == 'GET':
+        worker_entry = WorkerEntry.objects.filter(id=worker_id).first()
+        if not worker_entry:
+            return res.get_template_data(request, 'presenter/not_found.html', {})
+
+        data = {}
+        data['menu'] = ViewPrepareObjects.prepare_menu_for_html([])
+        data['worker'] = worker_entry.as_object()
+
+        return res.get_template_data(request, 'presenter/worker_edit.html', data)
+    else:
+        return res.get_only_get_allowed({})
+
 def get_worker_reports(request, worker_id):
     """ Returns html for the worker reports page """
     if request.method == 'GET':

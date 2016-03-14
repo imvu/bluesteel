@@ -48,6 +48,9 @@ def get_delete_project_url(project_id):
 def get_worker_all_url(page_index):
     return '/main/worker/all/page/{0}/'.format(page_index)
 
+def get_worker_edit_url(worker_id):
+    return '/main/worker/{0}/edit/'.format(worker_id)
+
 def get_download_worker_url():
     return '/main/bluesteelworker/download/'
 

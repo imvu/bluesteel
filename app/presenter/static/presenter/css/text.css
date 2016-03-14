@@ -130,3 +130,17 @@ a.title_link:hover
 {
     color: steelblue;
 }
+
+textarea.default_textarea
+{
+    width: 100%;
+    resize: vertical;
+    outline: none;
+    font-family: arial, sans-serif;
+    color: gray;
+    font-size: 15px;
+    line-height: 20px;
+    border-radius: 5px;
+    border:1px solid lightgray;
+
+}

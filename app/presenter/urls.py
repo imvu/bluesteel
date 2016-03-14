@@ -39,6 +39,9 @@ urlpatterns = patterns(
     url(r'^worker/all/page/(?P<page_index>\d+)/$',
         'app.presenter.views.html.ViewHtmlWorkers.get_workers'),
 
+    url(r'^worker/(?P<worker_id>\d+)/edit/$',
+        'app.presenter.views.html.ViewHtmlWorkers.get_worker_edit'),
+
     url(r'^bluesteelworker/(?P<worker_id>\d+)/report/all/$',
         'app.presenter.views.html.ViewHtmlWorkers.get_worker_reports'),
 
