@@ -46,6 +46,7 @@ class GitFetcher(object):
 
         for step in steps:
             if not step(project_info):
+                self.feed_data['reports'] = self.report_stack
                 return False
 
         # Pack all the feed data
