@@ -28,7 +28,12 @@ def save_project(request, project_id):
 
         CommandController.delete_command_group_by_id(project_entry.command_group.id)
 
+        local_search_path = val_resp_obj['git_project_folder_search_path']
+        local_search_path = local_search_path.replace('\\..\\', '\\')
+        local_search_path = local_search_path.replace('/../', '/')
+
         project_entry.name = val_resp_obj['name']
+        project_entry.git_project_folder_search_path = local_search_path
         project_entry.command_group = CommandGroupEntry.objects.create()
         project_entry.save()
 

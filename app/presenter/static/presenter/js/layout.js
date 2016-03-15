@@ -46,6 +46,7 @@ saveProject = function(idFormProject) {
 
     obj = {};
     obj['name'] = form.elements['project_name'].value;
+    obj['git_project_folder_search_path'] = form.elements['git_project_folder_search_path'].value;
     obj['clone'] = [];
     obj['fetch'] = [];
     obj['pull'] = [];

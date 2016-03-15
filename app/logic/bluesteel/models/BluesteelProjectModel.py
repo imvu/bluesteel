@@ -9,6 +9,7 @@ class BluesteelProjectEntry(models.Model):
     layout = models.ForeignKey('bluesteel.BluesteelLayoutEntry', related_name='bluesteel_layout')
     command_group = models.ForeignKey('commandrepo.CommandGroupEntry', related_name='bluesteel_command_group')
     git_project = models.ForeignKey('gitrepo.GitProjectEntry', related_name='bluesteel_git_project')
+    git_project_folder_search_path = models.CharField(default='.', max_length=255)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True, editable=False)
 
@@ -27,6 +28,7 @@ class BluesteelProjectEntry(models.Model):
         obj['uuid'] = self.get_uuid()
         obj['order'] = self.order
         obj['git_project'] = self.git_project.as_object()
+        obj['git_project_folder_search_path'] = self.git_project_folder_search_path
         obj['command_group'] = self.command_group.as_object()
 
         return obj

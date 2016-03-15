@@ -92,6 +92,22 @@
                         </div>
                     </li>
                 </ul>
+                <ul class="no_dots vertical_margin">
+                    <li>
+                        <div class="list_label indent_1">GIT PROJECT LOCAL SEARCH PATH</div>
+                    </li>
+                    <li>
+                        <div class="container_input">
+                            <input  class="command_input"
+                                    type="text"
+                                    name="git_project_folder_search_path"
+                                    value="{{project.git_project_folder_search_path}}"
+                                    maxlength="255"
+                            ></input>
+                        </div>
+                    </li>
+                </ul>
+
                 {% for command_set in project.command_group.command_sets %}
                     <ul     id="command_list_{{forloop.parentloop.counter0}}_{{forloop.counter0}}"
                             class="no_dots vertical_margin"
