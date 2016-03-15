@@ -524,6 +524,47 @@ class GitFetcherTestCase(TestCase):
         self.assertEqual('lgarcia-2@test.com', commits[1]['committer']['email'])
         self.assertEqual('2015-03-08T23:13:33-07:00', commits[1]['committer']['date'])
 
+    def test_extract_and_format_commits_from_report_with_wrong_escape_chars(self):
+        report1 = {}
+        report1['command'] = 'git log ...'
+        report1['result'] = {}
+        report1['result']['status'] = 0
+        report1['result']['out'] = '{\
+                "hash":"0000100001000010000100001000010000100001",\
+                "parent_hashes":"0000500005000050000500005000050000500005 0000200002000020000200002000020000200002",\
+                "author": {\
+                    "name":"llorensmarti",\
+                    "email":"lgarcia@test.com",\
+                    "date":"2015-03-08T23:13:33-07:00"\
+                },\
+                "committer": {\
+                    "name":"llorens\marti2",\
+                    "email":"lgarcia-2@test.com",\
+                    "date":"2015-03-08T23:13:33-07:00"\
+                }\
+            },'
+        report1['result']['error'] = ''
+
+        obj = {}
+        obj['status'] = True
+        obj['commands'] = []
+        obj['commands'].append(report1)
+
+        commits = self.fetcher.extract_and_format_commits_from_report(obj)
+
+        self.assertEqual(1, len(commits))
+
+        self.assertEqual('0000100001000010000100001000010000100001', commits[0]['hash'])
+        self.assertEqual(2, len(commits[0]['parent_hashes']))
+        self.assertEqual('0000500005000050000500005000050000500005', commits[0]['parent_hashes'][0])
+        self.assertEqual('0000200002000020000200002000020000200002', commits[0]['parent_hashes'][1])
+        self.assertEqual('llorensmarti', commits[0]['author']['name'])
+        self.assertEqual('lgarcia@test.com', commits[0]['author']['email'])
+        self.assertEqual('2015-03-08T23:13:33-07:00', commits[0]['author']['date'])
+        self.assertEqual('llorens\marti2', commits[0]['committer']['name'])
+        self.assertEqual('lgarcia-2@test.com', commits[0]['committer']['email'])
+        self.assertEqual('2015-03-08T23:13:33-07:00', commits[0]['committer']['date'])
+
     def test_trimmed_commits_not_found(self):
         commmit1 = {'hash' : '0000100001000010000100001000010000100001'}
         commmit2 = {'hash' : '0000200002000020000200002000020000200002'}

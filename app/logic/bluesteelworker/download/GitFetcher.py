@@ -489,7 +489,9 @@ class GitFetcher(object):
 
         for command in reports['commands']:
             if command['command'].startswith('git log') and command['result']['status'] == 0:
-                commits_string = '[' + command['result']['out'][:-1] + ']'
+                res = command['result']['out'][:-1]
+                res = res.replace('\\', '\\\\')
+                commits_string = '[' + res + ']'
                 commits_obj = json.loads(commits_string)
 
                 for commit in commits_obj:
