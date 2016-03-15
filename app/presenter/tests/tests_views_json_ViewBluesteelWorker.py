@@ -66,7 +66,7 @@ class ViewsBluesteelWorkerTestCase(TestCase):
         obj = json.loads(settings)
 
         self.assertEqual('http://testserver/main/bluesteelworker/bootstrap/', obj['entry_point'])
-        self.assertEqual(['..', 'tmp', 'worker_tmp'], obj['tmp_path'])
+        self.assertEqual(['tmp', 'worker_tmp'], obj['tmp_path'])
 
         settings_file.close()
         zipped_file.close()

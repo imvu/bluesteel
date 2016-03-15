@@ -30,7 +30,7 @@ def get_worker(request):
     if request.method == 'GET':
         settings_obj = {}
         settings_obj['entry_point'] = ViewUrlGenerator.get_worker_entry_point_full_url(request.get_host())
-        settings_obj['tmp_path'] = ['..', 'tmp', 'worker_tmp']
+        settings_obj['tmp_path'] = ['tmp', 'worker_tmp']
 
         path_final = zip_folder_and_return_path(
             os.path.join(settings.BASE_DIR, '..', 'app', 'logic', 'bluesteelworker', 'download'),
