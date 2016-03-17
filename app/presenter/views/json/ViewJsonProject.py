@@ -10,6 +10,18 @@ from app.logic.commandrepo.controllers.CommandController import CommandControlle
 from app.logic.httpcommon import res
 from app.logic.httpcommon import val
 
+def filter_folder_path(path):
+    """ This function will filter out \\..\\ or \\ at the begining. Also if path becomes empty, . will be used """
+    local_search_path = path
+    local_search_path = local_search_path.replace('\\..\\', '\\')
+    local_search_path = local_search_path.replace('/../', '/')
+    if local_search_path.startswith('/') or local_search_path.startswith('\\'):
+        local_search_path = local_search_path[1:]
+    if len(local_search_path) == 0:
+        local_search_path = '.'
+    return local_search_path
+
+
 def save_project(request, project_id):
     """ Save project properties """
     if request.method == 'POST':
@@ -28,9 +40,7 @@ def save_project(request, project_id):
 
         CommandController.delete_command_group_by_id(project_entry.command_group.id)
 
-        local_search_path = val_resp_obj['git_project_folder_search_path']
-        local_search_path = local_search_path.replace('\\..\\', '\\')
-        local_search_path = local_search_path.replace('/../', '/')
+        local_search_path = filter_folder_path(val_resp_obj['git_project_folder_search_path'])
 
         project_entry.name = val_resp_obj['name']
         project_entry.git_project_folder_search_path = local_search_path

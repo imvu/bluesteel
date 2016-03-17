@@ -193,6 +193,53 @@ class BluesteelViewProjectTestCase(TestCase):
         self.assertEqual(200, resp_obj['status'])
         self.assertEqual('local\\path\\without\\dots\\', BluesteelProjectEntry.objects.all().first().git_project_folder_search_path)
 
+    def test_save_bluesteel_project_removing_everything_in_path(self):
+        commands = []
+        commands.append('command-1')
+        commands.append('command-2')
+        commands.append('command-3')
+
+        commands2 = []
+        commands2.append('command-4')
+        commands2.append('command-5')
+        commands2.append('command-6')
+
+        command_group = CommandGroupEntry.objects.create()
+        CommandController.add_full_command_set(command_group, "CLONE", 0, commands)
+        CommandController.add_full_command_set(command_group, "FETCH", 1, commands2)
+
+        git_project = GitProjectEntry.objects.create(url='', name='git-project')
+
+        bluesteel_proj = BluesteelProjectEntry.objects.create(
+            name='project-1',
+            layout=self.layout_1,
+            command_group=command_group,
+            git_project=git_project
+        )
+
+        obj = {}
+        obj['name'] = 'NAME-updated'
+        obj['git_project_folder_search_path'] = '\\..\\'
+        obj['clone'] = []
+        obj['clone'].append('command-28')
+        obj['clone'].append('command-29')
+        obj['fetch'] = []
+        obj['fetch'].append('command-30')
+        obj['fetch'].append('command-31')
+        obj['pull'] = []
+        obj['pull'].append('command-32')
+
+        resp = self.client.post(
+            '/main/project/{0}/save/'.format(bluesteel_proj.id),
+            data = json.dumps(obj),
+            content_type='application/json')
+
+        res.check_cross_origin_headers(self, resp)
+        resp_obj = json.loads(resp.content)
+
+        self.assertEqual(200, resp_obj['status'])
+        self.assertEqual('.', BluesteelProjectEntry.objects.all().first().git_project_folder_search_path)
+
     def test_delete_bluesteel_project(self):
         commands = []
         commands.append('command-1')
