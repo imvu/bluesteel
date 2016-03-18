@@ -21,7 +21,7 @@ class ProjectFolderManager(object):
         return None
 
     @staticmethod
-    def get_folder_paths(cwd, tmp_folders_list, archive_name, project_name):
+    def get_folder_paths(cwd, tmp_folders_list, archive_name, project_name, local_search_path):
         """ Returns an object with all the paths needed on a project """
 
         obj = {}
@@ -30,12 +30,14 @@ class ProjectFolderManager(object):
         obj['project_name'] = str(os.path.join(obj['archive'], project_name))
         obj['project'] = str(os.path.join(obj['project_name'], 'project'))
         obj['log'] = str(os.path.join(obj['project_name'], 'log'))
+        obj['git_project_search_path'] = str(os.path.join(obj['project'], local_search_path))
 
         obj['temp'] = os.path.normpath(obj['temp'])
         obj['archive'] = os.path.normpath(obj['archive'])
         obj['project_name'] = os.path.normpath(obj['project_name'])
         obj['project'] = os.path.normpath(obj['project'])
         obj['log'] = os.path.normpath(obj['log'])
+        obj['git_project_search_path'] = os.path.normpath(obj['git_project_search_path'])
         return obj
 
     @staticmethod

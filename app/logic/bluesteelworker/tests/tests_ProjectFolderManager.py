@@ -71,6 +71,7 @@ class GitFetcherTestCase(TestCase):
             ['tmp', 'folder', 'list'],
             'archive-name',
             'project-name',
+            'test-repo'
         )
 
         ProjectFolderManager.create_tmp_folder_for_git_project(paths)
@@ -82,10 +83,13 @@ class GitFetcherTestCase(TestCase):
             ['tmp', 'folder', 'list'],
             'archive-name',
             'project-name',
+            'test-repo-2'
         )
 
         ProjectFolderManager.create_tmp_folder_for_git_project(paths)
-        os.makedirs(os.path.join(paths['project'], 'test-repo/.git'))
+        os.makedirs(os.path.join(paths['project'], 'test-repo-1/.git'))
+        os.makedirs(os.path.join(paths['project'], 'test-repo-2/.git'))
+        os.makedirs(os.path.join(paths['project'], 'test-repo-3/.git'))
         return paths
 
     def test_generated_folder_paths_are_correct(self):
@@ -94,6 +98,7 @@ class GitFetcherTestCase(TestCase):
             ['tmp', 'folder', 'list'],
             'archive-name',
             'project-name',
+            'test-repo'
         )
 
         self.assertEqual(os.path.join(self.tmp_folder, 'tmp/folder/list'), paths['temp'])
@@ -101,6 +106,7 @@ class GitFetcherTestCase(TestCase):
         self.assertEqual(os.path.join(self.tmp_folder, 'tmp/folder/list/archive-name/project-name'), paths['project_name'])
         self.assertEqual(os.path.join(self.tmp_folder, 'tmp/folder/list/archive-name/project-name/project'), paths['project'])
         self.assertEqual(os.path.join(self.tmp_folder, 'tmp/folder/list/archive-name/project-name/log'), paths['log'])
+        self.assertEqual(os.path.join(self.tmp_folder, 'tmp/folder/list/archive-name/project-name/project/test-repo'), paths['git_project_search_path'])
 
     def test_is_project_folder_present(self):
         paths = self.create_project_folders()
@@ -122,6 +128,7 @@ class GitFetcherTestCase(TestCase):
             ['tmp', 'folder', 'list'],
             'archive-name',
             'project-name',
+            'test-repo-with-no-git'
         )
 
         self.assertFalse(ProjectFolderManager.is_git_project_folder_present(paths))
@@ -136,6 +143,7 @@ class GitFetcherTestCase(TestCase):
             ['tmp', 'folder', 'list'],
             'archive-name',
             'project-name',
+            'test-repo'
         )
 
         self.assertFalse(ProjectFolderManager.is_log_project_folder_present(paths))
@@ -146,6 +154,7 @@ class GitFetcherTestCase(TestCase):
             ['tmp', 'folder', 'list'],
             'archive-name',
             'project-name',
+            'test-repo'
         )
 
         ProjectFolderManager.create_tmp_folder_for_git_project(paths)
@@ -162,6 +171,7 @@ class GitFetcherTestCase(TestCase):
             ['tmp', 'folder', 'list'],
             'archive-name',
             'project-name',
+            'test-repo'
         )
 
         ProjectFolderManager.create_tmp_folder_for_git_project(paths)

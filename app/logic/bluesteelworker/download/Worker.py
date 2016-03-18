@@ -96,6 +96,7 @@ def fragment_layout_in_project_infos(layout, tmp_path):
         obj['git']['project']['tmp_directory'] = tmp_path
         obj['git']['project']['archive'] = layout['uuid']
         obj['git']['project']['name'] = project['uuid']
+        obj['git']['project']['git_project_search_path'] = project['git_project_folder_search_path']
         obj['git']['branch'] = {}
         obj['git']['branch']['known'] = project['git_project']['branches']
 
@@ -282,12 +283,14 @@ def process_execute_task(settings, benchmark_execution):
 
     layout_uuid = benchmark_execution['definition']['layout']['uuid']
     project_uuid = benchmark_execution['definition']['project']['uuid']
+    local_search_path = benchmark_execution['definition']['project']['git_project_folder_search_path']
 
     paths = ProjectFolderManager.get_folder_paths(
         get_cwd(),
         settings['tmp_path'][:],
         layout_uuid,
         project_uuid,
+        local_search_path
     )
 
     git_path = ProjectFolderManager.get_cwd_of_first_git_project_found_in(paths['project'])

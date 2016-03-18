@@ -28,6 +28,7 @@ class GitFetcherTestCase(TestCase):
         self.obj1['git']['project']['tmp_directory'] = ['tmp-gitfetcher-folder']
         self.obj1['git']['project']['archive'] = 'archive-28-0123ABC'
         self.obj1['git']['project']['name'] = 'test-repo-1'
+        self.obj1['git']['project']['git_project_search_path'] = 'test-repo-git-2'
         self.obj1['git']['project']['url'] = 'git-url'
         self.obj1['git']['branches'] = []
         self.obj1['git']['clone'] = {}
@@ -49,6 +50,7 @@ class GitFetcherTestCase(TestCase):
         self.obj2['git']['project']['tmp_directory'] = ['tmp-gitfetcher-folder']
         self.obj2['git']['project']['archive'] = 'archive-28-0123ABC'
         self.obj2['git']['project']['name'] = 'test-repo-2'
+        self.obj2['git']['project']['git_project_search_path'] = 'test-repo-git-2'
         self.obj2['git']['project']['url'] = 'git-url'
         self.obj2['git']['branches'] = []
         self.obj2['git']['clone'] = {}
@@ -70,8 +72,12 @@ class GitFetcherTestCase(TestCase):
             shutil.rmtree(self.tmp_folder)
 
     def create_git_hidden_folder(self, root, tmp, archive, name_project):
-        path = os.path.join(root, tmp, archive, name_project, 'project', name_project, '.git')
-        os.makedirs(path)
+        path1 = os.path.join(root, tmp, archive, name_project, 'project', name_project, 'test-repo-git-1','.git')
+        path2 = os.path.join(root, tmp, archive, name_project, 'project', name_project, 'test-repo-git-2','.git')
+        path3 = os.path.join(root, tmp, archive, name_project, 'project', name_project, 'test-repo-git-3','.git')
+        os.makedirs(path1)
+        os.makedirs(path2)
+        os.makedirs(path3)
 
     def create_paths(self, obj):
         paths = ProjectFolderManager.get_folder_paths(
@@ -79,11 +85,21 @@ class GitFetcherTestCase(TestCase):
             obj['git']['project']['tmp_directory'],
             obj['git']['project']['archive'],
             obj['git']['project']['name'],
+            obj['git']['project']['git_project_search_path']
         )
 
         ProjectFolderManager.create_tmp_folder_for_git_project(paths)
-        os.makedirs(os.path.join(paths['project'], 'test-repo/.git'))
+        os.makedirs(os.path.join(paths['project'], 'test-repo-git-1/.git'))
+        os.makedirs(os.path.join(paths['project'], 'test-repo-git-2/.git'))
+        os.makedirs(os.path.join(paths['project'], 'test-repo-git-3/.git'))
         return paths
+
+    def test_find_first_git_project_inside_project_path(self):
+        self.create_paths(self.obj1)
+        paths = GitFetcher.get_project_paths(self.obj1)
+        found_path = GitFetcher.get_first_git_project_found_path(paths)
+
+        self.assertEqual(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'project', 'test-repo-git-2'), found_path)
 
     @mock.patch('app.logic.bluesteelworker.download.CommandExecutioner.subprocess.call')
     def test_clone_project(self, mock_subprocess):
@@ -319,7 +335,7 @@ class GitFetcherTestCase(TestCase):
         mock_subprocess.return_value = 0
         self.create_paths(self.obj1)
         self.create_git_hidden_folder(settings.TMP_ROOT, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1')
-        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC','test-repo-1', 'project', 'test-repo-1', '.git')))
+        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC','test-repo-1', 'project', 'test-repo-1', 'test-repo-git-2', '.git')))
 
         reports = self.fetcher.commands_get_branch_names_and_hashes(self.obj1, branch_names)
 
@@ -336,6 +352,9 @@ class GitFetcherTestCase(TestCase):
 
         self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC','test-repo-1')))
         self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC','test-repo-1', 'project')))
+        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC','test-repo-1', 'project', 'test-repo-git-1')))
+        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC','test-repo-1', 'project', 'test-repo-git-2')))
+        self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC','test-repo-1', 'project', 'test-repo-git-3')))
         self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC','test-repo-1', 'log')))
         self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC','test-repo-1', 'log', 'out.txt')))
         self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC','test-repo-1', 'log', 'err.txt')))
