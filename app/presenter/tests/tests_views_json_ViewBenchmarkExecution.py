@@ -83,7 +83,7 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
             }]
         }
 
-        self.assertEqual(13, CommandEntry.objects.all().count())
+        self.assertEqual(12, CommandEntry.objects.all().count())
         self.assertEqual(1, CommandEntry.objects.filter(command='git clone http://www.test.com').count())
         self.assertEqual(2, CommandEntry.objects.filter(command='git checkout master').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='git reset --hard origin/master').count())
@@ -92,7 +92,6 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
         self.assertEqual(1, CommandEntry.objects.filter(command='git pull -r origin master').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='git submodule sync').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='git submodule update --init --recursive').count())
-        self.assertEqual(1, CommandEntry.objects.filter(command='git pull -r').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='command-1').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='command-2').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='command-3').count())
@@ -111,7 +110,7 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
         execution = BenchmarkExecutionEntry.objects.filter(definition=self.benchmark_definition1).first()
 
         self.assertEqual('command-vertical-bars', CommandEntry.objects.filter(command_set=execution.report).first().command)
-        self.assertEqual(14, CommandEntry.objects.all().count())
+        self.assertEqual(13, CommandEntry.objects.all().count())
         self.assertEqual(1, CommandEntry.objects.filter(command='git clone http://www.test.com').count())
         self.assertEqual(2, CommandEntry.objects.filter(command='git checkout master').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='git reset --hard origin/master').count())
@@ -120,7 +119,6 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
         self.assertEqual(1, CommandEntry.objects.filter(command='git pull -r origin master').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='git submodule sync').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='git submodule update --init --recursive').count())
-        self.assertEqual(1, CommandEntry.objects.filter(command='git pull -r').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='command-1').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='command-2').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='command-3').count())
@@ -155,7 +153,7 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
             }]
         }
 
-        self.assertEqual(13, CommandEntry.objects.all().count())
+        self.assertEqual(12, CommandEntry.objects.all().count())
         self.assertEqual(1, CommandEntry.objects.filter(command='git clone http://www.test.com').count())
         self.assertEqual(2, CommandEntry.objects.filter(command='git checkout master').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='git reset --hard origin/master').count())
@@ -164,7 +162,6 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
         self.assertEqual(1, CommandEntry.objects.filter(command='git pull -r origin master').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='git submodule sync').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='git submodule update --init --recursive').count())
-        self.assertEqual(1, CommandEntry.objects.filter(command='git pull -r').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='command-1').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='command-2').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='command-3').count())
@@ -183,7 +180,7 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
         execution = BenchmarkExecutionEntry.objects.filter(definition=self.benchmark_definition1).first()
 
         self.assertEqual('command-text', CommandEntry.objects.filter(command_set=execution.report).first().command)
-        self.assertEqual(14, CommandEntry.objects.all().count())
+        self.assertEqual(13, CommandEntry.objects.all().count())
         self.assertEqual(1, CommandEntry.objects.filter(command='git clone http://www.test.com').count())
         self.assertEqual(2, CommandEntry.objects.filter(command='git checkout master').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='git reset --hard origin/master').count())
@@ -192,7 +189,6 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
         self.assertEqual(1, CommandEntry.objects.filter(command='git pull -r origin master').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='git submodule sync').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='git submodule update --init --recursive').count())
-        self.assertEqual(1, CommandEntry.objects.filter(command='git pull -r').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='command-1').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='command-2').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='command-3').count())
@@ -272,7 +268,7 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
             }]
         }
 
-        self.assertEqual(13, CommandEntry.objects.all().count())
+        self.assertEqual(12, CommandEntry.objects.all().count())
         self.assertEqual(1, CommandEntry.objects.filter(command='git clone http://www.test.com').count())
         self.assertEqual(2, CommandEntry.objects.filter(command='git checkout master').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='git reset --hard origin/master').count())
@@ -281,7 +277,6 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
         self.assertEqual(1, CommandEntry.objects.filter(command='git pull -r origin master').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='git submodule sync').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='git submodule update --init --recursive').count())
-        self.assertEqual(1, CommandEntry.objects.filter(command='git pull -r').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='command-1').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='command-2').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='command-3').count())
@@ -297,7 +292,7 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
 
         self.assertEqual(400, resp_obj['status'])
 
-        self.assertEqual(13, CommandEntry.objects.all().count())
+        self.assertEqual(12, CommandEntry.objects.all().count())
         self.assertEqual(1, CommandEntry.objects.filter(command='git clone http://www.test.com').count())
         self.assertEqual(2, CommandEntry.objects.filter(command='git checkout master').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='git reset --hard origin/master').count())
@@ -306,7 +301,6 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
         self.assertEqual(1, CommandEntry.objects.filter(command='git pull -r origin master').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='git submodule sync').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='git submodule update --init --recursive').count())
-        self.assertEqual(1, CommandEntry.objects.filter(command='git pull -r').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='command-1').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='command-2').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='command-3').count())
@@ -334,7 +328,7 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
             }]
         }
 
-        self.assertEqual(13, CommandEntry.objects.all().count())
+        self.assertEqual(12, CommandEntry.objects.all().count())
         self.assertEqual(1, CommandEntry.objects.filter(command='git clone http://www.test.com').count())
         self.assertEqual(2, CommandEntry.objects.filter(command='git checkout master').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='git reset --hard origin/master').count())
@@ -343,7 +337,6 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
         self.assertEqual(1, CommandEntry.objects.filter(command='git pull -r origin master').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='git submodule sync').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='git submodule update --init --recursive').count())
-        self.assertEqual(1, CommandEntry.objects.filter(command='git pull -r').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='command-1').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='command-2').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='command-3').count())
@@ -362,7 +355,7 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
 
         execution = BenchmarkExecutionEntry.objects.filter(definition=self.benchmark_definition1).first()
 
-        self.assertEqual(13, CommandEntry.objects.all().count())
+        self.assertEqual(12, CommandEntry.objects.all().count())
         self.assertEqual(1, CommandEntry.objects.filter(command='git clone http://www.test.com').count())
         self.assertEqual(2, CommandEntry.objects.filter(command='git checkout master').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='git reset --hard origin/master').count())
@@ -371,7 +364,6 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
         self.assertEqual(1, CommandEntry.objects.filter(command='git pull -r origin master').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='git submodule sync').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='git submodule update --init --recursive').count())
-        self.assertEqual(1, CommandEntry.objects.filter(command='git pull -r').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='command-1').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='command-2').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='command-3').count())

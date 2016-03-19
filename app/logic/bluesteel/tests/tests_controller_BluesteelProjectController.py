@@ -6,6 +6,8 @@ from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEnt
 from app.logic.bluesteel.controllers.BluesteelProjectController import BluesteelProjectController
 from app.logic.gitrepo.models.GitProjectModel import GitProjectEntry
 from app.logic.commandrepo.models.CommandModel import CommandEntry
+from app.logic.commandrepo.models.CommandGroupModel import CommandGroupEntry
+from app.logic.commandrepo.models.CommandSetModel import CommandSetEntry
 from app.logic.httpcommon import res
 from app.logic.httpcommon.Page import Page
 import json
@@ -35,6 +37,11 @@ class BluesteelProjectControllerTestCase(TestCase):
         self.assertEqual(layout_entry, BluesteelProjectEntry.objects.all().first().layout)
         self.assertEqual('project-name', BluesteelProjectEntry.objects.all().first().name)
         self.assertEqual(28, BluesteelProjectEntry.objects.all().first().order)
+
+        self.assertEqual(1, CommandGroupEntry.objects.all().count())
+        self.assertEqual(2, CommandSetEntry.objects.all().count())
+        self.assertEqual('CLONE', CommandSetEntry.objects.filter(order=0).first().name)
+        self.assertEqual('FETCH', CommandSetEntry.objects.filter(order=1).first().name)
 
         self.assertEqual(1, CommandEntry.objects.filter(order=0, command='git checkout master').count())
         self.assertEqual(1, CommandEntry.objects.filter(order=1, command='git reset --hard origin/master').count())

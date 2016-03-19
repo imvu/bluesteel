@@ -89,7 +89,6 @@ class BluesteelProjectController(object):
         group = CommandGroupEntry.objects.create()
         BluesteelProjectController.create_default_command_set_clone(group, 0)
         BluesteelProjectController.create_default_command_set_fetch(group, 1)
-        BluesteelProjectController.create_default_command_set_pull(group, 2)
         return group
 
     @staticmethod
