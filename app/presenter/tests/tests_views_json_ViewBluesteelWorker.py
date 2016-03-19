@@ -403,3 +403,34 @@ class ViewsBluesteelWorkerTestCase(TestCase):
         self.assertFalse(update_time_1 == update_time_2)
         self.assertTrue(update_time_1 < update_time_2)
 
+    def test_save_worker(self):
+        worker_new = WorkerEntry.objects.create(
+            name='worker-new',
+            uuid='8a88432d-33db-4d24-a0a7-2f863e111111',
+            description='description-1',
+            git_feeder=False,
+            user=self.user1
+        )
+
+        self.assertEqual('description-1', worker_new.description)
+        self.assertFalse(worker_new.git_feeder)
+
+        post_data = {}
+        post_data['description'] = 'description-2'
+        post_data['git_feeder'] = True
+
+        resp = self.client.post(
+            '/main/bluesteelworker/{0}/save/'.format(worker_new.id),
+            data=json.dumps(post_data),
+            content_type='text/plain'
+        )
+
+        res.check_cross_origin_headers(self, resp)
+        resp_obj = json.loads(resp.content)
+
+        worker = WorkerEntry.objects.filter(id=worker_new.id).first()
+
+        self.assertEqual(200, resp_obj['status'])
+        self.assertEqual('description-2', worker.description)
+        self.assertEqual(True, worker.git_feeder)
+

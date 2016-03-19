@@ -154,3 +154,25 @@ def update_worker_activity(request, worker_id):
             return res.get_response(404, 'Worker not found!', {})
     else:
         return res.get_only_post_allowed({})
+
+def save_worker(request, worker_id):
+    if request.method == 'POST':
+        (json_valid, post_info) = val.validate_json_string(request.body)
+        if not json_valid:
+            return res.get_json_parser_failed({})
+
+        (obj_validated, obj) = val.validate_obj_schema(post_info, BluesteelWorkerSchemas.SAVE_WORKER_SCHEMA)
+        if not obj_validated:
+            return res.get_schema_failed(obj)
+
+        worker = WorkerEntry.objects.filter(id=worker_id).first()
+        if worker == None:
+            return res.get_response(400, 'Worker not found', obj)
+        else:
+            worker.description = obj['description']
+            worker.git_feeder = obj['git_feeder']
+            worker.save()
+
+        return res.get_response(200, 'Worker Saved!', {})
+    else:
+        return res.get_only_post_allowed({})

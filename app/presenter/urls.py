@@ -130,6 +130,9 @@ urlpatterns = patterns(
     url(r'^bluesteelworker/(?P<worker_id>\d+)/update/activity/',
         'app.presenter.views.json.ViewJsonBluesteelWorker.update_worker_activity'),
 
+    url(r'^bluesteelworker/(?P<worker_id>\d+)/save/',
+        'app.presenter.views.json.ViewJsonBluesteelWorker.save_worker'),
+
     url(r'^feed/commit/project/(?P<project_id>\d+)/$',
         'app.presenter.views.json.ViewJsonGitFeeder.post_commits'),
 

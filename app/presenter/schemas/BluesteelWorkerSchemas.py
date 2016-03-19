@@ -44,3 +44,19 @@ LOGIN_WORKER_SCHEMA = {
         },
     },
 }
+
+SAVE_WORKER_SCHEMA = {
+    '$schema': 'http://json-schema.org/draft-03/schema#',
+    'type' : 'object',
+    'additionalProperties': False,
+    'required': ['description', 'git_feeder'],
+    'properties' : {
+        'description' : {
+            'type' : 'string',
+            'minLength' : 1,
+        },
+        'git_feeder' : {
+            'type': 'boolean',
+        },
+    },
+}

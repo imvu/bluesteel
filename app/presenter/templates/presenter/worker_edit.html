@@ -6,43 +6,53 @@
 <div class="container_large container_height">
     <ul class="no_dots no_indent horizontal_list">
         {% if worker %}
-        <li class="horizontal">
-            <div class="upper_card white_card card_padding_small card_small">
-                <div class="title">{{worker.name}}</div>
-            </div>
-            <div class="midle_card white_card card_padding_large card_small">
-                <ul class="no_dots no_indent">
-                    <li>
-                        <div class="list_label indent_1">DESCRIPTION</div>
-                        <div class="indent_2">
-                            <textarea class="default_textarea" rows="4">{{worker.description}}</textarea>
-                        </div>
-                    </li>
-                    <br/>
-                    <li>
-                        <div class="list_label indent_1">COMMIT FEEDER</div>
-                        <div class="container_input">
-                            <select     class="selection individual"
-                                        name="layout_project_index_path"
-                            >
-                                <option value="yes" {{worker.git_feeder|yesno:"selected, " }}>YES</option>
-                                <option value="no" {{worker.git_feeder|yesno:",selected" }}>NO</option>
-                            </select>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-            <div class="lower_card white_card card_padding_small">
-                <ul class="no_dots no_indent vertical_margin horizontal_list">
-                    <li class="horizontal">
-                        <button     class="btn_rect primary"
-                                    type='button'
-                                    id='worker_edit_save_button'
-                        >Save</button>
-                    </li>
-                </ul>
-            </div>
-        </li>
+        <form   action="{{worker.url.save}}"
+                method="POST"
+                name="saveWorkerForm"
+                id="save_worker_form"
+        >
+            <li class="horizontal">
+                <div class="upper_card white_card card_padding_small card_small">
+                    <div class="title">{{worker.name}}</div>
+                </div>
+                <div class="midle_card white_card card_padding_large card_small">
+                    <ul class="no_dots no_indent">
+                        <li>
+                            <div class="list_label indent_1">DESCRIPTION</div>
+                            <div class="indent_2">
+                                <textarea   class="default_textarea"
+                                            rows="4"
+                                            name="worker_description"
+                                >{{worker.description}}</textarea>
+                            </div>
+                        </li>
+                        <br/>
+                        <li>
+                            <div class="list_label indent_1">COMMIT FEEDER</div>
+                            <div class="container_input">
+                                <select     class="selection individual"
+                                            name="worker_git_feeder"
+                                >
+                                    <option value="yes" {{worker.git_feeder|yesno:"selected, " }}>YES</option>
+                                    <option value="no" {{worker.git_feeder|yesno:",selected" }}>NO</option>
+                                </select>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="lower_card white_card card_padding_small">
+                    <ul class="no_dots no_indent vertical_margin horizontal_list">
+                        <li class="horizontal">
+                            <button     class="btn_rect primary"
+                                        type='button'
+                                        id='worker_edit_save_button'
+                                        onclick="saveWorker('save_worker_form');"
+                            >Save</button>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+        </form>
         {% endif %}
     </ul>
 </div>

@@ -75,6 +75,9 @@ def get_worker_create_point_full_url(domain):
 def get_worker_login_point_full_url(domain):
     return 'http://{0}/main/bluesteelworker/login/'.format(domain)
 
+def get_worker_save_url(worker_id):
+    return '/main/bluesteelworker/{0}/save/'.format(worker_id)
+
 def get_gitfeeder_full_url(domain, project_id):
     return 'http://{0}/main/feed/commit/project/{1}/'.format(domain, project_id)
 

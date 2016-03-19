@@ -55,6 +55,8 @@ def get_worker_edit(request, worker_id):
         data = {}
         data['menu'] = ViewPrepareObjects.prepare_menu_for_html([])
         data['worker'] = worker_entry.as_object()
+        data['worker']['url'] = {}
+        data['worker']['url']['save'] = ViewUrlGenerator.get_worker_save_url(worker_id)
 
         return res.get_template_data(request, 'presenter/worker_edit.html', data)
     else:
