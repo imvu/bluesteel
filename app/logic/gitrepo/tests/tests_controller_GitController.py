@@ -258,7 +258,7 @@ class GitBranchMergeTargetTestCase(TestCase):
             order=3
         )
 
-        branches_trimmed = GitController.get_all_branches_trimmed_by_merge_target(self.git_project1)
+        branches_trimmed = GitController.get_all_branches_trimmed_by_merge_target(self.git_project1, 100)
 
         self.assertEqual(2 , len(branches_trimmed))
 
@@ -272,6 +272,80 @@ class GitBranchMergeTargetTestCase(TestCase):
         self.assertEqual('branch2' , branches_trimmed[1]['name'])
         self.assertEqual('0000500005000050000500005000050000500005', branches_trimmed[1]['commits'][0]['hash'])
         self.assertEqual('0000400004000040000400004000040000400004', branches_trimmed[1]['commits'][1]['hash'])
+
+    def test_branches_trimmed_with_maximum_commit_depth(self):
+        #  5   9
+        #  4   8
+        #  3   7
+        #  2 - 6
+        #  1
+
+        # Expected result with max commit depth of 2
+
+        #  5   9
+        #  4   8
+
+        # Commits
+        git_commit1 = self.create_commit(self.git_project1, self.git_user1, 1)
+        git_commit2 = self.create_commit(self.git_project1, self.git_user1, 2)
+        git_commit3 = self.create_commit(self.git_project1, self.git_user1, 3)
+        git_commit4 = self.create_commit(self.git_project1, self.git_user1, 4)
+        git_commit5 = self.create_commit(self.git_project1, self.git_user1, 5)
+        git_commit6 = self.create_commit(self.git_project1, self.git_user1, 6)
+        git_commit7 = self.create_commit(self.git_project1, self.git_user1, 7)
+        git_commit8 = self.create_commit(self.git_project1, self.git_user1, 8)
+        git_commit9 = self.create_commit(self.git_project1, self.git_user1, 9)
+
+        # Branches
+        git_branch1 = GitBranchEntry.objects.create(project=self.git_project1, commit=git_commit5, name='branch1')
+        git_branch2 = GitBranchEntry.objects.create(project=self.git_project1, commit=git_commit9, name='branch2')
+
+        # Parents
+        git_parent_1_2 = GitParentEntry.objects.create(project=self.git_project1, parent=git_commit1, son=git_commit2)
+        git_parent_2_3 = GitParentEntry.objects.create(project=self.git_project1, parent=git_commit2, son=git_commit3)
+        git_parent_3_4 = GitParentEntry.objects.create(project=self.git_project1, parent=git_commit3, son=git_commit4)
+        git_parent_4_5 = GitParentEntry.objects.create(project=self.git_project1, parent=git_commit4, son=git_commit5)
+
+        git_parent_2_6 = GitParentEntry.objects.create(project=self.git_project1, parent=git_commit2, son=git_commit6)
+        git_parent_6_7 = GitParentEntry.objects.create(project=self.git_project1, parent=git_commit6, son=git_commit7)
+        git_parent_7_8 = GitParentEntry.objects.create(project=self.git_project1, parent=git_commit7, son=git_commit8)
+        git_parent_8_9 = GitParentEntry.objects.create(project=self.git_project1, parent=git_commit8, son=git_commit9)
+
+        # Diffs
+        git_diff1 = GitDiffEntry.objects.create(project=self.git_project1, commit_son=git_commit6, commit_parent=git_commit2, content='content-text')
+
+        # Merge targets
+        git_merge_target_2_1 = GitBranchMergeTargetEntry.objects.create(project=self.git_project1, current_branch=git_branch2, target_branch=git_branch1, fork_point=git_commit2, diff=git_diff1)
+        git_merge_target_1_1 = GitBranchMergeTargetEntry.objects.create(project=self.git_project1, current_branch=git_branch1, target_branch=git_branch1, fork_point=git_commit1, diff=git_diff1)
+
+        #Trails Branch 1
+        git_trail_1_5 = GitBranchTrailEntry.objects.create(project=self.git_project1, branch=git_branch1, commit=git_commit5, order=0)
+        git_trail_1_4 = GitBranchTrailEntry.objects.create(project=self.git_project1, branch=git_branch1, commit=git_commit4, order=1)
+        git_trail_1_3 = GitBranchTrailEntry.objects.create(project=self.git_project1, branch=git_branch1, commit=git_commit3, order=3)
+        git_trail_1_2 = GitBranchTrailEntry.objects.create(project=self.git_project1, branch=git_branch1, commit=git_commit2, order=4)
+        git_trail_1_1 = GitBranchTrailEntry.objects.create(project=self.git_project1, branch=git_branch1, commit=git_commit1, order=5)
+
+        #Trails Branch 2
+        git_trail_2_9 = GitBranchTrailEntry.objects.create(project=self.git_project1, branch=git_branch2, commit=git_commit9, order=0)
+        git_trail_2_8 = GitBranchTrailEntry.objects.create(project=self.git_project1, branch=git_branch2, commit=git_commit8, order=1)
+        git_trail_2_7 = GitBranchTrailEntry.objects.create(project=self.git_project1, branch=git_branch2, commit=git_commit7, order=2)
+        git_trail_2_6 = GitBranchTrailEntry.objects.create(project=self.git_project1, branch=git_branch2, commit=git_commit6, order=3)
+        git_trail_2_2 = GitBranchTrailEntry.objects.create(project=self.git_project1, branch=git_branch2, commit=git_commit2, order=4)
+        git_trail_2_1 = GitBranchTrailEntry.objects.create(project=self.git_project1, branch=git_branch2, commit=git_commit1, order=5)
+
+        branches_trimmed = GitController.get_all_branches_trimmed_by_merge_target(self.git_project1, 2)
+
+        self.assertEqual(2 , len(branches_trimmed))
+
+        self.assertEqual('branch1' , branches_trimmed[0]['name'])
+        self.assertEqual(2 , len(branches_trimmed[0]['commits']))
+        self.assertEqual('0000500005000050000500005000050000500005', branches_trimmed[0]['commits'][0]['hash'])
+        self.assertEqual('0000400004000040000400004000040000400004', branches_trimmed[0]['commits'][1]['hash'])
+
+        self.assertEqual(2 , len(branches_trimmed[1]['commits']))
+        self.assertEqual('branch2' , branches_trimmed[1]['name'])
+        self.assertEqual('0000900009000090000900009000090000900009', branches_trimmed[1]['commits'][0]['hash'])
+        self.assertEqual('0000800008000080000800008000080000800008', branches_trimmed[1]['commits'][1]['hash'])
 
     def test_last_equal_trail_commit(self):
         #  4   6
@@ -496,9 +570,9 @@ class GitBranchMergeTargetTestCase(TestCase):
         git_branch6 = GitBranchEntry.objects.create(project=self.git_project1, commit=git_commit1, name='branch6')
         git_branch7 = GitBranchEntry.objects.create(project=self.git_project1, commit=git_commit1, name='branch7')
 
-        branches_1, page_indices_1 = GitController.get_paginated_branches_trimmed_by_merge_target(Page(3, 1), self.git_project1)
-        branches_2, page_indices_2 = GitController.get_paginated_branches_trimmed_by_merge_target(Page(3, 2), self.git_project1)
-        branches_3, page_indices_3 = GitController.get_paginated_branches_trimmed_by_merge_target(Page(3, 3), self.git_project1)
+        branches_1, page_indices_1 = GitController.get_paginated_branches_trimmed_by_merge_target(Page(3, 1), self.git_project1, 100)
+        branches_2, page_indices_2 = GitController.get_paginated_branches_trimmed_by_merge_target(Page(3, 2), self.git_project1, 100)
+        branches_3, page_indices_3 = GitController.get_paginated_branches_trimmed_by_merge_target(Page(3, 3), self.git_project1, 100)
 
         self.assertEqual(3, len(branches_1))
         self.assertEqual(git_branch7.id, branches_1[0]['id'])

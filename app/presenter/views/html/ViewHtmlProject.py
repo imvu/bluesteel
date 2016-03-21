@@ -46,7 +46,11 @@ def get_project_branches(request, project_id, commit_depth, page_index):
             return res.get_template_data(request, 'presenter/not_found.html', {})
 
         page = Page(PROJECTS_ITEMS_PER_PAGE, page_index)
-        branches, page_indices = BluesteelProjectController.get_project_git_branch_data(page, project_entry)
+        branches, page_indices = BluesteelProjectController.get_project_git_branch_data(
+            page,
+            project_entry,
+            commit_depth
+        )
         branches = BenchmarkExecutionController.add_bench_exec_completed_to_branches(branches)
 
         pagination = ViewPrepareObjects.prepare_pagination_branches(project_entry.id, commit_depth, page_indices)
@@ -73,7 +77,11 @@ def get_project_single_branch(request, project_id, branch_id):
         if branch_entry == None:
             return res.get_template_data(request, 'presenter/not_found.html', {})
 
-        branches = BluesteelProjectController.get_project_single_git_branch_data(project_entry, branch_entry)
+        branches = BluesteelProjectController.get_project_single_git_branch_data(
+            project_entry,
+            branch_entry,
+            BRANCH_COMMIT_DEPTH
+        )
         branches = BenchmarkExecutionController.add_bench_exec_completed_to_branches(branches)
 
         data = {}

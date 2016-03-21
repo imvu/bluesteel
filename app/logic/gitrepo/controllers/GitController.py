@@ -50,9 +50,11 @@ class GitController(object):
         project.delete()
 
     @staticmethod
-    def get_commits_from_trails(project, branch):
+    def get_commits_from_trails(project, branch, max_commits):
         """ Return commits as objects from trails """
-        trails = GitBranchTrailEntry.objects.filter(project=project, branch=branch).order_by('order')
+        max_commits = max(1, max_commits)
+
+        trails = GitBranchTrailEntry.objects.filter(project=project, branch=branch).order_by('order')[0:max_commits]
         obj = []
 
         for trail in trails:
@@ -60,9 +62,11 @@ class GitController(object):
         return obj
 
     @staticmethod
-    def get_commits_from_trails_until_fork(project, branch, fork_point_hash):
+    def get_commits_from_trails_until_fork(project, branch, fork_point_hash, max_commits):
         """ Return commits as objects from trails until fork point is found """
-        trails = GitBranchTrailEntry.objects.filter(project=project, branch=branch).order_by('order')
+        max_commits = max(1, max_commits)
+
+        trails = GitBranchTrailEntry.objects.filter(project=project, branch=branch).order_by('order')[0:max_commits]
         obj = []
 
         for trail in trails:
@@ -72,7 +76,7 @@ class GitController(object):
         return obj
 
     @staticmethod
-    def get_branches_trimmed_by_merge_target(project, branches):
+    def get_branches_trimmed_by_merge_target(project, branches, max_commits):
         """ Returns branch data trimmed by its merge target information from branches input """
         all_branches = GitBranchEntry.objects.filter(project=project)
         ret_branches = []
@@ -101,25 +105,26 @@ class GitController(object):
             obj['commits'] = []
 
             if merge_target.current_branch == merge_target.target_branch:
-                obj['commits'] = GitController.get_commits_from_trails(project, branch)
+                obj['commits'] = GitController.get_commits_from_trails(project, branch, max_commits)
             else:
                 obj['commits'] = GitController.get_commits_from_trails_until_fork(
                     project,
                     branch,
-                    merge_target.fork_point.commit_hash
+                    merge_target.fork_point.commit_hash,
+                    max_commits
                 )
 
             ret_branches.append(obj)
         return ret_branches
 
     @staticmethod
-    def get_all_branches_trimmed_by_merge_target(project):
+    def get_all_branches_trimmed_by_merge_target(project, max_commits):
         """ Returns branch data trimmed by its merge target information """
         branches = GitBranchEntry.objects.filter(project=project)
-        return GitController.get_branches_trimmed_by_merge_target(project, branches)
+        return GitController.get_branches_trimmed_by_merge_target(project, branches, max_commits)
 
     @staticmethod
-    def get_pgtd_branches_trimmed_by_merge_target(page, project):
+    def get_pgtd_branches_trimmed_by_merge_target(page, project, max_commits):
         """ Returns paginated branch data trimmed by its merge target information """
         branches = GitBranchEntry.objects.filter(project=project)
 
@@ -128,11 +133,11 @@ class GitController(object):
         branches = current_page.object_list
         page_indices = pag.get_pagination_indices(page, PAGINATION_HALF_RANGE, pager.num_pages)
 
-        branches = GitController.get_branches_trimmed_by_merge_target(project, branches)
+        branches = GitController.get_branches_trimmed_by_merge_target(project, branches, max_commits)
         return branches, page_indices
 
     @staticmethod
-    def get_single_branch_trimmed_by_merge_target(project, branch):
+    def get_single_branch_trimmed_by_merge_target(project, branch, max_commits):
         """ Returns current and target branch data trimmed by its merge target information """
         branches = []
 
@@ -142,7 +147,7 @@ class GitController(object):
 
         branches.append(branch)
 
-        return GitController.get_branches_trimmed_by_merge_target(project, branches)
+        return GitController.get_branches_trimmed_by_merge_target(project, branches, max_commits)
 
     @staticmethod
     def get_fork_point(trails_a, trails_b):

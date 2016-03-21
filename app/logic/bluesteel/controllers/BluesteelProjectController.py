@@ -115,13 +115,13 @@ class BluesteelProjectController(object):
         return entry
 
     @staticmethod
-    def get_project_git_branch_data(page, project):
+    def get_project_git_branch_data(page, project, commit_depth):
         """ Returns branch data associated with a project """
-        return GitController.get_pgtd_branches_trimmed_by_merge_target(page, project)
+        return GitController.get_pgtd_branches_trimmed_by_merge_target(page, project, commit_depth)
 
 
     @staticmethod
-    def get_project_single_git_branch_data(project, branch):
+    def get_project_single_git_branch_data(project, branch, commit_depth):
         """ Returns a single branch data associated with a project """
-        return GitController.get_single_branch_trimmed_by_merge_target(project, branch)
+        return GitController.get_single_branch_trimmed_by_merge_target(project, branch, commit_depth)
 
