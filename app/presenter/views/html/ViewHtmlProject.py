@@ -12,6 +12,7 @@ from app.logic.httpcommon import res
 from app.logic.httpcommon.Page import Page
 
 PROJECTS_ITEMS_PER_PAGE = 6
+BRANCH_COMMIT_DEPTH = 100
 
 def get_projects(request, page_index):
     """ Display all branch names """
@@ -23,7 +24,7 @@ def get_projects(request, page_index):
         for project in projects:
             obj = {}
             obj['name'] = project['name']
-            obj['url'] = ViewUrlGenerator.get_project_branches_url(project['id'], 1)
+            obj['url'] = ViewUrlGenerator.get_project_branches_url(project['id'], BRANCH_COMMIT_DEPTH, 1)
             items.append(obj)
 
         pagination = ViewPrepareObjects.prepare_pagination_project(page_indices)
@@ -37,7 +38,7 @@ def get_projects(request, page_index):
     else:
         return res.get_template_data(request, 'presenter/not_found.html', {})
 
-def get_project_branches(request, project_id, page_index):
+def get_project_branches(request, project_id, commit_depth, page_index):
     """ Display all the branches of a project """
     if request.method == 'GET':
         project_entry = BluesteelProjectEntry.objects.filter(id=project_id).first()
@@ -48,7 +49,7 @@ def get_project_branches(request, project_id, page_index):
         branches, page_indices = BluesteelProjectController.get_project_git_branch_data(page, project_entry)
         branches = BenchmarkExecutionController.add_bench_exec_completed_to_branches(branches)
 
-        pagination = ViewPrepareObjects.prepare_pagination_branches(project_entry.id, page_indices)
+        pagination = ViewPrepareObjects.prepare_pagination_branches(project_entry.id, commit_depth, page_indices)
 
         data = {}
         data['branches'] = ViewPrepareObjects.prepare_branches_for_html(project_entry.id, branches)

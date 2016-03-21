@@ -75,18 +75,18 @@ def prepare_pagination_project(page_indices):
         pagination['pages'].append(pag)
     return pagination
 
-def prepare_pagination_branches(project_id, page_indices):
+def prepare_pagination_branches(project_id, commit_depth, page_indices):
     """ Creates pagination object for branches from indices """
     pagination = {}
-    pagination['prev'] = ViewUrlGenerator.get_project_branches_url(project_id, page_indices['prev'])
-    pagination['current'] = ViewUrlGenerator.get_project_branches_url(project_id, page_indices['current'])
-    pagination['next'] = ViewUrlGenerator.get_project_branches_url(project_id, page_indices['next'])
+    pagination['prev'] = ViewUrlGenerator.get_project_branches_url(project_id, commit_depth, page_indices['prev'])
+    pagination['current'] = ViewUrlGenerator.get_project_branches_url(project_id, commit_depth, page_indices['current'])
+    pagination['next'] = ViewUrlGenerator.get_project_branches_url(project_id, commit_depth, page_indices['next'])
 
     pagination['pages'] = []
     for index in page_indices['page_indices']:
         pag = {}
         pag['index'] = index
-        pag['url'] = ViewUrlGenerator.get_project_branches_url(project_id, index)
+        pag['url'] = ViewUrlGenerator.get_project_branches_url(project_id, commit_depth, index)
         pag['is_current'] = (index == page_indices['current'])
         pagination['pages'].append(pag)
     return pagination
