@@ -76,8 +76,6 @@ class BluesteelViewProjectTestCase(TestCase):
         obj['fetch'] = []
         obj['fetch'].append('command-30')
         obj['fetch'].append('command-31')
-        obj['pull'] = []
-        obj['pull'].append('command-32')
 
         resp = self.client.post(
             '/main/project/{0}/save/'.format(bluesteel_proj.id),
@@ -91,13 +89,12 @@ class BluesteelViewProjectTestCase(TestCase):
         self.assertEqual('NAME-updated', BluesteelProjectEntry.objects.all().first().name)
         self.assertEqual('local/path/updated/too/', BluesteelProjectEntry.objects.all().first().git_project_folder_search_path)
         self.assertEqual(1, CommandGroupEntry.objects.all().count())
-        self.assertEqual(3, CommandSetEntry.objects.all().count())
-        self.assertEqual(5, CommandEntry.objects.all().count())
+        self.assertEqual(2, CommandSetEntry.objects.all().count())
+        self.assertEqual(4, CommandEntry.objects.all().count())
         self.assertEqual(1, CommandEntry.objects.filter(command='command-28').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='command-29').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='command-30').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='command-31').count())
-        self.assertEqual(1, CommandEntry.objects.filter(command='command-32').count())
 
     def test_save_bluesteel_project_removing_path_dots(self):
         commands = []
@@ -132,8 +129,6 @@ class BluesteelViewProjectTestCase(TestCase):
         obj['fetch'] = []
         obj['fetch'].append('command-30')
         obj['fetch'].append('command-31')
-        obj['pull'] = []
-        obj['pull'].append('command-32')
 
         resp = self.client.post(
             '/main/project/{0}/save/'.format(bluesteel_proj.id),
@@ -179,8 +174,6 @@ class BluesteelViewProjectTestCase(TestCase):
         obj['fetch'] = []
         obj['fetch'].append('command-30')
         obj['fetch'].append('command-31')
-        obj['pull'] = []
-        obj['pull'].append('command-32')
 
         resp = self.client.post(
             '/main/project/{0}/save/'.format(bluesteel_proj.id),
@@ -226,8 +219,6 @@ class BluesteelViewProjectTestCase(TestCase):
         obj['fetch'] = []
         obj['fetch'].append('command-30')
         obj['fetch'].append('command-31')
-        obj['pull'] = []
-        obj['pull'].append('command-32')
 
         resp = self.client.post(
             '/main/project/{0}/save/'.format(bluesteel_proj.id),

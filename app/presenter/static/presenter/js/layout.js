@@ -49,7 +49,6 @@ saveProject = function(idFormProject) {
     obj['git_project_folder_search_path'] = form.elements['git_project_folder_search_path'].value;
     obj['clone'] = [];
     obj['fetch'] = [];
-    obj['pull'] = [];
 
     var keys = Object.keys(form.elements);
 
@@ -59,8 +58,6 @@ saveProject = function(idFormProject) {
             obj['clone'].push(form.elements[key].value);
         } else if (key.startsWith("command_FETCH")) {
             obj['fetch'].push(form.elements[key].value);
-        } else if (key.startsWith("command_PULL")) {
-            obj['pull'].push(form.elements[key].value);
         }
     }
 

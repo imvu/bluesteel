@@ -33,7 +33,7 @@ SAVE_PROJECT = {
     '$schema': 'http://json-schema.org/draft-03/schema#',
     'type' : 'object',
     'additionalProperties': False,
-    'required': ['name', 'git_project_folder_search_path', 'clone', 'fetch', 'pull'],
+    'required': ['name', 'git_project_folder_search_path', 'clone', 'fetch'],
     'properties' : {
         'name' : {
             'type' : 'string',
@@ -62,15 +62,6 @@ SAVE_PROJECT = {
                 'type' : 'string',
                 'minLength' : 1,
                 'maxLength' : 255,
-            },
-        },
-        'pull' : {
-            'type' : 'array',
-            'minItems' : 1,
-            'items' : {
-                'minLength' : 1,
-                'maxLength' : 255,
-                'type' : 'string',
             },
         },
     },

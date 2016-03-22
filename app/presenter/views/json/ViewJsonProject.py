@@ -49,7 +49,6 @@ def save_project(request, project_id):
 
         CommandController.add_full_command_set(project_entry.command_group, 'CLONE', 0, val_resp_obj['clone'])
         CommandController.add_full_command_set(project_entry.command_group, 'FETCH', 1, val_resp_obj['fetch'])
-        CommandController.add_full_command_set(project_entry.command_group, 'PULL', 2, val_resp_obj['pull'])
 
         return res.get_response(200, 'Project saved', {})
     else:
