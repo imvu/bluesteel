@@ -614,7 +614,7 @@ class GitFetcher(object):
 
         for command in reports['commands']:
             if command['command'].startswith('git diff') and command['result']['status'] == 0:
-                return command['result']['out']
+                return command['result']['out'].decode('utf-8', 'ignore').encode('utf-8')
 
         return ''
 

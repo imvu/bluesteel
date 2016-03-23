@@ -1033,3 +1033,28 @@ class GitFetcherTestCase(TestCase):
 
         self.assertEqual('diff-long-long-text', diff)
 
+    def test_extract_diff_from_report_without_non_utf_8_characters(self):
+        report1 = {}
+        report1['command'] = 'git rev-parse master'
+        report1['result'] = {}
+        report1['result']['status'] = 0
+        report1['result']['out'] = '0000100001000010000100001000010000100001'
+        report1['result']['error'] = ''
+
+        report2 = {}
+        report2['command'] = 'git diff ...'
+        report2['result'] = {}
+        report2['result']['status'] = 0
+        report2['result']['out'] = 'this-is-a-text-that-\xa0-contains-non-utf-8-characters'
+        report2['result']['error'] = ''
+
+        obj = {}
+        obj['status'] = True
+        obj['commands'] = []
+        obj['commands'].append(report1)
+        obj['commands'].append(report2)
+
+        diff = self.fetcher.extract_diff_from_report(obj)
+
+        self.assertEqual('this-is-a-text-that--contains-non-utf-8-characters', diff)
+
