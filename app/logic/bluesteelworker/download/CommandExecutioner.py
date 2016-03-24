@@ -30,13 +30,14 @@ class CommandExecutioner(object):
             file_stdout = open(out_file_path, 'w')
             file_stderr = open(err_file_path, 'w')
 
+            start_time = datetime.datetime.utcnow().isoformat()
+
             report = {}
             report['result'] = {}
             report['result']['out'] = ''
             report['result']['error'] = ''
             report['result']['status'] = 0
 
-            start_time = datetime.datetime.utcnow().isoformat()
             normalized_cwd = os.path.normpath(project_cwd)
             exception_msg = ''
 

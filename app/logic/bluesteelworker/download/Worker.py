@@ -8,7 +8,7 @@ from ProjectFolderManager import ProjectFolderManager
 import GitFetcher
 import Request
 import os
-import time
+# import time
 import json
 import pprint
 import uuid
@@ -235,7 +235,7 @@ def process_git_fetch_and_feed(bootstrap_urls, settings, session, feed):
         fetcher = GitFetcher.GitFetcher()
         fetcher.fetch_git_project(project)
 
-        # ppi = pprint.PrettyPrinter(depth=10)
+        ppi = pprint.PrettyPrinter(depth=10)
         # ppi.pprint(fetcher.feed_data)
 
         obj_json = json.dumps(fetcher.feed_data)
@@ -245,7 +245,9 @@ def process_git_fetch_and_feed(bootstrap_urls, settings, session, feed):
         if project['feed']['active'] and feed:
             print '- Feeding git project'
             resp = session.post(project['feed']['url'], {}, obj_json)
+            ppi.pprint(resp)
             if not resp['succeed']:
+                print '- Error occurred while feeding project'
                 process_info = resp
                 return process_info
 
@@ -360,57 +362,66 @@ def process_feed_benchmark_execution_results(session, results, bench_exec):
 
 def main():
     """ Main """
-    ppi = pprint.PrettyPrinter(depth=10)
+    # ppi = pprint.PrettyPrinter(depth=10)
 
     settings = read_settings()
-    ppi.pprint(settings)
+    # ppi.pprint(settings)
 
     host_info = get_host_info()
     session = Request.Session()
 
     bootstrap_urls = get_bootstrap_urls(settings['entry_point'], session)
-    ppi.pprint(bootstrap_urls)
+    # ppi.pprint(bootstrap_urls)
 
 
     while True:
+        print '+ get or create worker.'
         worker_info = process_get_or_create_worker(bootstrap_urls, host_info, session)
         if worker_info['succeed'] == False:
             continue
 
+        print '+ connect worker.'
         con_info = process_connect_worker(bootstrap_urls, worker_info['worker'], session)
         if con_info['succeed'] == False:
             continue
 
+        print '+ update worker activity.'
         session.post(worker_info['worker']['url']['update_activity_point'], {}, '')
 
-        ppi.pprint(worker_info)
-        ppi.pprint(con_info)
-        time.sleep(1)
+        # ppi.pprint(worker_info)
+        # ppi.pprint(con_info)
+        # time.sleep(1)
 
         if con_info['succeed']:
             working = True
             while working:
+
+                print '+ fetch and feed gir project.'
                 process_git_fetch_and_feed(
                     bootstrap_urls,
                     settings,
                     session,
                     con_info['git_feeder'])
 
+                print '+ get available benchmarks.'
                 bench_exec = process_get_available_benchmark_execution(bootstrap_urls, session)
 
                 if not bench_exec:
                     continue
 
+                print '+ execute benchmark.'
                 res = process_execute_task(settings, bench_exec)
-                save_ret = process_feed_benchmark_execution_results(
+
+                print '+ save benchmark results.'
+                process_feed_benchmark_execution_results(
                     session,
                     res,
                     bench_exec)
 
-                print '+++++======save======+++++'
-                print save_ret
+                # print '+++++======save======+++++'
+                # print save_ret
 
-                time.sleep(1)
+                # time.sleep(1)
 
 
 

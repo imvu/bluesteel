@@ -267,7 +267,6 @@ class GitFetcher(object):
         report1['result']['finish_time'] = datetime.datetime.utcnow().isoformat()
 
         obj = {}
-        obj['status'] = True
         obj['commands'] = []
         obj['commands'].append(report1)
         return obj
@@ -325,6 +324,15 @@ class GitFetcher(object):
         """ fetch a git repo """
         paths = GitFetcher.get_project_paths(project_info)
         project_cwd = GitFetcher.get_first_git_project_found_path(paths)
+
+        if not project_cwd:
+            reports = GitFetcher.create_report(
+                'git_project_search_path',
+                -1,
+                '',
+                '{0} \nProject current working directory not found'.format(paths['git_project_search_path'])
+            )
+            return reports
 
         reports = CommandExecutioner.execute_command_list(
             project_info['git']['fetch']['commands'],

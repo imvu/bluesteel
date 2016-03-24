@@ -192,6 +192,21 @@ class GitFetcherTestCase(TestCase):
         self.assertEqual('', reports['commands'][4]['result']['out'])
 
     @mock.patch('app.logic.bluesteelworker.download.CommandExecutioner.subprocess.call')
+    def test_fetch_project_with_incorrect_git_project_search_path(self, mock_subprocess):
+        mock_subprocess.return_value = 0
+        self.create_paths(self.obj1)
+        self.create_git_hidden_folder(settings.TMP_ROOT, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1')
+        self.obj1['git']['project']['git_project_search_path'] = 'this-folder-does-not-exists'
+        reports = self.fetcher.commands_fetch_git_project(self.obj1)
+
+        self.assertEqual(1, len(reports['commands']))
+
+        self.assertEqual(-1, reports['commands'][0]['result']['status'])
+        self.assertEqual('git_project_search_path', reports['commands'][0]['command'])
+        self.assertEqual('/Users/llorencmarti/Documents/stronghold-environment/stronghold/tmp/test/tmp-gitfetcher-folder/archive-28-0123ABC/test-repo-1/project/this-folder-does-not-exists \nProject current working directory not found', reports['commands'][0]['result']['error'])
+        self.assertEqual('', reports['commands'][0]['result']['out'])
+
+    @mock.patch('app.logic.bluesteelworker.download.CommandExecutioner.subprocess.call')
     def test_get_branch_names(self, mock_subprocess):
         mock_subprocess.return_value = 0
         self.create_paths(self.obj1)
