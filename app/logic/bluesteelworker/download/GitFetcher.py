@@ -7,6 +7,7 @@ from CommandExecutioner import CommandExecutioner
 from ProjectFolderManager import ProjectFolderManager
 import json
 import datetime
+import logging as log
 
 class GitFetcher(object):
     """
@@ -20,6 +21,7 @@ class GitFetcher(object):
         self.branch_names = []
         self.branch_names_and_hashes = []
         self.branches_data = []
+        self.diff_hash_dict = {}
         self.diff_list = []
         self.unique_commmits = []
         self.branch_list = []
@@ -27,6 +29,8 @@ class GitFetcher(object):
 
     def fetch_git_project(self, project_info):
         """ Returns an object with the repository information """
+        log.basicConfig(level=log.INFO)
+        self.diff_hash_dict = {}
 
         steps = [
             self.step_fetch_git_project,
@@ -206,6 +210,12 @@ class GitFetcher(object):
             for i in range(len(branch['commits']) - 1):
                 commit_hash_1 = branch['commits'][i]['hash']
                 commit_hash_2 = branch['commits'][i + 1]['hash']
+
+                diff_key = '{0}-{1}'.format(commit_hash_1, commit_hash_2)
+
+                if diff_key in self.diff_hash_dict:
+                    continue
+
                 diff_report = self.commands_get_diff_between_commits(project_info, commit_hash_1, commit_hash_2)
 
                 # Report check
@@ -219,6 +229,7 @@ class GitFetcher(object):
                 diff['commit_hash_parent'] = commit_hash_2
                 diff['content'] = diff_content
                 self.diff_list.append(diff)
+                self.diff_hash_dict[diff_key] = ''
         return True
 
     def step_create_branch_trails(self, project_info):
