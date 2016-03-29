@@ -59,3 +59,10 @@ class CommandExecutionerTestCase(TestCase):
         self.assertEqual(['ps', 'aux'], args[0])
 
         self.assertEqual(4, mock_subprocess.call_count)
+
+    def test_remove_non_ascii_characters(self):
+        utf_str = u'Hi \xf3there!'
+
+        ascii_str = CommandExecutioner.remove_non_ascii(utf_str)
+
+        self.assertEqual(u'Hi  there!', ascii_str)

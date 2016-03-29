@@ -17,6 +17,11 @@ class CommandExecutioner(object):
         os.makedirs(output_folder_path)
 
     @staticmethod
+    def remove_non_ascii(text):
+        """ Removes all the non ascii (7bit) characters """
+        return ''.join([i if ord(i) < 128 else ' ' for i in text])
+
+    @staticmethod
     def execute_command_list(command_list, output_folder_path, project_cwd, exit_on_fail):
         """ Executes a list of commands, if the command fails it returns inmediately """
         reports = {}
@@ -66,11 +71,14 @@ class CommandExecutioner(object):
             file_stdout = open(out_file_path, 'r')
             file_stderr = open(err_file_path, 'r')
 
+            out = CommandExecutioner.remove_non_ascii(file_stdout.read())
+            err = CommandExecutioner.remove_non_ascii(file_stderr.read())
+
             report['command'] = ' '.join(command)
-            report['result']['out'] = file_stdout.read()
-            report['result']['error'] = '{0}{1}'.format(exception_msg, file_stderr.read())
-            report['result']['start_time'] = start_time
-            report['result']['finish_time'] = finish_time
+            report['result']['out'] = out
+            report['result']['error'] = '{0}{1}'.format(exception_msg, err)
+            report['result']['start_time'] = str(start_time)
+            report['result']['finish_time'] = str(finish_time)
 
             reports['commands'].append(report)
 

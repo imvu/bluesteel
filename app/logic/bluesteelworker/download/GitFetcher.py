@@ -525,8 +525,13 @@ class GitFetcher(object):
                     filtered_parents_list = []
                     for parent in original_parents_list:
                         if len(parent) > 0:
-                            filtered_parents_list.append(parent)
+                            filtered_parents_list.append(str(parent))
                     commit['parent_hashes'] = filtered_parents_list
+                    commit['author']['name'] = CommandExecutioner.remove_non_ascii(commit['author']['name'])
+                    commit['author']['email'] = CommandExecutioner.remove_non_ascii(commit['author']['email'])
+                    commit['committer']['name'] = CommandExecutioner.remove_non_ascii(commit['committer']['name'])
+                    commit['committer']['email'] = CommandExecutioner.remove_non_ascii(commit['committer']['email'])
+
                 commits = commits_obj
         return commits
 
