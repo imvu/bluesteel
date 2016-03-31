@@ -5,74 +5,19 @@
 
 from CommandExecutioner import CommandExecutioner
 from ProjectFolderManager import ProjectFolderManager
+import logging as log
 import GitFetcher
 import Request
 import os
-# import time
 import json
-import pprint
 import uuid
 import socket
 import platform
-
-
-def get_obj():
-    """ Returns a predefined object with fetch info """
-    branch1 = {}
-    branch1['name'] = 'master'
-    branch1['hash'] = '50a284b3d0c7d95d4e8ea99acbfb9898765ce4c6'
-    branch1['merge_target'] = {}
-    branch1['merge_target']['name'] = 'master'
-    branch1['merge_target']['hash'] = '50a284b3d0c7d95d4e8ea99acbfb9898765ce4c6'
-
-    branch2 = {}
-    branch2['name'] = 'branch-1'
-    branch2['hash'] = 'f486ee42b56432375f47b206a4281fd9ad0de02e'
-    branch2['merge_target'] = {}
-    branch2['merge_target']['name'] = 'master'
-    branch2['merge_target']['hash'] = '50a284b3d0c7d95d4e8ea99acbfb9898765ce4c6'
-
-    branch3 = {}
-    branch3['name'] = 'name-3'
-    branch3['hash'] = '0000100001000010000100001000010000100001'
-    branch3['merge_target'] = {}
-    branch3['merge_target']['name'] = 'name-1'
-    branch3['merge_target']['hash'] = '0000100001000010000100001000010000100001'
-
-    obj = {}
-    obj['git'] = {}
-    obj['git']['project'] = {}
-    obj['git']['project']['current_working_directory'] = os.path.dirname(__file__)
-    obj['git']['project']['tmp_directory'] = 'tmp'
-    obj['git']['project']['archive'] = 'proj-28-0123ABC'
-    obj['git']['project']['name'] = 'test-repo'
-    obj['git']['project']['url'] = 'https://llorensmarti@bitbucket.org/llorensmarti/test-repo.git'
-    obj['git']['branch'] = {}
-    obj['git']['branch']['known'] = []
-    # obj['git']['branch']['known'].append(branch1)
-    # obj['git']['branch']['known'].append(branch2)
-    # obj['git']['branch']['known'].append(branch3)
-    obj['git']['branch']['commands'] = []
-    obj['git']['branch']['commands'].append(['coomand-1', 'arg1', 'arg2'])
-    obj['git']['clone'] = {}
-    obj['git']['clone']['commands'] = []
-    obj['git']['clone']['commands'].append(
-        ['git', 'clone', 'https://llorensmarti@bitbucket.org/llorensmarti/test-repo.git']
-    )
-    obj['git']['fetch'] = {}
-    obj['git']['fetch']['commands'] = []
-    obj['git']['fetch']['commands'].append(['git', 'checkout', 'master'])
-    obj['git']['fetch']['commands'].append(['git', 'reset', '--hard', 'origin/master'])
-    obj['git']['fetch']['commands'].append(['git', 'clean', '-f', '-d', '-q'])
-    obj['git']['fetch']['commands'].append(['git', 'pull', '-r', 'origin', 'master'])
-    obj['git']['fetch']['commands'].append(['git', 'checkout', 'master'])
-    obj['git']['fetch']['commands'].append(['git', 'submodule', 'sync'])
-    obj['git']['fetch']['commands'].append(['git', 'submodule', 'update', '--init', '--recursive'])
-    return obj
+# import time
+# import pprint
 
 def command_string_to_vector(command):
     return command.split()
-
 
 def get_cwd():
     return os.path.dirname(os.path.abspath(__file__))
@@ -82,9 +27,6 @@ def fragment_layout_in_project_infos(layout, tmp_path):
     project_to_feed = layout['project_index_path']
     projects = []
     for index, project in enumerate(layout['projects']):
-
-        ppi = pprint.PrettyPrinter(depth=10)
-        ppi.pprint(project)
 
         obj = {}
         obj['feed'] = {}
@@ -232,26 +174,19 @@ def process_git_fetch_and_feed(bootstrap_urls, settings, session, feed):
 
     for project in res['projects']:
         print '- Fetching git project'
-        fetcher = GitFetcher.GitFetcher()
+        fetcher = GitFetcher.GitFetcher(log.DEBUG)
         fetcher.fetch_git_project(project)
 
-        ppi = pprint.PrettyPrinter(depth=10)
-        # ppi.pprint(fetcher.feed_data)
-
         obj_json = json.dumps(fetcher.feed_data)
-
-        # print project['feed']['url']
 
         if project['feed']['active'] and feed:
             print '- Feeding git project'
             resp = session.post(project['feed']['url'], {}, obj_json)
-            ppi.pprint(resp)
+            # ppi.pprint(resp)
             if not resp['succeed']:
                 print '- Error occurred while feeding project'
                 process_info = resp
                 return process_info
-
-            # ppi.pprint(resp)
 
     print '- Finshed fetching and feeding'
     return process_info
@@ -262,8 +197,8 @@ def process_get_available_benchmark_execution(bootstrap_urls, session):
 
     resp = session.post(bootstrap_urls['acquire_benchmark_execution_url'], {}, '')
     if resp['succeed'] == False:
-        print '    - An error occurred:'
-        print resp
+        # print '    - An error occurred:'
+        # print resp
         return None
 
     if resp['content']['status'] != 200:
@@ -272,9 +207,6 @@ def process_get_available_benchmark_execution(bootstrap_urls, session):
 
     data = resp['content']['data']
     return data
-    # for command in data['definition']['command_set']['commands']:
-    #     print '------> ', command['command']
-
 
 def process_execute_task(settings, benchmark_execution):
     """ It executes a benchmark execution, it returns a report from that """
@@ -303,7 +235,6 @@ def process_execute_task(settings, benchmark_execution):
         git_path,
         False)
 
-    print '---> ', res
     return res
 
 def prepare_results_before_feed(results):
@@ -353,7 +284,6 @@ def process_feed_benchmark_execution_results(session, results, bench_exec):
     """ Takes the results of the executed commands and feed them to BlueSteel """
     results_to_feed = prepare_results_before_feed(results)
 
-    print bench_exec['url']['save']
     json_res = json.dumps(results_to_feed)
 
     resp = session.post(bench_exec['url']['save'], {}, json_res)
@@ -362,17 +292,11 @@ def process_feed_benchmark_execution_results(session, results, bench_exec):
 
 def main():
     """ Main """
-    # ppi = pprint.PrettyPrinter(depth=10)
-
     settings = read_settings()
-    # ppi.pprint(settings)
-
     host_info = get_host_info()
     session = Request.Session()
 
     bootstrap_urls = get_bootstrap_urls(settings['entry_point'], session)
-    # ppi.pprint(bootstrap_urls)
-
 
     while True:
         print '+ get or create worker.'
@@ -387,10 +311,6 @@ def main():
 
         print '+ update worker activity.'
         session.post(worker_info['worker']['url']['update_activity_point'], {}, '')
-
-        # ppi.pprint(worker_info)
-        # ppi.pprint(con_info)
-        # time.sleep(1)
 
         if con_info['succeed']:
             working = True
@@ -417,12 +337,6 @@ def main():
                     session,
                     res,
                     bench_exec)
-
-                # print '+++++======save======+++++'
-                # print save_ret
-
-                # time.sleep(1)
-
 
 
 if __name__ == '__main__':

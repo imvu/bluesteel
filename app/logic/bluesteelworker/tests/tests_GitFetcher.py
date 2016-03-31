@@ -7,6 +7,7 @@ from django.utils.six import StringIO
 from app.logic.bluesteelworker.download.GitFetcher import GitFetcher
 from app.logic.bluesteelworker.download.ProjectFolderManager import ProjectFolderManager
 from datetime import timedelta
+import logging as log
 import os
 import json
 import hashlib
@@ -65,7 +66,7 @@ class GitFetcherTestCase(TestCase):
         self.obj2['git']['fetch']['commands'].append(['git', 'checkout', 'master'])
         self.obj2['git']['fetch']['commands'].append(['git', 'submodule', 'update', '--init', '--recursive'])
 
-        self.fetcher = GitFetcher()
+        self.fetcher = GitFetcher(log.ERROR)
 
     def tearDown(self):
         if os.path.exists(self.tmp_folder):
@@ -1090,12 +1091,14 @@ class GitFetcherTestCase(TestCase):
         commit3['hash'] = '0000300003000030000300003000030000300003'
 
         branch1 = {}
+        branch1['name'] = 'name-1'
         branch1['commits'] = []
         branch1['commits'].append(commit1)
         branch1['commits'].append(commit2)
         branch1['commits'].append(commit3)
 
         branch2 = {}
+        branch2['name'] = 'name-2'
         branch2['commits'] = []
         branch2['commits'].append(commit1)
         branch2['commits'].append(commit2)

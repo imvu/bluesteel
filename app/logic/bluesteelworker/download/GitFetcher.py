@@ -3,6 +3,10 @@
 # Disable warning for relative imports
 # pylint: disable=W0403
 
+# Too many instance attributes (11/10)
+# I need to think on how to reduce the class member variables
+# pylint: disable=R0902
+
 from CommandExecutioner import CommandExecutioner
 from ProjectFolderManager import ProjectFolderManager
 import json
@@ -14,8 +18,9 @@ class GitFetcher(object):
     GitFetcher is able to gather information of a git repository and return all the data with an
     understandable structure.
     """
-    def __init__(self):
+    def __init__(self, log_level):
         """ Constructor """
+        self.log_level = log_level
         self.report_stack = []
         self.remote_branch_names = []
         self.branch_names = []
@@ -29,7 +34,7 @@ class GitFetcher(object):
 
     def fetch_git_project(self, project_info):
         """ Returns an object with the repository information """
-        log.basicConfig(level=log.INFO)
+        log.basicConfig(level=self.log_level)
         self.diff_hash_dict = {}
 
         steps = [
@@ -49,8 +54,10 @@ class GitFetcher(object):
         ]
 
         for step in steps:
+            log.info('Step: ' + step.__name__)
             if not step(project_info):
                 self.feed_data['reports'] = self.report_stack
+                log.error('Step \'%s\' failed!', step.__name__)
                 return False
 
         # Pack all the feed data
@@ -138,6 +145,7 @@ class GitFetcher(object):
         for name_and_hash in self.branch_names_and_hashes:
             branch_name = name_and_hash['name']
             branch_hash = name_and_hash['commit_hash']
+            log.debug('Commit -- Getting all commits of: %s - %s', branch_hash, branch_name)
 
             com_reports = self.commands_get_commits_from_branch(project_info, branch_name)
             self.report_stack.append(com_reports)
@@ -207,11 +215,15 @@ class GitFetcher(object):
     def step_get_diff_for_all_commits(self, project_info):
         """Get all the diffs from all the commits"""
         for branch in self.branches_data:
+            log.debug('Diff -- Branch: %s', branch['name'])
+
             for i in range(len(branch['commits']) - 1):
                 commit_hash_1 = branch['commits'][i]['hash']
                 commit_hash_2 = branch['commits'][i + 1]['hash']
 
                 diff_key = '{0}-{1}'.format(commit_hash_1, commit_hash_2)
+
+                log.debug('Diff -- Extracting diff: %s', diff_key)
 
                 if diff_key in self.diff_hash_dict:
                     continue
@@ -236,6 +248,7 @@ class GitFetcher(object):
         """Create the branch trail"""
         del project_info
         for branch in self.branches_data:
+            log.debug('Trails -- Creating trails for branch: %s', branch['name'])
             trail = []
             for commit in branch['commits']:
                 trail.append(commit['hash'])
@@ -520,7 +533,8 @@ class GitFetcher(object):
                 commits_string = '[' + res + ']'
                 commits_obj = json.loads(commits_string)
 
-                for commit in commits_obj:
+                for index, commit in enumerate(commits_obj):
+                    log.debug('Commit -- Extracting commit: %s - %s', commit['hash'], index)
                     original_parents_list = commit['parent_hashes'].split(' ')
                     filtered_parents_list = []
                     for parent in original_parents_list:
