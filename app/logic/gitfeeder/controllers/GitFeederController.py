@@ -123,8 +123,7 @@ class GitFeederController(object):
         """ Inserts all the commits into the db """
 
         for commit in commit_list:
-            com_entry = GitCommitEntry.objects.filter(project=project, commit_hash=commit['hash']).first()
-            if com_entry == None:
+            if not GitCommitEntry.objects.filter(project=project, commit_hash=commit['hash']).exists():
                 author = GitFeederController.insert_user(project, commit['author']['name'], commit['author']['email'])
                 committer = GitFeederController.insert_user(
                     project,
