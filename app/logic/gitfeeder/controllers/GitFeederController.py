@@ -121,7 +121,7 @@ class GitFeederController(object):
     @staticmethod
     def insert_commits(commit_list, project):
         """ Inserts all the commits into the db """
-
+        bulk_commits = []
         for commit in commit_list:
             if not GitCommitEntry.objects.filter(project=project, commit_hash=commit['hash']).exists():
                 author = GitFeederController.insert_user(project, commit['author']['name'], commit['author']['email'])
@@ -130,7 +130,7 @@ class GitFeederController(object):
                     commit['committer']['name'],
                     commit['committer']['email'])
 
-                commit = GitCommitEntry.objects.create(
+                commit = GitCommitEntry(
                     project=project,
                     commit_hash=commit['hash'],
                     author=author,
@@ -138,13 +138,13 @@ class GitFeederController(object):
                     committer=committer,
                     committer_date=commit['committer']['date']
                 )
-
+                bulk_commits.append(commit)
+        GitCommitEntry.objects.bulk_create(bulk_commits)
 
     @staticmethod
     def insert_parents(commit_list, project):
         """ Inserts all the parents into the db """
         messages = []
-
         for commit in commit_list:
             for index, parent in enumerate(commit['parent_hashes']):
                 commit_parent = GitCommitEntry.objects.filter(project=project, commit_hash=parent).first()
@@ -159,12 +159,7 @@ class GitFeederController(object):
                     messages.append('Commit son {0} not found while inserting parents!'.format(commit['hash']))
                     continue
 
-                parent_entry = GitParentEntry.objects.filter(
-                    project=project,
-                    parent=commit_parent,
-                    son=commit_son).first()
-
-                if parent_entry == None:
+                if not GitParentEntry.objects.filter(project=project, parent=commit_parent, son=commit_son).exists():
                     GitParentEntry.objects.create(
                         project=project,
                         parent=commit_parent,
@@ -179,31 +174,25 @@ class GitFeederController(object):
         messages = []
 
         for diff in diffs_list:
-            commit_son = GitCommitEntry.objects.filter(project=project, commit_hash=diff['commit_hash_son']).first()
-            commit_parent = GitCommitEntry.objects.filter(
+            com_son = GitCommitEntry.objects.filter(project=project, commit_hash=diff['commit_hash_son']).first()
+            com_parent = GitCommitEntry.objects.filter(
                 project=project,
                 commit_hash=diff['commit_hash_parent']).first()
 
-            if commit_parent == None:
+            if com_parent == None:
                 messages.append('Commit parent {0} not found while inserting diffs!'.format(diff['commit_hash_parent']))
                 continue
 
 
-            if commit_son == None:
+            if com_son == None:
                 messages.append('Commit son {0} not found while inserting diffs!'.format(diff['commit_hash_son']))
                 continue
 
-            diff_entry = GitDiffEntry.objects.filter(
-                project=project,
-                commit_son=commit_son,
-                commit_parent=commit_parent
-            ).first()
-
-            if diff_entry == None:
+            if not GitDiffEntry.objects.filter(project=project, commit_son=com_son, commit_parent=com_parent).exists():
                 GitDiffEntry.objects.create(
                     project=project,
-                    commit_son=commit_son,
-                    commit_parent=commit_parent,
+                    commit_son=com_son,
+                    commit_parent=com_parent,
                     content=diff['content']
                 )
         return (True, messages)
@@ -218,9 +207,9 @@ class GitFeederController(object):
                 messages.append('Branch commit {0} not found!'.format(branch['commit_hash']))
                 continue
 
-            try:
-                branch_entry = GitBranchEntry.objects.get(project=project, name=branch['branch_name'])
-            except GitBranchEntry.DoesNotExist:
+            branch_entry = GitBranchEntry.objects.filter(project=project, name=branch['branch_name']).first()
+
+            if branch_entry == None:
                 branch_entry = GitBranchEntry.objects.create(
                     project=project,
                     name=branch['branch_name'],
@@ -229,6 +218,7 @@ class GitFeederController(object):
             else:
                 branch_entry.commit = commit_entry
                 branch_entry.save()
+
         return (True, messages)
 
     @staticmethod
@@ -262,31 +252,31 @@ class GitFeederController(object):
         """ Updates all the branch merge targets into the db """
         for branch in branch_list:
 
-            branch_entry = GitBranchEntry.objects.get(
+            branch_entry = GitBranchEntry.objects.filter(
                 commit__commit_hash=branch['commit_hash'],
                 name=branch['branch_name'],
                 project=project
-            )
+            ).first()
 
-            target_entry = GitBranchEntry.objects.get(
+            target_entry = GitBranchEntry.objects.filter(
                 name=branch['merge_target']['target_branch']['name'],
                 project=project
-            )
+            ).first()
 
-            fork_point_entry = GitCommitEntry.objects.get(
+            fork_point_entry = GitCommitEntry.objects.filter(
                 project=project,
                 commit_hash=branch['merge_target']['fork_point']
-            )
+            ).first()
 
-            son_entry = GitCommitEntry.objects.get(
+            son_entry = GitCommitEntry.objects.filter(
                 project=project,
                 commit_hash=branch['merge_target']['diff']['commit_hash_son']
-            )
+            ).first()
 
-            parent_entry = GitCommitEntry.objects.get(
+            parent_entry = GitCommitEntry.objects.filter(
                 project=project,
                 commit_hash=branch['merge_target']['diff']['commit_hash_parent']
-            )
+            ).first()
 
             diff_entry = GitDiffEntry.objects.filter(
                 project=project,
@@ -302,13 +292,13 @@ class GitFeederController(object):
                     content=branch['merge_target']['diff']['content']
                 )
 
-            try:
-                merge_target_entry = GitBranchMergeTargetEntry.objects.get(
-                    project=project,
-                    current_branch__name=branch['branch_name']
-                )
-            except GitBranchMergeTargetEntry.DoesNotExist:
-                branch_entry = GitBranchMergeTargetEntry.objects.create(
+            merge_target_entry = GitBranchMergeTargetEntry.objects.filter(
+                project=project,
+                current_branch__name=branch['branch_name']
+            ).first()
+
+            if not merge_target_entry:
+                GitBranchMergeTargetEntry.objects.create(
                     project=project,
                     current_branch=branch_entry,
                     target_branch=target_entry,
