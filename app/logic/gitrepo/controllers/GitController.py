@@ -167,3 +167,39 @@ class GitController(object):
             else:
                 fork_point = trail.commit
         return fork_point
+
+    @staticmethod
+    def get_commit_hashes_parents_and_children(commit_hash, parents_children_count):
+        """ Returns a window of commits hashes arround the commit_hash provided """
+        parents_children_count = max(1, parents_children_count)
+
+        commit_entry = GitCommitEntry.objects.filter(commit_hash=commit_hash).first()
+
+        if commit_entry == None:
+            return []
+
+        current_hash = commit_entry.commit_hash
+        hashes_children = []
+        for i in range(parents_children_count):
+            del i
+            entry = GitParentEntry.objects.filter(parent__commit_hash=current_hash).first()
+            if entry == None:
+                break
+            else:
+                current_hash = entry.son.commit_hash
+                hashes_children.append(current_hash)
+
+        current_hash = commit_entry.commit_hash
+        hashes_parents = []
+        for i in range(parents_children_count):
+            del i
+            entry = GitParentEntry.objects.filter(son__commit_hash=current_hash).first()
+            if entry == None:
+                break
+            else:
+                current_hash = entry.parent.commit_hash
+                hashes_parents.append(current_hash)
+
+        return list(reversed(hashes_parents)) + [commit_entry.commit_hash] + hashes_children
+
+

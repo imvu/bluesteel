@@ -598,3 +598,62 @@ class GitBranchMergeTargetTestCase(TestCase):
         self.assertEqual(3, page_indices_3['current'])
         self.assertEqual(3, page_indices_3['next'])
         self.assertEqual([1, 2, 3], page_indices_3['page_indices'])
+
+
+    def test_branches_trimmed_with_maximum_commit_depth(self):
+        #  9
+        #  8
+        #  7
+        #  6
+        #  5
+        #  4
+        #  3
+        #  2
+        #  1
+
+        # Commits
+        git_commit1 = self.create_commit(self.git_project1, self.git_user1, 1)
+        git_commit2 = self.create_commit(self.git_project1, self.git_user1, 2)
+        git_commit3 = self.create_commit(self.git_project1, self.git_user1, 3)
+        git_commit4 = self.create_commit(self.git_project1, self.git_user1, 4)
+        git_commit5 = self.create_commit(self.git_project1, self.git_user1, 5)
+        git_commit6 = self.create_commit(self.git_project1, self.git_user1, 6)
+        git_commit7 = self.create_commit(self.git_project1, self.git_user1, 7)
+        git_commit8 = self.create_commit(self.git_project1, self.git_user1, 8)
+        git_commit9 = self.create_commit(self.git_project1, self.git_user1, 9)
+
+        # Branches
+        git_branch1 = GitBranchEntry.objects.create(project=self.git_project1, commit=git_commit5, name='branch1')
+        git_branch2 = GitBranchEntry.objects.create(project=self.git_project1, commit=git_commit9, name='branch2')
+
+        # Parents
+        git_parent_1_2 = GitParentEntry.objects.create(project=self.git_project1, parent=git_commit1, son=git_commit2)
+        git_parent_2_3 = GitParentEntry.objects.create(project=self.git_project1, parent=git_commit2, son=git_commit3)
+        git_parent_3_4 = GitParentEntry.objects.create(project=self.git_project1, parent=git_commit3, son=git_commit4)
+        git_parent_4_5 = GitParentEntry.objects.create(project=self.git_project1, parent=git_commit4, son=git_commit5)
+        git_parent_5_6 = GitParentEntry.objects.create(project=self.git_project1, parent=git_commit5, son=git_commit6)
+        git_parent_6_7 = GitParentEntry.objects.create(project=self.git_project1, parent=git_commit6, son=git_commit7)
+        git_parent_7_8 = GitParentEntry.objects.create(project=self.git_project1, parent=git_commit7, son=git_commit8)
+        git_parent_8_9 = GitParentEntry.objects.create(project=self.git_project1, parent=git_commit8, son=git_commit9)
+
+        hashes1 = GitController.get_commit_hashes_parents_and_children('0000400004000040000400004000040000400004', 2)
+
+        self.assertEqual(5, len(hashes1))
+        self.assertEqual('0000200002000020000200002000020000200002', hashes1[0])
+        self.assertEqual('0000300003000030000300003000030000300003', hashes1[1])
+        self.assertEqual('0000400004000040000400004000040000400004', hashes1[2])
+        self.assertEqual('0000500005000050000500005000050000500005', hashes1[3])
+        self.assertEqual('0000600006000060000600006000060000600006', hashes1[4])
+
+        hashes2 = GitController.get_commit_hashes_parents_and_children('0000400004000040000400004000040000400004', 4)
+
+        self.assertEqual(8, len(hashes2))
+        self.assertEqual('0000100001000010000100001000010000100001', hashes2[0])
+        self.assertEqual('0000200002000020000200002000020000200002', hashes2[1])
+        self.assertEqual('0000300003000030000300003000030000300003', hashes2[2])
+        self.assertEqual('0000400004000040000400004000040000400004', hashes2[3])
+        self.assertEqual('0000500005000050000500005000050000500005', hashes2[4])
+        self.assertEqual('0000600006000060000600006000060000600006', hashes2[5])
+        self.assertEqual('0000700007000070000700007000070000700007', hashes2[6])
+        self.assertEqual('0000800008000080000800008000080000800008', hashes2[7])
+
