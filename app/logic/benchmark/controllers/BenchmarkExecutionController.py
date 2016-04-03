@@ -42,16 +42,6 @@ class BenchmarkExecutionController(object):
             return execution
 
     @staticmethod
-    def get_average(vector):
-        """
-        Returns the average of a vector values
-        """
-        average = 0.0
-        for value in vector:
-            average += float(value)
-        return average / float(len(vector))
-
-    @staticmethod
     def get_stacked_executions_from_branch(project_entry, branch_entry, bench_def_entry, worker_entry):
         """ Returns all benchmarks for a given branch """
         branch_trails = GitBranchTrailEntry.objects.filter(project=project_entry, branch=branch_entry).order_by('order')
@@ -77,7 +67,7 @@ class BenchmarkExecutionController(object):
             slot = {}
             slot['exists'] = False
             slot['benchmark_execution_id'] = 0
-            slot['report'] = {}
+            slot['results'] = {}
             slot['invalidated'] = False
             slot['current_branch'] = False
             slot['commit'] = ''
@@ -91,7 +81,7 @@ class BenchmarkExecutionController(object):
 
             slot['exists'] = True
             slot['benchmark_execution_id'] = benchmark_entry.id
-            slot['report'] = benchmark_entry.report.as_object()
+            slot['results'] = benchmark_entry.get_benchmark_results()
             slot['invalidated'] = benchmark_entry.is_invalidated()
             slot['current_branch'] = not past_fork_point
             slot['commit'] = benchmark_entry.commit.commit_hash
@@ -109,29 +99,26 @@ class BenchmarkExecutionController(object):
             if not data['exists']:
                 continue
 
-            for command in data['report']['commands']:
-                res = json.loads(command['result']['out'])
+            for exec_item in data['results']:
+                if exec_item['visual_type'] != 'vertical_bars':
+                    continue
 
-                for exec_item in res:
-                    if exec_item['visual_type'] != 'vertical_bars':
-                        continue
+                if exec_item['id'] not in bench_data:
+                    bench_data[exec_item['id']] = [{
+                        'average' : 0.0,
+                        'benchmark_execution_id' : 0,
+                        'bar_type' : 'invalidated'
+                    }] * len(stacked_benchmark_data)
 
-                    if exec_item['id'] not in bench_data:
-                        bench_data[exec_item['id']] = [{
-                            'average' : 0.0,
-                            'benchmark_execution_id' : 0,
-                            'bar_type' : 'invalidated'
-                        }] * len(stacked_benchmark_data)
-
-                    obj = {}
-                    obj['average'] = BenchmarkExecutionController.get_average(exec_item['data'])
-                    obj['benchmark_execution_id'] = data['benchmark_execution_id']
-                    obj['invalidated'] = data['invalidated']
-                    if data['current_branch']:
-                        obj['bar_type'] = 'current_branch'
-                    else:
-                        obj['bar_type'] = 'other_branch'
-                    bench_data[exec_item['id']][index] = obj
+                obj = {}
+                obj['average'] = exec_item['average']
+                obj['benchmark_execution_id'] = data['benchmark_execution_id']
+                obj['invalidated'] = data['invalidated']
+                if data['current_branch']:
+                    obj['bar_type'] = 'current_branch'
+                else:
+                    obj['bar_type'] = 'other_branch'
+                bench_data[exec_item['id']][index] = obj
 
         return bench_data
 

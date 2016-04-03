@@ -256,19 +256,19 @@ class BenchmarkExecutionControllerBranchTestCase(TestCase):
         self.assertEqual(True, bench_data[0]['exists'])
         self.assertEqual('0000100001000010000100001000010000100001', bench_data[0]['commit'])
         self.assertEqual(self.benchmark_execution1.id, bench_data[0]['benchmark_execution_id'])
-        self.assertEqual([1,2,3,4,5], json.loads(bench_data[0]['report']['commands'][0]['result']['out'])[0]['data'])
+        self.assertEqual([1,2,3,4,5], bench_data[0]['results'][0]['data'])
 
         self.assertEqual(True, bench_data[1]['current_branch'])
         self.assertEqual(True, bench_data[1]['exists'])
         self.assertEqual('0000200002000020000200002000020000200002', bench_data[1]['commit'])
         self.assertEqual(self.benchmark_execution2.id, bench_data[1]['benchmark_execution_id'])
-        self.assertEqual([6,7,8,9,10], json.loads(bench_data[1]['report']['commands'][0]['result']['out'])[0]['data'])
+        self.assertEqual([6,7,8,9,10], bench_data[1]['results'][0]['data'])
 
         self.assertEqual(True, bench_data[2]['current_branch'])
         self.assertEqual(True, bench_data[2]['exists'])
         self.assertEqual('0000300003000030000300003000030000300003', bench_data[2]['commit'])
         self.assertEqual(self.benchmark_execution3.id, bench_data[2]['benchmark_execution_id'])
-        self.assertEqual([11,12,13,14,15], json.loads(bench_data[2]['report']['commands'][0]['result']['out'])[0]['data'])
+        self.assertEqual([11,12,13,14,15], bench_data[2]['results'][0]['data'])
 
 
     def test_get_stacked_benchmark_execution_from_branch_with_deleted_benchmarks(self):
@@ -298,7 +298,7 @@ class BenchmarkExecutionControllerBranchTestCase(TestCase):
         self.assertEqual(True, bench_data[0]['exists'])
         self.assertEqual('0000100001000010000100001000010000100001', bench_data[0]['commit'])
         self.assertEqual(self.benchmark_execution1.id, bench_data[0]['benchmark_execution_id'])
-        self.assertEqual([1,2,3,4,5], json.loads(bench_data[0]['report']['commands'][0]['result']['out'])[0]['data'])
+        self.assertEqual([1,2,3,4,5], bench_data[0]['results'][0]['data'])
 
         self.assertEqual(False, bench_data[1]['current_branch'])
         self.assertEqual(False, bench_data[1]['exists'])
@@ -307,7 +307,7 @@ class BenchmarkExecutionControllerBranchTestCase(TestCase):
         self.assertEqual(True, bench_data[2]['exists'])
         self.assertEqual('0000300003000030000300003000030000300003', bench_data[2]['commit'])
         self.assertEqual(self.benchmark_execution3.id, bench_data[2]['benchmark_execution_id'])
-        self.assertEqual([11,12,13,14,15], json.loads(bench_data[2]['report']['commands'][0]['result']['out'])[0]['data'])
+        self.assertEqual([11,12,13,14,15], bench_data[2]['results'][0]['data'])
 
 
     def test_get_stacked_data_different_id(self):
