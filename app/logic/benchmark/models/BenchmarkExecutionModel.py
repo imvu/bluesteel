@@ -1,6 +1,9 @@
 """ BenchmarkExecution model """
 
 from django.db import models
+from app.logic.commandrepo.models.CommandModel import CommandEntry
+from app.logic.commandrepo.models.CommandResultModel import CommandResultEntry
+import json
 
 class BenchmarkExecutionEntry(models.Model):
     """ Benchmark Execution """
@@ -48,5 +51,34 @@ class BenchmarkExecutionEntry(models.Model):
         """ Returns true if Benchmark execution is invalidated """
         return self.definition.revision != self.revision_target or self.invalidated
 
+    def get_benchmark_results(self):
+        """ Returns all the results for a given benchmark flattened on a list """
+        results = []
+
+        com_list = CommandEntry.objects.filter(command_set__id=self.report.id).order_by('order')
+        for com_entry in com_list:
+            result = CommandResultEntry.objects.filter(command_id=com_entry.id).first()
+            if result:
+                res = json.loads(result.out)
+
+                for exec_item in res:
+                    bench_res = {}
+                    bench_res['id'] = exec_item['id']
+                    bench_res['visual_type'] = exec_item['visual_type']
+                    bench_res['data'] = exec_item['data']
+
+                    if exec_item['visual_type'] == 'vertical_bars':
+                        bench_res['average'] = BenchmarkExecutionEntry.get_average(exec_item['data'])
+
+                    results.append(bench_res)
+
+        return results
 
 
+    @staticmethod
+    def get_average(vector):
+        """ Returns the average of a vector values """
+        average = 0.0
+        for value in vector:
+            average += float(value)
+        return average / float(len(vector))

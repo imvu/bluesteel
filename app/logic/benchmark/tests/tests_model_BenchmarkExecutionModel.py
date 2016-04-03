@@ -13,7 +13,10 @@ from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEnt
 from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
 from app.logic.commandrepo.models.CommandGroupModel import CommandGroupEntry
 from app.logic.commandrepo.models.CommandSetModel import CommandSetEntry
+from app.logic.commandrepo.models.CommandModel import CommandEntry
+from app.logic.commandrepo.models.CommandResultModel import CommandResultEntry
 from datetime import timedelta
+import json
 
 class BenchmarkExecutionEntryTestCase(TestCase):
 
@@ -137,4 +140,50 @@ class BenchmarkExecutionEntryTestCase(TestCase):
         )
 
         self.assertEqual(True, entry.is_invalidated())
+
+    def test_get_benchmark_results_comput_vertical_bars_average(self):
+        out1 = {}
+        out1['id'] = 'benchmark-res-id-1'
+        out1['visual_type'] = 'vertical_bars'
+        out1['data'] = [1, 2, 3, 4, 5.5]
+
+        out2 = {}
+        out2['id'] = 'benchmark-res-id-2'
+        out2['visual_type'] = 'text'
+        out2['data'] = 'this is a text'
+
+        out1str = json.dumps([out1])
+        out2str = json.dumps([out2])
+
+        command_group1 = CommandGroupEntry.objects.create()
+        command_set1 = CommandSetEntry.objects.create(group=command_group1)
+
+        command1 = CommandEntry.objects.create(command_set=command_set1, command='command 1', order=0)
+        command2 = CommandEntry.objects.create(command_set=command_set1, command='command 2', order=1)
+
+        command_res1 = CommandResultEntry.objects.create(command=command1, out=out1str, error='', status=0)
+        command_res2 = CommandResultEntry.objects.create(command=command2, out=out2str, error='', status=0)
+
+
+        bench_entry = BenchmarkExecutionEntry.objects.create(
+            definition=self.benchmark_definition,
+            commit=self.git_commit,
+            worker=self.worker,
+            report=command_set1,
+            invalidated=False,
+            status=BenchmarkExecutionEntry.STATUS_TYPE[1][0],
+            revision_target=28
+        )
+
+        results = bench_entry.get_benchmark_results()
+
+        self.assertEqual(2, len(results))
+        self.assertEqual('benchmark-res-id-1', results[0]['id'])
+        self.assertEqual('vertical_bars', results[0]['visual_type'])
+        self.assertEqual([1, 2, 3, 4, 5.5], results[0]['data'])
+        self.assertEqual(3.1, results[0]['average'])
+
+        self.assertEqual('benchmark-res-id-2', results[1]['id'])
+        self.assertEqual('text', results[1]['visual_type'])
+        self.assertEqual('this is a text', results[1]['data'])
 

@@ -43,7 +43,9 @@ class BenchmarkExecutionController(object):
 
     @staticmethod
     def get_average(vector):
-        """ Returns the average of a vector values """
+        """
+        Returns the average of a vector values
+        """
         average = 0.0
         for value in vector:
             average += float(value)
