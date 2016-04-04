@@ -8,9 +8,11 @@ from app.logic.commandrepo.models.CommandSetModel import CommandSetEntry
 from app.logic.commandrepo.models.CommandModel import CommandEntry
 from app.logic.commandrepo.models.CommandResultModel import CommandResultEntry
 from app.logic.commandrepo.controllers.CommandController import CommandController
+from app.logic.gitrepo.controllers.GitController import GitController
 from app.logic.gitrepo.models.GitBranchTrailModel import GitBranchTrailEntry
 from app.logic.gitrepo.models.GitBranchMergeTargetModel import GitBranchMergeTargetEntry
 import json
+import sys
 
 class BenchmarkExecutionController(object):
     """ BenchmarkExecution controller with helper functions """
@@ -217,4 +219,39 @@ class BenchmarkExecutionController(object):
                     commit['benchmark_completed'] = int((float(finished) / float(count)) * 100.0)
 
         return branches
+
+    @staticmethod
+    def get_benchmark_fluctuation(commit_hash, fluctuation_window):
+        hashes = GitController.get_commit_hashes_parents_and_children(commit_hash, fluctuation_window)
+        benchmarks = {}
+        fluctuations = []
+
+        for commit_hash in hashes:
+            bench = BenchmarkExecutionEntry.objects.filter(commit__commit_hash=commit_hash).first()
+            if not bench:
+                continue
+
+            results = bench.get_benchmark_results()
+            for result in results:
+                if result['id'] not in benchmarks:
+                    benchmarks[result['id']] = []
+                benchmarks[result['id']].append(result)
+
+
+        for key in benchmarks:
+            average_min = sys.float_info.max
+            average_max = sys.float_info.min
+            for bench in benchmarks[key]:
+                average_min = min(average_min, bench['average'])
+                average_max = max(average_max, bench['average'])
+
+            fluctuation = {}
+            fluctuation['id'] = key
+            fluctuation['min'] = average_min
+            fluctuation['max'] = average_max
+            fluctuations.append(fluctuation)
+
+        return fluctuations
+
+
 
