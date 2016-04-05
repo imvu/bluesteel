@@ -9,6 +9,9 @@ from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEnt
 from app.logic.gitrepo.models.GitBranchModel import GitBranchEntry
 from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
 from app.logic.httpcommon import res
+from app.logic.httpcommon.Page import Page
+
+BENCH_EXEC_ITEMS_PER_PAGE = 25
 
 def get_benchmark_execution(request, bench_exec_id):
     """ Returns a benchmark execution """
@@ -46,9 +49,20 @@ def get_benchmark_executions_stacked(request, project_id, branch_id, definition_
         if worker == None:
             return res.get_template_data(request, 'presenter/not_found.html', {})
 
+        page = Page(BENCH_EXEC_ITEMS_PER_PAGE, 1)
+        commit_hashes, pagination = BenchmarkExecutionController.get_bench_exec_commits_paginated(
+            project,
+            branch,
+            page
+        )
+
+        # Use this varible!
+        del pagination
+
         data = BenchmarkExecutionController.get_stacked_executions_from_branch(
             project,
             branch,
+            commit_hashes,
             definition,
             worker
         )

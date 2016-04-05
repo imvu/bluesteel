@@ -1,6 +1,7 @@
 """ Benchmark Execution Controller file """
 
 from django.db.models import Q, F
+from django.core.paginator import Paginator
 from app.logic.benchmark.models.BenchmarkExecutionModel import BenchmarkExecutionEntry
 from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
 from app.logic.commandrepo.models.CommandGroupModel import CommandGroupEntry
@@ -11,8 +12,11 @@ from app.logic.commandrepo.controllers.CommandController import CommandControlle
 from app.logic.gitrepo.controllers.GitController import GitController
 from app.logic.gitrepo.models.GitBranchTrailModel import GitBranchTrailEntry
 from app.logic.gitrepo.models.GitBranchMergeTargetModel import GitBranchMergeTargetEntry
+from app.logic.httpcommon import pag
 import json
 import sys
+
+PAGINATION_HALF_RANGE = 12
 
 class BenchmarkExecutionController(object):
     """ BenchmarkExecution controller with helper functions """
@@ -44,9 +48,24 @@ class BenchmarkExecutionController(object):
             return execution
 
     @staticmethod
-    def get_stacked_executions_from_branch(project_entry, branch_entry, bench_def_entry, worker_entry):
-        """ Returns all benchmarks for a given branch """
+    def get_bench_exec_commits_paginated(project_entry, branch_entry, page):
+        """ Returns a commit list window from a page """
         branch_trails = GitBranchTrailEntry.objects.filter(project=project_entry, branch=branch_entry).order_by('order')
+
+        pager = Paginator(branch_trails, page.items_per_page)
+        current_page = pager.page(page.page_index)
+        branch_trails = current_page.object_list
+        page_indices = pag.get_pagination_indices(page, PAGINATION_HALF_RANGE, pager.num_pages)
+
+        commit_hashes = []
+        for trail in branch_trails:
+            commit_hashes.append(trail.commit.commit_hash)
+        return (commit_hashes, page_indices)
+
+
+    @staticmethod
+    def get_stacked_executions_from_branch(project_entry, branch_entry, commit_hashes, bench_def_entry, worker_entry):
+        """ Returns all benchmarks for a given branch """
         bench_data = []
 
         fork_point_hash = ''
@@ -59,10 +78,10 @@ class BenchmarkExecutionController(object):
         if merge_target and merge_target.current_branch != merge_target.target_branch:
             fork_point_hash = merge_target.fork_point.commit_hash
 
-        for trail in branch_trails:
+        for commit_hash in commit_hashes:
             benchmark_entry = BenchmarkExecutionEntry.objects.filter(
                 definition=bench_def_entry,
-                commit=trail.commit,
+                commit__commit_hash=commit_hash,
                 worker=worker_entry
             ).first()
 

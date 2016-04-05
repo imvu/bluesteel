@@ -3,6 +3,7 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
 from django.contrib.auth.models import AnonymousUser
+from django.utils import timezone
 from app.logic.benchmark.controllers.BenchmarkExecutionController import BenchmarkExecutionController
 from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
 from app.logic.benchmark.models.BenchmarkExecutionModel import BenchmarkExecutionEntry
@@ -21,7 +22,7 @@ from app.logic.commandrepo.models.CommandSetModel import CommandSetEntry
 from app.logic.commandrepo.models.CommandGroupModel import CommandGroupEntry
 from app.logic.commandrepo.helper import TestCommandHelper
 from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
-from django.utils import timezone
+from app.logic.httpcommon.Page import Page
 import json
 
 class BenchmarkExecutionControllerBranchTestCase(TestCase):
@@ -203,6 +204,32 @@ class BenchmarkExecutionControllerBranchTestCase(TestCase):
     def tearDown(self):
         pass
 
+    def test_get_bench_exec_commits_paginated_one_per_page(self):
+        commits1, page_indices1 = BenchmarkExecutionController.get_bench_exec_commits_paginated(self.git_project1, self.branch1, Page(1, 1))
+        commits2, page_indices2 = BenchmarkExecutionController.get_bench_exec_commits_paginated(self.git_project1, self.branch1, Page(1, 2))
+        commits3, page_indices3 = BenchmarkExecutionController.get_bench_exec_commits_paginated(self.git_project1, self.branch1, Page(1, 3))
+
+        self.assertEqual(1, len(commits1))
+        self.assertEqual('0000100001000010000100001000010000100001', commits1[0])
+
+        self.assertEqual(1, len(commits2))
+        self.assertEqual('0000200002000020000200002000020000200002', commits2[0])
+
+        self.assertEqual(1, len(commits3))
+        self.assertEqual('0000300003000030000300003000030000300003', commits3[0])
+
+    def test_get_bench_exec_commits_paginated_two_per_page(self):
+        commits1, page_indices1 = BenchmarkExecutionController.get_bench_exec_commits_paginated(self.git_project1, self.branch1, Page(2, 1))
+        commits2, page_indices2 = BenchmarkExecutionController.get_bench_exec_commits_paginated(self.git_project1, self.branch1, Page(2, 2))
+
+        self.assertEqual(2, len(commits1))
+        self.assertEqual('0000100001000010000100001000010000100001', commits1[0])
+        self.assertEqual('0000200002000020000200002000020000200002', commits1[1])
+
+        self.assertEqual(1, len(commits2))
+        self.assertEqual('0000300003000030000300003000030000300003', commits2[0])
+
+
     def test_get_stacked_benchmark_execution_from_branch(self):
         out_1 = json.dumps([{'visual_type' : 'vertical_bars', 'id' : 'id1', 'data' : [1,2,3,4,5]}])
         out_2 = json.dumps([{'visual_type' : 'vertical_bars', 'id' : 'id1', 'data' : [6,7,8,9,10]}])
@@ -244,9 +271,15 @@ class BenchmarkExecutionControllerBranchTestCase(TestCase):
         self.benchmark_execution3.report = self.report_3
         self.benchmark_execution3.save()
 
+        commit_hashes = []
+        commit_hashes.append('0000100001000010000100001000010000100001')
+        commit_hashes.append('0000200002000020000200002000020000200002')
+        commit_hashes.append('0000300003000030000300003000030000300003')
+
         bench_data = BenchmarkExecutionController.get_stacked_executions_from_branch(
             self.git_project1,
             self.branch1,
+            commit_hashes,
             self.benchmark_definition1,
             self.worker1
         )
@@ -286,9 +319,15 @@ class BenchmarkExecutionControllerBranchTestCase(TestCase):
         self.benchmark_execution3.report = self.report_3
         self.benchmark_execution3.save()
 
+        commit_hashes = []
+        commit_hashes.append('0000100001000010000100001000010000100001')
+        commit_hashes.append('0000200002000020000200002000020000200002')
+        commit_hashes.append('0000300003000030000300003000030000300003')
+
         bench_data = BenchmarkExecutionController.get_stacked_executions_from_branch(
             self.git_project1,
             self.branch1,
+            commit_hashes,
             self.benchmark_definition1,
             self.worker1
         )
@@ -328,9 +367,15 @@ class BenchmarkExecutionControllerBranchTestCase(TestCase):
         self.benchmark_execution3.report = self.report_3
         self.benchmark_execution3.save()
 
+        commit_hashes = []
+        commit_hashes.append('0000100001000010000100001000010000100001')
+        commit_hashes.append('0000200002000020000200002000020000200002')
+        commit_hashes.append('0000300003000030000300003000030000300003')
+
         data = BenchmarkExecutionController.get_stacked_executions_from_branch(
             self.git_project1,
             self.branch1,
+            commit_hashes,
             self.benchmark_definition1,
             self.worker1
         )
@@ -379,9 +424,15 @@ class BenchmarkExecutionControllerBranchTestCase(TestCase):
         self.benchmark_execution3.report = self.report_3
         self.benchmark_execution3.save()
 
+        commit_hashes = []
+        commit_hashes.append('0000100001000010000100001000010000100001')
+        commit_hashes.append('0000200002000020000200002000020000200002')
+        commit_hashes.append('0000300003000030000300003000030000300003')
+
         data = BenchmarkExecutionController.get_stacked_executions_from_branch(
             self.git_project1,
             self.branch1,
+            commit_hashes,
             self.benchmark_definition1,
             self.worker1
         )
@@ -414,9 +465,15 @@ class BenchmarkExecutionControllerBranchTestCase(TestCase):
         self.benchmark_execution3.report = self.report_3
         self.benchmark_execution3.save()
 
+        commit_hashes = []
+        commit_hashes.append('0000100001000010000100001000010000100001')
+        commit_hashes.append('0000200002000020000200002000020000200002')
+        commit_hashes.append('0000300003000030000300003000030000300003')
+
         data = BenchmarkExecutionController.get_stacked_executions_from_branch(
             self.git_project1,
             self.branch1,
+            commit_hashes,
             self.benchmark_definition1,
             self.worker1
         )
@@ -474,9 +531,15 @@ class BenchmarkExecutionControllerBranchTestCase(TestCase):
         self.benchmark_execution3.report = self.report_3
         self.benchmark_execution3.save()
 
+        commit_hashes = []
+        commit_hashes.append('0000100001000010000100001000010000100001')
+        commit_hashes.append('0000200002000020000200002000020000200002')
+        commit_hashes.append('0000300003000030000300003000030000300003')
+
         data = BenchmarkExecutionController.get_stacked_executions_from_branch(
             self.git_project1,
             self.branch1,
+            commit_hashes,
             self.benchmark_definition1,
             self.worker1
         )
@@ -590,9 +653,18 @@ class BenchmarkExecutionControllerBranchTestCase(TestCase):
             status=BenchmarkExecutionEntry.READY,
         )
 
+        commit_hashes = []
+        commit_hashes.append('0000600006000060000600006000060000600006')
+        commit_hashes.append('0000500005000050000500005000050000500005')
+        commit_hashes.append('0000400004000040000400004000040000400004')
+        commit_hashes.append('0000300003000030000300003000030000300003')
+        commit_hashes.append('0000200002000020000200002000020000200002')
+        commit_hashes.append('0000100001000010000100001000010000100001')
+
         data = BenchmarkExecutionController.get_stacked_executions_from_branch(
             self.git_project1,
             branch2,
+            commit_hashes,
             self.benchmark_definition1,
             self.worker1
         )
@@ -688,9 +760,18 @@ class BenchmarkExecutionControllerBranchTestCase(TestCase):
             status=BenchmarkExecutionEntry.READY,
         )
 
+        commit_hashes = []
+        commit_hashes.append('0000600006000060000600006000060000600006')
+        commit_hashes.append('0000500005000050000500005000050000500005')
+        commit_hashes.append('0000400004000040000400004000040000400004')
+        commit_hashes.append('0000300003000030000300003000030000300003')
+        commit_hashes.append('0000200002000020000200002000020000200002')
+        commit_hashes.append('0000100001000010000100001000010000100001')
+
         data = BenchmarkExecutionController.get_stacked_executions_from_branch(
             self.git_project1,
             branch2,
+            commit_hashes,
             self.benchmark_definition1,
             self.worker1
         )
@@ -698,7 +779,7 @@ class BenchmarkExecutionControllerBranchTestCase(TestCase):
         bench_data = BenchmarkExecutionController.get_stacked_data_separated_by_id(data)
 
         self.assertEqual(False, bench_data['id1'][0]['invalidated'])
-        self.assertEqual(True, bench_data['id1'][1]['invalidated'])
+        self.assertEqual(True,  bench_data['id1'][1]['invalidated'])
         self.assertEqual(False, bench_data['id1'][2]['invalidated'])
         self.assertEqual(False, bench_data['id1'][3]['invalidated'])
         self.assertEqual(False, bench_data['id1'][4]['invalidated'])
