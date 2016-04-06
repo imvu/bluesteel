@@ -104,12 +104,13 @@ def get_benchmark_execution_invalidate_url(bench_id):
     return '/main/execution/{0}/invalidate/'.format(bench_id)
 
 
-def get_benchmark_execution_stacked_url(project_entry, branch_entry, bench_def_entry, worker_entry):
-    return '/main/execution/stacked/project/{0}/branch/{1}/definition/{2}/worker/{3}/'.format(
+def get_benchmark_execution_stacked_url(project_entry, branch_entry, bench_def_entry, worker_entry, page_index):
+    return '/main/execution/stacked/project/{0}/branch/{1}/definition/{2}/worker/{3}/page/{4}/'.format(
         project_entry,
         branch_entry,
         bench_def_entry,
-        worker_entry
+        worker_entry,
+        page_index
     )
 
 def get_acquire_bench_exe_full_url(domain):

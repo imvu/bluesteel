@@ -139,6 +139,44 @@ def prepare_pagination_bench_definitions(page_indices):
         pagination['pages'].append(pag)
     return pagination
 
+def prepare_pagination_bench_stacked(project_entry, branch_entry, bench_def_entry, worker_entry, page_indices):
+    """ Creates pagination object for workers from indices """
+    pagination = {}
+    pagination['prev'] = ViewUrlGenerator.get_benchmark_execution_stacked_url(
+        project_entry,
+        branch_entry,
+        bench_def_entry,
+        worker_entry,
+        page_indices['prev'])
+
+    pagination['current'] = ViewUrlGenerator.get_benchmark_execution_stacked_url(
+        project_entry,
+        branch_entry,
+        bench_def_entry,
+        worker_entry,
+        page_indices['current'])
+
+    pagination['next'] = ViewUrlGenerator.get_benchmark_execution_stacked_url(
+        project_entry,
+        branch_entry,
+        bench_def_entry,
+        worker_entry,
+        page_indices['next'])
+
+    pagination['pages'] = []
+    for index in page_indices['page_indices']:
+        pag = {}
+        pag['index'] = index
+        pag['url'] = ViewUrlGenerator.get_benchmark_execution_stacked_url(
+            project_entry,
+            branch_entry,
+            bench_def_entry,
+            worker_entry,
+            index)
+        pag['is_current'] = (index == page_indices['current'])
+        pagination['pages'].append(pag)
+    return pagination
+
 def prepare_project_for_html(project):
     """ Adds information to project objects for template interaction """
     project['url'] = {}

@@ -30,7 +30,7 @@ def get_benchmark_execution(request, bench_exec_id):
 
     return res.get_template_data(request, 'presenter/benchmark_execution.html', data)
 
-def get_benchmark_executions_stacked(request, project_id, branch_id, definition_id, worker_id):
+def get_benchmark_executions_stacked(request, project_id, branch_id, definition_id, worker_id, page_index):
     """ Display single branch links """
     if request.method == 'GET':
         project = BluesteelProjectEntry.objects.filter(id=project_id).first()
@@ -49,15 +49,19 @@ def get_benchmark_executions_stacked(request, project_id, branch_id, definition_
         if worker == None:
             return res.get_template_data(request, 'presenter/not_found.html', {})
 
-        page = Page(BENCH_EXEC_ITEMS_PER_PAGE, 1)
+        page = Page(BENCH_EXEC_ITEMS_PER_PAGE, page_index)
         commit_hashes, pagination = BenchmarkExecutionController.get_bench_exec_commits_paginated(
             project,
             branch,
             page
         )
 
-        # Use this varible!
-        del pagination
+        pagination = ViewPrepareObjects.prepare_pagination_bench_stacked(
+            project_id,
+            branch_id,
+            definition_id,
+            worker_id,
+            pagination)
 
         data = BenchmarkExecutionController.get_stacked_executions_from_branch(
             project,
@@ -73,6 +77,7 @@ def get_benchmark_executions_stacked(request, project_id, branch_id, definition_
 
         data = {}
         data['stacked_executions'] = executions
+        data['pagination'] = pagination
         data['menu'] = ViewPrepareObjects.prepare_menu_for_html([])
 
         return res.get_template_data(request, 'presenter/benchmark_execution_stacked.html', data)

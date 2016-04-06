@@ -123,7 +123,8 @@ def get_project_single_branch_links(request, project_id, branch_id):
                     project_id,
                     branch_id,
                     def_entry.id,
-                    worker_entry.id
+                    worker_entry.id,
+                    1
                 )
                 definition['workers'].append(worker)
 
