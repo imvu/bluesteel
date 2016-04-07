@@ -46,6 +46,7 @@ def save_benchmark_execution(request, benchmark_execution_id):
 
         report = val_resp_obj
         BenchmarkExecutionController.save_bench_execution(bench_exec_entry, report)
+        BenchmarkExecutionController.notify_benchmark_fluctuation(bench_exec_entry, 2)
 
         return res.get_response(200, 'Benchmark Execution saved', {})
     else:

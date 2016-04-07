@@ -2,6 +2,7 @@
 
 from django.db.models import Q, F
 from django.core.paginator import Paginator
+from django.conf import settings
 from app.logic.benchmark.models.BenchmarkExecutionModel import BenchmarkExecutionEntry
 from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
 from app.logic.commandrepo.models.CommandGroupModel import CommandGroupEntry
@@ -12,6 +13,7 @@ from app.logic.commandrepo.controllers.CommandController import CommandControlle
 from app.logic.gitrepo.controllers.GitController import GitController
 from app.logic.gitrepo.models.GitBranchTrailModel import GitBranchTrailEntry
 from app.logic.gitrepo.models.GitBranchMergeTargetModel import GitBranchMergeTargetEntry
+from app.logic.mailing.models.StackedMailModel import StackedMailEntry
 from app.logic.httpcommon import pag
 import json
 import sys
@@ -257,21 +259,56 @@ class BenchmarkExecutionController(object):
                     benchmarks[result['id']] = []
                 benchmarks[result['id']].append(result)
 
-
         for key in benchmarks:
             average_min = sys.float_info.max
             average_max = sys.float_info.min
-            for bench in benchmarks[key]:
-                average_min = min(average_min, bench['average'])
-                average_max = max(average_max, bench['average'])
 
-            fluctuation = {}
-            fluctuation['id'] = key
-            fluctuation['min'] = average_min
-            fluctuation['max'] = average_max
-            fluctuations.append(fluctuation)
+            need_append = False
+
+            for bench in benchmarks[key]:
+                if bench['visual_type'] == 'vertical_bars':
+                    need_append = True
+                    average_min = min(average_min, bench['average'])
+                    average_max = max(average_max, bench['average'])
+
+            if need_append:
+                fluctuation = {}
+                fluctuation['id'] = key
+                fluctuation['min'] = average_min
+                fluctuation['max'] = average_max
+                fluctuations.append(fluctuation)
 
         return fluctuations
+
+
+    @staticmethod
+    def notify_benchmark_fluctuation(benchmark_exec_entry, fluctuation_window):
+        """ It generates stacked email entries based on fluctuation notifications """
+        commit_hash = benchmark_exec_entry.commit.commit_hash
+        fluctuations = BenchmarkExecutionController.get_benchmark_fluctuation(
+            commit_hash,
+            fluctuation_window
+        )
+
+        notify_fluctuation = False
+
+        for fluc in fluctuations:
+            if (float(fluc['max'] - fluc['min'])) > 1.0:
+                notify_fluctuation = True
+                break
+
+        if notify_fluctuation:
+            receiver_email = benchmark_exec_entry.commit.author.email
+            commit_hash = benchmark_exec_entry.commit.commit_hash
+            title = 'Benchmark execution fluctuation on commit: {0}'.format(commit_hash)
+            content = str(fluctuations)
+
+            StackedMailEntry.objects.create(
+                sender=settings.DEFAULT_FROM_EMAIL,
+                receiver=receiver_email,
+                title=title,
+                content=content
+            )
 
 
 
