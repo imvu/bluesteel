@@ -42,6 +42,26 @@ class GitFeederControllerTestCase(TestCase):
     def tearDown(self):
         pass
 
+    def test_get_commit_unique_set(self):
+        commits = []
+        commits.append(FeederTestHelper.create_commit(1, [], 'user1', 'user1@test.com', self.time, self.time))
+        commits.append(FeederTestHelper.create_commit(2, [], 'user1', 'user1@test.com', self.time, self.time))
+        commits.append(FeederTestHelper.create_commit(3, [], 'user1', 'user1@test.com', self.time, self.time))
+        commits.append(FeederTestHelper.create_commit(4, [], 'user1', 'user1@test.com', self.time, self.time))
+        commits.append(FeederTestHelper.create_commit(4, [], 'user1', 'user1@test.com', self.time, self.time))
+        commits.append(FeederTestHelper.create_commit(4, [], 'user1', 'user1@test.com', self.time, self.time))
+
+        res = GitFeederController.get_unique_commit_set(commits)
+
+        commit_set = set()
+        commit_set.add('0000100001000010000100001000010000100001')
+        commit_set.add('0000200002000020000200002000020000200002')
+        commit_set.add('0000300003000030000300003000030000300003')
+        commit_set.add('0000400004000040000400004000040000400004')
+
+        self.assertEqual(4, len(res))
+        self.assertEqual(commit_set, res)
+
     def test_commits_are_unique(self):
         commits = []
         commits.append(FeederTestHelper.create_commit(1, [], 'user1', 'user1@test.com', self.time, self.time))

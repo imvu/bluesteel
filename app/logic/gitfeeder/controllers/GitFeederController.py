@@ -25,22 +25,31 @@ class GitFeederController(object):
     def check_commit(commit_hash, commit_list, project):
         """ Checks if commit hash is present (in the commits list and in the DDBB) """
         if not any(com['hash'] == commit_hash for com in commit_list):
-            commit_entry = GitCommitEntry.objects.filter(project=project, commit_hash=commit_hash).first()
-            if commit_entry == None:
+            if not GitCommitEntry.objects.filter(project=project, commit_hash=commit_hash).exists():
                 return False
         return True
 
     @staticmethod
+    def get_unique_commit_set(commit_list):
+        """ Returns a set with unique commit hashes """
+        commit_hash_list = []
+        for commit in commit_list:
+            commit_hash_list.append(commit['hash'])
+
+        return set(commit_hash_list)
+
+
+    @staticmethod
     def are_commits_unique(commit_list):
         """ Returns true if all commit hashes are unique """
-        unique_hash = []
+        unique_hash = set()
         messages = []
         for commit in commit_list:
             if commit['hash'] in unique_hash:
                 messages.append('Commit not unique {0}'.format(commit['hash']))
                 return (False, messages)
             else:
-                unique_hash.append(commit['hash'])
+                unique_hash.add(commit['hash'])
         return (True, messages)
 
     @staticmethod
