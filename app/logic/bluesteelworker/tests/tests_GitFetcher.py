@@ -452,10 +452,10 @@ class GitFetcherTestCase(TestCase):
         self.assertEqual(['git', 'clean', '-f', '-d', '-q'], args[0])
 
         name, args, side = mock_subprocess.mock_calls[2]
-        self.assertEqual(['git', 'pull', '-r'], args[0])
+        self.assertEqual(['git', 'checkout', 'branch-1'], args[0])
 
         name, args, side = mock_subprocess.mock_calls[3]
-        self.assertEqual(['git', 'checkout', 'branch-1'], args[0])
+        self.assertEqual(['git', 'pull', '-r'], args[0])
 
         name, args, side = mock_subprocess.mock_calls[4]
         self.assertEqual(['git', 'log', '--first-parent', '--date=iso', pretty_string], args[0])
@@ -481,12 +481,12 @@ class GitFetcherTestCase(TestCase):
         self.assertEqual('', reports['commands'][1]['result']['out'])
 
         self.assertEqual(0, reports['commands'][2]['result']['status'])
-        self.assertEqual('git pull -r', reports['commands'][2]['command'])
+        self.assertEqual('git checkout branch-1', reports['commands'][2]['command'])
         self.assertEqual('', reports['commands'][2]['result']['error'])
         self.assertEqual('', reports['commands'][2]['result']['out'])
 
         self.assertEqual(0, reports['commands'][3]['result']['status'])
-        self.assertEqual('git checkout branch-1', reports['commands'][3]['command'])
+        self.assertEqual('git pull -r', reports['commands'][3]['command'])
         self.assertEqual('', reports['commands'][3]['result']['error'])
         self.assertEqual('', reports['commands'][3]['result']['out'])
 
