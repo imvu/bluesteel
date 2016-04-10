@@ -452,12 +452,15 @@ class GitFetcherTestCase(TestCase):
         self.assertEqual(['git', 'clean', '-f', '-d', '-q'], args[0])
 
         name, args, side = mock_subprocess.mock_calls[2]
-        self.assertEqual(['git', 'checkout', 'branch-1'], args[0])
+        self.assertEqual(['git', 'pull', '-r'], args[0])
 
         name, args, side = mock_subprocess.mock_calls[3]
+        self.assertEqual(['git', 'checkout', 'branch-1'], args[0])
+
+        name, args, side = mock_subprocess.mock_calls[4]
         self.assertEqual(['git', 'log', '--first-parent', '--date=iso', pretty_string], args[0])
 
-        self.assertEqual(4, mock_subprocess.call_count)
+        self.assertEqual(5, mock_subprocess.call_count)
 
         self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC','test-repo-1')))
         self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC','test-repo-1', 'project')))
@@ -465,7 +468,7 @@ class GitFetcherTestCase(TestCase):
         self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC','test-repo-1', 'log', 'out.txt')))
         self.assertTrue(os.path.exists(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC','test-repo-1', 'log', 'err.txt')))
 
-        self.assertEqual(4, len(reports['commands']))
+        self.assertEqual(5, len(reports['commands']))
 
         self.assertEqual(0, reports['commands'][0]['result']['status'])
         self.assertEqual('git reset --hard', reports['commands'][0]['command'])
@@ -478,14 +481,19 @@ class GitFetcherTestCase(TestCase):
         self.assertEqual('', reports['commands'][1]['result']['out'])
 
         self.assertEqual(0, reports['commands'][2]['result']['status'])
-        self.assertEqual('git checkout branch-1', reports['commands'][2]['command'])
+        self.assertEqual('git pull -r', reports['commands'][2]['command'])
         self.assertEqual('', reports['commands'][2]['result']['error'])
         self.assertEqual('', reports['commands'][2]['result']['out'])
 
         self.assertEqual(0, reports['commands'][3]['result']['status'])
-        self.assertEqual('git log --first-parent --date=iso {0}'.format(pretty_string), reports['commands'][3]['command'])
+        self.assertEqual('git checkout branch-1', reports['commands'][3]['command'])
         self.assertEqual('', reports['commands'][3]['result']['error'])
         self.assertEqual('', reports['commands'][3]['result']['out'])
+
+        self.assertEqual(0, reports['commands'][4]['result']['status'])
+        self.assertEqual('git log --first-parent --date=iso {0}'.format(pretty_string), reports['commands'][4]['command'])
+        self.assertEqual('', reports['commands'][4]['result']['error'])
+        self.assertEqual('', reports['commands'][4]['result']['out'])
 
     def test_extract_and_format_commits_from_report(self):
         report1 = {}
