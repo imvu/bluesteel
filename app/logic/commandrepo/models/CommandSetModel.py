@@ -22,7 +22,7 @@ class CommandSetEntry(models.Model):
         obj['order'] = self.order
         obj['commands'] = []
 
-        command_list = CommandEntry.objects.all().filter(command_set__id=self.id).order_by('order')
+        command_list = CommandEntry.objects.filter(command_set__id=self.id).order_by('order')
         for command in command_list:
             obj['commands'].append(command.as_object())
 

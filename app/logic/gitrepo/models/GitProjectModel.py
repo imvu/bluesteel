@@ -18,7 +18,7 @@ class GitProjectEntry(models.Model):
 
     def as_object(self):
         """ Return a GirProject as an object """
-        branch_entries = GitBranchEntry.objects.all().filter(project=self.id).order_by('id')
+        branch_entries = GitBranchEntry.objects.filter(project=self.id).order_by('id')
 
         branches = []
         for branch in branch_entries:

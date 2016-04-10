@@ -20,7 +20,7 @@ class CommandGroupEntry(models.Model):
         obj['id'] = self.id
         obj['command_sets'] = []
 
-        sets_list = CommandSetEntry.objects.all().filter(group_id=self.id).order_by('order')
+        sets_list = CommandSetEntry.objects.filter(group_id=self.id).order_by('order')
 
         for entry in sets_list:
             obj['command_sets'].append(entry.as_object())

@@ -28,7 +28,7 @@ def get_all_layouts_urls(request):
 def get_layout(request, layout_id):
     """ Return layout in json """
     if request.method == 'GET':
-        layout = BluesteelLayoutEntry.objects.all().filter(id=layout_id).first()
+        layout = BluesteelLayoutEntry.objects.filter(id=layout_id).first()
 
         if layout == None:
             return res.get_response(400, 'Layout not found', {})

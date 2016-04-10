@@ -23,7 +23,7 @@ class CommandEntry(models.Model):
         obj['order'] = self.order
         obj['result'] = {}
 
-        entry = CommandResultEntry.objects.all().filter(command_id=self.id).first()
+        entry = CommandResultEntry.objects.filter(command_id=self.id).first()
         if entry:
             obj['result'] = entry.as_object()
 

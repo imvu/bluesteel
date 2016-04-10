@@ -42,7 +42,7 @@ def get_bootstrap_urls(request):
 
 def get_worker_info(request, worker_uuid):
     if request.method == 'GET':
-        worker = WorkerEntry.objects.all().filter(uuid=worker_uuid).first()
+        worker = WorkerEntry.objects.filter(uuid=worker_uuid).first()
 
         obj = {}
         obj['csrf_token'] = csrf.get_token(request)
@@ -78,7 +78,7 @@ def create_worker_info(request):
         obj = val_resp_obj
         username_trimmed = obj['uuid'][:30]
 
-        worker = WorkerEntry.objects.all().filter(uuid=username_trimmed).first()
+        worker = WorkerEntry.objects.filter(uuid=username_trimmed).first()
         if worker == None:
             user = User.objects.filter(username=username_trimmed).first()
             if not user:

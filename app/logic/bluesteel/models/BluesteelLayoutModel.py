@@ -18,7 +18,7 @@ class BluesteelLayoutEntry(models.Model):
 
     def as_object(self):
         """ Returns a layout entry as an object """
-        project_entries = BluesteelProjectEntry.objects.all().filter(layout_id=self.id).order_by('id')
+        project_entries = BluesteelProjectEntry.objects.filter(layout_id=self.id).order_by('id')
 
         projects = []
         for entry in project_entries:
@@ -37,13 +37,13 @@ class BluesteelLayoutEntry(models.Model):
         return 'archive-{0}'.format(self.id)
 
     def clamp_project_index_path(self):
-        project_count = BluesteelProjectEntry.objects.all().filter(layout_id=self.id).count()
+        project_count = BluesteelProjectEntry.objects.filter(layout_id=self.id).count()
 
         self.project_index_path = max(0, min(self.project_index_path, project_count - 1))
         self.save()
 
     def check_active_state(self):
-        project_count = BluesteelProjectEntry.objects.all().filter(layout_id=self.id).count()
+        project_count = BluesteelProjectEntry.objects.filter(layout_id=self.id).count()
 
         if project_count == 0 or self.project_index_path >= project_count:
             self.active = False

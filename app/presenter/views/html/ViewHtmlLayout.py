@@ -37,7 +37,7 @@ def get_layouts(request, page_index):
 def get_layout_editable(request, layout_id):
     """ Returns html for the layout editable page """
     if request.method == 'GET':
-        layout = BluesteelLayoutEntry.objects.all().filter(id=layout_id).first()
+        layout = BluesteelLayoutEntry.objects.filter(id=layout_id).first()
 
         data = {}
         data['layout'] = layout.as_object()
