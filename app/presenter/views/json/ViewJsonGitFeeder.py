@@ -36,22 +36,24 @@ def post_commits(request, project_id):
         diffs = val_resp_obj['feed_data']['diffs']
         branches = val_resp_obj['feed_data']['branches']
 
+        commit_hash_set = GitFeederController.get_unique_commit_set(commits)
+
         correct, msgs = GitFeederController.are_commits_unique(commits)
         if not correct:
             LogEntry.error(request.user, (msg for msg in msgs))
             return res.get_response(400, 'Commits not correct', {})
 
-        correct, msgs = GitFeederController.are_parent_hashes_correct(commits, project_entry)
+        correct, msgs = GitFeederController.are_parent_hashes_correct(commits, commit_hash_set, project_entry)
         if not correct:
             LogEntry.error(request.user, (msg for msg in msgs))
             return res.get_response(400, 'Parents not correct', {})
 
-        correct, msgs = GitFeederController.are_diffs_correct(commits, diffs, project_entry)
+        correct, msgs = GitFeederController.are_diffs_correct(commit_hash_set, diffs, project_entry)
         if not correct:
             LogEntry.error(request.user, (msg for msg in msgs))
             return res.get_response(400, 'Diffs not correct', {})
 
-        correct, msgs = GitFeederController.are_branches_correct(commits, branches, project_entry)
+        correct, msgs = GitFeederController.are_branches_correct(commit_hash_set, branches, project_entry)
         if not correct:
             LogEntry.error(request.user, (msg for msg in msgs))
             return res.get_response(400, 'Branches not correct', {})

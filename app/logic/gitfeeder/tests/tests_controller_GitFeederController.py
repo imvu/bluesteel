@@ -94,7 +94,9 @@ class GitFeederControllerTestCase(TestCase):
         commits.append(FeederTestHelper.create_commit(3, [1, 2], 'user1', 'user1@test.com', self.time, self.time))
         commits.append(FeederTestHelper.create_commit(4, [3], 'user1', 'user1@test.com', self.time, self.time))
 
-        res = GitFeederController.are_parent_hashes_correct(commits, self.git_project1)
+        commit_set = GitFeederController.get_unique_commit_set(commits)
+
+        res = GitFeederController.are_parent_hashes_correct(commits, commit_set, self.git_project1)
 
         self.assertEqual(True, res[0])
         self.assertEqual(0, len(res[1]))
@@ -106,7 +108,9 @@ class GitFeederControllerTestCase(TestCase):
         commits.append(FeederTestHelper.create_commit(3, [5, 2], 'user1', 'user1@test.com', self.time, self.time))
         commits.append(FeederTestHelper.create_commit(4, [3], 'user1', 'user1@test.com', self.time, self.time))
 
-        res = GitFeederController.are_parent_hashes_correct(commits, self.git_project1)
+        commit_set = GitFeederController.get_unique_commit_set(commits)
+
+        res = GitFeederController.are_parent_hashes_correct(commits, commit_set, self.git_project1)
 
         self.assertEqual(False, res[0])
         self.assertEqual(1, len(res[1]))
@@ -129,7 +133,9 @@ class GitFeederControllerTestCase(TestCase):
         commits.append(FeederTestHelper.create_commit(3, [5, 2], 'user1', 'user1@test.com', self.time, self.time))
         commits.append(FeederTestHelper.create_commit(4, [3], 'user1', 'user1@test.com', self.time, self.time))
 
-        res = GitFeederController.are_parent_hashes_correct(commits, self.git_project1)
+        commit_set = GitFeederController.get_unique_commit_set(commits)
+
+        res = GitFeederController.are_parent_hashes_correct(commits, commit_set, self.git_project1)
 
         self.assertEqual(True, res[0])
         self.assertEqual(0, len(res[1]))
@@ -146,7 +152,9 @@ class GitFeederControllerTestCase(TestCase):
         diffs.append(FeederTestHelper.create_diff(2, 3, 'content-2'))
         diffs.append(FeederTestHelper.create_diff(3, 4, 'content-3'))
 
-        res = GitFeederController.are_diffs_correct(commits, diffs, self.git_project1)
+        commit_set = GitFeederController.get_unique_commit_set(commits)
+
+        res = GitFeederController.are_diffs_correct(commit_set, diffs, self.git_project1)
 
         self.assertEqual(True, res[0])
         self.assertEqual(0, len(res[1]))
@@ -163,7 +171,9 @@ class GitFeederControllerTestCase(TestCase):
         diffs.append(FeederTestHelper.create_diff(2, 3, 'content-2'))
         diffs.append(FeederTestHelper.create_diff(4, 5, 'content-3'))
 
-        res = GitFeederController.are_diffs_correct(commits, diffs, self.git_project1)
+        commit_set = GitFeederController.get_unique_commit_set(commits)
+
+        res = GitFeederController.are_diffs_correct(commit_set, diffs, self.git_project1)
 
         self.assertEqual(False, res[0])
         self.assertEqual(1, len(res[1]))
@@ -190,7 +200,9 @@ class GitFeederControllerTestCase(TestCase):
         diffs.append(FeederTestHelper.create_diff(2, 3, 'content-2'))
         diffs.append(FeederTestHelper.create_diff(4, 5, 'content-3'))
 
-        res = GitFeederController.are_diffs_correct(commits, diffs, self.git_project1)
+        commit_set = GitFeederController.get_unique_commit_set(commits)
+
+        res = GitFeederController.are_diffs_correct(commit_set, diffs, self.git_project1)
 
         self.assertEqual(True, res[0])
         self.assertEqual(0, len(res[1]))
@@ -211,7 +223,9 @@ class GitFeederControllerTestCase(TestCase):
         branch_list = []
         branch_list.append(FeederTestHelper.create_branch('b1', 4, 'b2', 3, 2, trail, 'content'))
 
-        res = GitFeederController.are_branches_correct(commits, branch_list, self.git_project1)
+        commit_set = GitFeederController.get_unique_commit_set(commits)
+
+        res = GitFeederController.are_branches_correct(commit_set, branch_list, self.git_project1)
         self.assertEqual(True, res[0])
         self.assertEqual(0, len(res[1]))
 

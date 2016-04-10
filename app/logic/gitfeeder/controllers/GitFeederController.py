@@ -22,9 +22,9 @@ class GitFeederController(object):
     """ GitFeeder Controller """
 
     @staticmethod
-    def check_commit(commit_hash, commit_list, project):
+    def check_commit(commit_hash, commit_hash_set, project):
         """ Checks if commit hash is present (in the commits list and in the DDBB) """
-        if not any(com['hash'] == commit_hash for com in commit_list):
+        if not commit_hash in commit_hash_set:
             if not GitCommitEntry.objects.filter(project=project, commit_hash=commit_hash).exists():
                 return False
         return True
@@ -53,13 +53,13 @@ class GitFeederController(object):
         return (True, messages)
 
     @staticmethod
-    def are_parent_hashes_correct(commit_list, project):
+    def are_parent_hashes_correct(commit_list, commit_hash_set, project):
         """ Returns true if all parents are correct """
         messages = []
         for commit in commit_list:
             if len(commit['parent_hashes']) > 0:
                 parent_hash = commit['parent_hashes'][0]
-                correct = GitFeederController.check_commit(parent_hash, commit_list, project)
+                correct = GitFeederController.check_commit(parent_hash, commit_hash_set, project)
                 if not correct:
                     messages.append('Commit {0} has parent hash {1} but it is not present'.format(
                         commit['hash'],
@@ -68,42 +68,42 @@ class GitFeederController(object):
         return (True, messages)
 
     @staticmethod
-    def are_diffs_correct(commit_list, diffs_list, project):
+    def are_diffs_correct(commit_hash_set, diffs_list, project):
         """ Returns true if all diffs are correct """
         for diff in diffs_list:
-            correct = GitFeederController.check_commit(diff['commit_hash_son'], commit_list, project)
+            correct = GitFeederController.check_commit(diff['commit_hash_son'], commit_hash_set, project)
             if not correct:
                 return (False, ['Diff with a wrong son commit {0}'.format(diff['commit_hash_son'])])
 
-            correct = GitFeederController.check_commit(diff['commit_hash_parent'], commit_list, project)
+            correct = GitFeederController.check_commit(diff['commit_hash_parent'], commit_hash_set, project)
             if not correct:
                 return (False, ['Diff with a wrong parent commit {0}'.format(diff['commit_hash_parent'])])
         return (True, [])
 
 
     @staticmethod
-    def are_branches_correct(commit_list, branch_list, project):
+    def are_branches_correct(commit_hash_set, branch_list, project):
         """ Returns true if all branches are correct """
         for branch in branch_list:
-            res = GitFeederController.check_commit(branch['commit_hash'], commit_list, project)
+            res = GitFeederController.check_commit(branch['commit_hash'], commit_hash_set, project)
             if not res:
                 msg = 'Branch {0} with commit {1} not found!'.format(branch['branch_name'], branch['commit_hash'])
                 return (False, [msg])
 
             for trail_hash in branch['trail']:
-                res = GitFeederController.check_commit(trail_hash, commit_list, project)
+                res = GitFeederController.check_commit(trail_hash, commit_hash_set, project)
                 if not res:
                     msg = 'Trail hash {0} not found!'.format(trail_hash)
                     return (False, [msg])
 
             com = branch['merge_target']['diff']['commit_hash_son']
-            res = GitFeederController.check_commit(com, commit_list, project)
+            res = GitFeederController.check_commit(com, commit_hash_set, project)
             if not res:
                 msg = 'Merge target diff son commit {0} not found!'.format(com)
                 return (False, [msg])
 
             com = branch['merge_target']['diff']['commit_hash_parent']
-            res = GitFeederController.check_commit(com, commit_list, project)
+            res = GitFeederController.check_commit(com, commit_hash_set, project)
             if not res:
                 msg = 'Merge target diff parent commit {0} not found!'.format(com)
                 return (False, [msg])
