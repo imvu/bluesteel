@@ -234,6 +234,7 @@ class GitFeederController(object):
     def insert_branch_trails(branch_list, project):
         """ Insert branch trails and return messages if errors """
         messages = []
+        bulk_trails = []
 
         for branch in branch_list:
             branch_entry = GitBranchEntry.objects.filter(project=project, name=branch['branch_name']).first()
@@ -246,14 +247,18 @@ class GitFeederController(object):
             for index, git_hash in enumerate(branch['trail']):
                 commit_entry = GitCommitEntry.objects.filter(project=project, commit_hash=git_hash).first()
                 if commit_entry:
-                    GitBranchTrailEntry.objects.create(
+                    trail = GitBranchTrailEntry(
                         project=project,
                         branch=branch_entry,
                         commit=commit_entry,
                         order=index
                     )
+
+                    bulk_trails.append(trail)
                 else:
                     messages.append('Commit {0} not found while inserting branches!'.format(git_hash))
+
+        GitBranchTrailEntry.objects.bulk_create(bulk_trails)
         return (True, messages)
 
     @staticmethod

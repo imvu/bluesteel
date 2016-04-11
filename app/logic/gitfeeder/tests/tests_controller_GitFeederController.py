@@ -523,3 +523,60 @@ class GitFeederControllerTestCase(TestCase):
         self.assertEqual(0, group_obj['command_sets'][0]['commands'][2]['result']['status'])
         self.assertEqual(u'default-out', group_obj['command_sets'][0]['commands'][2]['result']['out'])
         self.assertEqual(u'default-error', group_obj['command_sets'][0]['commands'][2]['result']['error'])
+
+
+    def test_insert_branch_trails(self):
+        commit_time = str(timezone.now().isoformat())
+        git_commit1 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash=FeederTestHelper.hash_string(1), author=self.git_user1, author_date=commit_time, committer=self.git_user1, committer_date=commit_time)
+        git_commit2 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash=FeederTestHelper.hash_string(2), author=self.git_user1, author_date=commit_time, committer=self.git_user1, committer_date=commit_time)
+        git_commit3 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash=FeederTestHelper.hash_string(3), author=self.git_user1, author_date=commit_time, committer=self.git_user1, committer_date=commit_time)
+        git_commit4 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash=FeederTestHelper.hash_string(4), author=self.git_user1, author_date=commit_time, committer=self.git_user1, committer_date=commit_time)
+        git_commit5 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash=FeederTestHelper.hash_string(5), author=self.git_user1, author_date=commit_time, committer=self.git_user1, committer_date=commit_time)
+        git_commit6 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash=FeederTestHelper.hash_string(6), author=self.git_user1, author_date=commit_time, committer=self.git_user1, committer_date=commit_time)
+        git_commit7 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash=FeederTestHelper.hash_string(7), author=self.git_user1, author_date=commit_time, committer=self.git_user1, committer_date=commit_time)
+        git_commit8 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash=FeederTestHelper.hash_string(8), author=self.git_user1, author_date=commit_time, committer=self.git_user1, committer_date=commit_time)
+
+        branch1 = GitBranchEntry.objects.create(project=self.git_project1, name='branch1', commit=git_commit4)
+        branch2 = GitBranchEntry.objects.create(project=self.git_project1, name='branch2', commit=git_commit8)
+
+        commits1 = []
+        commits1.append(FeederTestHelper.create_commit(1, [],  'user1', 'user1@test.com', self.time, self.time))
+        commits1.append(FeederTestHelper.create_commit(2, [1], 'user1', 'user1@test.com', self.time, self.time))
+        commits1.append(FeederTestHelper.create_commit(3, [2], 'user1', 'user1@test.com', self.time, self.time))
+        commits1.append(FeederTestHelper.create_commit(4, [3], 'user1', 'user1@test.com', self.time, self.time))
+
+        commits2 = []
+        commits2.append(FeederTestHelper.create_commit(5, [],  'user1', 'user1@test.com', self.time, self.time))
+        commits2.append(FeederTestHelper.create_commit(6, [5], 'user1', 'user1@test.com', self.time, self.time))
+        commits2.append(FeederTestHelper.create_commit(7, [6], 'user1', 'user1@test.com', self.time, self.time))
+        commits2.append(FeederTestHelper.create_commit(8, [7], 'user1', 'user1@test.com', self.time, self.time))
+
+        trail1 = []
+        trail1.append(1)
+        trail1.append(2)
+        trail1.append(3)
+        trail1.append(4)
+
+        trail2 = []
+        trail2.append(5)
+        trail2.append(6)
+        trail2.append(7)
+        trail2.append(8)
+
+        branch_list = []
+        branch_list.append(FeederTestHelper.create_branch('branch1', 4, 'branch1', 3, 2, trail1, 'content'))
+        branch_list.append(FeederTestHelper.create_branch('branch2', 8, 'branch1', 4, 1, trail2, 'content'))
+
+        self.assertEqual(0, GitBranchTrailEntry.objects.all().count())
+
+        GitFeederController.insert_branch_trails(branch_list, self.git_project1)
+
+        self.assertEqual(8, GitBranchTrailEntry.objects.all().count())
+        self.assertEqual(1, GitBranchTrailEntry.objects.filter(commit__commit_hash='0000100001000010000100001000010000100001', branch__name='branch1', project=self.git_project1).count())
+        self.assertEqual(1, GitBranchTrailEntry.objects.filter(commit__commit_hash='0000200002000020000200002000020000200002', branch__name='branch1', project=self.git_project1).count())
+        self.assertEqual(1, GitBranchTrailEntry.objects.filter(commit__commit_hash='0000300003000030000300003000030000300003', branch__name='branch1', project=self.git_project1).count())
+        self.assertEqual(1, GitBranchTrailEntry.objects.filter(commit__commit_hash='0000400004000040000400004000040000400004', branch__name='branch1', project=self.git_project1).count())
+        self.assertEqual(1, GitBranchTrailEntry.objects.filter(commit__commit_hash='0000500005000050000500005000050000500005', branch__name='branch2', project=self.git_project1).count())
+        self.assertEqual(1, GitBranchTrailEntry.objects.filter(commit__commit_hash='0000600006000060000600006000060000600006', branch__name='branch2', project=self.git_project1).count())
+        self.assertEqual(1, GitBranchTrailEntry.objects.filter(commit__commit_hash='0000700007000070000700007000070000700007', branch__name='branch2', project=self.git_project1).count())
+        self.assertEqual(1, GitBranchTrailEntry.objects.filter(commit__commit_hash='0000800008000080000800008000080000800008', branch__name='branch2', project=self.git_project1).count())
