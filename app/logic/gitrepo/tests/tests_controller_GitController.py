@@ -657,3 +657,70 @@ class GitBranchMergeTargetTestCase(TestCase):
         self.assertEqual('0000700007000070000700007000070000700007', hashes2[6])
         self.assertEqual('0000800008000080000800008000080000800008', hashes2[7])
 
+    def test_best_branch_for_commit(self):
+        #  6   10
+        #  5   9
+        #  4   8
+        #  3 - 7
+        #  2
+        #  1
+
+        # Commits
+        git_commit1 = self.create_commit(self.git_project1, self.git_user1, 1)
+        git_commit2 = self.create_commit(self.git_project1, self.git_user1, 2)
+        git_commit3 = self.create_commit(self.git_project1, self.git_user1, 3)
+        git_commit4 = self.create_commit(self.git_project1, self.git_user1, 4)
+        git_commit5 = self.create_commit(self.git_project1, self.git_user1, 5)
+        git_commit6 = self.create_commit(self.git_project1, self.git_user1, 6)
+        git_commit7 = self.create_commit(self.git_project1, self.git_user1, 7)
+        git_commit8 = self.create_commit(self.git_project1, self.git_user1, 8)
+        git_commit9 = self.create_commit(self.git_project1, self.git_user1, 9)
+        git_commit10 = self.create_commit(self.git_project1, self.git_user1, 10)
+
+        # Branches
+        git_branch1 = GitBranchEntry.objects.create(project=self.git_project1, commit=git_commit6, name='branch1')
+        git_branch2 = GitBranchEntry.objects.create(project=self.git_project1, commit=git_commit10, name='branch2')
+
+        # Parents
+        git_parent_1_2 = GitParentEntry.objects.create(project=self.git_project1, parent=git_commit1, son=git_commit2)
+        git_parent_2_3 = GitParentEntry.objects.create(project=self.git_project1, parent=git_commit2, son=git_commit3)
+        git_parent_3_4 = GitParentEntry.objects.create(project=self.git_project1, parent=git_commit3, son=git_commit4)
+        git_parent_4_5 = GitParentEntry.objects.create(project=self.git_project1, parent=git_commit4, son=git_commit5)
+        git_parent_5_6 = GitParentEntry.objects.create(project=self.git_project1, parent=git_commit5, son=git_commit6)
+        git_parent_3_7 = GitParentEntry.objects.create(project=self.git_project1, parent=git_commit3, son=git_commit7)
+        git_parent_7_8 = GitParentEntry.objects.create(project=self.git_project1, parent=git_commit7, son=git_commit8)
+        git_parent_8_9 = GitParentEntry.objects.create(project=self.git_project1, parent=git_commit8, son=git_commit9)
+        git_parent_9_10 = GitParentEntry.objects.create(project=self.git_project1, parent=git_commit9, son=git_commit10)
+
+        # Trails Branch 1
+        git_trail_1_1 = self.create_trail(self.git_project1, git_branch1, git_commit1, 5)
+        git_trail_1_2 = self.create_trail(self.git_project1, git_branch1, git_commit2, 4)
+        git_trail_1_3 = self.create_trail(self.git_project1, git_branch1, git_commit3, 3)
+        git_trail_1_4 = self.create_trail(self.git_project1, git_branch1, git_commit4, 2)
+        git_trail_1_5 = self.create_trail(self.git_project1, git_branch1, git_commit5, 1)
+        git_trail_1_6 = self.create_trail(self.git_project1, git_branch1, git_commit6, 0)
+
+        # Trails Branch 2
+        git_trail_2_1 = self.create_trail(self.git_project1, git_branch2, git_commit1, 6)
+        git_trail_2_2 = self.create_trail(self.git_project1, git_branch2, git_commit2, 5)
+        git_trail_2_3 = self.create_trail(self.git_project1, git_branch2, git_commit3, 4)
+        git_trail_2_7 = self.create_trail(self.git_project1, git_branch2, git_commit7, 3)
+        git_trail_2_8 = self.create_trail(self.git_project1, git_branch2, git_commit8, 2)
+        git_trail_2_9 = self.create_trail(self.git_project1, git_branch2, git_commit9, 1)
+        git_trail_2_10 = self.create_trail(self.git_project1, git_branch2, git_commit10, 0)
+
+        git_diff1 = GitDiffEntry.objects.create(project=self.git_project1, commit_son=git_commit6, commit_parent=git_commit1, content='content-text-1')
+        git_diff2 = GitDiffEntry.objects.create(project=self.git_project1, commit_son=git_commit10, commit_parent=git_commit3, content='content-text-2')
+
+        GitBranchMergeTargetEntry.objects.create(project=self.git_project1, current_branch=git_branch1, target_branch=git_branch1, fork_point=git_commit1, diff=git_diff1)
+        GitBranchMergeTargetEntry.objects.create(project=self.git_project1, current_branch=git_branch2, target_branch=git_branch1, fork_point=git_commit3, diff=git_diff2)
+
+        branch_name1 = GitController.get_best_branch_from_a_commit(self.git_project1, '0000800008000080000800008000080000800008')
+        branch_name2 = GitController.get_best_branch_from_a_commit(self.git_project1, '0000400004000040000400004000040000400004')
+        branch_name3 = GitController.get_best_branch_from_a_commit(self.git_project1, '0000200002000020000200002000020000200002')
+
+        self.assertEqual('branch2', branch_name1)
+        self.assertEqual('branch1', branch_name2)
+        self.assertEqual('branch2', branch_name3)
+
+
