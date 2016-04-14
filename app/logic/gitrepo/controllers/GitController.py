@@ -9,6 +9,7 @@ from app.logic.gitrepo.models.GitBranchModel import GitBranchEntry
 from app.logic.gitrepo.models.GitBranchTrailModel import GitBranchTrailEntry
 from app.logic.gitrepo.models.GitDiffModel import GitDiffEntry
 from app.logic.gitrepo.models.GitBranchMergeTargetModel import GitBranchMergeTargetEntry
+import sys
 
 PAGINATION_HALF_RANGE = 2
 
@@ -201,5 +202,42 @@ class GitController(object):
                 hashes_parents.append(current_hash)
 
         return list(reversed(hashes_parents)) + [commit_entry.commit_hash] + hashes_children
+
+
+    @staticmethod
+    def get_best_branch_from_a_commit(project_entry, commit_hash):
+        """ Returns best matching branch for a given commit_hash """
+        trails = GitBranchTrailEntry.objects.filter(project=project_entry, commit__commit_hash=commit_hash)
+
+        candidate_branches = []
+
+        default_obj = {}
+        default_obj['name'] = ''
+        default_obj['order'] = int(sys.maxint)
+        candidate_branches.append(default_obj)
+
+        for trail in trails:
+            merge_target = GitBranchMergeTargetEntry.objects.filter(
+                project=project_entry,
+                current_branch=trail.branch).first()
+
+            if not merge_target:
+                continue
+
+            trail_fork = GitBranchTrailEntry.objects.filter(
+                project=project_entry,
+                commit=merge_target.fork_point).first()
+
+            if not trail_fork:
+                continue
+
+            branch_obj = {}
+            branch_obj['name'] = trail.branch.name
+            branch_obj['order'] = int(trail_fork.order - trail.order)
+            candidate_branches.append(branch_obj)
+
+        candidate_branches.sort(key=lambda element: element['order'])
+        return candidate_branches[0]['name']
+
 
 

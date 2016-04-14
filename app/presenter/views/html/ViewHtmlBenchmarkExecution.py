@@ -6,12 +6,14 @@ from app.logic.benchmark.controllers.BenchmarkExecutionController import Benchma
 from app.logic.benchmark.models.BenchmarkExecutionModel import BenchmarkExecutionEntry
 from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
 from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
+from app.logic.gitrepo.controllers.GitController import GitController
 from app.logic.gitrepo.models.GitBranchModel import GitBranchEntry
 from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
 from app.logic.httpcommon import res
 from app.logic.httpcommon.Page import Page
 
 BENCH_EXEC_ITEMS_PER_PAGE = 25
+BENCH_EXEC_WINDOW_HALF = 4
 
 def get_benchmark_execution(request, bench_exec_id):
     """ Returns a benchmark execution """
@@ -30,8 +32,51 @@ def get_benchmark_execution(request, bench_exec_id):
 
     return res.get_template_data(request, 'presenter/benchmark_execution.html', data)
 
+def get_benchmark_execution_window(request, bench_exec_id):
+    """ Returns a window of benchmark executions centered on bench_exe_id """
+    if request.method == 'GET':
+        bench_exec = BenchmarkExecutionEntry.objects.filter(id=bench_exec_id).first()
+        if not bench_exec:
+            return res.get_template_data(request, 'presenter/not_found.html', {})
+
+        commits_hashes = GitController.get_commit_hashes_parents_and_children(
+            bench_exec.commit.commit_hash,
+            BENCH_EXEC_WINDOW_HALF
+        )
+
+        branch_name = GitController.get_best_branch_from_a_commit(
+            project_entry=bench_exec.definition.project,
+            commit_hash=bench_exec.commit.commit_hash
+        )
+
+        branch = GitBranchEntry.objects.filter(project=bench_exec.definition.project, name=branch_name).first()
+
+        if not branch:
+            return res.get_template_data(request, 'presenter/not_found.html', {})
+
+        commits_hashes = list(reversed(commits_hashes))
+
+        data = BenchmarkExecutionController.get_stacked_executions_from_branch(
+            bench_exec.definition.project,
+            branch,
+            commits_hashes,
+            bench_exec.definition,
+            bench_exec.worker
+        )
+
+        executions = BenchmarkExecutionController.get_stacked_data_separated_by_id(data)
+        executions = ViewPrepareObjects.prepare_stacked_executions_for_html(request.get_host(), executions)
+
+        data = {}
+        data['stacked_executions'] = executions
+        data['menu'] = ViewPrepareObjects.prepare_menu_for_html([])
+
+        return res.get_template_data(request, 'presenter/benchmark_execution_stacked.html', data)
+    else:
+        return res.get_template_data(request, 'presenter/not_found.html', {})
+
 def get_benchmark_executions_stacked(request, project_id, branch_id, definition_id, worker_id, page_index):
-    """ Display single branch links """
+    """ Returns benchmark executions stacked and paginated """
     if request.method == 'GET':
         project = BluesteelProjectEntry.objects.filter(id=project_id).first()
         if project == None:

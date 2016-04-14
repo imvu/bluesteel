@@ -109,7 +109,7 @@ class BenchmarkExecutionController(object):
             slot['current_branch'] = not past_fork_point
             slot['commit'] = benchmark_entry.commit.commit_hash
             bench_data.append(slot)
-        return bench_data
+        return list(reversed(bench_data))
 
 
 
