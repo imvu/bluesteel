@@ -1,6 +1,9 @@
 """ Presenter json views, benchmark execution page functions """
 
+from django.conf import settings
 from app.presenter.schemas import BenchmarkExecutionSchemas
+from app.presenter.views.helpers import ViewUrlGenerator
+from app.logic.mailing.models.StackedMailModel import StackedMailEntry
 from app.logic.benchmark.models.BenchmarkExecutionModel import BenchmarkExecutionEntry
 from app.logic.benchmark.controllers.BenchmarkExecutionController import BenchmarkExecutionController
 from app.logic.httpcommon import res, val
@@ -20,6 +23,38 @@ def check_benchmark_json_ids(report_out):
             return (False, ids)
     return (True, ids)
 
+
+def notify_benchmark_fluctuation(benchmark_exec_entry, fluctuation_window, domain):
+    """ It generates stacked email entries based on fluctuation notifications """
+    commit_hash = benchmark_exec_entry.commit.commit_hash
+    fluctuations = BenchmarkExecutionController.get_benchmark_fluctuation(
+        commit_hash,
+        fluctuation_window
+    )
+
+    notify_fluctuation = False
+
+    for fluc in fluctuations:
+        if (float(fluc['max'] - fluc['min'])) > 1.0:
+            notify_fluctuation = True
+            break
+
+    if notify_fluctuation:
+        receiver_email = benchmark_exec_entry.commit.author.email
+        commit_hash = benchmark_exec_entry.commit.commit_hash
+        title = 'Benchmark execution fluctuation on commit: {0}'.format(commit_hash)
+        content = 'There were fluctuations on the benchmark execution.\nTake a look at: {0}'.format(
+            ViewUrlGenerator.get_benchmark_execution_window_full_url(
+                domain,
+                benchmark_exec_entry.id)
+            )
+
+        StackedMailEntry.objects.create(
+            sender=settings.DEFAULT_FROM_EMAIL,
+            receiver=receiver_email,
+            title=title,
+            content=content
+        )
 
 def save_benchmark_execution(request, benchmark_execution_id):
     """ Check and save a benchmark execution data into the db """
@@ -46,7 +81,7 @@ def save_benchmark_execution(request, benchmark_execution_id):
 
         report = val_resp_obj
         BenchmarkExecutionController.save_bench_execution(bench_exec_entry, report)
-        BenchmarkExecutionController.notify_benchmark_fluctuation(bench_exec_entry, 2)
+        notify_benchmark_fluctuation(bench_exec_entry, 2, request.get_host())
 
         return res.get_response(200, 'Benchmark Execution saved', {})
     else:

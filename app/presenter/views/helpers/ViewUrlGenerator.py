@@ -100,6 +100,9 @@ def get_benchmark_definitions_url(page_index):
 def get_benchmark_execution_full_url(domain, bench_id):
     return 'http://{0}/main/execution/{1}/'.format(domain, bench_id)
 
+def get_benchmark_execution_window_full_url(domain, bench_id):
+    return 'http://{0}/main/execution/{1}/window/'.format(domain, bench_id)
+
 def get_benchmark_execution_invalidate_url(bench_id):
     return '/main/execution/{0}/invalidate/'.format(bench_id)
 
