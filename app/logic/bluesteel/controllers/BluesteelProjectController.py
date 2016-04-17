@@ -61,14 +61,19 @@ class BluesteelProjectController(object):
             order=order,
         )
 
-        BluesteelProjectController.create_command(command_set_fetch, 0, 'git checkout master')
-        BluesteelProjectController.create_command(command_set_fetch, 1, 'git reset --hard origin/master')
-        BluesteelProjectController.create_command(command_set_fetch, 2, 'git clean -f -d -q')
-        BluesteelProjectController.create_command(command_set_fetch, 3, 'git fetch --all')
-        BluesteelProjectController.create_command(command_set_fetch, 4, 'git pull -r origin master')
+        BluesteelProjectController.create_command(command_set_fetch, 0, 'git reset HEAD')
+        BluesteelProjectController.create_command(command_set_fetch, 1, 'git checkout -- .')
+        BluesteelProjectController.create_command(command_set_fetch, 2, 'git clean -d -f -q')
+        BluesteelProjectController.create_command(command_set_fetch, 3, 'git submodule sync --recursive')
+        BluesteelProjectController.create_command(command_set_fetch, 4, 'git submodule update --init --recursive')
         BluesteelProjectController.create_command(command_set_fetch, 5, 'git checkout master')
-        BluesteelProjectController.create_command(command_set_fetch, 6, 'git submodule sync')
-        BluesteelProjectController.create_command(command_set_fetch, 7, 'git submodule update --init --recursive')
+        BluesteelProjectController.create_command(command_set_fetch, 6, 'git reset --hard origin/master')
+        BluesteelProjectController.create_command(command_set_fetch, 7, 'git clean -d -f -q')
+        BluesteelProjectController.create_command(command_set_fetch, 8, 'git fetch --all')
+        BluesteelProjectController.create_command(command_set_fetch, 9, 'git pull -r origin master')
+        BluesteelProjectController.create_command(command_set_fetch, 10, 'git checkout master')
+        BluesteelProjectController.create_command(command_set_fetch, 11, 'git submodule sync --recursive')
+        BluesteelProjectController.create_command(command_set_fetch, 12, 'git submodule update --init --recursive')
         return command_set_fetch
 
     @staticmethod
