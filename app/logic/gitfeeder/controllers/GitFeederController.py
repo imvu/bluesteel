@@ -182,20 +182,24 @@ class GitFeederController(object):
         """ Inserts all the parents into the db """
         messages = []
 
-        for diff in diffs_list:
-            com_son = GitCommitEntry.objects.filter(project=project, commit_hash=diff['commit_hash_son']).first()
-            com_parent = GitCommitEntry.objects.filter(
-                project=project,
-                commit_hash=diff['commit_hash_parent']).first()
+        all_commits = list(GitCommitEntry.objects.filter(project=project))
+        commits_dict = {}
 
-            if com_parent == None:
+        for commit in all_commits:
+            commits_dict[commit.commit_hash] = commit
+
+        for diff in diffs_list:
+            if diff['commit_hash_parent'] not in commits_dict:
                 messages.append('Commit parent {0} not found while inserting diffs!'.format(diff['commit_hash_parent']))
                 continue
 
 
-            if com_son == None:
+            if diff['commit_hash_son'] not in commits_dict:
                 messages.append('Commit son {0} not found while inserting diffs!'.format(diff['commit_hash_son']))
                 continue
+
+            com_son = commits_dict[diff['commit_hash_son']]
+            com_parent = commits_dict[diff['commit_hash_parent']]
 
             if not GitDiffEntry.objects.filter(project=project, commit_son=com_son, commit_parent=com_parent).exists():
                 GitDiffEntry.objects.create(
