@@ -204,7 +204,7 @@ class GitFetcherTestCase(TestCase):
 
         self.assertEqual(-1, reports['commands'][0]['result']['status'])
         self.assertEqual('git_project_search_path', reports['commands'][0]['command'])
-        self.assertEqual('/Users/llorencmarti/Documents/stronghold-environment/stronghold/tmp/test/tmp-gitfetcher-folder/archive-28-0123ABC/test-repo-1/project/this-folder-does-not-exists \nProject current working directory not found', reports['commands'][0]['result']['error'])
+        self.assertTrue('tmp/test/tmp-gitfetcher-folder/archive-28-0123ABC/test-repo-1/project/this-folder-does-not-exists \nProject current working directory not found' in reports['commands'][0]['result']['error'])
         self.assertEqual('', reports['commands'][0]['result']['out'])
 
     @mock.patch('app.logic.bluesteelworker.download.CommandExecutioner.subprocess.call')
