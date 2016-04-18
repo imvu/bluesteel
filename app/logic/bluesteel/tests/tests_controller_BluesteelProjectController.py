@@ -47,7 +47,7 @@ class BluesteelProjectControllerTestCase(TestCase):
         self.assertEqual(1, CommandEntry.objects.filter(order=1, command='git checkout -- .').count())
         self.assertEqual(1, CommandEntry.objects.filter(order=2, command='git clean -d -f -q').count())
         self.assertEqual(1, CommandEntry.objects.filter(order=3, command='git submodule sync --recursive').count())
-        self.assertEqual(1, CommandEntry.objects.filter(order=4, command='git submodule update --init --recursive').count())
+        self.assertEqual(1, CommandEntry.objects.filter(order=4, command='git submodule update --init --recursive --force').count())
         self.assertEqual(1, CommandEntry.objects.filter(order=5, command='git checkout master').count())
         self.assertEqual(1, CommandEntry.objects.filter(order=6, command='git reset --hard origin/master').count())
         self.assertEqual(1, CommandEntry.objects.filter(order=7, command='git clean -d -f -q').count())
@@ -55,7 +55,7 @@ class BluesteelProjectControllerTestCase(TestCase):
         self.assertEqual(1, CommandEntry.objects.filter(order=9, command='git pull -r origin master').count())
         self.assertEqual(1, CommandEntry.objects.filter(order=10, command='git checkout master').count())
         self.assertEqual(1, CommandEntry.objects.filter(order=11, command='git submodule sync --recursive').count())
-        self.assertEqual(1, CommandEntry.objects.filter(order=12, command='git submodule update --init --recursive').count())
+        self.assertEqual(1, CommandEntry.objects.filter(order=12, command='git submodule update --init --recursive --force').count())
 
 
     def test_get_paginated_projects(self):
