@@ -1,0 +1,100 @@
+{% extends "presenter/base.html" %}
+
+{% load staticfiles %}
+
+{% block data_body %}
+<div class="container_med">
+    {% if project %}
+        <div class="upper_card white_card card_padding_large">
+            <div class="title">PROJECT</div>
+            <form   action="{{project.url.save}}"
+                    method="POST"
+                    name="projectForm"
+                    id="project_form_{{forloop.counter0}}"
+            >
+                <ul class="no_dots vertical_margin">
+                    <li>
+                        <div class="list_label indent_1">NAME</div>
+                    </li>
+                    <li>
+                        <div class="container_input">
+                            <input  class="command_input"
+                                    type="text"
+                                    name="project_name"
+                                    value="{{project.name}}"
+                                    maxlength="50"
+                            ></input>
+                        </div>
+                    </li>
+                </ul>
+                <ul class="no_dots vertical_margin">
+                    <li>
+                        <div class="list_label indent_1">GIT PROJECT LOCAL SEARCH PATH</div>
+                    </li>
+                    <li>
+                        <div class="container_input">
+                            <input  class="command_input"
+                                    type="text"
+                                    name="git_project_folder_search_path"
+                                    value="{{project.git_project_folder_search_path}}"
+                                    maxlength="255"
+                            ></input>
+                        </div>
+                    </li>
+                </ul>
+
+                {% for command_set in project.command_group.command_sets %}
+                    <ul     id="command_list_{{forloop.parentloop.counter0}}_{{forloop.counter0}}"
+                            class="no_dots vertical_margin"
+                    >
+                        <li>
+                            <div class="list_label indent_1">{{command_set.name}}</div>
+                        </li>
+                        {% for command in command_set.commands %}
+                        <li     class="no_text"
+                                id="command_{{command_set.name}}_{{forloop.counter0}}">
+                            <div class="container_input">
+                                <input  class="command_input"
+                                        type="text"
+                                        name="command_{{command_set.name}}_{{forloop.counter0}}"
+                                        value="{{command.command}}"
+                                        maxlength="255"
+                                ></input>
+                            </div>
+                            <button     class="btn_icon icon_gray"
+                                        type='button'
+                                        onclick="removeListElement('command_{{command_set.name}}_{{forloop.counter0}}');"
+                            >
+                                <i class="fa fa-times-circle fa-2x"></i>
+                            </button>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    <ul class="no_dots no_indent vertical_margin horizontal_list">
+                        <li class="horizontal">
+                            <button     class="btn_round light"
+                                        type='button'
+                                        onclick="addListElement(this, '{{forloop.counter0}}', 'command_list_{{forloop.parentloop.counter0}}_{{forloop.counter0}}', 'command_{{command_set.name}}_');"
+                            >Add Command</button>
+                        </li>
+                    </ul>
+                {% endfor %}
+            </form>
+        </div>
+        <div class="lower_card white_card card_padding_large">
+            <ul class="no_dots no_indent vertical_margin horizontal_list">
+                <li class="horizontal">
+                    <button     class="btn_rect primary"
+                                onclick="saveProject('project_form_{{forloop.counter0}}');"
+                    >Save</button>
+                </li>
+                <li class="horizontal">
+                    <button     class="btn_rect danger"
+                                onclick="executeAndRedirect('{{project.url.delete}}', '');"
+                    >Delete</button>
+                </li>
+            </ul>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

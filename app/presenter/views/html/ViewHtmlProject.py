@@ -38,6 +38,23 @@ def get_projects(request, page_index):
     else:
         return res.get_template_data(request, 'presenter/not_found.html', {})
 
+def get_project_editable(request, project_id):
+    """ Returns html for the project editable page """
+    if request.method == 'GET':
+        project = BluesteelProjectEntry.objects.filter(id=project_id).first()
+
+        if project is None:
+            return res.get_template_data(request, 'presenter/not_found.html', {})
+
+        data = {}
+        data['project'] = project.as_object()
+        data['project'] = ViewPrepareObjects.prepare_project_for_html(data['project'])
+        data['menu'] = ViewPrepareObjects.prepare_menu_for_html([])
+
+        return res.get_template_data(request, 'presenter/project_edit.html', data)
+    else:
+        return res.get_template_data(request, 'presenter/not_found.html', {})
+
 def get_project_branches(request, project_id, commit_depth, page_index):
     """ Display all the branches of a project """
     if request.method == 'GET':
