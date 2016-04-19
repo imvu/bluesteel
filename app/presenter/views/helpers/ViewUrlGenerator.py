@@ -84,6 +84,9 @@ def get_gitfeeder_full_url(domain, project_id):
 def get_change_merge_target_url(project_id):
     return '/main/branch/merge/target/project/{0}/'.format(project_id)
 
+def get_project_edit_url(project_id):
+    return '/main/project/{0}/edit/'.format(project_id)
+
 def get_project_branches_url(project_id, commit_depth, page_index):
     return '/main/project/{0}/branch/all/depth/{1}/page/{2}/'.format(project_id, commit_depth, page_index)
 

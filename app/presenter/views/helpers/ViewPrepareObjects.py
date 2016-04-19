@@ -182,6 +182,7 @@ def prepare_project_for_html(project):
     project['url'] = {}
     project['url']['save'] = ViewUrlGenerator.get_save_project_url(project['id'])
     project['url']['delete'] = ViewUrlGenerator.get_delete_project_url(project['id'])
+    project['url']['edit'] = ViewUrlGenerator.get_project_edit_url(project['id'])
     return project
 
 def prepare_menu_for_html(menu):
