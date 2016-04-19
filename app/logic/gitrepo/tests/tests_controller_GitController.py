@@ -636,7 +636,7 @@ class GitBranchMergeTargetTestCase(TestCase):
         git_parent_7_8 = GitParentEntry.objects.create(project=self.git_project1, parent=git_commit7, son=git_commit8)
         git_parent_8_9 = GitParentEntry.objects.create(project=self.git_project1, parent=git_commit8, son=git_commit9)
 
-        hashes1 = GitController.get_commit_hashes_parents_and_children('0000400004000040000400004000040000400004', 2)
+        hashes1 = GitController.get_commit_hashes_parents_and_children(self.git_project1, '0000400004000040000400004000040000400004', 2)
 
         self.assertEqual(5, len(hashes1))
         self.assertEqual('0000200002000020000200002000020000200002', hashes1[0])
@@ -645,7 +645,7 @@ class GitBranchMergeTargetTestCase(TestCase):
         self.assertEqual('0000500005000050000500005000050000500005', hashes1[3])
         self.assertEqual('0000600006000060000600006000060000600006', hashes1[4])
 
-        hashes2 = GitController.get_commit_hashes_parents_and_children('0000400004000040000400004000040000400004', 4)
+        hashes2 = GitController.get_commit_hashes_parents_and_children(self.git_project1, '0000400004000040000400004000040000400004', 4)
 
         self.assertEqual(8, len(hashes2))
         self.assertEqual('0000100001000010000100001000010000100001', hashes2[0])

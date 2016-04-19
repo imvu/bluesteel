@@ -240,9 +240,9 @@ class BenchmarkExecutionController(object):
         return branches
 
     @staticmethod
-    def get_benchmark_fluctuation(commit_hash, fluctuation_window):
+    def get_benchmark_fluctuation(project, commit_hash, fluctuation_window):
         """ Returns fluctuation information from a commit range """
-        hashes = GitController.get_commit_hashes_parents_and_children(commit_hash, fluctuation_window)
+        hashes = GitController.get_commit_hashes_parents_and_children(project, commit_hash, fluctuation_window)
         benchmarks = {}
         fluctuations = []
 

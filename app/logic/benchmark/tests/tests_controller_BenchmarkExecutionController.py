@@ -771,7 +771,7 @@ class BenchmarkExecutionControllerTestCase(TestCase):
         benchmark_execution4 = BenchmarkExecutionEntry.objects.create(definition=self.benchmark_definition1, commit=commit4, worker=self.worker1, report=report_4, invalidated=False, revision_target=28, status=BenchmarkExecutionEntry.READY)
         benchmark_execution5 = BenchmarkExecutionEntry.objects.create(definition=self.benchmark_definition1, commit=commit5, worker=self.worker1, report=report_5, invalidated=False, revision_target=28, status=BenchmarkExecutionEntry.READY)
 
-        fluctuation = BenchmarkExecutionController.get_benchmark_fluctuation(commit2.commit_hash, 2)
+        fluctuation = BenchmarkExecutionController.get_benchmark_fluctuation(self.git_project1, commit2.commit_hash, 2)
         fluctuation.sort(key=lambda x: x['id'])
 
         self.assertEqual(4, len(fluctuation))
@@ -868,7 +868,7 @@ class BenchmarkExecutionControllerTestCase(TestCase):
         benchmark_execution4 = BenchmarkExecutionEntry.objects.create(definition=self.benchmark_definition1, commit=commit4, worker=self.worker1, report=report_4, invalidated=False, revision_target=28, status=BenchmarkExecutionEntry.READY)
         benchmark_execution5 = BenchmarkExecutionEntry.objects.create(definition=self.benchmark_definition1, commit=commit5, worker=self.worker1, report=report_5, invalidated=False, revision_target=28, status=BenchmarkExecutionEntry.READY)
 
-        fluctuation = BenchmarkExecutionController.get_benchmark_fluctuation(commit2.commit_hash, 2)
+        fluctuation = BenchmarkExecutionController.get_benchmark_fluctuation(self.git_project1, commit2.commit_hash, 2)
         fluctuation.sort(key=lambda x: x['id'])
 
         self.assertEqual(4, len(fluctuation))

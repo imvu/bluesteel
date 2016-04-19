@@ -40,8 +40,9 @@ def get_benchmark_execution_window(request, bench_exec_id):
             return res.get_template_data(request, 'presenter/not_found.html', {})
 
         commits_hashes = GitController.get_commit_hashes_parents_and_children(
-            bench_exec.commit.commit_hash,
-            BENCH_EXEC_WINDOW_HALF
+            project=bench_exec.definition.project,
+            commit_hash=bench_exec.commit.commit_hash,
+            parents_children_count=BENCH_EXEC_WINDOW_HALF
         )
 
         branch_name = GitController.get_best_branch_from_a_commit(

@@ -28,8 +28,9 @@ def notify_benchmark_fluctuation(benchmark_exec_entry, fluctuation_window, domai
     """ It generates stacked email entries based on fluctuation notifications """
     commit_hash = benchmark_exec_entry.commit.commit_hash
     fluctuations = BenchmarkExecutionController.get_benchmark_fluctuation(
-        commit_hash,
-        fluctuation_window
+        project=benchmark_exec_entry.definition.project,
+        commit_hash=commit_hash,
+        fluctuation_window=fluctuation_window
     )
 
     notify_fluctuation = False
