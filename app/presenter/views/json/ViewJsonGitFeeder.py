@@ -1,5 +1,6 @@
 """ Git Feed json views """
 
+from django.db import transaction
 from app.logic.httpcommon import res
 from app.logic.httpcommon import val
 from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
@@ -12,6 +13,7 @@ from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
 from app.logic.logger.models.LogModel import LogEntry
 from app.presenter.schemas import GitFeederSchemas
 
+@transaction.atomic
 def post_commits(request, project_id):
     """ Insert new commits to a given git project """
     if request.method == 'POST':
