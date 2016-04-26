@@ -508,3 +508,34 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
         self.assertEqual('Benchmark execution fluctuation on commit: 0000400004000040000400004000040000400004', StackedMailEntry.objects.all().first().title)
         self.assertEqual('user1@test.com', StackedMailEntry.objects.all().first().receiver)
         self.assertTrue('http://test-domain.com/main/execution/{0}/window/'.format(benchmark_execution4.id) in StackedMailEntry.objects.all().first().content)
+
+    def test_notify_benchmark_fluctuation(self):
+        com1 = {}
+        com1['command'] = 'command-1'
+        com1['result'] = {}
+        com1['result']['status'] = 0
+        com1['result']['out'] = 'out-1'
+        com1['result']['error'] = 'error-1'
+
+        com2 = {}
+        com2['command'] = 'command-2'
+        com2['result'] = {}
+        com2['result']['status'] = -1
+        com2['result']['out'] = 'out-2'
+        com2['result']['error'] = 'error-2'
+
+        report_json = {}
+        report_json['command_set'] = []
+        report_json['command_set'].append(com1)
+        report_json['command_set'].append(com2)
+
+
+        report = CommandSetEntry.objects.create(group=None)
+        benchmark_execution = BenchmarkExecutionEntry.objects.create(definition=self.benchmark_definition1, commit=self.commit1, worker=self.worker1, report=report, invalidated=False, revision_target=28, status=BenchmarkExecutionEntry.READY)
+
+        ViewJsonBenchmarkExecutions.notify_benchmark_command_failure(benchmark_execution, report_json, 'test-domain.com')
+
+        self.assertEqual(1, StackedMailEntry.objects.all().count())
+        self.assertEqual('Benchmark execution with failed commands on commit: 0000100001000010000100001000010000100001', StackedMailEntry.objects.all().first().title)
+        self.assertEqual('user1@test.com', StackedMailEntry.objects.all().first().receiver)
+        self.assertTrue('http://test-domain.com/main/execution/{0}/'.format(benchmark_execution.id) in StackedMailEntry.objects.all().first().content)

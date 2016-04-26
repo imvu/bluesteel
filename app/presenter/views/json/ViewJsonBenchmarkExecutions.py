@@ -24,6 +24,33 @@ def check_benchmark_json_ids(report_out):
     return (True, ids)
 
 
+def notify_benchmark_command_failure(benchmark_exec_entry, report, domain):
+    """ Will send a notification if there is any command with an status different that 0 """
+    notify_failure = False
+    for com in report['command_set']:
+        if com['result']['status'] != 0:
+            notify_failure = True
+            break
+
+    if notify_failure:
+        receiver_email = benchmark_exec_entry.commit.author.email
+        commit_hash = benchmark_exec_entry.commit.commit_hash
+        title = 'Benchmark execution with failed commands on commit: {0}'.format(commit_hash)
+        content = 'There were commands that failed to execute.\nTake a look at: {0}'.format(
+            ViewUrlGenerator.get_benchmark_execution_full_url(
+                domain,
+                benchmark_exec_entry.id)
+            )
+
+        StackedMailEntry.objects.create(
+            sender=settings.DEFAULT_FROM_EMAIL,
+            receiver=receiver_email,
+            title=title,
+            content=content
+        )
+    return notify_failure
+
+
 def notify_benchmark_fluctuation(benchmark_exec_entry, fluctuation_window, domain):
     """ It generates stacked email entries based on fluctuation notifications """
     commit_hash = benchmark_exec_entry.commit.commit_hash
@@ -82,6 +109,7 @@ def save_benchmark_execution(request, benchmark_execution_id):
 
         report = val_resp_obj
         BenchmarkExecutionController.save_bench_execution(bench_exec_entry, report)
+        notify_benchmark_command_failure(bench_exec_entry, report, request.get_host())
         notify_benchmark_fluctuation(bench_exec_entry, 2, request.get_host())
 
         return res.get_response(200, 'Benchmark Execution saved', {})
