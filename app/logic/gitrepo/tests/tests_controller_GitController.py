@@ -132,6 +132,41 @@ class GitBranchMergeTargetTestCase(TestCase):
         self.assertEqual(0, GitBranchMergeTargetEntry.objects.all().count())
         self.assertEqual(0, GitBranchTrailEntry.objects.all().count())
 
+    def test_delete_git_project(self):
+        git_commit1 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash='0000100001000010000100001000010000100001', author=self.git_user1, author_date=timezone.now(), committer=self.git_user1, committer_date=timezone.now())
+        git_commit2 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash='0000200002000020000200002000020000200002', author=self.git_user1, author_date=timezone.now(), committer=self.git_user1, committer_date=timezone.now())
+
+        git_branch1 = GitBranchEntry.objects.create(project=self.git_project1, commit=git_commit1, name='branch1')
+        git_branch2 = GitBranchEntry.objects.create(project=self.git_project1, commit=git_commit2, name='branch2')
+
+        git_diff1 = GitDiffEntry.objects.create(project=self.git_project1, commit_son=git_commit1, commit_parent=git_commit2, content='content-text')
+
+        git_parent = GitParentEntry.objects.create(project=self.git_project1, parent=git_commit1, son=git_commit2)
+
+        git_merge_target = GitBranchMergeTargetEntry.objects.create(project=self.git_project1, current_branch=git_branch1, target_branch=git_branch2, fork_point=git_commit1, diff=git_diff1)
+
+        git_trail = GitBranchTrailEntry.objects.create(project=self.git_project1, branch=git_branch1, commit=git_commit1)
+
+        self.assertEqual(1, GitProjectEntry.objects.all().count())
+        self.assertEqual(1, GitUserEntry.objects.all().count())
+        self.assertEqual(2, GitCommitEntry.objects.all().count())
+        self.assertEqual(1, GitDiffEntry.objects.all().count())
+        self.assertEqual(2, GitBranchEntry.objects.all().count())
+        self.assertEqual(1, GitParentEntry.objects.all().count())
+        self.assertEqual(1, GitBranchMergeTargetEntry.objects.all().count())
+        self.assertEqual(1, GitBranchTrailEntry.objects.all().count())
+
+        GitController.wipe_project_data(self.git_project1)
+
+        self.assertEqual(1, GitProjectEntry.objects.all().count())
+        self.assertEqual(0, GitUserEntry.objects.all().count())
+        self.assertEqual(0, GitCommitEntry.objects.all().count())
+        self.assertEqual(0, GitDiffEntry.objects.all().count())
+        self.assertEqual(0, GitBranchEntry.objects.all().count())
+        self.assertEqual(0, GitParentEntry.objects.all().count())
+        self.assertEqual(0, GitBranchMergeTargetEntry.objects.all().count())
+        self.assertEqual(0, GitBranchTrailEntry.objects.all().count())
+
     def test_branches_trimmed_by_merge_target(self):
         #  3   5
         #  2 - 4

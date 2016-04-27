@@ -24,6 +24,9 @@ urlpatterns = patterns(
     url(r'^layout/(?P<layout_id>\d+)/confirm/delete/$',
         'app.presenter.views.html.ViewHtmlLayout.confirm_delete'),
 
+    url(r'^layout/(?P<layout_id>\d+)/confirm/wipe/$',
+        'app.presenter.views.html.ViewHtmlLayout.confirm_wipe'),
+
     url(r'^project/all/page/(?P<page_index>\d+)/$',
         'app.presenter.views.html.ViewHtmlProject.get_projects'),
 
@@ -85,6 +88,9 @@ urlpatterns = patterns(
 
     url(r'^layout/(?P<layout_id>\d+)/delete/$',
         'app.presenter.views.json.ViewJsonLayout.delete'),
+
+    url(r'^layout/(?P<layout_id>\d+)/wipe/$',
+        'app.presenter.views.json.ViewJsonLayout.wipe'),
 
     url(r'^layout/create/$',
         'app.presenter.views.json.ViewJsonLayout.post_create_new_layout'),

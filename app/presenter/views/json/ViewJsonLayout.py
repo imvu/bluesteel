@@ -3,6 +3,7 @@
 from app.presenter.views.helpers import ViewUrlGenerator
 from app.presenter.schemas import BluesteelSchemas
 from app.logic.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
+from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
 from app.logic.bluesteel.controllers.BluesteelLayoutController import BluesteelLayoutController
 from app.logic.httpcommon import res
 from app.logic.httpcommon import val
@@ -33,6 +34,24 @@ def delete(request, layout_id):
         data = {}
         data['redirect'] = ViewUrlGenerator.get_layout_all_url(1)
         return res.get_response(200, 'Layout deleted', data)
+    else:
+        return res.get_only_post_allowed({})
+
+def wipe(request, layout_id):
+    """ Layout wipe data """
+    if request.method == 'POST':
+        layout_entry = BluesteelLayoutEntry.objects.filter(id=layout_id).first()
+        if layout_entry == None:
+            return res.get_response(404, 'Bluesteel layout not found', {})
+
+        project_entries = BluesteelProjectEntry.objects.filter(layout=layout_entry)
+
+        for project in project_entries:
+            project.wipe_data()
+
+        data = {}
+        data['redirect'] = ViewUrlGenerator.get_layout_all_url(1)
+        return res.get_response(200, 'Layout wiped', data)
     else:
         return res.get_only_post_allowed({})
 

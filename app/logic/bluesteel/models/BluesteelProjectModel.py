@@ -1,6 +1,7 @@
 """ BlueSteelProject model """
 
 from django.db import models
+from app.logic.gitrepo.controllers.GitController import GitController
 
 class BluesteelProjectEntry(models.Model):
     """ BlueSteel Project """
@@ -35,3 +36,7 @@ class BluesteelProjectEntry(models.Model):
 
     def get_uuid(self):
         return 'project-{0}'.format(self.id)
+
+    def wipe_data(self):
+        """ Wipe data associated with this project """
+        GitController.wipe_project_data(self.git_project)

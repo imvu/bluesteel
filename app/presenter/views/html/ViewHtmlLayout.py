@@ -71,3 +71,23 @@ def confirm_delete(request, layout_id):
     else:
         return res.get_only_get_allowed({})
 
+def confirm_wipe(request, layout_id):
+    """ Confirm layout deletion """
+    if request.method == 'GET':
+        layout_entry = BluesteelLayoutEntry.objects.filter(id=layout_id).first()
+        if layout_entry == None:
+            return res.get_response(404, 'Bluesteel layout not found', {})
+
+        data = {}
+        data['confirm'] = {}
+        data['confirm']['title'] = 'Wipe layout'
+        data['confirm']['text'] = 'Are you sure you want to wipe this Layout\'s data ?'
+        data['confirm']['url'] = {}
+        data['confirm']['url']['accept'] = ViewUrlGenerator.get_wipe_layout_url(layout_entry.id)
+        data['confirm']['url']['cancel'] = ViewUrlGenerator.get_layout_edit_url(layout_entry.id)
+        data['menu'] = ViewPrepareObjects.prepare_menu_for_html([])
+
+        return res.get_template_data(request, 'presenter/confirm.html', data)
+    else:
+        return res.get_only_get_allowed({})
+

@@ -135,4 +135,3 @@ class BluesteelProjectController(object):
     def get_project_single_git_branch_data(project, branch, commit_depth):
         """ Returns a single branch data associated with a project """
         return GitController.get_single_branch_trimmed_by_merge_target(project, branch, commit_depth)
-

@@ -1,9 +1,12 @@
 """ Bluesteel Project tests """
 
 from django.test import TestCase
+from django.utils import timezone
 from app.logic.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
 from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
 from app.logic.gitrepo.models.GitProjectModel import GitProjectEntry
+from app.logic.gitrepo.models.GitCommitModel import GitCommitEntry
+from app.logic.gitrepo.models.GitUserModel import GitUserEntry
 from app.logic.commandrepo.models.CommandGroupModel import CommandGroupEntry
 from app.logic.commandrepo.models.CommandSetModel import CommandSetEntry
 from app.logic.commandrepo.models.CommandModel import CommandEntry
@@ -15,6 +18,16 @@ class BluesteelProjectTestCase(TestCase):
             url='http://www.test.com',
             name='git-project-28',
         )
+
+        self.git_user1 = GitUserEntry.objects.create(
+            project=self.git_project,
+            name='user1',
+            email='user1@test.com'
+        )
+
+        self.commit1 = GitCommitEntry.objects.create(project=self.git_project, commit_hash='0000100001000010000100001000010000100001', author=self.git_user1, author_date=timezone.now(), committer=self.git_user1, committer_date=timezone.now())
+        self.commit2 = GitCommitEntry.objects.create(project=self.git_project, commit_hash='0000200002000020000200002000020000200002', author=self.git_user1, author_date=timezone.now(), committer=self.git_user1, committer_date=timezone.now())
+        self.commit3 = GitCommitEntry.objects.create(project=self.git_project, commit_hash='0000300003000030000300003000030000300003', author=self.git_user1, author_date=timezone.now(), committer=self.git_user1, committer_date=timezone.now())
 
         self.command_group = CommandGroupEntry.objects.create()
         self.command_set = CommandSetEntry.objects.create(
@@ -58,3 +71,17 @@ class BluesteelProjectTestCase(TestCase):
         )
 
         self.assertEqual('project-{0}'.format(project_new.id), project_new.get_uuid())
+
+    def test_wipe_data(self):
+        project_new = BluesteelProjectEntry.objects.create(
+            name='project-28',
+            layout=self.layout,
+            command_group=self.command_group,
+            git_project=self.git_project,
+        )
+
+        self.assertEqual(3, GitCommitEntry.objects.all().count())
+
+        project_new.wipe_data()
+
+        self.assertEqual(0, GitCommitEntry.objects.all().count())

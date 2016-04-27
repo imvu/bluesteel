@@ -27,8 +27,14 @@ def get_save_layout_url(layout_id):
 def get_delete_layout_url(layout_id):
     return '/main/layout/{0}/delete/'.format(layout_id)
 
+def get_wipe_layout_url(layout_id):
+    return '/main/layout/{0}/wipe/'.format(layout_id)
+
 def get_confirm_delete_layout_url(layout_id):
     return '/main/layout/{0}/confirm/delete/'.format(layout_id)
+
+def get_confirm_wipe_layout_url(layout_id):
+    return '/main/layout/{0}/confirm/wipe/'.format(layout_id)
 
 def get_project_all_url(page_index):
     return '/main/project/all/page/{0}/'.format(page_index)

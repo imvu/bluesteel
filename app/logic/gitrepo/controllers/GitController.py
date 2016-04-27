@@ -19,36 +19,18 @@ class GitController(object):
     @staticmethod
     def delete_git_project(project):
         """ Delete a git project and all its components """
-        commit_entries = GitCommitEntry.objects.filter(project=project)
-        branch_entries = GitBranchEntry.objects.filter(project=project)
-        branch_targets = GitBranchMergeTargetEntry.objects.filter(project=project)
-        branch_trails = GitBranchTrailEntry.objects.filter(project=project)
-        diff_entries = GitDiffEntry.objects.filter(project=project)
-        user_entries = GitUserEntry.objects.filter(project=project)
-        parents_entries = GitParentEntry.objects.filter(project=project)
-
-        for commit in commit_entries:
-            commit.delete()
-
-        for branch in branch_entries:
-            branch.delete()
-
-        for target in branch_targets:
-            target.delete()
-
-        for trail in branch_trails:
-            trail.delete()
-
-        for diff in diff_entries:
-            diff.delete()
-
-        for user in user_entries:
-            user.delete()
-
-        for parent in parents_entries:
-            parent.delete()
-
         project.delete()
+
+    @staticmethod
+    def wipe_project_data(project):
+        """ Wipe git project data """
+        GitCommitEntry.objects.filter(project=project).delete()
+        GitBranchEntry.objects.filter(project=project).delete()
+        GitBranchMergeTargetEntry.objects.filter(project=project).delete()
+        GitBranchTrailEntry.objects.filter(project=project).delete()
+        GitDiffEntry.objects.filter(project=project).delete()
+        GitUserEntry.objects.filter(project=project).delete()
+        GitParentEntry.objects.filter(project=project).delete()
 
     @staticmethod
     def get_commits_from_trails(project, branch, max_commits):
