@@ -392,3 +392,22 @@ class GitFeederController(object):
                     start_time=start_time,
                     finish_time=finish_time,
                 )
+
+    @staticmethod
+    def delete_commits_of_only_branch(project, branch_name):
+        """ This function will delete all the commits that are only referenced by one branch """
+        branch_entry = GitBranchEntry.objects.filter(project=project, name=branch_name).first()
+        if branch_entry is None:
+            return
+
+        trails_entries = GitBranchTrailEntry.objects.filter(project=project, branch=branch_entry)
+
+        commits_to_delete = []
+        for trail in trails_entries:
+            trail_count = GitBranchTrailEntry.objects.filter(project=project, commit=trail.commit).count()
+            if trail_count == 1:
+                commits_to_delete.append(trail.commit)
+
+
+        for commit in commits_to_delete:
+            commit.delete()
