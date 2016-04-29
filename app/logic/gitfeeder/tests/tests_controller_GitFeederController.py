@@ -580,3 +580,29 @@ class GitFeederControllerTestCase(TestCase):
         self.assertEqual(1, GitBranchTrailEntry.objects.filter(commit__commit_hash='0000600006000060000600006000060000600006', branch__name='branch2', project=self.git_project1).count())
         self.assertEqual(1, GitBranchTrailEntry.objects.filter(commit__commit_hash='0000700007000070000700007000070000700007', branch__name='branch2', project=self.git_project1).count())
         self.assertEqual(1, GitBranchTrailEntry.objects.filter(commit__commit_hash='0000800008000080000800008000080000800008', branch__name='branch2', project=self.git_project1).count())
+
+
+    def test_branches_to_remove_with_existing_difference(self):
+        # Commits
+        commit_time = str(timezone.now().isoformat())
+        git_commit1 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash=FeederTestHelper.hash_string(1), author=self.git_user1, author_date=commit_time, committer=self.git_user1, committer_date=commit_time)
+        git_commit2 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash=FeederTestHelper.hash_string(2), author=self.git_user1, author_date=commit_time, committer=self.git_user1, committer_date=commit_time)
+        git_commit3 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash=FeederTestHelper.hash_string(3), author=self.git_user1, author_date=commit_time, committer=self.git_user1, committer_date=commit_time)
+
+        # Branches
+        git_branch1 = GitBranchEntry.objects.create(project=self.git_project1, commit=git_commit1, name='branch1')
+        git_branch2 = GitBranchEntry.objects.create(project=self.git_project1, commit=git_commit2, name='branch2')
+        git_branch3 = GitBranchEntry.objects.create(project=self.git_project1, commit=git_commit3, name='branch3')
+
+        branches = []
+        branches.append({'name' : 'branch1'})
+        branches.append({'name' : 'branch4'})
+        branches.append({'name' : 'branch5'})
+        branches.append({'name' : 'branch6'})
+
+        branches_to_remove = GitFeederController.get_branch_names_to_remove(branches, self.git_project1)
+        branches_to_remove.sort()
+
+        self.assertEqual(2, len(branches_to_remove))
+        self.assertEqual('branch2', branches_to_remove[0])
+        self.assertEqual('branch3', branches_to_remove[1])

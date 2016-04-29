@@ -1,5 +1,6 @@
 """ Controller for GitFeeder """
 
+from sets import Set
 from django.utils import timezone
 from django.conf import settings
 from app.logic.gitfeeder.models.FeedModel import FeedEntry
@@ -115,6 +116,23 @@ class GitFeederController(object):
                 return (False, [msg])
 
         return (True, [])
+
+    @staticmethod
+    def get_branch_names_to_remove(branch_list, project):
+        """ Returns the name of those branches that needs to be deleted """
+        branch_entries = GitBranchEntry.objects.filter(project=project)
+
+        branch_list_1 = Set()
+        branch_list_2 = Set()
+
+        for branch1 in branch_list:
+            branch_list_1.add(branch1['name'])
+
+        for branch2 in branch_entries:
+            branch_list_2.add(branch2.name)
+
+        return list(branch_list_2.difference(branch_list_1))
+
 
     @staticmethod
     def insert_user(project, name, email):
