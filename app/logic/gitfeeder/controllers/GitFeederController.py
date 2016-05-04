@@ -83,6 +83,26 @@ class GitFeederController(object):
 
 
     @staticmethod
+    def are_branch_trails_correct(commit_trails, commit_hash_set, project):
+        """ It checks if branch trails are correct on a quick way, faster than a simple loop """
+        trail_not_in_set = []
+
+        for trail_hash in commit_trails:
+            if not trail_hash in commit_hash_set:
+                trail_not_in_set.append(trail_hash)
+
+        if len(trail_not_in_set) == 0:
+            return (True, [])
+
+        trail_exist_count = GitCommitEntry.objects.filter(project=project, commit_hash__in=trail_not_in_set).count()
+        if trail_exist_count == len(trail_not_in_set):
+            return (True, [])
+
+        msg = 'Trail hashes: {0}, not found!'.format(trail_not_in_set)
+        return (False, [msg])
+
+
+    @staticmethod
     def are_branches_correct(commit_hash_set, branch_list, project):
         """ Returns true if all branches are correct """
         for branch in branch_list:
@@ -91,11 +111,9 @@ class GitFeederController(object):
                 msg = 'Branch {0} with commit {1} not found!'.format(branch['branch_name'], branch['commit_hash'])
                 return (False, [msg])
 
-            for trail_hash in branch['trail']:
-                res = GitFeederController.check_commit(trail_hash, commit_hash_set, project)
-                if not res:
-                    msg = 'Trail hash {0} not found!'.format(trail_hash)
-                    return (False, [msg])
+            res = GitFeederController.are_branch_trails_correct(branch['trail'], commit_hash_set, project)
+            if not res[0]:
+                return res
 
             com = branch['merge_target']['diff']['commit_hash_son']
             res = GitFeederController.check_commit(com, commit_hash_set, project)
