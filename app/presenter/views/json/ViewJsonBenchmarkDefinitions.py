@@ -14,7 +14,7 @@ def create_new_benchmark_definition(request):
 
         bench_def = BenchmarkDefinitionController.create_default_benchmark_definition()
 
-        commit_entries = GitCommitEntry.objects.all()
+        commit_entries = GitCommitEntry.objects.filter(project=bench_def.project.git_project)
         worker_entries = WorkerEntry.objects.all()
         BenchmarkExecutionController.create_bench_executions_from_definition(
             bench_def_entry=bench_def,
