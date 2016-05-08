@@ -157,4 +157,7 @@ urlpatterns = patterns(
     url(r'^execution/acquire/$',
         'app.presenter.views.json.ViewJsonBenchmark.acquire_benchmark_execution'),
 
+    url(r'^command/(?P<command_id>\d+)/download/json/$',
+        'app.presenter.views.json.ViewJsonCommand.download_command_as_json'),
+
 )
