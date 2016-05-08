@@ -19,6 +19,7 @@ class CommandEntry(models.Model):
         """ Returns a command entry as an object """
 
         obj = {}
+        obj['id'] = self.id
         obj['command'] = self.command
         obj['order'] = self.order
         obj['result'] = {}

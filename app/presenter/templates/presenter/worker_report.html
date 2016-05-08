@@ -30,6 +30,11 @@
                                 <div class="list_label indent_1">ERR (status code: {{command.result.status}})</div>
                                 <div class="command indent_2">{{command.result.error}}</div>
                             {% endif %}
+                            {% if command.url %}
+                                <div class="list_label indent_1">DOWNLOAD</div>
+                                <a class="normal_link indent_2" href="{{command.url.download}}">Download complete command output</a>
+                            {% endif %}
+
                             {% if not forloop.last %}
                                 <br/>
                                 <br/>

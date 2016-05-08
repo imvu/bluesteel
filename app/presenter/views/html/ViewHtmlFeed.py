@@ -9,6 +9,23 @@ from app.logic.httpcommon.Page import Page
 
 FEED_REPORT_ITEMS_PER_PAGE = 12
 PAGINATION_HALF_RANGE = 2
+MAX_COMMAND_RESULT_LENGTH = 1000
+
+def trim_report(report):
+    """ Trim report output and add the url to download if trimmed """
+    for com_set in report['command_group']['command_sets']:
+        for com in com_set['commands']:
+            len_out = len(com['result']['out'])
+            len_err = len(com['result']['error'])
+
+            need_trim = (len_out > MAX_COMMAND_RESULT_LENGTH) or (len_err > MAX_COMMAND_RESULT_LENGTH)
+
+            if need_trim:
+                com['result']['out'] = com['result']['out'][0:MAX_COMMAND_RESULT_LENGTH] + ' ...'
+                com['result']['error'] = com['result']['error'][0:MAX_COMMAND_RESULT_LENGTH] + ' ...'
+                com['url'] = {}
+                com['url']['download'] = ViewUrlGenerator.get_command_download_json_url(com['id'])
+    return report
 
 def get_feed_report(request, feed_report_id):
     """ Returns html for the worker reports page """
@@ -19,6 +36,8 @@ def get_feed_report(request, feed_report_id):
         data = {}
         data['menu'] = ViewPrepareObjects.prepare_menu_for_html([])
         data['report'] = feed.as_object()
+
+        data['report'] = trim_report(data['report'])
 
         return res.get_template_data(request, 'presenter/worker_report.html', data)
     else:

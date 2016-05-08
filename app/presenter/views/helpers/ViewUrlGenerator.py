@@ -151,3 +151,6 @@ def get_feed_report_url(feed_id):
 
 def get_feed_report_form_worker_url(worker_id, page_index):
     return '/main/feed/fromworker/{0}/page/{1}/'.format(worker_id, page_index)
+
+def get_command_download_json_url(command_id):
+    return '/main/command/{0}/download/json/'.format(command_id)
