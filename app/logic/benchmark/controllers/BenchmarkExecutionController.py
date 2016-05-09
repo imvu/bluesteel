@@ -16,7 +16,7 @@ from app.logic.httpcommon import pag
 import json
 import sys
 
-PAGINATION_HALF_RANGE = 12
+PAGINATION_HALF_RANGE = 2
 
 class BenchmarkExecutionController(object):
     """ BenchmarkExecution controller with helper functions """
