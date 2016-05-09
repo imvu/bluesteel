@@ -227,12 +227,10 @@ def process_execute_task(settings, benchmark_execution):
         local_search_path
     )
 
-    git_path = ProjectFolderManager.get_cwd_of_first_git_project_found_in(paths['project'])
-
     res = CommandExecutioner.execute_command_list(
         commands,
         paths['log'],
-        git_path,
+        paths['git_project_search_path'],
         False)
 
     return res
