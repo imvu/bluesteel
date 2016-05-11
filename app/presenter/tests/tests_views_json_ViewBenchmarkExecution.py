@@ -422,7 +422,7 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
         self.assertEqual(1, CommandEntry.objects.filter(command='command-3').count())
         self.assertEqual(0, CommandResultEntry.objects.all().count())
 
-    def test_notify_benchmark_fluctuation(self):
+    def test_does_benchmark_fluctuation_exists(self):
         commit0 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash='0000000000000000000000000000000000000000', author=self.git_user1, author_date=timezone.now(), committer=self.git_user1, committer_date=timezone.now())
         commit1 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash='0000100001000010000100001000010000100001', author=self.git_user1, author_date=timezone.now(), committer=self.git_user1, committer_date=timezone.now())
         commit2 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash='0000200002000020000200002000020000200002', author=self.git_user1, author_date=timezone.now(), committer=self.git_user1, committer_date=timezone.now())
@@ -502,14 +502,21 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
         benchmark_execution4 = BenchmarkExecutionEntry.objects.create(definition=self.benchmark_definition1, commit=commit4, worker=self.worker1, report=report_4, invalidated=False, revision_target=28, status=BenchmarkExecutionEntry.READY)
         benchmark_execution5 = BenchmarkExecutionEntry.objects.create(definition=self.benchmark_definition1, commit=commit5, worker=self.worker1, report=report_5, invalidated=False, revision_target=28, status=BenchmarkExecutionEntry.READY)
 
-        ViewJsonBenchmarkExecutions.notify_benchmark_fluctuation(benchmark_execution4, 2, 'test-domain.com')
+        self.assertEqual(True, ViewJsonBenchmarkExecutions.does_benchmark_fluctuation_exist(benchmark_execution4, 2))
+
+    def test_notify_benchmark_fluctuation(self):
+        commit4 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash='0000400004000040000400004000040000400004', author=self.git_user1, author_date=timezone.now(), committer=self.git_user1, committer_date=timezone.now())
+        report_4 = CommandSetEntry.objects.create(group=None)
+        benchmark_execution4 = BenchmarkExecutionEntry.objects.create(definition=self.benchmark_definition1, commit=commit4, worker=self.worker1, report=report_4, invalidated=False, revision_target=28, status=BenchmarkExecutionEntry.READY)
+
+        ViewJsonBenchmarkExecutions.notify_benchmark_fluctuation(benchmark_execution4, 'test-domain.com')
 
         self.assertEqual(1, StackedMailEntry.objects.all().count())
         self.assertEqual('Benchmark execution fluctuation on commit: 0000400004000040000400004000040000400004', StackedMailEntry.objects.all().first().title)
         self.assertEqual('user1@test.com', StackedMailEntry.objects.all().first().receiver)
         self.assertTrue('http://test-domain.com/main/execution/{0}/window/'.format(benchmark_execution4.id) in StackedMailEntry.objects.all().first().content)
 
-    def test_notify_benchmark_fluctuation(self):
+    def test_did_commands_succeed(self):
         com1 = {}
         com1['command'] = 'command-1'
         com1['result'] = {}
@@ -529,11 +536,14 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
         report_json['command_set'].append(com1)
         report_json['command_set'].append(com2)
 
+        self.assertEqual(False, ViewJsonBenchmarkExecutions.did_commands_succeed(report_json))
 
+
+    def test_notify_benchmark_command_failure(self):
         report = CommandSetEntry.objects.create(group=None)
         benchmark_execution = BenchmarkExecutionEntry.objects.create(definition=self.benchmark_definition1, commit=self.commit1, worker=self.worker1, report=report, invalidated=False, revision_target=28, status=BenchmarkExecutionEntry.READY)
 
-        ViewJsonBenchmarkExecutions.notify_benchmark_command_failure(benchmark_execution, report_json, 'test-domain.com')
+        ViewJsonBenchmarkExecutions.notify_benchmark_command_failure(benchmark_execution, 'test-domain.com')
 
         self.assertEqual(1, StackedMailEntry.objects.all().count())
         self.assertEqual('Benchmark execution with failed commands on commit: 0000100001000010000100001000010000100001', StackedMailEntry.objects.all().first().title)

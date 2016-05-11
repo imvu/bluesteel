@@ -23,36 +23,15 @@ def check_benchmark_json_ids(report_out):
             return (False, ids)
     return (True, ids)
 
-
-def notify_benchmark_command_failure(benchmark_exec_entry, report, domain):
-    """ Will send a notification if there is any command with an status different that 0 """
-    notify_failure = False
+def did_commands_succeed(report):
+    """ Returns true if all the commands succeed"""
     for com in report['command_set']:
         if com['result']['status'] != 0:
-            notify_failure = True
-            break
+            return False
+    return True
 
-    if notify_failure:
-        receiver_email = benchmark_exec_entry.commit.author.email
-        commit_hash = benchmark_exec_entry.commit.commit_hash
-        title = 'Benchmark execution with failed commands on commit: {0}'.format(commit_hash)
-        content = 'There were commands that failed to execute.\nTake a look at: {0}'.format(
-            ViewUrlGenerator.get_benchmark_execution_full_url(
-                domain,
-                benchmark_exec_entry.id)
-            )
-
-        StackedMailEntry.objects.create(
-            sender=settings.DEFAULT_FROM_EMAIL,
-            receiver=receiver_email,
-            title=title,
-            content=content
-        )
-    return notify_failure
-
-
-def notify_benchmark_fluctuation(benchmark_exec_entry, fluctuation_window, domain):
-    """ It generates stacked email entries based on fluctuation notifications """
+def does_benchmark_fluctuation_exist(benchmark_exec_entry, fluctuation_window):
+    """ Returns true if fluctuation exists """
     commit_hash = benchmark_exec_entry.commit.commit_hash
     fluctuations = BenchmarkExecutionController.get_benchmark_fluctuation(
         project=benchmark_exec_entry.definition.project,
@@ -60,29 +39,48 @@ def notify_benchmark_fluctuation(benchmark_exec_entry, fluctuation_window, domai
         fluctuation_window=fluctuation_window
     )
 
-    notify_fluctuation = False
-
     for fluc in fluctuations:
         if (float(fluc['max'] - fluc['min'])) > 1.0:
-            notify_fluctuation = True
-            break
+            return True
+    return False
 
-    if notify_fluctuation:
-        receiver_email = benchmark_exec_entry.commit.author.email
-        commit_hash = benchmark_exec_entry.commit.commit_hash
-        title = 'Benchmark execution fluctuation on commit: {0}'.format(commit_hash)
-        content = 'There were fluctuations on the benchmark execution.\nTake a look at: {0}'.format(
-            ViewUrlGenerator.get_benchmark_execution_window_full_url(
-                domain,
-                benchmark_exec_entry.id)
-            )
 
-        StackedMailEntry.objects.create(
-            sender=settings.DEFAULT_FROM_EMAIL,
-            receiver=receiver_email,
-            title=title,
-            content=content
+def notify_benchmark_command_failure(benchmark_exec_entry, domain):
+    """ Will send a notification about command failures """
+    receiver_email = benchmark_exec_entry.commit.author.email
+    commit_hash = benchmark_exec_entry.commit.commit_hash
+    title = 'Benchmark execution with failed commands on commit: {0}'.format(commit_hash)
+    content = 'There were commands that failed to execute.\nTake a look at: {0}'.format(
+        ViewUrlGenerator.get_benchmark_execution_full_url(
+            domain,
+            benchmark_exec_entry.id)
         )
+
+    StackedMailEntry.objects.create(
+        sender=settings.DEFAULT_FROM_EMAIL,
+        receiver=receiver_email,
+        title=title,
+        content=content
+    )
+
+
+def notify_benchmark_fluctuation(benchmark_exec_entry, domain):
+    """ Will send notificaiton about benchmark fluctuation """
+    receiver_email = benchmark_exec_entry.commit.author.email
+    commit_hash = benchmark_exec_entry.commit.commit_hash
+    title = 'Benchmark execution fluctuation on commit: {0}'.format(commit_hash)
+    content = 'There were fluctuations on the benchmark execution.\nTake a look at: {0}'.format(
+        ViewUrlGenerator.get_benchmark_execution_window_full_url(
+            domain,
+            benchmark_exec_entry.id)
+        )
+
+    StackedMailEntry.objects.create(
+        sender=settings.DEFAULT_FROM_EMAIL,
+        receiver=receiver_email,
+        title=title,
+        content=content
+    )
 
 def save_benchmark_execution(request, benchmark_execution_id):
     """ Check and save a benchmark execution data into the db """
@@ -109,8 +107,12 @@ def save_benchmark_execution(request, benchmark_execution_id):
 
         report = val_resp_obj
         BenchmarkExecutionController.save_bench_execution(bench_exec_entry, report)
-        notify_benchmark_command_failure(bench_exec_entry, report, request.get_host())
-        notify_benchmark_fluctuation(bench_exec_entry, 2, request.get_host())
+
+        if not did_commands_succeed(report):
+            notify_benchmark_command_failure(bench_exec_entry, request.get_host())
+
+        if does_benchmark_fluctuation_exist(bench_exec_entry, 2):
+            notify_benchmark_fluctuation(bench_exec_entry, request.get_host())
 
         return res.get_response(200, 'Benchmark Execution saved', {})
     else:
