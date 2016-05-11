@@ -1,9 +1,7 @@
 """ Presenter json views, benchmark execution page functions """
 
-from django.conf import settings
 from app.presenter.schemas import BenchmarkExecutionSchemas
-from app.presenter.views.helpers import ViewUrlGenerator
-from app.logic.mailing.models.StackedMailModel import StackedMailEntry
+from app.presenter.views.helpers import ViewNotifications
 from app.logic.benchmark.models.BenchmarkExecutionModel import BenchmarkExecutionEntry
 from app.logic.benchmark.controllers.BenchmarkExecutionController import BenchmarkExecutionController
 from app.logic.httpcommon import res, val
@@ -23,12 +21,14 @@ def check_benchmark_json_ids(report_out):
             return (False, ids)
     return (True, ids)
 
+
 def did_commands_succeed(report):
     """ Returns true if all the commands succeed"""
     for com in report['command_set']:
         if com['result']['status'] != 0:
             return False
     return True
+
 
 def does_benchmark_fluctuation_exist(benchmark_exec_entry, fluctuation_window):
     """ Returns true if fluctuation exists """
@@ -45,43 +45,6 @@ def does_benchmark_fluctuation_exist(benchmark_exec_entry, fluctuation_window):
     return False
 
 
-def notify_benchmark_command_failure(benchmark_exec_entry, domain):
-    """ Will send a notification about command failures """
-    receiver_email = benchmark_exec_entry.commit.author.email
-    commit_hash = benchmark_exec_entry.commit.commit_hash
-    title = 'Benchmark execution with failed commands on commit: {0}'.format(commit_hash)
-    content = 'There were commands that failed to execute.\nTake a look at: {0}'.format(
-        ViewUrlGenerator.get_benchmark_execution_full_url(
-            domain,
-            benchmark_exec_entry.id)
-        )
-
-    StackedMailEntry.objects.create(
-        sender=settings.DEFAULT_FROM_EMAIL,
-        receiver=receiver_email,
-        title=title,
-        content=content
-    )
-
-
-def notify_benchmark_fluctuation(benchmark_exec_entry, domain):
-    """ Will send notificaiton about benchmark fluctuation """
-    receiver_email = benchmark_exec_entry.commit.author.email
-    commit_hash = benchmark_exec_entry.commit.commit_hash
-    title = 'Benchmark execution fluctuation on commit: {0}'.format(commit_hash)
-    content = 'There were fluctuations on the benchmark execution.\nTake a look at: {0}'.format(
-        ViewUrlGenerator.get_benchmark_execution_window_full_url(
-            domain,
-            benchmark_exec_entry.id)
-        )
-
-    StackedMailEntry.objects.create(
-        sender=settings.DEFAULT_FROM_EMAIL,
-        receiver=receiver_email,
-        title=title,
-        content=content
-    )
-
 def save_benchmark_execution(request, benchmark_execution_id):
     """ Check and save a benchmark execution data into the db """
     if request.method == 'POST':
@@ -91,12 +54,14 @@ def save_benchmark_execution(request, benchmark_execution_id):
 
         (is_json_valid, post_info) = val.validate_json_string(request.body)
         if not is_json_valid:
+            ViewNotifications.notify_json_invalid(bench_exec_entry.commit.author.email, request.body)
             return res.get_json_parser_failed({})
 
         (obj_validated, val_resp_obj) = val.validate_obj_schema(
             post_info,
             BenchmarkExecutionSchemas.SAVE_BENCHMARK_EXECUTION)
         if not obj_validated:
+            ViewNotifications.notify_schema_failed(bench_exec_entry.commit.author.email, post_info, val_resp_obj)
             return res.get_schema_failed(val_resp_obj)
 
         for command in val_resp_obj['command_set']:
@@ -109,10 +74,20 @@ def save_benchmark_execution(request, benchmark_execution_id):
         BenchmarkExecutionController.save_bench_execution(bench_exec_entry, report)
 
         if not did_commands_succeed(report):
-            notify_benchmark_command_failure(bench_exec_entry, request.get_host())
+            ViewNotifications.notify_benchmark_command_failure(
+                bench_exec_entry.commit.author.email,
+                bench_exec_entry.id,
+                bench_exec_entry.commit.commit.commit_hash,
+                request.get_host()
+            )
 
         if does_benchmark_fluctuation_exist(bench_exec_entry, 2):
-            notify_benchmark_fluctuation(bench_exec_entry, request.get_host())
+            ViewNotifications.notify_benchmark_fluctuation(
+                bench_exec_entry.commit.author.email,
+                bench_exec_entry.id,
+                bench_exec_entry.commit.commit.commit_hash,
+                request.get_host()
+            )
 
         return res.get_response(200, 'Benchmark Execution saved', {})
     else:
