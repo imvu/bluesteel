@@ -15,7 +15,7 @@ from app.logic.httpcommon.Page import Page
 BENCH_EXEC_ITEMS_PER_PAGE = 25
 BENCH_EXEC_WINDOW_HALF = 4
 
-def get_benchmark_execution(request, bench_exec_id):
+def get_benchmark_execution_relevant(request, bench_exec_id):
     """ Returns a benchmark execution """
     data = {}
     data['menu'] = ViewPrepareObjects.prepare_menu_for_html([])
@@ -29,8 +29,27 @@ def get_benchmark_execution(request, bench_exec_id):
     data['results'] = ViewPrepareObjects.prepare_results_from_bench_exec_to_html(obj)
     data['url'] = {}
     data['url']['invalidate'] = ViewUrlGenerator.get_benchmark_execution_invalidate_url(exec_entry.id)
+    data['url']['complete'] = ViewUrlGenerator.get_benchmark_execution_complete_url(exec_entry.id)
 
-    return res.get_template_data(request, 'presenter/benchmark_execution.html', data)
+    return res.get_template_data(request, 'presenter/benchmark_execution_relevant.html', data)
+
+def get_benchmark_execution_complete(request, bench_exec_id):
+    """ Returns a benchmark execution """
+    data = {}
+    data['menu'] = ViewPrepareObjects.prepare_menu_for_html([])
+
+    exec_entry = BenchmarkExecutionEntry.objects.filter(id=bench_exec_id).first()
+
+    if exec_entry == None:
+        return res.get_template_data(request, 'presenter/not_found.html', data)
+
+    obj = exec_entry.as_object()
+    data['results'] = ViewPrepareObjects.prepare_results_from_bench_exec_to_html(obj)
+    data['url'] = {}
+    data['url']['invalidate'] = ViewUrlGenerator.get_benchmark_execution_invalidate_url(exec_entry.id)
+    data['url']['relevant'] = ViewUrlGenerator.get_benchmark_execution_relevant_url(exec_entry.id)
+
+    return res.get_template_data(request, 'presenter/benchmark_execution_complete.html', data)
 
 def get_benchmark_execution_window(request, bench_exec_id):
     """ Returns a window of benchmark executions centered on bench_exe_id """

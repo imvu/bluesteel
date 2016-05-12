@@ -77,7 +77,7 @@ def save_benchmark_execution(request, benchmark_execution_id):
             ViewNotifications.notify_benchmark_command_failure(
                 bench_exec_entry.commit.author.email,
                 bench_exec_entry.id,
-                bench_exec_entry.commit.commit.commit_hash,
+                bench_exec_entry.commit.commit_hash,
                 request.get_host()
             )
 
@@ -85,7 +85,7 @@ def save_benchmark_execution(request, benchmark_execution_id):
             ViewNotifications.notify_benchmark_fluctuation(
                 bench_exec_entry.commit.author.email,
                 bench_exec_entry.id,
-                bench_exec_entry.commit.commit.commit_hash,
+                bench_exec_entry.commit.commit_hash,
                 request.get_host()
             )
 

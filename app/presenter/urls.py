@@ -63,8 +63,11 @@ urlpatterns = patterns(
     url(r'^definition/(?P<definition_id>\d+)/confirm/delete/$',
         'app.presenter.views.html.ViewHtmlBenchmarkDefinitions.get_benchmark_definition_confirm_delete'),
 
-    url(r'^execution/(?P<bench_exec_id>\d+)/$',
-        'app.presenter.views.html.ViewHtmlBenchmarkExecution.get_benchmark_execution'),
+    url(r'^execution/(?P<bench_exec_id>\d+)/relevant/$',
+        'app.presenter.views.html.ViewHtmlBenchmarkExecution.get_benchmark_execution_relevant'),
+
+    url(r'^execution/(?P<bench_exec_id>\d+)/complete/$',
+        'app.presenter.views.html.ViewHtmlBenchmarkExecution.get_benchmark_execution_complete'),
 
     url(r'^execution/(?P<bench_exec_id>\d+)/window/$',
         'app.presenter.views.html.ViewHtmlBenchmarkExecution.get_benchmark_execution_window'),

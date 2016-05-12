@@ -106,8 +106,11 @@ def get_project_branch_single_links_url(project_id, branch_id):
 def get_benchmark_definitions_url(page_index):
     return '/main/definitions/all/page/{0}/'.format(page_index)
 
-def get_benchmark_execution_full_url(domain, bench_id):
-    return 'http://{0}/main/execution/{1}/'.format(domain, bench_id)
+def get_benchmark_execution_complete_full_url(domain, bench_id):
+    return 'http://{0}/main/execution/{1}/complete/'.format(domain, bench_id)
+
+def get_benchmark_execution_relevant_full_url(domain, bench_id):
+    return 'http://{0}/main/execution/{1}/relevant/'.format(domain, bench_id)
 
 def get_benchmark_execution_window_full_url(domain, bench_id):
     return 'http://{0}/main/execution/{1}/window/'.format(domain, bench_id)
@@ -115,6 +118,11 @@ def get_benchmark_execution_window_full_url(domain, bench_id):
 def get_benchmark_execution_invalidate_url(bench_id):
     return '/main/execution/{0}/invalidate/'.format(bench_id)
 
+def get_benchmark_execution_relevant_url(bench_id):
+    return '/main/execution/{0}/relevant/'.format(bench_id)
+
+def get_benchmark_execution_complete_url(bench_id):
+    return '/main/execution/{0}/complete/'.format(bench_id)
 
 def get_benchmark_execution_stacked_url(project_entry, branch_entry, bench_def_entry, worker_entry, page_index):
     return '/main/execution/stacked/project/{0}/branch/{1}/definition/{2}/worker/{3}/page/{4}/'.format(

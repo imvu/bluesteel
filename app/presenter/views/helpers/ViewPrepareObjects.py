@@ -327,7 +327,7 @@ def prepare_stacked_executions_for_html(domain, executions):
         item['data'] = executions[key]
 
         for bench_data in item['data']:
-            bench_data['benchmark_execution_url'] = ViewUrlGenerator.get_benchmark_execution_full_url(
+            bench_data['benchmark_execution_url'] = ViewUrlGenerator.get_benchmark_execution_relevant_full_url(
                 domain,
                 bench_data['benchmark_execution_id'])
 
