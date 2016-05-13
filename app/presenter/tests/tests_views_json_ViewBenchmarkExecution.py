@@ -230,6 +230,89 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
         self.assertEqual('this is a text, very long', obj[0]['data'])
         self.assertEqual('this is a text, different', obj[1]['data'])
 
+    def test_save_benchmark_execution_unknown(self):
+        execution = BenchmarkExecutionController.create_benchmark_execution(
+            self.benchmark_definition1,
+            self.commit1,
+            self.worker1)
+
+        obj = {
+            'command_set' : [{
+                'command' : 'command-unknown',
+                'result' : {
+                    'status' : 0,
+                    'out' : [
+                        {'visual_type' : 'unknown', 'id' : 'id1', 'data' : 'this is an unknown text, very long'},
+                        {'visual_type' : 'unknown', 'id' : 'id2', 'data' : 'this is an unknown text, different'}
+                    ],
+                    'error' : '',
+                    'start_time' : str(timezone.now()),
+                    'finish_time' : str(timezone.now())
+                },
+            }]
+        }
+
+        self.assertEqual(17, CommandEntry.objects.all().count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='git clone http://www.test.com').count())
+        self.assertEqual(1, CommandEntry.objects.filter(order=0, command='git reset HEAD').count())
+        self.assertEqual(1, CommandEntry.objects.filter(order=1, command='git checkout -- .').count())
+        self.assertEqual(1, CommandEntry.objects.filter(order=2, command='git clean -d -f -q').count())
+        self.assertEqual(1, CommandEntry.objects.filter(order=3, command='git submodule sync --recursive').count())
+        self.assertEqual(1, CommandEntry.objects.filter(order=4, command='git submodule update --init --recursive --force').count())
+        self.assertEqual(1, CommandEntry.objects.filter(order=5, command='git checkout master').count())
+        self.assertEqual(1, CommandEntry.objects.filter(order=6, command='git reset --hard origin/master').count())
+        self.assertEqual(1, CommandEntry.objects.filter(order=7, command='git clean -d -f -q').count())
+        self.assertEqual(1, CommandEntry.objects.filter(order=8, command='git fetch --all').count())
+        self.assertEqual(1, CommandEntry.objects.filter(order=9, command='git pull -r origin master').count())
+        self.assertEqual(1, CommandEntry.objects.filter(order=10, command='git checkout master').count())
+        self.assertEqual(1, CommandEntry.objects.filter(order=11, command='git submodule sync --recursive').count())
+        self.assertEqual(1, CommandEntry.objects.filter(order=12, command='git submodule update --init --recursive --force').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='command-1').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='command-2').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='command-3').count())
+        self.assertEqual(0, CommandResultEntry.objects.all().count())
+
+        resp = self.client.post(
+            '/main/execution/{0}/save/'.format(execution.id),
+            data = json.dumps(obj),
+            content_type='application/json')
+
+        res.check_cross_origin_headers(self, resp)
+        resp_obj = json.loads(resp.content)
+
+        self.assertEqual(200, resp_obj['status'])
+
+        execution = BenchmarkExecutionEntry.objects.filter(definition=self.benchmark_definition1).first()
+
+        self.assertEqual('command-unknown', CommandEntry.objects.filter(command_set=execution.report).first().command)
+        self.assertEqual(18, CommandEntry.objects.all().count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='git clone http://www.test.com').count())
+        self.assertEqual(1, CommandEntry.objects.filter(order=0, command='git reset HEAD').count())
+        self.assertEqual(1, CommandEntry.objects.filter(order=1, command='git checkout -- .').count())
+        self.assertEqual(1, CommandEntry.objects.filter(order=2, command='git clean -d -f -q').count())
+        self.assertEqual(1, CommandEntry.objects.filter(order=3, command='git submodule sync --recursive').count())
+        self.assertEqual(1, CommandEntry.objects.filter(order=4, command='git submodule update --init --recursive --force').count())
+        self.assertEqual(1, CommandEntry.objects.filter(order=5, command='git checkout master').count())
+        self.assertEqual(1, CommandEntry.objects.filter(order=6, command='git reset --hard origin/master').count())
+        self.assertEqual(1, CommandEntry.objects.filter(order=7, command='git clean -d -f -q').count())
+        self.assertEqual(1, CommandEntry.objects.filter(order=8, command='git fetch --all').count())
+        self.assertEqual(1, CommandEntry.objects.filter(order=9, command='git pull -r origin master').count())
+        self.assertEqual(1, CommandEntry.objects.filter(order=10, command='git checkout master').count())
+        self.assertEqual(1, CommandEntry.objects.filter(order=11, command='git submodule sync --recursive').count())
+        self.assertEqual(1, CommandEntry.objects.filter(order=12, command='git submodule update --init --recursive --force').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='command-1').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='command-2').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='command-3').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='command-unknown').count())
+        self.assertEqual(1, CommandResultEntry.objects.all().count())
+
+        obj = json.loads(CommandResultEntry.objects.all().first().out)
+
+        self.assertEqual(2, len(obj))
+        self.assertEqual('this is an unknown text, very long', obj[0]['data'])
+        self.assertEqual('this is an unknown text, different', obj[1]['data'])
+
+
     def test_save_benchmark_stores_the_correct_json(self):
         execution = BenchmarkExecutionController.create_benchmark_execution(
             self.benchmark_definition1,

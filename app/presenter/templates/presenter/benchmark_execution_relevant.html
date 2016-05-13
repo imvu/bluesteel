@@ -11,24 +11,32 @@
                     <div class="centered"><a class="title_link" href="{{definition.url.edit}}">my execution</a></div>
                 </div>
                 {% for res in results %}
-                    <div class="middle_card white_card card_padding_large">
-                        <div class="list_label indent_1">COMMAND</div>
-                        <div class="command indent_2">{{res.command}}</div>
-                        <br/>
                         {% for entry in res.out %}
-                            {% if entry.obj.visual_type == 'vertical_bars' %}
-                                <div class="command indent_2">{{entry.obj.id}}</div>
-                                <canvas id="chart-{{forloop.counter0}}" width="540" height="220"></canvas>
-                                <script>chartVerticalBars('chart-{{forloop.counter0}}', {{entry.json|safe}});</script>
-                            {% elif entry.obj.visual_type == 'text' %}
-                                <div class="command indent_2 break_line">{{entry.obj.data}}</div>
-                            {% endif %}
-                            {% if res.out.count > 0 %}
-                            <br/>
-                            <br/>
+                            {% if entry.obj.visual_type != 'unknown' %}
+                                {% if forloop.first %}
+                                <div class="middle_card white_card card_padding_large">
+                                    <div class="list_label indent_1">COMMAND</div>
+                                    <div class="command indent_2">{{res.command}}</div>
+                                    <br/>
+                                {% endif %}
+
+                                {% if entry.obj.visual_type == 'vertical_bars' %}
+                                    <div class="command indent_2">{{entry.obj.id}}</div>
+                                    <canvas id="chart-{{forloop.counter0}}" width="540" height="220"></canvas>
+                                    <script>chartVerticalBars('chart-{{forloop.counter0}}', {{entry.json|safe}});</script>
+                                {% elif entry.obj.visual_type == 'text' %}
+                                    <div class="command indent_2 break_line">{{entry.obj.data}}</div>
+                                {% endif %}
+                                {% if res.out.count > 0 %}
+                                <br/>
+                                <br/>
+                                {% endif %}
+
+                                {% if forloop.last %}
+                                </div>
+                                {% endif %}
                             {% endif %}
                         {% endfor %}
-                </div>
                 {% endfor %}
                 <div class="middle_card white_card card_padding_large">
                     <ul class="no_dots no_indent vertical_margin horizontal_list">

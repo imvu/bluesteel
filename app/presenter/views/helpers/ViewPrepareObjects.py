@@ -294,7 +294,7 @@ def prepare_results_from_bench_exec_to_html(execution):
         except ValueError as error:
             res = {}
             res['id'] = 'error-{0}'.format(index)
-            res['visual_type'] = 'text'
+            res['visual_type'] = 'unknown'
             res['data'] = '{0}\n{1}'.format(
                 str(error),
                 command['result']['out'])
@@ -302,7 +302,7 @@ def prepare_results_from_bench_exec_to_html(execution):
         except KeyError as error:
             res = {}
             res['id'] = 'error-{0}'.format(index)
-            res['visual_type'] = 'text'
+            res['visual_type'] = 'unknown'
             res['data'] = '{0}\n{1}'.format(
                 str(error),
                 command['result']['out'])

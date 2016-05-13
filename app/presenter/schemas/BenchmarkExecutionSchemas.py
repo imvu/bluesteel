@@ -47,7 +47,26 @@ SAVE_BENCHMARK_EXECUTION = {
                                             'id' : {
                                                 'type' : 'string',
                                                 'minLength' : 1,
-                                                'maxLength' : 16,
+                                                'maxLength' : 32,
+                                            },
+                                            'data' : {
+                                                'type' : 'string',
+                                                'minLength' : 1,
+                                            },
+                                        },
+                                    }, {
+                                        'type' : 'object',
+                                        'additionalProperties': False,
+                                        'required': ['id', 'visual_type', 'data'],
+                                        'properties' : {
+                                            'visual_type' : {
+                                                'type' : 'string',
+                                                'enum' : ['unknown'],
+                                            },
+                                            'id' : {
+                                                'type' : 'string',
+                                                'minLength' : 1,
+                                                'maxLength' : 32,
                                             },
                                             'data' : {
                                                 'type' : 'string',
@@ -66,7 +85,7 @@ SAVE_BENCHMARK_EXECUTION = {
                                             'id' : {
                                                 'type' : 'string',
                                                 'minLength' : 1,
-                                                'maxLength' : 16,
+                                                'maxLength' : 32,
                                             },
                                             'data' : {
                                                 'type' : 'array',

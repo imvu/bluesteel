@@ -256,7 +256,7 @@ def prepare_results_before_feed(results):
         except ValueError as error:
             res = {}
             res['id'] = 'error-{0}'.format(index)
-            res['visual_type'] = 'text'
+            res['visual_type'] = 'unknown'
             res['data'] = '{0}\n{1}'.format(
                 str(error),
                 command['result']['out'])
@@ -264,7 +264,7 @@ def prepare_results_before_feed(results):
         except KeyError as error:
             res = {}
             res['id'] = 'error-{0}'.format(index)
-            res['visual_type'] = 'text'
+            res['visual_type'] = 'unknown'
             res['data'] = '{0}\n{1}'.format(
                 str(error),
                 command['result']['out'])
