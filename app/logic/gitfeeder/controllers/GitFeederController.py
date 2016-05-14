@@ -144,7 +144,7 @@ class GitFeederController(object):
         branch_list_2 = Set()
 
         for branch1 in branch_list:
-            branch_list_1.add(branch1['name'])
+            branch_list_1.add(branch1['branch_name'])
 
         for branch2 in branch_entries:
             branch_list_2.add(branch2.name)

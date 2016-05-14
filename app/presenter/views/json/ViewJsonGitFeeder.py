@@ -60,6 +60,10 @@ def post_commits(request, project_id):
             LogEntry.error(request.user, (msg for msg in msgs))
             return res.get_response(400, 'Branches not correct', {})
 
+        branches_to_remove = GitFeederController.get_branch_names_to_remove(branches, project_entry)
+        for branch_name in branches_to_remove:
+            GitFeederController.delete_commits_of_only_branch(project_entry, branch_name)
+
         GitFeederController.insert_commits(commits, project_entry)
         GitFeederController.insert_parents(commits, project_entry)
         GitFeederController.insert_diffs(diffs, project_entry)

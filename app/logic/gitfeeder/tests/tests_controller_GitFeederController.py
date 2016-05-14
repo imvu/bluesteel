@@ -595,10 +595,10 @@ class GitFeederControllerTestCase(TestCase):
         git_branch3 = GitBranchEntry.objects.create(project=self.git_project1, commit=git_commit3, name='branch3')
 
         branches = []
-        branches.append({'name' : 'branch1'})
-        branches.append({'name' : 'branch4'})
-        branches.append({'name' : 'branch5'})
-        branches.append({'name' : 'branch6'})
+        branches.append({'branch_name' : 'branch1'})
+        branches.append({'branch_name' : 'branch4'})
+        branches.append({'branch_name' : 'branch5'})
+        branches.append({'branch_name' : 'branch6'})
 
         branches_to_remove = GitFeederController.get_branch_names_to_remove(branches, self.git_project1)
         branches_to_remove.sort()
