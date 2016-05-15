@@ -51,7 +51,7 @@ class BluesteelProjectControllerTestCase(TestCase):
         self.assertEqual(1, CommandEntry.objects.filter(order=5, command='git checkout master').count())
         self.assertEqual(1, CommandEntry.objects.filter(order=6, command='git reset --hard origin/master').count())
         self.assertEqual(1, CommandEntry.objects.filter(order=7, command='git clean -d -f -q').count())
-        self.assertEqual(1, CommandEntry.objects.filter(order=8, command='git fetch --all').count())
+        self.assertEqual(1, CommandEntry.objects.filter(order=8, command='git fetch --all -p').count())
         self.assertEqual(1, CommandEntry.objects.filter(order=9, command='git pull -r origin master').count())
         self.assertEqual(1, CommandEntry.objects.filter(order=10, command='git checkout master').count())
         self.assertEqual(1, CommandEntry.objects.filter(order=11, command='git submodule sync --recursive').count())
