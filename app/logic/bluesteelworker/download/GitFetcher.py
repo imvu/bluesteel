@@ -511,6 +511,7 @@ class GitFetcher(object):
         commands.append(['git', 'reset', '--hard'])
         commands.append(['git', 'clean', '-f', '-d', '-q'])
         commands.append(['git', 'checkout', branch_name])
+        commands.append(['git', 'submodule', 'update', '--init', '--recursive'])
         commands.append(['git', 'pull', '-r'])
         commands.append(['git', 'log', '--first-parent', '--date=iso', pretty_string])
 
