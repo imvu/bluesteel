@@ -23,6 +23,7 @@ class GitFetcher(object):
         self.log_level = log_level
         self.report_stack = []
         self.remote_branch_names = []
+        self.local_branch_names = []
         self.branch_names = []
         self.branch_names_and_hashes = []
         self.branches_data = []
@@ -40,6 +41,8 @@ class GitFetcher(object):
         steps = [
             self.step_fetch_git_project,
             self.step_fetch_remote_branches,
+            self.step_fetch_local_branches,
+            self.step_remove_local_branches,
             self.step_transform_remote_to_local_branch,
             self.step_get_all_local_branch_names,
             self.step_get_name_and_hash_from_local_branch,
@@ -97,19 +100,54 @@ class GitFetcher(object):
         remote_branches_report = self.commands_get_remote_branch_names(project_info)
         self.report_stack.append(remote_branches_report)
         if not GitFetcher.is_report_ok(remote_branches_report):
+            log.error('Fetch Remote Branches -- Error while fetching remote branches')
             return False
 
         self.remote_branch_names = self.extract_remote_branch_names_from_reports(remote_branches_report)
 
         if len(self.remote_branch_names) == 0:
-            no_branches_report = GitFetcher.create_report(
-                'No command executed',
-                0,
-                'No remote branches found, looks strange',
-                ''
-            )
+            msg = 'No remote branches found, looks strange'
+            no_branches_report = GitFetcher.create_report('No command executed', 0, msg, '')
             self.report_stack.append(no_branches_report)
 
+        return True
+
+    def step_fetch_local_branches(self, project_info):
+        """ Fetch local branches to see how many of them need to be removed """
+        local_branches_report = self.commands_get_local_branch_names(project_info)
+        self.report_stack.append(local_branches_report)
+        if not GitFetcher.is_report_ok(local_branches_report):
+            log.error('Fetch Local Branches -- Error while fetching local branches')
+            return False
+
+        self.local_branch_names = self.extract_local_branch_names_from_reports(local_branches_report)
+
+        if len(self.local_branch_names) == 0:
+            msg = 'No local branches found, looks strange'
+            no_branches_report = GitFetcher.create_report('No command executed', 0, msg, '')
+            self.report_stack.append(no_branches_report)
+
+        return True
+
+    def step_remove_local_branches(self, project_info):
+        """ Removes local branches that were deleted on remote """
+        branches_to_remove = []
+
+        for local_name in self.local_branch_names:
+            found = False
+            for remote_name in self.remote_branch_names:
+                if local_name in remote_name:
+                    found = True
+                    break
+
+            if not found:
+                branches_to_remove.append(local_name)
+
+        removed_branches_report = self.commands_remove_branches(project_info, branches_to_remove)
+        self.report_stack.append(removed_branches_report)
+        if not GitFetcher.is_report_ok(removed_branches_report):
+            log.error('Remove Local Branches -- Error while removing local branches')
+            return False
         return True
 
     def step_transform_remote_to_local_branch(self, project_info):
@@ -122,7 +160,7 @@ class GitFetcher(object):
 
     def step_get_all_local_branch_names(self, project_info):
         """ Get all local branch names """
-        branch_names_report = self.commands_get_branch_names(project_info)
+        branch_names_report = self.commands_get_local_branch_names(project_info)
         self.report_stack.append(branch_names_report)
         if not GitFetcher.is_report_ok(branch_names_report):
             return False
@@ -369,10 +407,39 @@ class GitFetcher(object):
     @staticmethod
     def commands_get_remote_branch_names(project_info):
         """ Returns all remote branches names """
+        return GitFetcher.commands_get_branch_names(project_info, [u'git', u'branch', u'-r'])
+
+    @staticmethod
+    def commands_get_local_branch_names(project_info):
+        """ Returns all local branches names """
+        return GitFetcher.commands_get_branch_names(project_info, [u'git', u'branch'])
+
+    @staticmethod
+    def commands_get_branch_names(project_info, command):
+        """ Returns all local branches names """
         paths = GitFetcher.get_project_paths(project_info)
         project_cwd = GitFetcher.get_first_git_project_found_path(paths)
 
-        commands = [[u'git', u'branch', u'-r']]
+        commands = [command]
+        reports = CommandExecutioner.execute_command_list(
+            commands,
+            paths['log'],
+            project_cwd,
+            True
+        )
+        return reports
+
+    @staticmethod
+    def commands_remove_branches(project_info, branch_names):
+        """ Returns all local branches names """
+        paths = GitFetcher.get_project_paths(project_info)
+        project_cwd = GitFetcher.get_first_git_project_found_path(paths)
+
+        commands = []
+
+        for name in branch_names:
+            commands.append(['git', 'branch', '-D', name])
+
         reports = CommandExecutioner.execute_command_list(
             commands,
             paths['log'],
@@ -384,38 +451,38 @@ class GitFetcher(object):
     @staticmethod
     def extract_remote_branch_names_from_reports(reports):
         """ Extracts remote branch names from the reports """
-        remote_branch_names = []
+        return GitFetcher.extract_branch_names_from_reports(reports, 'git branch -r')
+
+    @staticmethod
+    def extract_local_branch_names_from_reports(reports):
+        """ Extracts local branch names from the reports """
+        return GitFetcher.extract_branch_names_from_reports(reports, 'git branch')
+
+    @staticmethod
+    def extract_branch_names_from_reports(reports, git_command):
+        """ Extracts branch names with a command from the reports """
+        branch_names = []
 
         for command in reports['commands']:
-            if command['command'] == 'git branch -r' and command['result']['status'] == 0:
+            if command['command'] == git_command and command['result']['status'] == 0:
                 names = command['result']['out'].split('\n')
                 for name in names:
                     name = name.strip()
+
                     if len(name) == 0:
                         continue
-                    name = name.split(' ')[0]
-                    name = name.strip()
+
+                    if '*' in name:
+                        name = name.split(' ')[1].strip()
+                        if len(name) > 0:
+                            branch_names.append(name)
+                        continue
+
+                    name = name.split(' ')[0].strip()
                     if len(name) > 0 and not 'HEAD' in name:
-                        remote_branch_names.append(name)
-        return remote_branch_names
+                        branch_names.append(name)
 
-
-    @staticmethod
-    def commands_get_branch_names(project_info):
-        """ Returns all local branches """
-        paths = GitFetcher.get_project_paths(project_info)
-        project_cwd = GitFetcher.get_first_git_project_found_path(paths)
-
-        command = ['git', 'branch']
-        commands = []
-        commands.append(command)
-        reports = CommandExecutioner.execute_command_list(
-            commands,
-            paths['log'],
-            project_cwd,
-            True
-        )
-        return reports
+        return branch_names
 
     @staticmethod
     def extract_branch_names_from_report(reports):
