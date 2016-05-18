@@ -90,7 +90,7 @@ class GitFetcher(object):
         else:
             report = self.commands_clone_git_project(project_info)
 
-        self.report_stack.append(report)
+        self.save_report('step_fetch_git_project', report)
         if not GitFetcher.is_report_ok(report):
             return False
         return True
@@ -98,7 +98,7 @@ class GitFetcher(object):
     def step_fetch_remote_branches(self, project_info):
         """ Fetch remote branches using project_info """
         remote_branches_report = self.commands_get_remote_branch_names(project_info)
-        self.report_stack.append(remote_branches_report)
+        self.save_report('step_fetch_remote_branches', remote_branches_report)
         if not GitFetcher.is_report_ok(remote_branches_report):
             log.error('Fetch Remote Branches -- Error while fetching remote branches')
             return False
@@ -108,14 +108,14 @@ class GitFetcher(object):
         if len(self.remote_branch_names) == 0:
             msg = 'No remote branches found, looks strange'
             no_branches_report = GitFetcher.create_report('No command executed', 0, msg, '')
-            self.report_stack.append(no_branches_report)
+            self.save_report('step_fetch_remote_branches', no_branches_report)
 
         return True
 
     def step_fetch_local_branches(self, project_info):
         """ Fetch local branches to see how many of them need to be removed """
         local_branches_report = self.commands_get_local_branch_names(project_info)
-        self.report_stack.append(local_branches_report)
+        self.save_report('step_fetch_local_branches', local_branches_report)
         if not GitFetcher.is_report_ok(local_branches_report):
             log.error('Fetch Local Branches -- Error while fetching local branches')
             return False
@@ -125,7 +125,7 @@ class GitFetcher(object):
         if len(self.local_branch_names) == 0:
             msg = 'No local branches found, looks strange'
             no_branches_report = GitFetcher.create_report('No command executed', 0, msg, '')
-            self.report_stack.append(no_branches_report)
+            self.save_report('step_fetch_local_branches', no_branches_report)
 
         return True
 
@@ -144,7 +144,7 @@ class GitFetcher(object):
                 branches_to_remove.append(local_name)
 
         removed_branches_report = self.commands_remove_branches(project_info, branches_to_remove)
-        self.report_stack.append(removed_branches_report)
+        self.save_report('step_remove_local_branches', removed_branches_report)
         if not GitFetcher.is_report_ok(removed_branches_report):
             log.error('Remove Local Branches -- Error while removing local branches')
             return False
@@ -153,7 +153,7 @@ class GitFetcher(object):
     def step_transform_remote_to_local_branch(self, project_info):
         """ Transform remote to local branches """
         remote_to_local_reports = self.checkout_remote_branches_to_local(project_info, self.remote_branch_names)
-        self.report_stack.append(remote_to_local_reports)
+        self.save_report('step_transform_remote_to_local_branch', remote_to_local_reports)
         if not GitFetcher.is_report_ok(remote_to_local_reports):
             return False
         return True
@@ -161,7 +161,7 @@ class GitFetcher(object):
     def step_get_all_local_branch_names(self, project_info):
         """ Get all local branch names """
         branch_names_report = self.commands_get_local_branch_names(project_info)
-        self.report_stack.append(branch_names_report)
+        self.save_report('step_transform_remote_to_local_branch', branch_names_report)
         if not GitFetcher.is_report_ok(branch_names_report):
             return False
 
@@ -171,7 +171,7 @@ class GitFetcher(object):
     def step_get_name_and_hash_from_local_branch(self, project_info):
         """ Get the branch names and hashes per every name """
         names_and_hashes_report = self.commands_get_branch_names_and_hashes(project_info, self.branch_names)
-        self.report_stack.append(names_and_hashes_report)
+        self.save_report('step_get_name_and_hash_from_local_branch', names_and_hashes_report)
         if not GitFetcher.is_report_ok(names_and_hashes_report):
             return False
 
@@ -186,7 +186,7 @@ class GitFetcher(object):
             log.debug('Commit -- Getting all commits of: %s - %s', branch_hash, branch_name)
 
             com_reports = self.commands_get_commits_from_branch(project_info, branch_name)
-            self.report_stack.append(com_reports)
+            self.save_report('step_get_all_commits_from_branch', com_reports)
             if not GitFetcher.is_report_ok(com_reports):
                 return False
 
@@ -229,7 +229,7 @@ class GitFetcher(object):
                 branch['merge_target']['fork_point']
             )
 
-            self.report_stack.append(diff_target_report)
+            self.save_report('step_setup_diff_on_merge_target', diff_target_report)
             if not GitFetcher.is_report_ok(diff_target_report):
                 return False
 
@@ -269,7 +269,7 @@ class GitFetcher(object):
                 diff_report = self.commands_get_diff_between_commits(project_info, commit_hash_1, commit_hash_2)
 
                 # Report check
-                self.report_stack.append(diff_report)
+                self.save_report('step_get_diff_for_all_commits', diff_report)
                 if not GitFetcher.is_report_ok(diff_report):
                     return False
 
@@ -315,6 +315,17 @@ class GitFetcher(object):
             branch_data['trail'] = branch['trail']
             self.branch_list.append(branch_data)
         return True
+
+    def save_report(self, name, report):
+        """ Save the given report or if empty save a meaningful report with some info """
+
+        if len(report['commands']) > 0:
+            self.report_stack.append(report)
+        else:
+            msg = 'No commands has been found. So we populate one command to let you know :D'
+            rep = GitFetcher.create_report('No commands in: {0}'.format(name), 255, msg, '')
+            self.report_stack.append(rep)
+
 
     @staticmethod
     def create_report(command, status, out, error):
@@ -723,4 +734,6 @@ class GitFetcher(object):
                 return command['result']['out'].decode('utf-8', 'ignore').encode('utf-8')
 
         return ''
+
+
 
