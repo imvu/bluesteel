@@ -13,6 +13,7 @@ from app.logic.gitrepo.models.GitCommitModel import GitCommitEntry
 from app.logic.gitrepo.models.GitBranchModel import GitBranchEntry
 from app.logic.gitrepo.models.GitBranchTrailModel import GitBranchTrailEntry
 from app.logic.gitrepo.models.GitDiffModel import GitDiffEntry
+from app.logic.gitrepo.models.GitBranchMergeTargetModel import GitBranchMergeTargetEntry
 from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
 
 class GitFeederControllerTestCase(TestCase):
@@ -608,6 +609,14 @@ class GitFeederControllerTestCase(TestCase):
         self.assertEqual('branch3', branches_to_remove[1])
 
     def test_delete_commits_only_associated_with_a_branch(self):
+        #     8
+        #     7
+        #     6
+        # 4 - 5
+        # 3
+        # 2
+        # 1
+
         commit_time = str(timezone.now().isoformat())
         git_commit1 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash=FeederTestHelper.hash_string(1), author=self.git_user1, author_date=commit_time, committer=self.git_user1, committer_date=commit_time)
         git_commit2 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash=FeederTestHelper.hash_string(2), author=self.git_user1, author_date=commit_time, committer=self.git_user1, committer_date=commit_time)
@@ -620,6 +629,10 @@ class GitFeederControllerTestCase(TestCase):
 
         branch1 = GitBranchEntry.objects.create(project=self.git_project1, name='branch1', commit=git_commit4)
         branch2 = GitBranchEntry.objects.create(project=self.git_project1, name='branch2', commit=git_commit8)
+
+        diff1 = GitDiffEntry.objects.create(project=self.git_project1, commit_son=git_commit8, commit_parent=git_commit4, content='diff-content')
+
+        merge_target_1 = GitBranchMergeTargetEntry.objects.create(project=self.git_project1, current_branch=branch2, target_branch=branch1, fork_point=git_commit4, diff=diff1, invalidated=False)
 
         parent_1_2 = GitParentEntry.objects.create(project=self.git_project1, parent=git_commit1, son=git_commit2, order=0)
         parent_2_3 = GitParentEntry.objects.create(project=self.git_project1, parent=git_commit2, son=git_commit3, order=1)

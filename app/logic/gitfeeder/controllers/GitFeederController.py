@@ -418,14 +418,20 @@ class GitFeederController(object):
         if branch_entry is None:
             return
 
-        trails_entries = GitBranchTrailEntry.objects.filter(project=project, branch=branch_entry)
+        merge_target = GitBranchMergeTargetEntry.objects.filter(project=project, current_branch=branch_entry).first()
+        if merge_target is None:
+            return
 
+        trails_entries = GitBranchTrailEntry.objects.filter(project=project, branch=branch_entry).order_by('order')
+
+        merge_fork_hash = merge_target.fork_point.commit_hash
         commits_to_delete = []
-        for trail in trails_entries:
-            trail_count = GitBranchTrailEntry.objects.filter(project=project, commit=trail.commit).count()
-            if trail_count == 1:
-                commits_to_delete.append(trail.commit)
 
+        for trail in trails_entries:
+            if trail.commit.commit_hash != merge_fork_hash:
+                commits_to_delete.append(trail.commit)
+            else:
+                break
 
         for commit in commits_to_delete:
             commit.delete()
