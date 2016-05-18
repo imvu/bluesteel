@@ -12,6 +12,7 @@ from app.logic.gitfeeder.controllers.GitFeederController import GitFeederControl
 from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
 from app.logic.logger.models.LogModel import LogEntry
 from app.presenter.schemas import GitFeederSchemas
+import json
 
 @transaction.atomic
 def post_commits(request, project_id):
@@ -23,10 +24,12 @@ def post_commits(request, project_id):
 
         (json_valid, post_info) = val.validate_json_string(request.body)
         if not json_valid:
+            LogEntry.error(request.user, 'Json parser failed.\n{0}'.format(json.dumps(post_info)))
             return res.get_json_parser_failed({})
 
         (obj_validated, val_resp_obj) = val.validate_obj_schema(post_info, GitFeederSchemas.GIT_FEEDER_SCHEMA)
         if not obj_validated:
+            LogEntry.error(request.user, 'Json schema failed.\n{0}'.format(json.dumps(val_resp_obj)))
             return res.get_schema_failed(val_resp_obj)
 
         GitFeederController.insert_reports(request.user, val_resp_obj['reports'])
