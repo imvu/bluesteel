@@ -542,7 +542,7 @@ class GitFetcher(object):
         commands = []
 
         for name in branch_names:
-            commands.append(['git', 'rev-parse', name])
+            commands.append(['git', 'rev-parse', 'refs/heads/{0}'.format(name)])
 
         reports = CommandExecutioner.execute_command_list(
             commands,
@@ -558,9 +558,9 @@ class GitFetcher(object):
         branch_names = []
 
         for command in reports['commands']:
-            if command['command'].startswith('git rev-parse') and command['result']['status'] == 0:
+            if command['command'].startswith('git rev-parse refs/heads/') and command['result']['status'] == 0:
                 branch = {}
-                branch['name'] = command['command'][14:].strip()
+                branch['name'] = command['command'][25:].strip()
                 branch['commit_hash'] = command['result']['out'].strip()
                 branch_names.append(branch)
         return branch_names

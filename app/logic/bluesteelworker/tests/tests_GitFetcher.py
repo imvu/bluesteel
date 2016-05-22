@@ -418,13 +418,13 @@ class GitFetcherTestCase(TestCase):
         reports = self.fetcher.commands_get_branch_names_and_hashes(self.obj1, branch_names)
 
         name, args, side = mock_subprocess.mock_calls[0]
-        self.assertEqual(['git', 'rev-parse', 'master'], args[0])
+        self.assertEqual(['git', 'rev-parse', 'refs/heads/master'], args[0])
 
         name, args, side = mock_subprocess.mock_calls[1]
-        self.assertEqual(['git', 'rev-parse', 'branch-1'], args[0])
+        self.assertEqual(['git', 'rev-parse', 'refs/heads/branch-1'], args[0])
 
         name, args, side = mock_subprocess.mock_calls[2]
-        self.assertEqual(['git', 'rev-parse', 'branch-2'], args[0])
+        self.assertEqual(['git', 'rev-parse', 'refs/heads/branch-2'], args[0])
 
         self.assertEqual(3, mock_subprocess.call_count)
 
@@ -440,30 +440,30 @@ class GitFetcherTestCase(TestCase):
         self.assertEqual(3, len(reports['commands']))
 
         self.assertEqual(0, reports['commands'][0]['result']['status'])
-        self.assertEqual('git rev-parse master', reports['commands'][0]['command'])
+        self.assertEqual('git rev-parse refs/heads/master', reports['commands'][0]['command'])
         self.assertEqual('', reports['commands'][0]['result']['error'])
         self.assertEqual('', reports['commands'][0]['result']['out'])
 
         self.assertEqual(0, reports['commands'][1]['result']['status'])
-        self.assertEqual('git rev-parse branch-1', reports['commands'][1]['command'])
+        self.assertEqual('git rev-parse refs/heads/branch-1', reports['commands'][1]['command'])
         self.assertEqual('', reports['commands'][1]['result']['error'])
         self.assertEqual('', reports['commands'][1]['result']['out'])
 
         self.assertEqual(0, reports['commands'][2]['result']['status'])
-        self.assertEqual('git rev-parse branch-2', reports['commands'][2]['command'])
+        self.assertEqual('git rev-parse refs/heads/branch-2', reports['commands'][2]['command'])
         self.assertEqual('', reports['commands'][2]['result']['error'])
         self.assertEqual('', reports['commands'][2]['result']['out'])
 
     def test_extract_branch_names_and_hashes_correct(self):
         report1 = {}
-        report1['command'] = 'git rev-parse master'
+        report1['command'] = 'git rev-parse refs/heads/master'
         report1['result'] = {}
         report1['result']['status'] = 0
         report1['result']['out'] = '0000100001000010000100001000010000100001'
         report1['result']['error'] = ''
 
         report2 = {}
-        report2['command'] = 'git rev-parse branch-1'
+        report2['command'] = 'git rev-parse refs/heads/branch-1'
         report2['result'] = {}
         report2['result']['status'] = 0
         report2['result']['out'] = '0000200002000020000200002000020000200002'
