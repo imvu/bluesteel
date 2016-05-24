@@ -2,7 +2,9 @@
 
 from django.db.models import Q, F
 from django.core.paginator import Paginator
+from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
 from app.logic.benchmark.models.BenchmarkExecutionModel import BenchmarkExecutionEntry
+from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
 from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
 from app.logic.commandrepo.models.CommandGroupModel import CommandGroupEntry
 from app.logic.commandrepo.models.CommandSetModel import CommandSetEntry
@@ -10,6 +12,7 @@ from app.logic.commandrepo.models.CommandModel import CommandEntry
 from app.logic.commandrepo.models.CommandResultModel import CommandResultEntry
 from app.logic.commandrepo.controllers.CommandController import CommandController
 from app.logic.gitrepo.controllers.GitController import GitController
+from app.logic.gitrepo.models.GitCommitModel import GitCommitEntry
 from app.logic.gitrepo.models.GitBranchTrailModel import GitBranchTrailEntry
 from app.logic.gitrepo.models.GitBranchMergeTargetModel import GitBranchMergeTargetEntry
 from app.logic.httpcommon import pag
@@ -161,6 +164,23 @@ class BenchmarkExecutionController(object):
                 report=command_set,
             )
         return exec_entry
+
+    @staticmethod
+    def create_bench_executions_from_commits(git_project_entry, commit_hashes):
+        """ Create all the benchmark executions from a list of commits and its associate git project """
+        project_entries = BluesteelProjectEntry.objects.filter(git_project=git_project_entry)
+        bench_def_entries = BenchmarkDefinitionEntry.objects.filter(project__in=project_entries)
+        worker_entries = WorkerEntry.objects.all()
+
+        for commit_hash in commit_hashes:
+            commit_entry = GitCommitEntry.objects.filter(commit_hash=commit_hash, project=git_project_entry).first()
+            if not commit_entry:
+                continue
+
+            BenchmarkExecutionController.create_bench_executions_from_commit(
+                commit_entry,
+                bench_def_entries,
+                worker_entries)
 
     @staticmethod
     def create_bench_executions_from_commit(commit_entry, bench_def_entries, worker_entries):

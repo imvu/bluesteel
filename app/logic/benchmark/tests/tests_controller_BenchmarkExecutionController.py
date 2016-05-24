@@ -298,6 +298,34 @@ class BenchmarkExecutionControllerTestCase(TestCase):
             worker=self.worker2,
             definition=self.benchmark_definition2).count())
 
+    def test_create_bench_executions_froms_commits(self):
+        BenchmarkExecutionEntry.objects.all().delete()
+
+        commit_hashes = []
+        commit_hashes.append('0000100001000010000100001000010000100001')
+        commit_hashes.append('0000200002000020000200002000020000200002')
+        commit_hashes.append('0000300003000030000300003000030000300003')
+
+        self.assertEqual(0, BenchmarkExecutionEntry.objects.all().count())
+
+        BenchmarkExecutionController.create_bench_executions_from_commits(self.git_project1, commit_hashes)
+
+        self.assertEqual(12, BenchmarkExecutionEntry.objects.all().count())
+
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(definition=self.benchmark_definition1, commit=self.commit1, worker=self.worker1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(definition=self.benchmark_definition1, commit=self.commit1, worker=self.worker2).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(definition=self.benchmark_definition1, commit=self.commit2, worker=self.worker1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(definition=self.benchmark_definition1, commit=self.commit2, worker=self.worker2).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(definition=self.benchmark_definition1, commit=self.commit3, worker=self.worker1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(definition=self.benchmark_definition1, commit=self.commit3, worker=self.worker2).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(definition=self.benchmark_definition2, commit=self.commit1, worker=self.worker1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(definition=self.benchmark_definition2, commit=self.commit1, worker=self.worker2).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(definition=self.benchmark_definition2, commit=self.commit2, worker=self.worker1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(definition=self.benchmark_definition2, commit=self.commit2, worker=self.worker2).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(definition=self.benchmark_definition2, commit=self.commit3, worker=self.worker1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(definition=self.benchmark_definition2, commit=self.commit3, worker=self.worker2).count())
+
+
     def test_create_bench_executions_from_worker_definitions_and_commits(self):
         exec_entries = BenchmarkExecutionEntry.objects.all()
         for exec_entry in exec_entries:

@@ -3,13 +3,9 @@
 from django.db import transaction
 from app.logic.httpcommon import res
 from app.logic.httpcommon import val
-from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
-from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
 from app.logic.benchmark.controllers.BenchmarkExecutionController import BenchmarkExecutionController
-from app.logic.gitrepo.models.GitCommitModel import GitCommitEntry
 from app.logic.gitrepo.models.GitProjectModel import GitProjectEntry
 from app.logic.gitfeeder.controllers.GitFeederController import GitFeederController
-from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
 from app.logic.logger.models.LogModel import LogEntry
 from app.presenter.schemas import GitFeederSchemas
 import json
@@ -74,19 +70,8 @@ def post_commits(request, project_id):
         GitFeederController.insert_branch_trails(branches, project_entry)
         GitFeederController.update_branch_merge_target(branches, project_entry)
 
-        project_entries = BluesteelProjectEntry.objects.filter(git_project=project_entry)
-        bench_def_entries = BenchmarkDefinitionEntry.objects.filter(project__in=project_entries)
-        worker_entries = WorkerEntry.objects.all()
-
-        for commit in commits:
-            commit_entry = GitCommitEntry.objects.filter(commit_hash=commit['hash'], project=project_entry).first()
-            if not commit_entry:
-                continue
-
-            BenchmarkExecutionController.create_bench_executions_from_commit(
-                commit_entry,
-                bench_def_entries,
-                worker_entries)
+        commit_hashes = [commit['hash'] for commit in commits]
+        BenchmarkExecutionController.create_bench_executions_from_commits(project_entry, commit_hashes)
 
         return res.get_response(200, 'Commits added correctly', {})
     else:
