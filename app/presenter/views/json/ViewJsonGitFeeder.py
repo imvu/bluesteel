@@ -70,7 +70,7 @@ def post_commits(request, project_id):
         GitFeederController.insert_branch_trails(branches, project_entry)
         GitFeederController.update_branch_merge_target(branches, project_entry)
 
-        commit_hashes = [commit['hash'] for commit in commits]
+        commit_hashes = list(commit_hash_set)
         BenchmarkExecutionController.create_bench_executions_from_commits(project_entry, commit_hashes)
 
         return res.get_response(200, 'Commits added correctly', {})
