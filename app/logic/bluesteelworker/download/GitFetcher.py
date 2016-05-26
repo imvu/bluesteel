@@ -3,10 +3,6 @@
 # Disable warning for relative imports
 # pylint: disable=W0403
 
-# Too many instance attributes (11/10)
-# I need to think on how to reduce the class member variables
-# pylint: disable=R0902
-
 from CommandExecutioner import CommandExecutioner
 from ProjectFolderManager import ProjectFolderManager
 import json
@@ -27,8 +23,6 @@ class GitFetcher(object):
         self.branch_names = []
         self.branch_names_and_hashes = []
         self.branches_data = []
-        self.diff_hash_dict = {}
-        self.diff_list = []
         self.unique_commmits = []
         self.branch_list = []
         self.feed_data = {}
@@ -36,7 +30,6 @@ class GitFetcher(object):
     def fetch_git_project(self, project_info):
         """ Returns an object with the repository information """
         log.basicConfig(level=self.log_level)
-        self.diff_hash_dict = {}
 
         steps = [
             self.step_fetch_git_project,
@@ -51,7 +44,6 @@ class GitFetcher(object):
             self.step_setup_diff_on_merge_target,
             self.step_create_branch_trails,
             self.step_trim_commits,
-            self.step_get_diff_for_all_commits,
             self.step_create_unique_list_commits,
             self.step_create_branch_list,
         ]
@@ -67,13 +59,11 @@ class GitFetcher(object):
         contains_data = True
         contains_data = contains_data and (len(self.unique_commmits) > 0)
         contains_data = contains_data and (len(self.branch_list) > 0)
-        contains_data = contains_data and (len(self.diff_list) > 0)
 
         if contains_data:
             self.feed_data['feed_data'] = {}
             self.feed_data['feed_data']['commits'] = self.unique_commmits
             self.feed_data['feed_data']['branches'] = self.branch_list
-            self.feed_data['feed_data']['diffs'] = self.diff_list
 
         self.feed_data['reports'] = self.report_stack
         return True
@@ -248,38 +238,6 @@ class GitFetcher(object):
                 branch['commits'],
                 project_info['git']['branch']['known']
             )
-        return True
-
-    def step_get_diff_for_all_commits(self, project_info):
-        """Get all the diffs from all the commits"""
-        for branch in self.branches_data:
-            log.debug('Diff -- Branch: %s', branch['name'])
-
-            for i in range(len(branch['commits']) - 1):
-                commit_hash_1 = branch['commits'][i]['hash']
-                commit_hash_2 = branch['commits'][i + 1]['hash']
-
-                diff_key = '{0}-{1}'.format(commit_hash_1, commit_hash_2)
-
-                log.debug('Diff -- Extracting diff: %s', diff_key)
-
-                if diff_key in self.diff_hash_dict:
-                    continue
-
-                diff_report = self.commands_get_diff_between_commits(project_info, commit_hash_1, commit_hash_2)
-
-                # Report check
-                self.save_report('step_get_diff_for_all_commits', diff_report)
-                if not GitFetcher.is_report_ok(diff_report):
-                    return False
-
-                diff_content = self.extract_diff_from_report(diff_report)
-                diff = {}
-                diff['commit_hash_son'] = commit_hash_1
-                diff['commit_hash_parent'] = commit_hash_2
-                diff['content'] = diff_content
-                self.diff_list.append(diff)
-                self.diff_hash_dict[diff_key] = ''
         return True
 
     def step_create_branch_trails(self, project_info):

@@ -34,7 +34,6 @@ def post_commits(request, project_id):
             return res.get_response(200, 'Only reports added', {})
 
         commits = val_resp_obj['feed_data']['commits']
-        diffs = val_resp_obj['feed_data']['diffs']
         branches = val_resp_obj['feed_data']['branches']
 
         commit_hash_set = GitFeederController.get_unique_commit_set(commits)
@@ -49,11 +48,6 @@ def post_commits(request, project_id):
             LogEntry.error(request.user, (msg for msg in msgs))
             return res.get_response(400, 'Parents not correct', {})
 
-        correct, msgs = GitFeederController.are_diffs_correct(commit_hash_set, diffs, project_entry)
-        if not correct:
-            LogEntry.error(request.user, (msg for msg in msgs))
-            return res.get_response(400, 'Diffs not correct', {})
-
         correct, msgs = GitFeederController.are_branches_correct(commit_hash_set, branches, project_entry)
         if not correct:
             LogEntry.error(request.user, (msg for msg in msgs))
@@ -65,7 +59,6 @@ def post_commits(request, project_id):
 
         GitFeederController.insert_commits(commits, project_entry)
         GitFeederController.insert_parents(commits, project_entry)
-        GitFeederController.insert_diffs(diffs, project_entry)
         GitFeederController.insert_branches(branches, project_entry)
         GitFeederController.insert_branch_trails(branches, project_entry)
         GitFeederController.update_branch_merge_target(branches, project_entry)

@@ -48,8 +48,6 @@ class GitFeedViewsBranchTestCase(TestCase):
         feed_data['commits'].append(commit1)
         feed_data['branches'] = []
         feed_data['branches'].append(branch1)
-        feed_data['diffs'] = []
-        feed_data['diffs'].append(FeederTestHelper.create_diff(1, 1, 'diff-1'))
 
         post_data = FeederTestHelper.create_feed_data_and_report(
             feed_data,
@@ -96,8 +94,6 @@ class GitFeedViewsBranchTestCase(TestCase):
         feed_data['branches'] = []
         feed_data['branches'].append(branch1)
         feed_data['branches'].append(branch2)
-        feed_data['diffs'] = []
-        feed_data['diffs'].append(FeederTestHelper.create_diff(6, 5, 'diff-1'))
 
         self.assertEqual(1, GitCommitEntry.objects.filter(project=self.git_project1, commit_hash='0000100001000010000100001000010000100001').count())
         self.assertEqual(1, GitCommitEntry.objects.filter(project=self.git_project1, commit_hash='0000200002000020000200002000020000200002').count())
@@ -157,8 +153,6 @@ class GitFeedViewsBranchTestCase(TestCase):
         feed_data['commits'].append(commit1)
         feed_data['branches'] = []
         feed_data['branches'].append(branch1)
-        feed_data['diffs'] = []
-        feed_data['diffs'].append(FeederTestHelper.create_diff(2, 1, 'diff-2-1'))
 
         post_data = FeederTestHelper.create_feed_data_and_report(
             feed_data,
@@ -177,7 +171,7 @@ class GitFeedViewsBranchTestCase(TestCase):
         self.assertEqual(2, GitCommitEntry.objects.all().count())
         self.assertEqual(1, GitBranchEntry.objects.all().count())
         self.assertEqual(1, GitParentEntry.objects.all().count())
-        self.assertEqual(2, GitDiffEntry.objects.all().count())
+        self.assertEqual(1, GitDiffEntry.objects.all().count())
         self.assertEqual(2, GitBranchTrailEntry.objects.all().count())
         self.assertEqual(1, GitBranchMergeTargetEntry.objects.all().count())
 
@@ -225,10 +219,6 @@ class GitFeedViewsBranchTestCase(TestCase):
         feed_data['commits'].append(commit3)
         feed_data['branches'] = []
         feed_data['branches'].append(branch1)
-        feed_data['diffs'] = []
-        feed_data['diffs'].append(FeederTestHelper.create_diff(1, 1, 'diff-1'))
-        feed_data['diffs'].append(FeederTestHelper.create_diff(2, 1, 'diff-2-1'))
-        feed_data['diffs'].append(FeederTestHelper.create_diff(3, 2, 'diff-3-2'))
 
         post_data = FeederTestHelper.create_feed_data_and_report(
             feed_data,

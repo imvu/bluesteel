@@ -59,8 +59,6 @@ class GitFeedViewsCommitTestCase(TestCase):
         feed_data['commits'].append(commit1)
         feed_data['branches'] = []
         feed_data['branches'].append(branch1)
-        feed_data['diffs'] = []
-        feed_data['diffs'].append(FeederTestHelper.create_diff(1, 1, 'diff-1'))
 
         post_data = FeederTestHelper.create_feed_data_and_report(
             feed_data,
@@ -94,8 +92,6 @@ class GitFeedViewsCommitTestCase(TestCase):
         feed_data['commits'].append(commit1)
         feed_data['branches'] = []
         feed_data['branches'].append(branch1)
-        feed_data['diffs'] = []
-        feed_data['diffs'].append(FeederTestHelper.create_diff(1, 1, 'diff-1'))
 
         post_data = FeederTestHelper.create_feed_data_and_report(
             feed_data,
@@ -135,8 +131,6 @@ class GitFeedViewsCommitTestCase(TestCase):
         feed_data['commits'].append(commit1)
         feed_data['branches'] = []
         feed_data['branches'].append(branch1)
-        feed_data['diffs'] = []
-        feed_data['diffs'].append(FeederTestHelper.create_diff(1, 1, 'diff-1'))
 
         post_data = FeederTestHelper.create_feed_data_and_report(
             feed_data,
@@ -177,10 +171,6 @@ class GitFeedViewsCommitTestCase(TestCase):
         feed_data['commits'].append(commit4)
         feed_data['branches'] = []
         feed_data['branches'].append(branch1)
-        feed_data['diffs'] = []
-        feed_data['diffs'].append(FeederTestHelper.create_diff(1, 1, 'diff-1'))
-        feed_data['diffs'].append(FeederTestHelper.create_diff(2, 1, 'diff-2-1'))
-        feed_data['diffs'].append(FeederTestHelper.create_diff(3, 2, 'diff-3-2'))
 
         post_data = FeederTestHelper.create_feed_data_and_report(
             feed_data,
@@ -216,9 +206,6 @@ class GitFeedViewsCommitTestCase(TestCase):
         feed_data['commits'].append(commit2)
         feed_data['branches'] = []
         feed_data['branches'].append(branch1)
-        feed_data['diffs'] = []
-        feed_data['diffs'].append(FeederTestHelper.create_diff(1, 1, 'diff-1'))
-        feed_data['diffs'].append(FeederTestHelper.create_diff(2, 1, 'diff-2-1'))
 
         post_data = FeederTestHelper.create_feed_data_and_report(
             feed_data,
@@ -260,9 +247,6 @@ class GitFeedViewsCommitTestCase(TestCase):
         feed_data['commits'].append(commit2)
         feed_data['branches'] = []
         feed_data['branches'].append(branch1)
-        feed_data['diffs'] = []
-        feed_data['diffs'].append(FeederTestHelper.create_diff(1, 1, 'diff-1'))
-        feed_data['diffs'].append(FeederTestHelper.create_diff(2, 1, 'diff-2-1'))
 
         post_data = FeederTestHelper.create_feed_data_and_report(
             feed_data,
@@ -293,9 +277,6 @@ class GitFeedViewsCommitTestCase(TestCase):
         feed_data['commits'].append(commit2)
         feed_data['branches'] = []
         feed_data['branches'].append(branch1)
-        feed_data['diffs'] = []
-        feed_data['diffs'].append(FeederTestHelper.create_diff(1, 1, 'diff-1'))
-        feed_data['diffs'].append(FeederTestHelper.create_diff(2, 1, 'diff-2-1'))
 
         post_data = FeederTestHelper.create_feed_data_and_report(
             feed_data,
@@ -331,10 +312,6 @@ class GitFeedViewsCommitTestCase(TestCase):
         feed_data['branches'] = []
         feed_data['branches'].append(branch1)
         feed_data['branches'].append(branch2)
-        feed_data['diffs'] = []
-        feed_data['diffs'].append(FeederTestHelper.create_diff(1, 1, 'diff-1'))
-        feed_data['diffs'].append(FeederTestHelper.create_diff(2, 1, 'diff-2-1'))
-        feed_data['diffs'].append(FeederTestHelper.create_diff(3, 2, 'diff-3-2'))
 
         post_data = FeederTestHelper.create_feed_data_and_report(
             feed_data,
@@ -363,9 +340,6 @@ class GitFeedViewsCommitTestCase(TestCase):
         feed_data['branches'] = []
         feed_data['branches'].append(branch1)
         feed_data['branches'].append(branch2)
-        feed_data['diffs'] = []
-        feed_data['diffs'].append(FeederTestHelper.create_diff(4, 3, 'diff-4-3'))
-        feed_data['diffs'].append(FeederTestHelper.create_diff(5, 4, 'diff-5-4'))
 
         post_data = FeederTestHelper.create_feed_data_and_report(
             feed_data,
@@ -471,8 +445,6 @@ class GitFeedViewsCommitTestCase(TestCase):
         feed_data['commits'].append(commit1)
         feed_data['branches'] = []
         feed_data['branches'].append(branch1)
-        feed_data['diffs'] = []
-        feed_data['diffs'].append(FeederTestHelper.create_diff(1, 1, 'diff-1'))
 
         post_data = FeederTestHelper.create_feed_data_and_report(
             feed_data,

@@ -1146,52 +1146,6 @@ class GitFetcherTestCase(TestCase):
 
 
     @mock.patch('app.logic.bluesteelworker.download.CommandExecutioner.subprocess.call')
-    def test_step_get_diff_for_all_commits(self, mock_subprocess):
-        mock_subprocess.return_value = 0
-        self.create_paths(self.obj1)
-        self.create_git_hidden_folder(settings.TMP_ROOT, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1')
-
-        commit1 = {}
-        commit1['hash'] = '0000100001000010000100001000010000100001'
-
-        commit2 = {}
-        commit2['hash'] = '0000200002000020000200002000020000200002'
-
-        commit3 = {}
-        commit3['hash'] = '0000300003000030000300003000030000300003'
-
-        branch1 = {}
-        branch1['name'] = 'name-1'
-        branch1['commits'] = []
-        branch1['commits'].append(commit1)
-        branch1['commits'].append(commit2)
-        branch1['commits'].append(commit3)
-
-        branch2 = {}
-        branch2['name'] = 'name-2'
-        branch2['commits'] = []
-        branch2['commits'].append(commit1)
-        branch2['commits'].append(commit2)
-        branch2['commits'].append(commit3)
-
-        self.fetcher.branches_data = [branch1, branch2]
-
-        res = self.fetcher.step_get_diff_for_all_commits(self.obj1)
-
-        self.assertTrue(res)
-        self.assertEqual(2, mock_subprocess.call_count)
-        self.assertEqual(2, len(self.fetcher.diff_hash_dict))
-        self.assertTrue('0000100001000010000100001000010000100001-0000200002000020000200002000020000200002' in self.fetcher.diff_hash_dict)
-        self.assertTrue('0000200002000020000200002000020000200002-0000300003000030000300003000030000300003' in self.fetcher.diff_hash_dict)
-
-        name1, args1, side1 = mock_subprocess.mock_calls[0]
-        self.assertEqual(['git', 'diff', '0000100001000010000100001000010000100001', '0000200002000020000200002000020000200002'], args1[0])
-
-        name2, args2, side2 = mock_subprocess.mock_calls[1]
-        self.assertEqual(['git', 'diff', '0000200002000020000200002000020000200002', '0000300003000030000300003000030000300003'], args2[0])
-
-
-    @mock.patch('app.logic.bluesteelworker.download.CommandExecutioner.subprocess.call')
     def test_step_local_branches(self, mock_subprocess):
         mock_subprocess.return_value = 0
         self.create_paths(self.obj1)

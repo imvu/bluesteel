@@ -12,7 +12,7 @@ GIT_FEEDER_SCHEMA = {
         'feed_data' : {
             'type' : 'object',
             'additionalProperties': False,
-            'required': ['commits', 'branches', 'diffs'],
+            'required': ['commits', 'branches'],
             'properties' : {
                 'commits' : {
                     'type' : 'array',
@@ -162,27 +162,6 @@ GIT_FEEDER_SCHEMA = {
 
                                 }
                             }
-                        }
-                    }
-                },
-                'diffs' : {
-                    'type' : 'array',
-                    'items' : {
-                        'type' : 'object',
-                        'additionalProperties': False,
-                        'required': ['commit_hash_son', 'commit_hash_parent', 'content'],
-                        'properties' : {
-                            'commit_hash_son' : {
-                                'type' : 'string',
-                                'pattern': '^[0-9a-f]{40}$'
-                            },
-                            'commit_hash_parent' : {
-                                'type' : 'string',
-                                'pattern': '^[0-9a-f]{40}$'
-                            },
-                            'content' : {
-                                'type' : 'string',
-                            },
                         }
                     }
                 },
