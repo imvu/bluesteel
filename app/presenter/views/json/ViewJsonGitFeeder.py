@@ -28,7 +28,7 @@ def post_commits(request, project_id):
             LogEntry.error(request.user, 'Json schema failed.\n{0}'.format(json.dumps(val_resp_obj)))
             return res.get_schema_failed(val_resp_obj)
 
-        GitFeederController.insert_reports(request.user, val_resp_obj['reports'])
+        GitFeederController.insert_reports(request.user, val_resp_obj['reports'], project_entry)
 
         if 'feed_data' not in val_resp_obj:
             return res.get_response(200, 'Only reports added', {})

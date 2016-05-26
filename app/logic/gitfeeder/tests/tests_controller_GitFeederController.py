@@ -450,7 +450,7 @@ class GitFeederControllerTestCase(TestCase):
 
         self.assertEqual(0, FeedEntry.objects.all().count())
 
-        GitFeederController.insert_reports(self.user1, reports)
+        GitFeederController.insert_reports(self.user1, reports, self.git_project1)
 
         self.assertEqual(1, FeedEntry.objects.all().count())
         self.assertEqual(1, FeedEntry.objects.filter(worker=self.worker1).count())
@@ -471,7 +471,7 @@ class GitFeederControllerTestCase(TestCase):
 
         self.assertEqual(0, FeedEntry.objects.all().count())
 
-        GitFeederController.insert_reports(self.user2, reports)
+        GitFeederController.insert_reports(self.user2, reports, self.git_project1)
 
         self.assertEqual(1, FeedEntry.objects.all().count())
         self.assertEqual(0, FeedEntry.objects.filter(worker=self.worker1).count())
@@ -498,7 +498,7 @@ class GitFeederControllerTestCase(TestCase):
 
         self.assertEqual(0, FeedEntry.objects.all().count())
 
-        GitFeederController.insert_reports(anonymous, reports)
+        GitFeederController.insert_reports(anonymous, reports, self.git_project1)
 
         self.assertEqual(1, FeedEntry.objects.all().count())
         self.assertEqual(0, FeedEntry.objects.filter(worker=self.worker1).count())

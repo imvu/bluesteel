@@ -372,7 +372,7 @@ class GitFeederController(object):
                 merge_target_entry.save()
 
     @staticmethod
-    def insert_reports(user, reports):
+    def insert_reports(user, reports, project):
         """ Inserts all the commands into the db """
         report_user = user
         if user.is_anonymous():
@@ -380,7 +380,7 @@ class GitFeederController(object):
 
         worker_entry = WorkerEntry.objects.filter(user=report_user).first()
         group_entry = CommandGroupEntry.objects.create(user=report_user)
-        feed_entry = FeedEntry.objects.create(command_group=group_entry, worker=worker_entry)
+        feed_entry = FeedEntry.objects.create(command_group=group_entry, worker=worker_entry, git_project=project)
         del feed_entry
 
         for index, command_set in enumerate(reports):
