@@ -16,10 +16,12 @@
                         <div class="list_label indent_1">OPERATIVE SYSTEM</div>
                         <div class="normal indent_2">{{worker.operative_system}}</div>
                     </li>
+                    <br/>
                     <li>
                         <div class="list_label indent_1">DESCRIPTION</div>
                         <div class="normal indent_2">{{worker.description}}</div>
                     </li>
+                    <br/>
                     <li>
                         <div class="list_label indent_1">COMMIT FEEDER</div>
                         {% if worker.git_feeder %}
@@ -28,6 +30,7 @@
                             <div class="normal indent_2">No</div>
                         {% endif %}
                     </li>
+                    <br/>
                     <li>
                         <div class="list_label indent_1">LAST ACTIVITY</div>
                         <div class="normal indent_2">
