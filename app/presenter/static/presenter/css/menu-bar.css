@@ -30,6 +30,7 @@ li.menu_item
     margin-right: 15px;
     line-height: 45px;
     text-align: vertical;
+    -webkit-font-smoothing: antialiased;
 }
 
 a.menu_item_link
@@ -38,6 +39,7 @@ a.menu_item_link
     color: white;
     text-decoration: none;
     line-height: 45px;
+    -webkit-font-smoothing: antialiased;
 }
 
 a.menu_item_link:hover
@@ -60,6 +62,7 @@ li.control_item
     margin-right: 15px;
     line-height: 45px;
     text-align: vertical;
+    -webkit-font-smoothing: antialiased;
 }
 
 a.control_item_link
@@ -69,6 +72,7 @@ a.control_item_link
     text-decoration: none;
     line-height: 45px;
     cursor: pointer;
+    -webkit-font-smoothing: antialiased;
 }
 
 a.control_item_link:hover
@@ -107,6 +111,7 @@ a.page_item_link
     cursor: pointer;
     border-radius: 3px;
     border-style: none;
+    -webkit-font-smoothing: antialiased;
 }
 
 a.page_item_link_selected

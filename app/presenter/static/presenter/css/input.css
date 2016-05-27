@@ -9,6 +9,7 @@ input.command_input[type="text"] {
     text-decoration: none;
     line-height: 15px;
     font-style: bold;
+    -webkit-font-smoothing: antialiased;
 }
 
 input.command_input[type="text"]:focus {
@@ -29,6 +30,7 @@ input.path_input
     text-decoration: none;
     line-height: 15px;
     font-style: bold;
+    -webkit-font-smoothing: antialiased;
 }
 
 input.path_input:focus

@@ -28,6 +28,7 @@ a.footer_item_link
     color: steelblue;
     text-decoration: none;
     line-height: 45px;
+    -webkit-font-smoothing: antialiased;
 }
 
 a.footer_item_link:hover

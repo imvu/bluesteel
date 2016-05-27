@@ -5,6 +5,7 @@ div.title
     text-decoration: none;
     line-height: 30px;
     font-style: bold;
+    -webkit-font-smoothing: antialiased;
 }
 
 div.list_label
@@ -18,6 +19,7 @@ div.list_label
     line-height: 20px;
     font-style: bold;
     text-align: left;
+    -webkit-font-smoothing: antialiased;
 }
 
 div.normal
@@ -27,12 +29,14 @@ div.normal
     font-size: 15px;
     line-height: 20px;
     text-align: left;
+    -webkit-font-smoothing: antialiased;
 }
 
 div.big_text
 {
     font-size: 20px;
     line-height: 30px;
+    -webkit-font-smoothing: antialiased;
 }
 
 div.centered
@@ -52,6 +56,7 @@ div.command
     text-decoration: none;
     line-height: 25px;
     font-style: bold;
+    -webkit-font-smoothing: antialiased;
 }
 
 div.indent_1
@@ -109,6 +114,7 @@ a.normal_link
     line-height: 20px;
     text-align: left;
     cursor: pointer;
+    -webkit-font-smoothing: antialiased;
 }
 
 a.normal_link:hover
@@ -124,6 +130,7 @@ a.title_link
     line-height: 30px;
     font-style: bold;
     cursor: pointer;
+    -webkit-font-smoothing: antialiased;
 }
 
 a.title_link:hover
@@ -142,5 +149,6 @@ textarea.default_textarea
     line-height: 20px;
     border-radius: 5px;
     border:1px solid lightgray;
+    -webkit-font-smoothing: antialiased;
 
 }

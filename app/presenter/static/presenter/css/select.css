@@ -9,6 +9,7 @@ select.selection
     text-decoration: none;
     line-height: 15px;
     border: solid 0px transparent;
+    -webkit-font-smoothing: antialiased;
 }
 
 select.individual
