@@ -126,7 +126,7 @@ class GitFetcher(object):
         for local_name in self.local_branch_names:
             found = False
             for remote_name in self.remote_branch_names:
-                if local_name in remote_name:
+                if remote_name.endswith(local_name):
                     found = True
                     break
 

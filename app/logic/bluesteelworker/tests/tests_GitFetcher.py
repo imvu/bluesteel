@@ -1146,7 +1146,7 @@ class GitFetcherTestCase(TestCase):
 
 
     @mock.patch('app.logic.bluesteelworker.download.CommandExecutioner.subprocess.call')
-    def test_step_local_branches(self, mock_subprocess):
+    def test_step_remove_local_branches(self, mock_subprocess):
         mock_subprocess.return_value = 0
         self.create_paths(self.obj1)
         self.create_git_hidden_folder(settings.TMP_ROOT, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1')
@@ -1161,6 +1161,26 @@ class GitFetcherTestCase(TestCase):
 
         name1, args1, side1 = mock_subprocess.mock_calls[0]
         self.assertEqual(['git', 'branch', '-D', 'branch-2'], args1[0])
+
+        name2, args2, side2 = mock_subprocess.mock_calls[1]
+        self.assertEqual(['git', 'branch', '-D', 'branch-4'], args2[0])
+
+    @mock.patch('app.logic.bluesteelworker.download.CommandExecutioner.subprocess.call')
+    def test_step_remove_local_branches_with_same_start_name(self, mock_subprocess):
+        mock_subprocess.return_value = 0
+        self.create_paths(self.obj1)
+        self.create_git_hidden_folder(settings.TMP_ROOT, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1')
+
+        self.fetcher.remote_branch_names = ['origin/branch-1-1', 'origin/branch-3', 'origin/branch-5']
+        self.fetcher.local_branch_names = ['branch-1', 'branch-1-1', 'branch-3', 'branch-4']
+
+        res = self.fetcher.step_remove_local_branches(self.obj1)
+
+        self.assertTrue(res)
+        self.assertEqual(2, mock_subprocess.call_count)
+
+        name1, args1, side1 = mock_subprocess.mock_calls[0]
+        self.assertEqual(['git', 'branch', '-D', 'branch-1'], args1[0])
 
         name2, args2, side2 = mock_subprocess.mock_calls[1]
         self.assertEqual(['git', 'branch', '-D', 'branch-4'], args2[0])
