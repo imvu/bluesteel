@@ -1,7 +1,10 @@
 """ BenchmarkExecution model """
 
 from django.db import models
+from django.db.models import signals
+from django.dispatch.dispatcher import receiver
 from app.logic.commandrepo.models.CommandModel import CommandEntry
+from app.logic.commandrepo.models.CommandSetModel import CommandSetEntry
 from app.logic.commandrepo.models.CommandResultModel import CommandResultEntry
 import json
 
@@ -82,3 +85,17 @@ class BenchmarkExecutionEntry(models.Model):
         for value in vector:
             average += float(value)
         return average / float(len(vector))
+
+@receiver(models.signals.post_delete)
+def benchmark_exec_entry_post_delete(sender, instance, **kwargs):
+    """ This function will delete the report on any delete of this model """
+    del kwargs
+    if isinstance(instance, BenchmarkExecutionEntry) and (sender == BenchmarkExecutionEntry):
+        signals.post_delete.disconnect(benchmark_exec_entry_post_delete, sender=BenchmarkExecutionEntry)
+        try:
+            if instance.report and instance.report.id != None:
+                instance.report.delete()
+        except CommandSetEntry.DoesNotExist:
+            pass
+
+        signals.post_delete.connect(benchmark_exec_entry_post_delete, sender=BenchmarkExecutionEntry)

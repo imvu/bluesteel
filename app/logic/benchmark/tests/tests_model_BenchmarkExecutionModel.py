@@ -187,3 +187,21 @@ class BenchmarkExecutionEntryTestCase(TestCase):
         self.assertEqual('text', results[1]['visual_type'])
         self.assertEqual('this is a text', results[1]['data'])
 
+
+    def test_benchmark_execution_deletion_also_delete_the_report(self):
+        report = CommandSetEntry.objects.create()
+
+        entry = BenchmarkExecutionEntry.objects.create(
+            definition=self.benchmark_definition,
+            commit=self.git_commit,
+            worker=self.worker,
+            report=report,
+            invalidated=False,
+            status=BenchmarkExecutionEntry.STATUS_TYPE[1][0]
+        )
+
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(id=entry.id).count())
+        self.assertEqual(1, CommandSetEntry.objects.filter(id=report.id).count())
+        entry.delete()
+        self.assertEqual(0, BenchmarkExecutionEntry.objects.filter(id=entry.id).count())
+        self.assertEqual(0, CommandSetEntry.objects.filter(id=report.id).count())

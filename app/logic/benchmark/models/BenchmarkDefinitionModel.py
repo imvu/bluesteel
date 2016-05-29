@@ -3,6 +3,7 @@
 from django.db import models
 from django.db.models import signals
 from django.dispatch.dispatcher import receiver
+from app.logic.commandrepo.models.CommandSetModel import CommandSetEntry
 
 class BenchmarkDefinitionEntry(models.Model):
     """ Benchmark Definition """
@@ -41,7 +42,6 @@ def benchmark_def_entry_post_delete(sender, instance, **kwargs):
     del kwargs
     if isinstance(instance, BenchmarkDefinitionEntry) and (sender == BenchmarkDefinitionEntry):
         signals.post_delete.disconnect(benchmark_def_entry_post_delete, sender=BenchmarkDefinitionEntry)
-        from app.logic.commandrepo.models.CommandSetModel import CommandSetEntry
         try:
             if instance.command_set and instance.command_set.id != None:
                 instance.command_set.delete()
