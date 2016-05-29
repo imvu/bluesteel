@@ -6,7 +6,6 @@ from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinit
 from app.logic.benchmark.models.BenchmarkExecutionModel import BenchmarkExecutionEntry
 from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
 from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
-from app.logic.commandrepo.models.CommandGroupModel import CommandGroupEntry
 from app.logic.commandrepo.models.CommandSetModel import CommandSetEntry
 from app.logic.commandrepo.models.CommandModel import CommandEntry
 from app.logic.commandrepo.models.CommandResultModel import CommandResultEntry
@@ -151,8 +150,7 @@ class BenchmarkExecutionController(object):
     @staticmethod
     def create_benchmark_execution(definition, commit, worker):
         """ Creates a benchmark execution only if there is none equal before """
-        command_group = CommandGroupEntry.objects.create()
-        command_set = CommandSetEntry.objects.create(group=command_group)
+        command_set = CommandSetEntry.objects.create()
 
         exec_entry = BenchmarkExecutionEntry.objects.filter(definition=definition, commit=commit, worker=worker).first()
 
@@ -234,7 +232,7 @@ class BenchmarkExecutionController(object):
         exec_entries = BenchmarkExecutionEntry.objects.filter(definition=benchmark_definition)
 
         for exec_entry in exec_entries:
-            CommandController.delete_command_group_by_id(exec_entry.report.group.id)
+            CommandController.delete_command_set_by_id(exec_entry.report.id)
             exec_entry.delete()
 
     @staticmethod

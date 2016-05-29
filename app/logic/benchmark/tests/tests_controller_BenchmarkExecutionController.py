@@ -496,7 +496,7 @@ class BenchmarkExecutionControllerTestCase(TestCase):
             commit=self.commit1,
             worker=self.worker1,
             definition=self.benchmark_definition1).count())
-        self.assertEqual(1, CommandGroupEntry.objects.all().count())
+        self.assertEqual(0, CommandGroupEntry.objects.all().count())
         self.assertEqual(1, CommandSetEntry.objects.all().count())
 
         BenchmarkExecutionController.delete_benchmark_executions(self.benchmark_definition1)
