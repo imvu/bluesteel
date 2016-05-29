@@ -12,6 +12,7 @@ from app.logic.httpcommon import res
 from app.logic.httpcommon.Page import Page
 
 PROJECTS_ITEMS_PER_PAGE = 6
+PROJECTS_BRANCHES_PER_PAGE = 4
 BRANCH_COMMIT_DEPTH = 100
 
 def get_projects(request, page_index):
@@ -62,7 +63,7 @@ def get_project_branches(request, project_id, commit_depth, page_index):
         if project_entry == None:
             return res.get_template_data(request, 'presenter/not_found.html', {})
 
-        page = Page(PROJECTS_ITEMS_PER_PAGE, page_index)
+        page = Page(PROJECTS_BRANCHES_PER_PAGE, page_index)
         branches, page_indices = BluesteelProjectController.get_project_git_branch_data(
             page,
             project_entry,
