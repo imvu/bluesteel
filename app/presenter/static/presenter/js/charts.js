@@ -64,7 +64,7 @@ stackedchartVerticalBars = function(objId, data) {
     var labels = []
     var test = []
     for (var i = 0; i < data.length; i++) {
-        labels.push(data[i]['benchmark_execution_id'].toString());
+        labels.push(data[i]['benchmark_execution_hash'].toString());
         test.push(labels[i] + "--test");
     }
 
@@ -128,7 +128,7 @@ stackedchartVerticalBars = function(objId, data) {
 
 
     for (var i = 0; i < data.length; i++) {
-        labels.push(data[i]['benchmark_execution_id'].toString());
+        labels.push(data[i]['benchmark_execution_hash'].toString());
 
         if (data[i]['invalidated']) {
             // if (data[i]['bar_type'] === 'current_branch') {
