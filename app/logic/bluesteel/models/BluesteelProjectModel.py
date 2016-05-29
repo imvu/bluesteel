@@ -1,6 +1,9 @@
 """ BlueSteelProject model """
 
 from django.db import models
+from django.db.models import signals
+from django.dispatch.dispatcher import receiver
+from app.logic.commandrepo.models.CommandGroupModel import CommandGroupEntry
 from app.logic.gitrepo.controllers.GitController import GitController
 
 class BluesteelProjectEntry(models.Model):
@@ -40,3 +43,18 @@ class BluesteelProjectEntry(models.Model):
     def wipe_data(self):
         """ Wipe data associated with this project """
         GitController.wipe_project_data(self.git_project)
+
+
+@receiver(models.signals.post_delete)
+def bluesteel_project_entry_post_delete(sender, instance, **kwargs):
+    """ This function will delete the command_group on any delete of this model """
+    del kwargs
+    if isinstance(instance, BluesteelProjectEntry) and (sender == BluesteelProjectEntry):
+        signals.post_delete.disconnect(bluesteel_project_entry_post_delete, sender=BluesteelProjectEntry)
+        try:
+            if instance.command_group and instance.command_group.id != None:
+                instance.command_group.delete()
+        except CommandGroupEntry.DoesNotExist:
+            pass
+
+        signals.post_delete.connect(bluesteel_project_entry_post_delete, sender=BluesteelProjectEntry)

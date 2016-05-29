@@ -85,3 +85,19 @@ class BluesteelProjectTestCase(TestCase):
         project_new.wipe_data()
 
         self.assertEqual(0, GitCommitEntry.objects.all().count())
+
+    def test_bluesteel_project_deletion_delete_command_group(self):
+        project_new = BluesteelProjectEntry.objects.create(
+            name='project-28',
+            layout=self.layout,
+            command_group=self.command_group,
+            git_project=self.git_project,
+        )
+
+        self.assertEqual(1, BluesteelProjectEntry.objects.filter(id=project_new.id).count())
+        self.assertEqual(1, CommandGroupEntry.objects.filter(id=self.command_group.id).count())
+
+        project_new.delete()
+
+        self.assertEqual(0, BluesteelProjectEntry.objects.filter(id=project_new.id).count())
+        self.assertEqual(0, CommandGroupEntry.objects.filter(id=self.command_group.id).count())
