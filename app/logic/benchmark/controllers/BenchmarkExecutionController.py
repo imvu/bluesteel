@@ -90,6 +90,7 @@ class BenchmarkExecutionController(object):
             slot = {}
             slot['exists'] = False
             slot['benchmark_execution_id'] = 0
+            slot['benchmark_execution_hash'] = ''
             slot['results'] = {}
             slot['invalidated'] = False
             slot['current_branch'] = False
@@ -104,6 +105,7 @@ class BenchmarkExecutionController(object):
 
             slot['exists'] = True
             slot['benchmark_execution_id'] = benchmark_entry.id
+            slot['benchmark_execution_hash'] = benchmark_entry.commit.commit_hash[:5]
             slot['results'] = benchmark_entry.get_benchmark_results()
             slot['invalidated'] = benchmark_entry.is_invalidated()
             slot['current_branch'] = not past_fork_point
@@ -130,12 +132,14 @@ class BenchmarkExecutionController(object):
                     bench_data[exec_item['id']] = [{
                         'average' : 0.0,
                         'benchmark_execution_id' : 0,
+                        'benchmark_execution_hash' : '',
                         'bar_type' : 'invalidated'
                     }] * len(stacked_benchmark_data)
 
                 obj = {}
                 obj['average'] = exec_item['average']
                 obj['benchmark_execution_id'] = data['benchmark_execution_id']
+                obj['benchmark_execution_hash'] = data['benchmark_execution_hash']
                 obj['invalidated'] = data['invalidated']
                 if data['current_branch']:
                     obj['bar_type'] = 'current_branch'

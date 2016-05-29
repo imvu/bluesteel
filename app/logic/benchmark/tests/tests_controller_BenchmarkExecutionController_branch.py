@@ -289,18 +289,21 @@ class BenchmarkExecutionControllerBranchTestCase(TestCase):
         self.assertEqual(True, bench_data[0]['exists'])
         self.assertEqual('0000300003000030000300003000030000300003', bench_data[0]['commit'])
         self.assertEqual(self.benchmark_execution3.id, bench_data[0]['benchmark_execution_id'])
+        self.assertEqual('00003', bench_data[0]['benchmark_execution_hash'])
         self.assertEqual([11,12,13,14,15], bench_data[0]['results'][0]['data'])
 
         self.assertEqual(True, bench_data[1]['current_branch'])
         self.assertEqual(True, bench_data[1]['exists'])
         self.assertEqual('0000200002000020000200002000020000200002', bench_data[1]['commit'])
         self.assertEqual(self.benchmark_execution2.id, bench_data[1]['benchmark_execution_id'])
+        self.assertEqual('00002', bench_data[1]['benchmark_execution_hash'])
         self.assertEqual([6,7,8,9,10], bench_data[1]['results'][0]['data'])
 
         self.assertEqual(True, bench_data[2]['current_branch'])
         self.assertEqual(True, bench_data[2]['exists'])
         self.assertEqual('0000100001000010000100001000010000100001', bench_data[2]['commit'])
         self.assertEqual(self.benchmark_execution1.id, bench_data[2]['benchmark_execution_id'])
+        self.assertEqual('00001', bench_data[2]['benchmark_execution_hash'])
         self.assertEqual([1,2,3,4,5], bench_data[2]['results'][0]['data'])
 
 
@@ -337,6 +340,7 @@ class BenchmarkExecutionControllerBranchTestCase(TestCase):
         self.assertEqual(True, bench_data[0]['exists'])
         self.assertEqual('0000300003000030000300003000030000300003', bench_data[0]['commit'])
         self.assertEqual(self.benchmark_execution3.id, bench_data[0]['benchmark_execution_id'])
+        self.assertEqual('00003', bench_data[0]['benchmark_execution_hash'])
         self.assertEqual([11,12,13,14,15], bench_data[0]['results'][0]['data'])
 
         self.assertEqual(False, bench_data[1]['current_branch'])
@@ -346,6 +350,7 @@ class BenchmarkExecutionControllerBranchTestCase(TestCase):
         self.assertEqual(True, bench_data[2]['exists'])
         self.assertEqual('0000100001000010000100001000010000100001', bench_data[2]['commit'])
         self.assertEqual(self.benchmark_execution1.id, bench_data[2]['benchmark_execution_id'])
+        self.assertEqual('00001', bench_data[2]['benchmark_execution_hash'])
         self.assertEqual([1,2,3,4,5], bench_data[2]['results'][0]['data'])
 
 
@@ -387,6 +392,7 @@ class BenchmarkExecutionControllerBranchTestCase(TestCase):
         self.assertEqual(0.0, bench_data['id1'][1]['average'])
         self.assertEqual(3.0, bench_data['id1'][2]['average'])
         self.assertEqual(self.benchmark_execution1.id, bench_data['id1'][2]['benchmark_execution_id'])
+        self.assertEqual('00001', bench_data['id1'][2]['benchmark_execution_hash'])
         self.assertEqual(0, bench_data['id1'][1]['benchmark_execution_id'])
         self.assertEqual(0, bench_data['id1'][0]['benchmark_execution_id'])
 
@@ -396,6 +402,7 @@ class BenchmarkExecutionControllerBranchTestCase(TestCase):
         self.assertEqual(0.0, bench_data['id2'][2]['average'])
         self.assertEqual(0, bench_data['id2'][2]['benchmark_execution_id'])
         self.assertEqual(self.benchmark_execution2.id, bench_data['id2'][1]['benchmark_execution_id'])
+        self.assertEqual('00002', bench_data['id2'][1]['benchmark_execution_hash'])
         self.assertEqual(0, bench_data['id2'][0]['benchmark_execution_id'])
 
         self.assertEqual(3, len(bench_data['id3']))
@@ -405,6 +412,7 @@ class BenchmarkExecutionControllerBranchTestCase(TestCase):
         self.assertEqual(0, bench_data['id3'][2]['benchmark_execution_id'])
         self.assertEqual(0, bench_data['id3'][1]['benchmark_execution_id'])
         self.assertEqual(self.benchmark_execution3.id, bench_data['id3'][0]['benchmark_execution_id'])
+        self.assertEqual('00003', bench_data['id3'][0]['benchmark_execution_hash'])
 
     def test_get_stacked_data_same_id(self):
         out_1 = json.dumps([{'visual_type' : 'vertical_bars', 'id' : 'id1', 'data' : [1,2,3,4,5]}])
@@ -446,6 +454,9 @@ class BenchmarkExecutionControllerBranchTestCase(TestCase):
         self.assertEqual(self.benchmark_execution1.id, bench_data['id1'][2]['benchmark_execution_id'])
         self.assertEqual(self.benchmark_execution2.id, bench_data['id1'][1]['benchmark_execution_id'])
         self.assertEqual(self.benchmark_execution3.id, bench_data['id1'][0]['benchmark_execution_id'])
+        self.assertEqual('00001', bench_data['id1'][2]['benchmark_execution_hash'])
+        self.assertEqual('00002', bench_data['id1'][1]['benchmark_execution_hash'])
+        self.assertEqual('00003', bench_data['id1'][0]['benchmark_execution_hash'])
 
     def test_get_stacked_data_multiple_id_per_execution(self):
         out_1 = json.dumps([{'visual_type' : 'vertical_bars', 'id' : 'id1', 'data' : [1,2,3,4,5]},     {'visual_type' : 'vertical_bars', 'id' : 'id4', 'data' : [21,22,23,24,25]}])
@@ -487,6 +498,9 @@ class BenchmarkExecutionControllerBranchTestCase(TestCase):
         self.assertEqual(self.benchmark_execution1.id, bench_data['id1'][2]['benchmark_execution_id'])
         self.assertEqual(self.benchmark_execution2.id, bench_data['id1'][1]['benchmark_execution_id'])
         self.assertEqual(self.benchmark_execution3.id, bench_data['id1'][0]['benchmark_execution_id'])
+        self.assertEqual('00001', bench_data['id1'][2]['benchmark_execution_hash'])
+        self.assertEqual('00002', bench_data['id1'][1]['benchmark_execution_hash'])
+        self.assertEqual('00003', bench_data['id1'][0]['benchmark_execution_hash'])
 
         self.assertEqual(3, len(bench_data['id4']))
         self.assertEqual(0.0, bench_data['id4'][0]['average'])
@@ -495,6 +509,9 @@ class BenchmarkExecutionControllerBranchTestCase(TestCase):
         self.assertEqual(self.benchmark_execution1.id, bench_data['id4'][2]['benchmark_execution_id'])
         self.assertEqual(0, bench_data['id4'][1]['benchmark_execution_id'])
         self.assertEqual(0, bench_data['id4'][0]['benchmark_execution_id'])
+        self.assertEqual('00001', bench_data['id4'][2]['benchmark_execution_hash'])
+        self.assertEqual('', bench_data['id4'][1]['benchmark_execution_hash'])
+        self.assertEqual('', bench_data['id4'][0]['benchmark_execution_hash'])
 
         self.assertEqual(3, len(bench_data['id6']))
         self.assertEqual(0.0, bench_data['id6'][0]['average'])
@@ -503,6 +520,9 @@ class BenchmarkExecutionControllerBranchTestCase(TestCase):
         self.assertEqual(0, bench_data['id6'][2]['benchmark_execution_id'])
         self.assertEqual(self.benchmark_execution2.id, bench_data['id6'][1]['benchmark_execution_id'])
         self.assertEqual(0, bench_data['id6'][0]['benchmark_execution_id'])
+        self.assertEqual('', bench_data['id6'][2]['benchmark_execution_hash'])
+        self.assertEqual('00002', bench_data['id6'][1]['benchmark_execution_hash'])
+        self.assertEqual('', bench_data['id6'][0]['benchmark_execution_hash'])
 
         self.assertEqual(3, len(bench_data['id8']))
         self.assertEqual(53.0, bench_data['id8'][0]['average'])
@@ -511,6 +531,9 @@ class BenchmarkExecutionControllerBranchTestCase(TestCase):
         self.assertEqual(0, bench_data['id8'][2]['benchmark_execution_id'])
         self.assertEqual(0, bench_data['id8'][1]['benchmark_execution_id'])
         self.assertEqual(self.benchmark_execution3.id, bench_data['id8'][0]['benchmark_execution_id'])
+        self.assertEqual('', bench_data['id8'][2]['benchmark_execution_hash'])
+        self.assertEqual('', bench_data['id8'][1]['benchmark_execution_hash'])
+        self.assertEqual('00003', bench_data['id8'][0]['benchmark_execution_hash'])
 
 
     def test_get_stacked_data_text_is_not_stacked(self):
@@ -553,6 +576,9 @@ class BenchmarkExecutionControllerBranchTestCase(TestCase):
         self.assertEqual(self.benchmark_execution1.id, bench_data['id1'][2]['benchmark_execution_id'])
         self.assertEqual(self.benchmark_execution2.id, bench_data['id1'][1]['benchmark_execution_id'])
         self.assertEqual(self.benchmark_execution3.id, bench_data['id1'][0]['benchmark_execution_id'])
+        self.assertEqual('00001', bench_data['id1'][2]['benchmark_execution_hash'])
+        self.assertEqual('00002', bench_data['id1'][1]['benchmark_execution_hash'])
+        self.assertEqual('00003', bench_data['id1'][0]['benchmark_execution_hash'])
 
         self.assertEqual(False, 'id4' in bench_data)
 
@@ -563,6 +589,9 @@ class BenchmarkExecutionControllerBranchTestCase(TestCase):
         self.assertEqual(0, bench_data['id6'][0]['benchmark_execution_id'])
         self.assertEqual(self.benchmark_execution2.id, bench_data['id6'][1]['benchmark_execution_id'])
         self.assertEqual(0, bench_data['id6'][2]['benchmark_execution_id'])
+        self.assertEqual('', bench_data['id6'][0]['benchmark_execution_hash'])
+        self.assertEqual('00002', bench_data['id6'][1]['benchmark_execution_hash'])
+        self.assertEqual('', bench_data['id6'][2]['benchmark_execution_hash'])
 
         self.assertEqual(3, len(bench_data['id8']))
         self.assertEqual(53.0, bench_data['id8'][0]['average'])
@@ -571,6 +600,9 @@ class BenchmarkExecutionControllerBranchTestCase(TestCase):
         self.assertEqual(0, bench_data['id8'][2]['benchmark_execution_id'])
         self.assertEqual(0, bench_data['id8'][1]['benchmark_execution_id'])
         self.assertEqual(self.benchmark_execution3.id, bench_data['id8'][0]['benchmark_execution_id'])
+        self.assertEqual('', bench_data['id8'][2]['benchmark_execution_hash'])
+        self.assertEqual('', bench_data['id8'][1]['benchmark_execution_hash'])
+        self.assertEqual('00003', bench_data['id8'][0]['benchmark_execution_hash'])
 
     def test_bar_color_depending_on_branch(self):
         commit4 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash='0000400004000040000400004000040000400004', author=self.git_user1, author_date=timezone.now(), committer=self.git_user1, committer_date=timezone.now())
