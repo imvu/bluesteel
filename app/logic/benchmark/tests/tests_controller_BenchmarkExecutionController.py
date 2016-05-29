@@ -477,17 +477,9 @@ class BenchmarkExecutionControllerTestCase(TestCase):
 
 
     def test_delete_benchmark_executions_from_definition(self):
-        exec_entries = BenchmarkExecutionEntry.objects.all()
-        for exec_entry in exec_entries:
-            exec_entries.delete()
-
-        com_group_entries = CommandGroupEntry.objects.all()
-        for group_entry in com_group_entries:
-            group_entry.delete()
-
-        com_set_entries = CommandSetEntry.objects.all()
-        for set_entry in com_set_entries:
-            set_entry.delete()
+        BenchmarkExecutionEntry.objects.all().delete()
+        CommandGroupEntry.objects.all().delete()
+        CommandSetEntry.objects.all().delete()
 
         self.assertEqual(0, BenchmarkExecutionEntry.objects.all().count())
         self.assertEqual(0, CommandGroupEntry.objects.all().count())

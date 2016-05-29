@@ -1,7 +1,8 @@
 """ BenchmarkDefinition model """
 
 from django.db import models
-# import hashlib
+from django.db.models import signals
+from django.dispatch.dispatcher import receiver
 
 class BenchmarkDefinitionEntry(models.Model):
     """ Benchmark Definition """
@@ -34,3 +35,17 @@ class BenchmarkDefinitionEntry(models.Model):
         self.save()
 
 
+@receiver(models.signals.post_delete)
+def benchmark_def_entry_post_delete(sender, instance, **kwargs):
+    """ This function will delete the command_set on any delete of this model """
+    del kwargs
+    if isinstance(instance, BenchmarkDefinitionEntry) and (sender == BenchmarkDefinitionEntry):
+        signals.post_delete.disconnect(benchmark_def_entry_post_delete, sender=BenchmarkDefinitionEntry)
+        from app.logic.commandrepo.models.CommandSetModel import CommandSetEntry
+        try:
+            if instance.command_set and instance.command_set.id != None:
+                instance.command_set.delete()
+        except CommandSetEntry.DoesNotExist:
+            pass
+
+        signals.post_delete.connect(benchmark_def_entry_post_delete, sender=BenchmarkDefinitionEntry)
