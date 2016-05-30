@@ -21,8 +21,15 @@ class FeedEntry(models.Model):
         obj['command_group'] = self.command_group.as_object()
         obj['worker'] = self.worker.as_object()
         obj['git_project'] = {}
-        obj['git_project']['id'] = self.git_project.id
-        obj['git_project']['url'] = self.git_project.url
-        obj['git_project']['name'] = self.git_project.name
+
+        if self.git_project:
+            obj['git_project']['id'] = self.git_project.id
+            obj['git_project']['url'] = self.git_project.url
+            obj['git_project']['name'] = self.git_project.name
+        else:
+            obj['git_project']['id'] = -1
+            obj['git_project']['url'] = ''
+            obj['git_project']['name'] = ''
+
         obj['date'] = str(self.created_at)
         return obj
