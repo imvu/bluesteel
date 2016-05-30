@@ -7,7 +7,7 @@
     <ul class="no_dots no_indent">
         <li>
             <div class="upper_card white_card card_padding_small">
-                <div class="centered"><a class="title_link" href="">{{definition.name}}</a></div>
+                <div class="title centered">Benchmark Definition - {{definition.name}}</div>
             </div>
             <div class="lower_card white_card card_padding_large">
                 <form   action="{{definition.url.save}}"
@@ -29,6 +29,7 @@
                             </div>
                         </li>
                     </ul>
+                    <br/>
                     <ul class="no_dots">
                         <li><div class="list_label indent_1">LAYOUT</div></li>
                         <li>
@@ -44,6 +45,7 @@
                             </div>
                         </li>
                     </ul>
+                    <br/>
                     <ul class="no_dots">
                         <li><div class="list_label indent_1">PROJECT</div></li>
                         <li>
@@ -59,8 +61,7 @@
                             </div>
                         </li>
                     </ul>
-
-
+                    <br/>
                     <ul     id="command_list"
                             class="no_dots vertical_margin"
                         >
@@ -87,6 +88,7 @@
                         </li>
                         {% endfor %}
                     </ul>
+                    <br/>
                     <ul class="no_dots no_indent vertical_margin horizontal_list">
                         <li class="horizontal">
                             <!-- <button class="btn_icon icon_gray"><i class="fa fa-plus-circle fa-2x"></i></button> -->
@@ -96,7 +98,7 @@
                             >Add Command</button>
                         </li>
                     </ul>
-
+                    <br/>
                     <ul class="no_dots no_indent vertical_margin horizontal_list">
                         <li class="horizontal">
                             <button     class="btn_rect primary"
