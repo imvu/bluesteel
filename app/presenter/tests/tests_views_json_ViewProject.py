@@ -145,6 +145,12 @@ class BluesteelViewProjectTestCase(TestCase):
 
         self.assertEqual(1, BenchmarkDefinitionEntry.objects.filter(id=benchmark_def.id).count())
 
+        self.assertEqual(4, CommandEntry.objects.all().count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='command-28').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='command-29').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='command-30').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='command-31').count())
+
 
     def test_save_bluesteel_project_removing_path_dots(self):
         commands = []
