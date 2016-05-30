@@ -8,9 +8,9 @@
         {% for layout in layout_list %}
         <li class="horizontal">
             <div class="upper_card card_small white_card card_padding_small">
-                <div class="centered"><a class="title_link" href="{{layout.url.edit}}">Layout {{layout.id}}</a></div>
+                <div class="title centered">Layout {{layout.id}}</div>
             </div>
-            <div class="lower_card card_small white_card card_padding_large">
+            <div class="middle_card card_small white_card card_padding_large">
                 <div class="list_label indent_1">NAME</div>
                 <div class="normal indent_2">{{layout.name}}</div>
                 <br/>
@@ -18,6 +18,16 @@
                 {% for project in layout.projects %}
                     <div class="normal indent_2">{{project.name}}</div>
                 {% endfor %}
+            </div>
+            <div class="lower_card card_small white_card card_padding_small">
+                <ul class="no_dots no_indent vertical_margin horizontal_list">
+                    <li class="horizontal">
+                        <button     class="btn_round light"
+                                    type='button'
+                                    onclick="window.location='{{layout.url.edit}}'"
+                        >Edit</button>
+                    </li>
+                </ul>
             </div>
         </li>
         {% endfor %}
