@@ -5,7 +5,7 @@ from app.presenter.schemas import BluesteelSchemas
 from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
 from app.logic.bluesteel.controllers.BluesteelProjectController import BluesteelProjectController
 from app.logic.bluesteel.controllers.BluesteelLayoutController import BluesteelLayoutController
-from app.logic.commandrepo.models.CommandGroupModel import CommandGroupEntry
+from app.logic.commandrepo.models.CommandSetModel import CommandSetEntry
 from app.logic.commandrepo.controllers.CommandController import CommandController
 from app.logic.httpcommon import res
 from app.logic.httpcommon import val
@@ -38,13 +38,12 @@ def save_project(request, project_id):
         if not obj_validated:
             return res.get_schema_failed(val_resp_obj)
 
-        CommandController.delete_command_group_by_id(project_entry.command_group.id)
+        CommandSetEntry.objects.filter(group=project_entry.command_group).delete()
 
         local_search_path = filter_folder_path(val_resp_obj['git_project_folder_search_path'])
 
         project_entry.name = val_resp_obj['name']
         project_entry.git_project_folder_search_path = local_search_path
-        project_entry.command_group = CommandGroupEntry.objects.create()
         project_entry.save()
 
         CommandController.add_full_command_set(project_entry.command_group, 'CLONE', 0, val_resp_obj['clone'])

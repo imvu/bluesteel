@@ -2,6 +2,7 @@
 
 from django.test import TestCase
 from django.test import Client
+from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
 from app.logic.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
 from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
 from app.logic.gitrepo.models.GitProjectModel import GitProjectEntry
@@ -95,6 +96,55 @@ class BluesteelViewProjectTestCase(TestCase):
         self.assertEqual(1, CommandEntry.objects.filter(command='command-29').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='command-30').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='command-31').count())
+
+    def test_save_bluesteel_project_does_not_delete_benchmark_definitions(self):
+        commands = []
+        commands.append('command-1')
+        commands.append('command-2')
+        commands.append('command-3')
+
+        command_group = CommandGroupEntry.objects.create()
+        CommandController.add_full_command_set(command_group, "CLONE", 0, commands)
+
+        git_project = GitProjectEntry.objects.create(url='', name='git-project')
+
+        bluesteel_proj = BluesteelProjectEntry.objects.create(
+            name='project-1',
+            layout=self.layout_1,
+            command_group=command_group,
+            git_project=git_project
+        )
+
+        benchmark_def = BenchmarkDefinitionEntry.objects.create(
+            layout=self.layout_1,
+            project=bluesteel_proj,
+            command_set=CommandSetEntry.objects.create()
+        )
+
+        self.assertEqual(1, CommandGroupEntry.objects.all().count())
+        self.assertEqual(2, CommandSetEntry.objects.all().count())
+        self.assertEqual(3, CommandEntry.objects.all().count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='command-1').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='command-2').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='command-3').count())
+
+        obj = {}
+        obj['name'] = 'NAME-updated'
+        obj['git_project_folder_search_path'] = 'local/path/updated/too/'
+        obj['clone'] = []
+        obj['clone'].append('command-28')
+        obj['clone'].append('command-29')
+        obj['fetch'] = []
+        obj['fetch'].append('command-30')
+        obj['fetch'].append('command-31')
+
+        resp = self.client.post(
+            '/main/project/{0}/save/'.format(bluesteel_proj.id),
+            data = json.dumps(obj),
+            content_type='application/json')
+
+        self.assertEqual(1, BenchmarkDefinitionEntry.objects.filter(id=benchmark_def.id).count())
+
 
     def test_save_bluesteel_project_removing_path_dots(self):
         commands = []
