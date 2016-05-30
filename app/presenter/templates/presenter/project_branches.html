@@ -10,7 +10,19 @@
                 <ul class="no_dots no_indent">
                     <li>
                         <div class="upper_card white_card card_padding_small">
-                            <div><a class="title_link" href="{{branch.url.links}}">{{branch.name}}</a></div>
+                            <div class="title centered">Branch - {{branch.name}}</div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="middle_card white_card card_padding_small">
+                            <ul class="no_dots no_indent vertical_margin horizontal_list">
+                                <li class="horizontal">
+                                    <button     class="btn_round light"
+                                                type='button'
+                                                onclick="window.location='{{branch.url.links}}'"
+                                    >Branch data</button>
+                                </li>
+                            </ul>
                         </div>
                     </li>
                     {% for commit in branch.commits %}
