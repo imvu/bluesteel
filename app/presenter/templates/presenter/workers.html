@@ -8,9 +8,9 @@
         {% for worker in workers %}
         <li class="horizontal">
             <div class="upper_card white_card card_padding_small card_small">
-                <div><a class="title_link" href="{{worker.url.edit}}">{{worker.name}}</a></div>
+                <div class="title centered">Worker - {{worker.name}}</div>
             </div>
-            <div class="lower_card white_card card_padding_large card_small">
+            <div class="middle_card white_card card_padding_large card_small">
                 <ul class="no_dots no_indent">
                     <li>
                         <div class="list_label indent_1">OPERATIVE SYSTEM</div>
@@ -25,12 +25,26 @@
                     <li>
                         <div class="list_label indent_1">COMMIT FEEDER</div>
                         {% if worker.git_feeder %}
-                            <div class="normal indent_2">Yes, <a class="normal_link" href="{{worker.url.feed_report}}">see feed reports</a></div>
+                            <div class="normal indent_2">Yes</div>
                         {% else %}
                             <div class="normal indent_2">No</div>
                         {% endif %}
                     </li>
                     <br/>
+                    {% if worker.git_feeder %}
+                        <li>
+                            <div class="list_label indent_1">FEED REPORTS</div>
+                            <ul class="no_dots no_indent vertical_margin horizontal_list">
+                                <li class="horizontal">
+                                    <button     class="btn_round light"
+                                                type='button'
+                                                onclick="window.location='{{worker.url.feed_report}}'"
+                                    >See reports</button>
+                                </li>
+                            </ul>
+                        </li>
+                        <br/>
+                    {% endif %}
                     <li>
                         <div class="list_label indent_1">LAST ACTIVITY</div>
                         <div class="normal indent_2">
@@ -42,6 +56,16 @@
                             <div class="normal inline color_error">{{worker.last_update.year}}-{{worker.last_update.month}}-{{worker.last_update.day}}, {{worker.last_update.hour}}:{{worker.last_update.minute}}:{{worker.last_update.second}}</div>
                             {% endif %}
                         </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="lower_card card_small white_card card_padding_small">
+                <ul class="no_dots no_indent vertical_margin horizontal_list">
+                    <li class="horizontal">
+                        <button     class="btn_round light"
+                                    type='button'
+                                    onclick="window.location='{{worker.url.edit}}'"
+                        >Edit</button>
                     </li>
                 </ul>
             </div>
