@@ -281,7 +281,7 @@ class GitFetcher(object):
             self.report_stack.append(report)
         else:
             msg = 'No commands has been found. So we populate one command to let you know :D'
-            rep = GitFetcher.create_report('No commands in: {0}'.format(name), 255, msg, '')
+            rep = GitFetcher.create_report('No commands in: {0}'.format(name), 0, msg, '')
             self.report_stack.append(rep)
 
 
