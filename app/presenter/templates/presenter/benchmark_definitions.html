@@ -8,13 +8,15 @@
         {% for definition in definitions %}
             <li>
                 <div class="upper_card white_card card_padding_small">
-                    <div class="centered"><a class="title_link" href="{{definition.url.edit}}">{{definition.name}}</a></div>
+                    <div class="title centered">Benchmark Definition - {{definition.name}}</div>
                 </div>
-                <div class="lower_card white_card card_padding_large">
+                <div class="middle_card white_card card_padding_large">
                     <div class="list_label indent_1">LAYOUT</div>
                     <div class="normal indent_2">{{definition.layout.name}}</div>
+                    <br/>
                     <div class="list_label indent_1">PROJECT</div>
                     <div class="normal indent_2">{{definition.project.name}}</div>
+                    <br/>
                     <div class="list_label indent_1">COMMANDS</div>
                     <ul class="no_dots vertical_margin">
                     {% for command in definition.command_set.commands %}
@@ -26,6 +28,16 @@
                     {% endfor %}
                     </ul>
                 </div>
+                <div class="lower_card white_card card_padding_small">
+                <ul class="no_dots no_indent vertical_margin horizontal_list">
+                    <li class="horizontal">
+                        <button     class="btn_round light"
+                                    type='button'
+                                    onclick="window.location='{{definition.url.edit}}'"
+                        >Edit</button>
+                    </li>
+                </ul>
+            </div>
             </li>
         {% endfor %}
     </ul>
