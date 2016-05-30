@@ -40,7 +40,8 @@ def does_benchmark_fluctuation_exist(benchmark_exec_entry, fluctuation_window):
     )
 
     for fluc in fluctuations:
-        if (float(fluc['max'] - fluc['min'])) > 1.0:
+        fluc_ratio = 1.0 - (float(fluc['min']) / float(fluc['max']))
+        if fluc_ratio >= 0.05:
             return True
     return False
 
