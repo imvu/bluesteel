@@ -25,17 +25,19 @@ def get_projects(request, page_index):
         for project in projects:
             obj = {}
             obj['name'] = project['name']
-            obj['url'] = ViewUrlGenerator.get_project_branches_url(project['id'], BRANCH_COMMIT_DEPTH, 1)
+            obj['url'] = {}
+            obj['url']['branches'] = ViewUrlGenerator.get_project_branches_url(project['id'], BRANCH_COMMIT_DEPTH, 1)
+            obj['url']['edit'] = ViewUrlGenerator.get_project_edit_url(project['id'])
             items.append(obj)
 
         pagination = ViewPrepareObjects.prepare_pagination_project(page_indices)
 
         data = {}
-        data['items'] = items
+        data['projects'] = items
         data['menu'] = ViewPrepareObjects.prepare_menu_for_html([])
         data['pagination'] = pagination
 
-        return res.get_template_data(request, 'presenter/single_item_list.html', data)
+        return res.get_template_data(request, 'presenter/project_list.html', data)
     else:
         return res.get_template_data(request, 'presenter/not_found.html', {})
 

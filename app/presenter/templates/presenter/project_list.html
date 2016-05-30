@@ -1,0 +1,41 @@
+{% extends "presenter/base.html" %}
+
+{% load staticfiles %}
+
+{% block data_body %}
+<div class="container_large container_height">
+    <ul class="no_dots no_indent horizontal_list">
+        {% for project in projects %}
+        <li class="horizontal">
+            <div class="upper_card card_small white_card card_padding_small">
+                <div class="title centered">Project - {{project.name}}</div>
+            </div>
+            <div class="middle_card card_small white_card card_padding_large">
+                <div class="list_label indent_1">NAME</div>
+                <div class="normal indent_2">{{project.name}}</div>
+                <br/>
+                <div class="list_label indent_1">BRANCHES</div>
+                <ul class="no_dots no_indent vertical_margin horizontal_list">
+                    <li class="horizontal">
+                        <button     class="btn_round light"
+                                    type='button'
+                                    onclick="window.location='{{project.url.branches}}'"
+                        >See project's branches</button>
+                    </li>
+                </ul>
+            </div>
+            <div class="lower_card card_small white_card card_padding_small">
+                <ul class="no_dots no_indent vertical_margin horizontal_list">
+                    <li class="horizontal">
+                        <button     class="btn_round light"
+                                    type='button'
+                                    onclick="window.location='{{project.url.edit}}'"
+                        >Edit</button>
+                    </li>
+                </ul>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
