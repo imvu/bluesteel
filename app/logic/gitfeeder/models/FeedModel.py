@@ -1,6 +1,9 @@
 """ Feed model """
 
 from django.db import models
+from django.db.models import signals
+from django.dispatch.dispatcher import receiver
+from app.logic.commandrepo.models.CommandGroupModel import CommandGroupEntry
 
 class FeedEntry(models.Model):
     """ Feed """
@@ -33,3 +36,18 @@ class FeedEntry(models.Model):
 
         obj['date'] = str(self.created_at)
         return obj
+
+
+@receiver(models.signals.post_delete)
+def feed_entry_post_delete(sender, instance, **kwargs):
+    """ This function will delete the command_group on any delete of this model """
+    del kwargs
+    if isinstance(instance, FeedEntry) and (sender == FeedEntry):
+        signals.post_delete.disconnect(feed_entry_post_delete, sender=FeedEntry)
+        try:
+            if instance.command_group and instance.command_group.id != None:
+                instance.command_group.delete()
+        except CommandGroupEntry.DoesNotExist:
+            pass
+
+        signals.post_delete.connect(feed_entry_post_delete, sender=FeedEntry)

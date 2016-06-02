@@ -42,3 +42,15 @@ class FeedModelTestCase(TestCase):
         self.git_project1.delete()
 
         self.assertEqual(0, FeedEntry.objects.all().count())
+
+    def test_feed_deletion_also_deletes_command_group(self):
+        command_group = CommandGroupEntry.objects.create(user=self.user1)
+        feed_entry = FeedEntry.objects.create(command_group=command_group, worker=self.worker1, git_project=self.git_project1)
+
+        self.assertEqual(1, FeedEntry.objects.all().count())
+        self.assertEqual(1, CommandGroupEntry.objects.all().count())
+
+        feed_entry.delete()
+
+        self.assertEqual(0, FeedEntry.objects.all().count())
+        self.assertEqual(0, CommandGroupEntry.objects.all().count())
