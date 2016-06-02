@@ -19,6 +19,7 @@ import json
 import sys
 
 PAGINATION_HALF_RANGE = 2
+MAX_FLUCTUATION_RATIO = 0.05
 
 class BenchmarkExecutionController(object):
     """ BenchmarkExecution controller with helper functions """
@@ -300,6 +301,21 @@ class BenchmarkExecutionController(object):
 
         return fluctuations
 
+    @staticmethod
+    def does_benchmark_fluctuation_exist(benchmark_exec_entry, fluctuation_window):
+        """ Returns true if fluctuation exists """
+        commit_hash = benchmark_exec_entry.commit.commit_hash
+        fluctuations = BenchmarkExecutionController.get_benchmark_fluctuation(
+            project=benchmark_exec_entry.definition.project,
+            commit_hash=commit_hash,
+            fluctuation_window=fluctuation_window
+        )
+
+        for fluc in fluctuations:
+            fluc_ratio = 1.0 - (float(fluc['min']) / float(fluc['max']))
+            if fluc_ratio >= MAX_FLUCTUATION_RATIO:
+                return True
+        return False
 
 
 

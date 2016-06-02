@@ -7,6 +7,8 @@ from app.logic.benchmark.controllers.BenchmarkExecutionController import Benchma
 from app.logic.httpcommon import res, val
 from collections import defaultdict
 
+FLUCTUATION_WINDOW = 2
+
 def check_benchmark_json_ids(report_out):
     """ Checks if the ids inside the report out fields are unique """
     ids = defaultdict(int)
@@ -28,22 +30,6 @@ def did_commands_succeed(report):
         if com['result']['status'] != 0:
             return False
     return True
-
-
-def does_benchmark_fluctuation_exist(benchmark_exec_entry, fluctuation_window):
-    """ Returns true if fluctuation exists """
-    commit_hash = benchmark_exec_entry.commit.commit_hash
-    fluctuations = BenchmarkExecutionController.get_benchmark_fluctuation(
-        project=benchmark_exec_entry.definition.project,
-        commit_hash=commit_hash,
-        fluctuation_window=fluctuation_window
-    )
-
-    for fluc in fluctuations:
-        fluc_ratio = 1.0 - (float(fluc['min']) / float(fluc['max']))
-        if fluc_ratio >= 0.05:
-            return True
-    return False
 
 
 def save_benchmark_execution(request, benchmark_execution_id):
@@ -82,7 +68,7 @@ def save_benchmark_execution(request, benchmark_execution_id):
                 request.get_host()
             )
 
-        if does_benchmark_fluctuation_exist(bench_exec_entry, 2):
+        if BenchmarkExecutionController.does_benchmark_fluctuation_exist(bench_exec_entry, FLUCTUATION_WINDOW):
             ViewNotifications.notify_benchmark_fluctuation(
                 bench_exec_entry.commit.author.email,
                 bench_exec_entry.id,
