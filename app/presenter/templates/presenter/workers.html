@@ -46,6 +46,20 @@
                         <br/>
                     {% endif %}
                     <li>
+                        <div class="list_label indent_1">LATEST BENCHMARKS</div>
+                        <ul class="no_dots no_indent vertical_margin horizontal_list">
+                            {% for bench_info in worker.latest_benchmarks %}
+                            <li class="horizontal">
+                                <button     class="btn_round light"
+                                            type='button'
+                                            onclick="window.location='{{bench_info.url}}'"
+                                >Benchmark {{bench_info.id}}</button>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    <br/>
+                    <li>
                         <div class="list_label indent_1">LAST ACTIVITY</div>
                         <div class="normal indent_2">
                             {% if worker.activity %}
