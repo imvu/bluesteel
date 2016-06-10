@@ -223,3 +223,20 @@ class GitController(object):
 
 
 
+    @staticmethod
+    def update_branches_order_value(project_entry):
+        """ Sort all the branches, first by order, then by updated, finally it updates order values """
+        branch_entries = list(GitBranchEntry.objects.filter(project=project_entry).order_by('order', '-updated_at'))
+
+        for index, branch in enumerate(branch_entries):
+            branch.order = index
+            branch.save()
+
+    @staticmethod
+    def sort_branch_with_branches(project_entry, branch_entry, branch_order):
+        """ Assign new order to a given branch and then sort all of them """
+        branch_entry.order = branch_order
+        branch_entry.save()
+
+        GitController.update_branches_order_value(project_entry)
+
