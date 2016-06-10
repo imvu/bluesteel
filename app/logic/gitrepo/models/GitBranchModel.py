@@ -7,6 +7,7 @@ class GitBranchEntry(models.Model):
     project = models.ForeignKey('gitrepo.GitProjectEntry', related_name='git_branch_project')
     name = models.TextField(default='')
     commit = models.ForeignKey('gitrepo.GitCommitEntry', related_name='git_branch_commit')
+    order = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True, editable=False)
 
@@ -19,4 +20,5 @@ class GitBranchEntry(models.Model):
         obj['project'] = self.project.id
         obj['name'] = self.name
         obj['commit_hash'] = self.commit.commit_hash
+        obj['order'] = self.order
         return obj
