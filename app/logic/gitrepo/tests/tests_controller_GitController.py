@@ -11,6 +11,7 @@ from app.logic.gitrepo.models.GitUserModel import GitUserEntry
 from app.logic.gitrepo.models.GitDiffModel import GitDiffEntry
 from app.logic.gitrepo.models.GitProjectModel import GitProjectEntry
 from app.logic.gitrepo.controllers.GitController import GitController
+from app.logic.httpcommon.Page import Page
 from datetime import timedelta
 
 
@@ -223,6 +224,45 @@ class GitBranchMergeTargetTestCase(TestCase):
         self.assertEqual(1 , branches_trimmed[1]['order'])
         self.assertEqual('0000500005000050000500005000050000500005', branches_trimmed[1]['commits'][0]['hash'])
         self.assertEqual('0000400004000040000400004000040000400004', branches_trimmed[1]['commits'][1]['hash'])
+
+
+    def test_paginated_branches_trimmed_returns_ordered(self):
+        # Commits
+        git_commit1 = self.create_commit(self.git_project1, self.git_user1, 1)
+
+        # Branches
+        git_branch1 = GitBranchEntry.objects.create(project=self.git_project1, commit=git_commit1, name='branch1', order=0)
+        git_branch2 = GitBranchEntry.objects.create(project=self.git_project1, commit=git_commit1, name='branch2', order=3)
+        git_branch3 = GitBranchEntry.objects.create(project=self.git_project1, commit=git_commit1, name='branch3', order=2)
+        git_branch4 = GitBranchEntry.objects.create(project=self.git_project1, commit=git_commit1, name='branch4', order=1)
+        git_branch5 = GitBranchEntry.objects.create(project=self.git_project1, commit=git_commit1, name='branch5', order=4)
+
+        # Parents
+        git_parent_1_2 = GitParentEntry.objects.create(project=self.git_project1, parent=git_commit1, son=git_commit1)
+
+        # Diffs
+        git_diff1 = GitDiffEntry.objects.create(project=self.git_project1, commit_son=git_commit1, commit_parent=git_commit1, content='content-text')
+
+        # Merge targets
+        git_merge_target_5_1 = GitBranchMergeTargetEntry.objects.create(project=self.git_project1, current_branch=git_branch5, target_branch=git_branch1, fork_point=git_commit1, diff=git_diff1)
+        git_merge_target_4_1 = GitBranchMergeTargetEntry.objects.create(project=self.git_project1, current_branch=git_branch4, target_branch=git_branch1, fork_point=git_commit1, diff=git_diff1)
+        git_merge_target_3_1 = GitBranchMergeTargetEntry.objects.create(project=self.git_project1, current_branch=git_branch3, target_branch=git_branch1, fork_point=git_commit1, diff=git_diff1)
+        git_merge_target_2_1 = GitBranchMergeTargetEntry.objects.create(project=self.git_project1, current_branch=git_branch2, target_branch=git_branch1, fork_point=git_commit1, diff=git_diff1)
+        git_merge_target_1_1 = GitBranchMergeTargetEntry.objects.create(project=self.git_project1, current_branch=git_branch1, target_branch=git_branch1, fork_point=git_commit1, diff=git_diff1)
+
+        branches, pagination = GitController.get_pgtd_branches_trimmed_by_merge_target(Page(3, 1), self.git_project1, 100)
+
+        self.assertEqual(3 , len(branches))
+
+        self.assertEqual('branch1' , branches[0]['name'])
+        self.assertEqual(0 , branches[0]['order'])
+
+        self.assertEqual('branch4' , branches[1]['name'])
+        self.assertEqual(1 , branches[1]['order'])
+
+        self.assertEqual('branch3' , branches[2]['name'])
+        self.assertEqual(2 , branches[2]['order'])
+
 
     def test_branches_trimmed_with_maximum_commit_depth(self):
         #  5   9
@@ -508,47 +548,6 @@ class GitBranchMergeTargetTestCase(TestCase):
         commit_fork_point = GitController.get_fork_point(trails_b, trails_a)
 
         self.assertEqual('0000400004000040000400004000040000400004', commit_fork_point.commit_hash)
-
-
-    def get_paginated_git_branches(self):
-        git_commit1 = self.create_commit(self.git_project1, self.git_user1, 1)
-
-        git_branch1 = GitBranchEntry.objects.create(project=self.git_project1, commit=git_commit1, name='branch1')
-        git_branch2 = GitBranchEntry.objects.create(project=self.git_project1, commit=git_commit1, name='branch2')
-        git_branch3 = GitBranchEntry.objects.create(project=self.git_project1, commit=git_commit1, name='branch3')
-        git_branch4 = GitBranchEntry.objects.create(project=self.git_project1, commit=git_commit1, name='branch4')
-        git_branch5 = GitBranchEntry.objects.create(project=self.git_project1, commit=git_commit1, name='branch5')
-        git_branch6 = GitBranchEntry.objects.create(project=self.git_project1, commit=git_commit1, name='branch6')
-        git_branch7 = GitBranchEntry.objects.create(project=self.git_project1, commit=git_commit1, name='branch7')
-
-        branches_1, page_indices_1 = GitController.get_paginated_branches_trimmed_by_merge_target(Page(3, 1), self.git_project1, 100)
-        branches_2, page_indices_2 = GitController.get_paginated_branches_trimmed_by_merge_target(Page(3, 2), self.git_project1, 100)
-        branches_3, page_indices_3 = GitController.get_paginated_branches_trimmed_by_merge_target(Page(3, 3), self.git_project1, 100)
-
-        self.assertEqual(3, len(branches_1))
-        self.assertEqual(git_branch7.id, branches_1[0]['id'])
-        self.assertEqual(git_branch6.id, branches_1[1]['id'])
-        self.assertEqual(git_branch5.id, branches_1[2]['id'])
-        self.assertEqual(1, page_indices_1['prev'])
-        self.assertEqual(1, page_indices_1['current'])
-        self.assertEqual(2, page_indices_1['next'])
-        self.assertEqual([1, 2, 3], page_indices_1['page_indices'])
-
-        self.assertEqual(3, len(branches_2))
-        self.assertEqual(git_branch4.id, branches_2[0]['id'])
-        self.assertEqual(git_branch3.id, branches_2[1]['id'])
-        self.assertEqual(git_branch2.id, branches_2[2]['id'])
-        self.assertEqual(1, page_indices_2['prev'])
-        self.assertEqual(2, page_indices_2['current'])
-        self.assertEqual(3, page_indices_2['next'])
-        self.assertEqual([1, 2, 3], page_indices_2['page_indices'])
-
-        self.assertEqual(1, len(branches_3))
-        self.assertEqual(git_branch1.id, branches_3[0]['id'])
-        self.assertEqual(2, page_indices_3['prev'])
-        self.assertEqual(3, page_indices_3['current'])
-        self.assertEqual(3, page_indices_3['next'])
-        self.assertEqual([1, 2, 3], page_indices_3['page_indices'])
 
 
     def test_branches_trimmed_with_maximum_commit_depth(self):
