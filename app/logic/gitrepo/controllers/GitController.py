@@ -83,6 +83,7 @@ class GitController(object):
             obj = {}
             obj['name'] = branch.name
             obj['id'] = branch.id
+            obj['order'] = branch.order
             obj['merge_target'] = merge_target.as_object()
             obj['branch_info'] = branch_info
             obj['commits'] = []
@@ -103,13 +104,13 @@ class GitController(object):
     @staticmethod
     def get_all_branches_trimmed_by_merge_target(project, max_commits):
         """ Returns branch data trimmed by its merge target information """
-        branches = GitBranchEntry.objects.filter(project=project)
+        branches = GitBranchEntry.objects.filter(project=project).order_by('order')
         return GitController.get_branches_trimmed_by_merge_target(project, branches, max_commits)
 
     @staticmethod
     def get_pgtd_branches_trimmed_by_merge_target(page, project, max_commits):
         """ Returns paginated branch data trimmed by its merge target information """
-        branches = GitBranchEntry.objects.filter(project=project)
+        branches = GitBranchEntry.objects.filter(project=project).order_by('order')
 
         pager = Paginator(branches, page.items_per_page)
         current_page = pager.page(page.page_index)
