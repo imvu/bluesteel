@@ -4,6 +4,7 @@ from sets import Set
 from django.utils import timezone
 from django.conf import settings
 from app.logic.gitfeeder.models.FeedModel import FeedEntry
+from app.logic.gitrepo.controllers.GitController import GitController
 from app.logic.gitrepo.models.GitUserModel import GitUserEntry
 from app.logic.gitrepo.models.GitCommitModel import GitCommitEntry
 from app.logic.gitrepo.models.GitParentModel import GitParentEntry
@@ -264,10 +265,13 @@ class GitFeederController(object):
                     name=branch['branch_name'],
                     commit=commit_entry
                 )
+                branch_entry.order = branch_entry.id
+                branch_entry.save()
             else:
                 branch_entry.commit = commit_entry
                 branch_entry.save()
 
+        GitController.update_branches_order_value(project)
         return (True, messages)
 
     @staticmethod

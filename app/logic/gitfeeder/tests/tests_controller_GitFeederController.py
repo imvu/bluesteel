@@ -255,6 +255,32 @@ class GitFeederControllerTestCase(TestCase):
         self.assertEqual(1, GitCommitEntry.objects.all().count())
         self.assertEqual(FeederTestHelper.hash_string(1), GitCommitEntry.objects.all().first().commit_hash)
 
+    def test_insert_branches_with_order(self):
+        commit_time = str(timezone.now().isoformat())
+
+        git_commit1 = GitCommitEntry.objects.create(
+            project=self.git_project1,
+            commit_hash=FeederTestHelper.hash_string(1),
+            author=self.git_user1,
+            author_date=commit_time,
+            committer=self.git_user1,
+            committer_date=commit_time
+        )
+
+        commit1 = FeederTestHelper.create_commit(1, [], 'user1', 'user1@test.com', commit_time, commit_time)
+        branch1 = FeederTestHelper.create_branch('branch-1', 1, 'branch-1', 1, 1, [1], 'content')
+        branch2 = FeederTestHelper.create_branch('branch-2', 1, 'branch-2', 1, 1, [1], 'content')
+        branch3 = FeederTestHelper.create_branch('branch-3', 1, 'branch-3', 1, 1, [1], 'content')
+        branch4 = FeederTestHelper.create_branch('branch-4', 1, 'branch-4', 1, 1, [1], 'content')
+
+        GitFeederController.insert_branches([branch1, branch2, branch3, branch4], self.git_project1)
+
+        self.assertEqual(4, GitBranchEntry.objects.all().count())
+        self.assertEqual('branch-1', GitBranchEntry.objects.filter(order=0).first().name)
+        self.assertEqual('branch-2', GitBranchEntry.objects.filter(order=1).first().name)
+        self.assertEqual('branch-3', GitBranchEntry.objects.filter(order=2).first().name)
+        self.assertEqual('branch-4', GitBranchEntry.objects.filter(order=3).first().name)
+
 
     def test_insert_branch_and_log_because_branch_commit_not_found(self):
         commit_time = str(timezone.now().isoformat())
