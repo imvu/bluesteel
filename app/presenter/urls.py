@@ -154,6 +154,9 @@ urlpatterns = patterns(
     url(r'^branch/all/project/(?P<project_id>\d+)/$',
         'app.presenter.views.json.ViewJsonGitRepo.get_branch_list'),
 
+    url(r'^branch/(?P<branch_id>\d+)/project/(?P<project_id>\d+)/update/order/(?P<order_value>\d+)/$',
+        'app.presenter.views.json.ViewJsonBranch.update_branch_order_value'),
+
     url(r'^branch/merge/target/project/(?P<project_id>\d+)/$',
         'app.presenter.views.json.ViewJsonBranchMergeTarget.set_branch_merge_target'),
 
