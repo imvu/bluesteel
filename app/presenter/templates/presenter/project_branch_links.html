@@ -40,7 +40,22 @@
                                         </ul>
                                     {% endfor %}
                                 {% endfor %}
+                                <br/>
                             {% endif %}
+
+                            <div class="list_label indent_1">BRANCH ORDER</div>
+                            <div class="normal indent_2">Update '{{branch.name}}' branch order value to be located at:</div>
+                            <div class="container_input">
+                                <select     class="selection individual"
+                                            name="merge_target_select"
+                                            onchange="executeAndReload(this.options[this.selectedIndex].value, '');"
+                                >
+                                    {% for sel in branch.update_order_selection %}
+                                        <option value="{{sel.url.update}}" {{sel.current|yesno:"selected,"}} >Position {{sel.order}} - {{sel.current|yesno:"(current) ,"}}{{sel.name}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <br/>
                         </div>
                     </li>
                 </ul>

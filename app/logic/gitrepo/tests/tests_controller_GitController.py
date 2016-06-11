@@ -168,6 +168,38 @@ class GitBranchMergeTargetTestCase(TestCase):
         self.assertEqual(0, GitBranchMergeTargetEntry.objects.all().count())
         self.assertEqual(0, GitBranchTrailEntry.objects.all().count())
 
+    def test_get_branch_names_and_order_values(self):
+        # Commits
+        git_commit1 = self.create_commit(self.git_project1, self.git_user1, 1)
+
+        # Branches
+        git_branch1 = GitBranchEntry.objects.create(project=self.git_project1, commit=git_commit1, name='branch1', order=0)
+        git_branch2 = GitBranchEntry.objects.create(project=self.git_project1, commit=git_commit1, name='branch2', order=3)
+        git_branch3 = GitBranchEntry.objects.create(project=self.git_project1, commit=git_commit1, name='branch3', order=2)
+        git_branch4 = GitBranchEntry.objects.create(project=self.git_project1, commit=git_commit1, name='branch4', order=1)
+        git_branch5 = GitBranchEntry.objects.create(project=self.git_project1, commit=git_commit1, name='branch5', order=4)
+
+        branches_and_orders = GitController.get_branch_names_and_order_values(self.git_project1)
+
+        self.assertEqual(5 , len(branches_and_orders))
+
+        self.assertEqual('branch1', branches_and_orders[0]['name'])
+        self.assertEqual('branch4', branches_and_orders[1]['name'])
+        self.assertEqual('branch3', branches_and_orders[2]['name'])
+        self.assertEqual('branch2', branches_and_orders[3]['name'])
+        self.assertEqual('branch5', branches_and_orders[4]['name'])
+        self.assertEqual(0, branches_and_orders[0]['order'])
+        self.assertEqual(1, branches_and_orders[1]['order'])
+        self.assertEqual(2, branches_and_orders[2]['order'])
+        self.assertEqual(3, branches_and_orders[3]['order'])
+        self.assertEqual(4, branches_and_orders[4]['order'])
+        self.assertEqual(git_branch1.id, branches_and_orders[0]['id'])
+        self.assertEqual(git_branch4.id, branches_and_orders[1]['id'])
+        self.assertEqual(git_branch3.id, branches_and_orders[2]['id'])
+        self.assertEqual(git_branch2.id, branches_and_orders[3]['id'])
+        self.assertEqual(git_branch5.id, branches_and_orders[4]['id'])
+
+
     def test_branches_trimmed_by_merge_target(self):
         #  3   5
         #  2 - 4
@@ -685,6 +717,30 @@ class GitBranchMergeTargetTestCase(TestCase):
 
         self.assertEqual(1, GitBranchEntry.objects.filter(project=self.git_project1, commit=git_commit2, name='branch2', order=0).count())
         self.assertEqual(1, GitBranchEntry.objects.filter(project=self.git_project1, commit=git_commit1, name='branch1', order=1).count())
+
+    def test_sort_branch_with_branches_from_small_order_to_higher_one(self):
+        git_commit1 = self.create_commit(self.git_project1, self.git_user1, 1)
+        git_commit2 = self.create_commit(self.git_project1, self.git_user1, 2)
+        git_commit3 = self.create_commit(self.git_project1, self.git_user1, 3)
+        git_commit4 = self.create_commit(self.git_project1, self.git_user1, 4)
+        git_commit5 = self.create_commit(self.git_project1, self.git_user1, 5)
+        git_commit6 = self.create_commit(self.git_project1, self.git_user1, 6)
+
+        git_branch1 = GitBranchEntry.objects.create(project=self.git_project1, commit=git_commit1, name='branch1', order=0)
+        git_branch2 = GitBranchEntry.objects.create(project=self.git_project1, commit=git_commit2, name='branch2', order=1)
+        git_branch3 = GitBranchEntry.objects.create(project=self.git_project1, commit=git_commit3, name='branch3', order=2)
+        git_branch4 = GitBranchEntry.objects.create(project=self.git_project1, commit=git_commit4, name='branch4', order=3)
+        git_branch5 = GitBranchEntry.objects.create(project=self.git_project1, commit=git_commit5, name='branch5', order=4)
+        git_branch6 = GitBranchEntry.objects.create(project=self.git_project1, commit=git_commit6, name='branch6', order=5)
+
+        GitController.sort_branch_with_branches(self.git_project1, git_branch1, 1)
+
+        self.assertEqual(1, GitBranchEntry.objects.filter(project=self.git_project1, commit=git_commit2, name='branch2', order=0).count())
+        self.assertEqual(1, GitBranchEntry.objects.filter(project=self.git_project1, commit=git_commit1, name='branch1', order=1).count())
+        self.assertEqual(1, GitBranchEntry.objects.filter(project=self.git_project1, commit=git_commit3, name='branch3', order=2).count())
+        self.assertEqual(1, GitBranchEntry.objects.filter(project=self.git_project1, commit=git_commit4, name='branch4', order=3).count())
+        self.assertEqual(1, GitBranchEntry.objects.filter(project=self.git_project1, commit=git_commit5, name='branch5', order=4).count())
+        self.assertEqual(1, GitBranchEntry.objects.filter(project=self.git_project1, commit=git_commit6, name='branch6', order=5).count())
 
     def test_sort_branch_with_branches(self):
         git_commit1 = self.create_commit(self.git_project1, self.git_user1, 1)

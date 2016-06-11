@@ -59,6 +59,20 @@ class GitController(object):
         return obj
 
     @staticmethod
+    def get_branch_names_and_order_values(project):
+        """ Returns a list of branch names and its order values """
+        branches = GitBranchEntry.objects.filter(project=project).order_by('order')
+
+        branches_and_order_values = []
+        for branch in branches:
+            obj = {}
+            obj['id'] = branch.id
+            obj['name'] = branch.name
+            obj['order'] = branch.order
+            branches_and_order_values.append(obj)
+        return branches_and_order_values
+
+    @staticmethod
     def get_branches_trimmed_by_merge_target(project, branches, max_commits):
         """ Returns branch data trimmed by its merge target information from branches input """
         all_branches = GitBranchEntry.objects.filter(project=project)
@@ -236,7 +250,11 @@ class GitController(object):
     @staticmethod
     def sort_branch_with_branches(project_entry, branch_entry, branch_order):
         """ Assign new order to a given branch and then sort all of them """
-        branch_entry.order = branch_order
+        value = int(branch_order)
+        if branch_entry.order <= value:
+            value = value + 1
+
+        branch_entry.order = value
         branch_entry.save()
 
         GitController.update_branches_order_value(project_entry)

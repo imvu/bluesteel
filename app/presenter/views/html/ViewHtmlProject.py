@@ -7,6 +7,8 @@ from app.logic.bluesteel.controllers.BluesteelProjectController import Bluesteel
 from app.logic.benchmark.controllers.BenchmarkExecutionController import BenchmarkExecutionController
 from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
 from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
+from app.logic.gitrepo.controllers.GitController import GitController
+from app.logic.gitrepo.models.GitProjectModel import GitProjectEntry
 from app.logic.gitrepo.models.GitBranchModel import GitBranchEntry
 from app.logic.httpcommon import res
 from app.logic.httpcommon.Page import Page
@@ -118,14 +120,16 @@ def get_project_single_branch(request, project_id, branch_id):
 def get_project_single_branch_links(request, project_id, branch_id):
     """ Display single branch links """
     if request.method == 'GET':
-        branch_entry = GitBranchEntry.objects.filter(id=branch_id, project__id=project_id).first()
+        project_entry = GitProjectEntry.objects.filter(id=project_id).first()
+        if project_entry == None:
+            return res.get_template_data(request, 'presenter/not_found.html', {})
+
+        branch_entry = GitBranchEntry.objects.filter(id=branch_id, project=project_entry).first()
         if branch_entry == None:
             return res.get_template_data(request, 'presenter/not_found.html', {})
 
         def_entries = BenchmarkDefinitionEntry.objects.all()
         worker_entries = WorkerEntry.objects.all()
-
-        # project_entry, branch_entry, bench_def_entry, worker_entry
 
         links = []
 
@@ -150,12 +154,27 @@ def get_project_single_branch_links(request, project_id, branch_id):
 
             links.append(definition)
 
+
+        branch_names_and_orders = GitController.get_branch_names_and_order_values(project_entry)
+        update_order_selection = []
+        for name_and_order in branch_names_and_orders:
+            obj = {}
+            obj['name'] = name_and_order['name']
+            obj['order'] = name_and_order['order']
+            obj['current'] = name_and_order['id'] == branch_entry.id
+            obj['url'] = {}
+            obj['url']['update'] = ViewUrlGenerator.get_branch_update_order_url(branch_id, project_id, obj['order'])
+            update_order_selection.append(obj)
+
+
         data = {}
         data['branch'] = {}
         data['branch']['name'] = branch_entry.name
+        data['branch']['order'] = branch_entry.order
         data['branch']['url'] = {}
         data['branch']['url']['single'] = ViewUrlGenerator.get_project_branch_single_url(project_id, branch_id)
         data['branch']['links'] = links
+        data['branch']['update_order_selection'] = update_order_selection
         data['menu'] = ViewPrepareObjects.prepare_menu_for_html([])
 
         return res.get_template_data(request, 'presenter/project_branch_links.html', data)

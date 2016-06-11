@@ -90,6 +90,9 @@ def get_gitfeeder_full_url(domain, project_id):
 def get_change_merge_target_url(project_id):
     return '/main/branch/merge/target/project/{0}/'.format(project_id)
 
+def get_branch_update_order_url(branch_id, project_id, order_value):
+    return '/main/branch/{0}/project/{1}/update/order/{2}/'.format(branch_id, project_id, order_value)
+
 def get_project_edit_url(project_id):
     return '/main/project/{0}/edit/'.format(project_id)
 
