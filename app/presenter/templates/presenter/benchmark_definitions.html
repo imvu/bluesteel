@@ -22,7 +22,12 @@
                     {% for command in definition.command_set.commands %}
                         <li>
                             <div class="container_input">
-                                <div class="command">{{command.command}}</div>
+                                <input  class="command_input"
+                                        type="text"
+                                        name="project_name"
+                                        value="{{command.command}}"
+                                        maxlength="50"
+                                ></input>
                             </div>
                         </li>
                     {% endfor %}
