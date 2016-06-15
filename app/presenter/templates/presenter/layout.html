@@ -11,13 +11,55 @@
                 <div class="title centered">Layout - {{layout.id}}</div>
             </div>
             <div class="middle_card card_small white_card card_padding_large">
-                <div class="list_label indent_1">NAME</div>
-                <div class="normal indent_2">{{layout.name}}</div>
+                <ul class="no_dots vertical_margin">
+                    <li>
+                        <div class="list_label indent_1">NAME</div>
+                    </li>
+                    <li>
+                        <div class="container_input">
+                            <input  class="command_input"
+                                    type="text"
+                                    value="{{layout.name}}"
+                                    readonly
+                            ></input>
+                        </div>
+                    </li>
+                </ul>
                 <br/>
-                <div class="list_label indent_1">PROJECTS</div>
-                {% for project in layout.projects %}
-                    <div class="normal indent_2">{{project.name}}</div>
-                {% endfor %}
+
+                <ul class="no_dots vertical_margin">
+                    <li>
+                        <div class="list_label indent_1">ACTIVE</div>
+                    </li>
+                    <li>
+                        <div class="container_input">
+                            <input  class="command_input"
+                                    type="text"
+                                    value={{layout.active|yesno:"Yes,No"}}
+                                    readonly
+                            ></input>
+                        </div>
+                    </li>
+                </ul>
+
+                <br/>
+                <ul class="no_dots vertical_margin">
+                    <li>
+                        <div class="list_label indent_1">PROJECTS</div>
+                    </li>
+                    {% for project in layout.projects %}
+                    <li>
+                        <div class="container_input">
+                            <input  class="command_input"
+                                    type="text"
+                                    value="{{project.name}}"
+                                    readonly
+                            ></input>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+
             </div>
             <div class="lower_card card_small white_card card_padding_small">
                 <ul class="no_dots no_indent vertical_margin horizontal_list">
