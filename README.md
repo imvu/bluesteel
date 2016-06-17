@@ -26,7 +26,7 @@
 
 ### Install PostgreSQL database (optional)###
 
-- Go to [http://postgresapp.com](http://postgresapp.com) and download the app
+- Go to [http://postgresapp.com](http://postgresapp.com) and download the app.
 - Install it! (in OS X means to move it to the Applications folder)
 - Locate `pg_config` binary. It should live inside: `/Applications/Postgres.app/Contents/Versions/9.3/bin/`
 - add that path to $PATH environment variable with: `PATH=$PATH:/Applications/Postgres.app/Contents/Versions/9.3/bin/`
