@@ -37,10 +37,16 @@
 - For running tests you simply need to execute: `s/test-bluesteel.py`
 - If you want to run an specific set of tests, you can do: `s/test-bluesteel.py <set_name>`
 
-### How to run BlueSteel ###
+### How to run BlueSteel (development) ###
 
 - Execute `s/run-server-development.py`
 - Open a browser and type the url: `localhost:28028`
+- See next step `How to edit things inside BlueSteel`
+
+### How to run BlueSteel (production) ###
+
+- Execute `s/run-server-production.py`
+- Open a browser and type the url: `localhost:8080`
 - See next step `How to edit things inside BlueSteel`
 
 ### How to edit things inside BlueSteel ###
@@ -53,4 +59,5 @@
 
 - Make commits as atomic and small as possible.
 - Write test for all the code you write.
+- Make a pull request and submit it.
 - For any related question, please contact `llorens.marti@gmail.com`
