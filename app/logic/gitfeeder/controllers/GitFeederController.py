@@ -444,7 +444,4 @@ class GitFeederController(object):
     @staticmethod
     def purge_all_reports(project, worker_entry):
         """ This function will delete all feed reports for a given  """
-        feed_entries = FeedEntry.objects.filter(git_project=project, worker=worker_entry)
-
-        for feed in feed_entries:
-            feed.delete()
+        FeedEntry.objects.filter(git_project=project, worker=worker_entry).delete()
