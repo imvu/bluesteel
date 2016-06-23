@@ -195,9 +195,9 @@ class BenchmarkExecutionControllerTestCase(TestCase):
         self.assertEqual('worker-name-1', execution.worker.name)
 
     def test_executions_available_ordered_by_commit_creation_time(self):
-        self.commit2.created_at = timezone.now()
+        self.commit2.author_date = timezone.now()
         self.commit2.save()
-        self.commit1.created_at = timezone.now()
+        self.commit1.author_date = timezone.now()
         self.commit1.save()
 
         execution = BenchmarkExecutionController.get_earliest_available_execution(self.user1)
