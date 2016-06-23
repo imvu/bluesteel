@@ -11,11 +11,11 @@ FEED_REPORT_ITEMS_PER_PAGE = 12
 PAGINATION_HALF_RANGE = 2
 MAX_COMMAND_RESULT_LENGTH = 1000
 
-def get_feed_controls():
+def get_feed_controls(git_project_id, worker_id):
     """ Returns a list of control buttons for the feed report page """
     control = {}
     control['name'] = '  Purge Reports'
-    control['link'] = ViewUrlGenerator.get_feed_purge_reports_url()
+    control['link'] = ViewUrlGenerator.get_feed_purge_reports_url(git_project_id, worker_id)()
     control['icon'] = 'fa fa-trash'
     control['onclick'] = 'executeAndReload(\'{0}\', \'\');'.format(control['link'])
 
@@ -75,7 +75,7 @@ def get_feed_reports_from_worker(request, worker_id, page_index):
 
         data = {}
         data['menu'] = ViewPrepareObjects.prepare_menu_for_html([])
-        data['controls'] = get_feed_controls()
+        data['controls'] = get_feed_controls(0, worker_id) # Fix that 0 !!
         data['pagination'] = ViewPrepareObjects.prepare_pagination_feed_reports(worker_id, page_indices)
         data['items'] = items
 
