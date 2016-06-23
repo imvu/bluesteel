@@ -27,8 +27,19 @@ class GitFetcher(object):
         self.branch_list = []
         self.feed_data = {}
 
-    def fetch_git_project(self, project_info):
-        """ Returns an object with the repository information """
+    def fetch_only_git_project(self, project_info):
+        """ Only performs the first step to fetch the project """
+        log.basicConfig(level=self.log_level)
+
+        steps = [
+            self.step_fetch_git_project,
+        ]
+
+        self.execute_steps(project_info, steps)
+        return True
+
+    def fetch_and_feed_git_project(self, project_info):
+        """ Performs fetch and all the remaining steps to feed the data """
         log.basicConfig(level=self.log_level)
 
         steps = [
@@ -48,6 +59,12 @@ class GitFetcher(object):
             self.step_create_branch_list,
         ]
 
+        self.execute_steps(project_info, steps)
+        return True
+
+
+    def execute_steps(self, project_info, steps):
+        """ Executes all the provided steps and fill the final data into the member variables """
         for step in steps:
             log.info('Step: ' + step.__name__)
             if not step(project_info):
@@ -66,7 +83,6 @@ class GitFetcher(object):
             self.feed_data['feed_data']['branches'] = self.branch_list
 
         self.feed_data['reports'] = self.report_stack
-        return True
 
     def step_fetch_git_project(self, project_info):
         """ Fetch a git project using project info """

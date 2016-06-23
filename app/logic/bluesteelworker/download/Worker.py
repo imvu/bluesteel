@@ -173,13 +173,15 @@ def process_git_fetch_and_feed(bootstrap_urls, settings, session, feed):
         return process_info
 
     for project in res['projects']:
-        print '- Fetching git project'
+        if not project['feed']['active']:
+            continue
+
         fetcher = GitFetcher.GitFetcher(log.DEBUG)
-        fetcher.fetch_git_project(project)
 
-        obj_json = json.dumps(fetcher.feed_data)
-
-        if project['feed']['active'] and feed:
+        if feed:
+            print '- Fetching git project'
+            fetcher.fetch_and_feed_git_project(project)
+            obj_json = json.dumps(fetcher.feed_data)
             print '- Feeding git project'
             resp = session.post(project['feed']['url'], {}, obj_json)
             # ppi.pprint(resp)
@@ -187,6 +189,10 @@ def process_git_fetch_and_feed(bootstrap_urls, settings, session, feed):
                 print '- Error occurred while feeding project'
                 process_info = resp
                 return process_info
+        else:
+            print '- Only Fetching git project'
+            fetcher.fetch_only_git_project(project)
+
 
     print '- Finshed fetching and feeding'
     return process_info
