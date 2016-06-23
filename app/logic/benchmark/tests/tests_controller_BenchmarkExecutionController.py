@@ -194,6 +194,34 @@ class BenchmarkExecutionControllerTestCase(TestCase):
         self.assertEqual('0000100001000010000100001000010000100001', execution.commit.commit_hash)
         self.assertEqual('worker-name-1', execution.worker.name)
 
+    def test_executions_available_ordered_by_commit_creation_time(self):
+        self.commit2.created_at = timezone.now()
+        self.commit2.save()
+        self.commit1.created_at = timezone.now()
+        self.commit1.save()
+
+        execution = BenchmarkExecutionController.get_earliest_available_execution(self.user1)
+
+        self.assertNotEqual(None, execution)
+        self.assertEqual(BenchmarkExecutionEntry.IN_PROGRESS, execution.status)
+        self.assertEqual(False, execution.invalidated)
+        self.assertEqual(28, self.benchmark_definition1.revision)
+        self.assertEqual(28, execution.revision_target)
+        self.assertEqual('BenchmarkDefinition1', execution.definition.name)
+        self.assertEqual('0000100001000010000100001000010000100001', execution.commit.commit_hash)
+        self.assertEqual('worker-name-1', execution.worker.name)
+
+        execution = BenchmarkExecutionController.get_earliest_available_execution(self.user1)
+
+        self.assertNotEqual(None, execution)
+        self.assertEqual(BenchmarkExecutionEntry.IN_PROGRESS, execution.status)
+        self.assertEqual(False, execution.invalidated)
+        self.assertEqual(28, self.benchmark_definition1.revision)
+        self.assertEqual(28, execution.revision_target)
+        self.assertEqual('BenchmarkDefinition1', execution.definition.name)
+        self.assertEqual('0000200002000020000200002000020000200002', execution.commit.commit_hash)
+        self.assertEqual('worker-name-1', execution.worker.name)
+
     def test_third_execution_available_does_not_exist_after_all_taken(self):
         execution = BenchmarkExecutionController.get_earliest_available_execution(self.user1)
         self.assertNotEqual(None, execution)
@@ -203,7 +231,6 @@ class BenchmarkExecutionControllerTestCase(TestCase):
 
         execution = BenchmarkExecutionController.get_earliest_available_execution(self.user1)
         self.assertEqual(None, execution)
-        
 
     def test_earliest_available_execution_of_user_2_is_execution_3(self):
         execution = BenchmarkExecutionController.get_earliest_available_execution(self.user2)
