@@ -69,3 +69,22 @@ def post_commits(request, project_id):
         return res.get_response(200, 'Commits added correctly', {})
     else:
         return res.get_response(400, 'Only post allowed', {})
+
+
+@transaction.atomic
+def purge_all_feed_reports(request, worker_id):
+    """ Purge all feed reports """
+    if request.method == 'POST':
+        GitFeederController.purge_all_reports(worker_id)
+        return res.get_response(200, 'Feed reports purged', {})
+    else:
+        return res.get_response(400, 'Only post allowed', {})
+
+@transaction.atomic
+def purge_old_feed_reports(request, worker_id, keep_young_count):
+    """ Purge old feed reports and keep young ones"""
+    if request.method == 'POST':
+        GitFeederController.purge_old_reports(worker_id, keep_young_count)
+        return res.get_response(200, 'Feed reports purged', {})
+    else:
+        return res.get_response(400, 'Only post allowed', {})

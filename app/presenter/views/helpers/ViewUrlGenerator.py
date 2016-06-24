@@ -160,8 +160,11 @@ def get_delete_benchmark_definition_url(benchmark_definition_id):
 def get_feed_report_url(feed_id):
     return '/main/feed/report/{0}/'.format(feed_id)
 
-def get_feed_purge_reports_url(git_project_id, worker_id):
-    return '/main/feed/report/git_project/{0}/worker/{1}/purge/all/'.format(git_project_id, worker_id)
+def get_feed_purge_all_reports_url(worker_id):
+    return '/main/feed/report/worker/{0}/purge/all/'.format(worker_id)
+
+def get_feed_purge_old_reports_url(worker_id, keep_young_count):
+    return '/main/feed/report/worker/{0}/purge/keep/{1}/'.format(worker_id, keep_young_count)
 
 def get_feed_report_form_worker_url(worker_id, page_index):
     return '/main/feed/fromworker/{0}/page/{1}/'.format(worker_id, page_index)

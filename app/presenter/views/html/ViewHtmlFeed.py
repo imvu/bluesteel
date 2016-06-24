@@ -10,17 +10,25 @@ from app.logic.httpcommon.Page import Page
 FEED_REPORT_ITEMS_PER_PAGE = 12
 PAGINATION_HALF_RANGE = 2
 MAX_COMMAND_RESULT_LENGTH = 1000
+KEEP_YOUNG_COUNT = 10
 
-def get_feed_controls(git_project_id, worker_id):
+def get_feed_controls(worker_id, keep_young_count):
     """ Returns a list of control buttons for the feed report page """
-    control = {}
-    control['name'] = '  Purge Reports'
-    control['link'] = ViewUrlGenerator.get_feed_purge_reports_url(git_project_id, worker_id)()
-    control['icon'] = 'fa fa-trash'
-    control['onclick'] = 'executeAndReload(\'{0}\', \'\');'.format(control['link'])
+    control1 = {}
+    control1['name'] = '  Purge All Reports'
+    control1['link'] = ViewUrlGenerator.get_feed_purge_all_reports_url(worker_id)
+    control1['icon'] = 'fa fa-trash'
+    control1['onclick'] = 'executeAndReload(\'{0}\', \'\');'.format(control1['link'])
+
+    control2 = {}
+    control2['name'] = '  Purge Old Reports'
+    control2['link'] = ViewUrlGenerator.get_feed_purge_old_reports_url(worker_id, keep_young_count)
+    control2['icon'] = 'fa fa-trash'
+    control2['onclick'] = 'executeAndReload(\'{0}\', \'\');'.format(control2['link'])
 
     controls = []
-    controls.append(control)
+    controls.append(control1)
+    controls.append(control2)
     return controls
 
 def trim_report(report):
@@ -75,7 +83,7 @@ def get_feed_reports_from_worker(request, worker_id, page_index):
 
         data = {}
         data['menu'] = ViewPrepareObjects.prepare_menu_for_html([])
-        data['controls'] = get_feed_controls(0, worker_id) # Fix that 0 !!
+        data['controls'] = get_feed_controls(worker_id, KEEP_YOUNG_COUNT)
         data['pagination'] = ViewPrepareObjects.prepare_pagination_feed_reports(worker_id, page_indices)
         data['items'] = items
 

@@ -833,7 +833,36 @@ class GitFeederControllerTestCase(TestCase):
         self.assertEqual(1, CommandGroupEntry.objects.filter(id=command_group_3.id).count())
         self.assertEqual(1, CommandGroupEntry.objects.filter(id=command_group_4.id).count())
 
-        res = GitFeederController.purge_all_reports(self.git_project1, self.worker1)
+        res = GitFeederController.purge_all_reports(self.worker1)
+
+        self.assertEqual(0, FeedEntry.objects.all().count())
+        self.assertEqual(0, FeedEntry.objects.filter(git_project=self.git_project1, worker=self.worker1).count())
+        self.assertEqual(0, FeedEntry.objects.filter(git_project=git_project2, worker=self.worker1).count())
+        self.assertEqual(0, CommandGroupEntry.objects.filter(id=command_group_1.id).count())
+        self.assertEqual(0, CommandGroupEntry.objects.filter(id=command_group_2.id).count())
+        self.assertEqual(0, CommandGroupEntry.objects.filter(id=command_group_3.id).count())
+        self.assertEqual(0, CommandGroupEntry.objects.filter(id=command_group_4.id).count())
+
+    def test_purge_old_feed_reports_from_a_worker(self):
+        git_project2 = GitProjectEntry.objects.create(url='http://test/2/')
+
+        command_group_1 = CommandGroupEntry.objects.create()
+        command_group_2 = CommandGroupEntry.objects.create()
+        command_group_3 = CommandGroupEntry.objects.create()
+        command_group_4 = CommandGroupEntry.objects.create()
+
+        feed_1_1 = FeedEntry.objects.create(command_group=command_group_1, git_project=self.git_project1, worker=self.worker1)
+        feed_1_2 = FeedEntry.objects.create(command_group=command_group_2, git_project=self.git_project1, worker=self.worker1)
+        feed_2_1 = FeedEntry.objects.create(command_group=command_group_3, git_project=git_project2, worker=self.worker1)
+        feed_2_2 = FeedEntry.objects.create(command_group=command_group_4, git_project=git_project2, worker=self.worker1)
+
+        self.assertEqual(4, FeedEntry.objects.all().count())
+        self.assertEqual(1, CommandGroupEntry.objects.filter(id=command_group_1.id).count())
+        self.assertEqual(1, CommandGroupEntry.objects.filter(id=command_group_2.id).count())
+        self.assertEqual(1, CommandGroupEntry.objects.filter(id=command_group_3.id).count())
+        self.assertEqual(1, CommandGroupEntry.objects.filter(id=command_group_4.id).count())
+
+        res = GitFeederController.purge_old_reports(self.worker1, 2)
 
         self.assertEqual(2, FeedEntry.objects.all().count())
         self.assertEqual(0, FeedEntry.objects.filter(git_project=self.git_project1, worker=self.worker1).count())

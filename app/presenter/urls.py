@@ -151,6 +151,12 @@ urlpatterns = patterns(
     url(r'^feed/commit/project/(?P<project_id>\d+)/$',
         'app.presenter.views.json.ViewJsonGitFeeder.post_commits'),
 
+    url(r'^feed/report/worker/(?P<worker_id>\d+)/purge/all/$',
+        'app.presenter.views.json.ViewJsonGitFeeder.purge_all_feed_reports'),
+
+    url(r'^feed/report/worker/(?P<worker_id>\d+)/purge/keep/(?P<keep_young_count>\d+)/$',
+        'app.presenter.views.json.ViewJsonGitFeeder.purge_old_feed_reports'),
+
     url(r'^branch/all/project/(?P<project_id>\d+)/$',
         'app.presenter.views.json.ViewJsonGitRepo.get_branch_list'),
 
