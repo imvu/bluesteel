@@ -50,14 +50,12 @@ saveProject = function(idFormProject) {
     obj['clone'] = [];
     obj['fetch'] = [];
 
-    var keys = Object.keys(form.elements);
-
-    for (var i = 0; i < keys.length; i++) {
-        var key = keys[i];
-        if (key.startsWith("command_CLONE")) {
-            obj['clone'].push(form.elements[key].value);
-        } else if (key.startsWith("command_FETCH")) {
-            obj['fetch'].push(form.elements[key].value);
+    for (var i = 0; i < form.elements.length; i++) {
+        var element = form.elements[i];
+        if (element.name.startsWith("command_CLONE")) {
+            obj['clone'].push(element.value);
+        } else if (element.name.startsWith("command_FETCH")) {
+            obj['fetch'].push(element.value);
         }
     }
 
