@@ -52,7 +52,7 @@ SAVE_PROJECT = {
             'items' : {
                 'minLength' : 1,
                 'type' : 'string',
-                'maxLength' : 255,
+                'maxLength' : 2048,
             },
         },
         'fetch' : {
@@ -61,7 +61,7 @@ SAVE_PROJECT = {
             'items' : {
                 'type' : 'string',
                 'minLength' : 1,
-                'maxLength' : 255,
+                'maxLength' : 2048,
             },
         },
     },
