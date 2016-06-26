@@ -45,7 +45,13 @@ class BenchmarkDefinitionController(object):
         return definition
 
     @staticmethod
-    def save_benchmark_definition(name, benchmark_definition_id, layout_id, project_id, command_list):
+    def save_benchmark_definition(
+            name,
+            benchmark_definition_id,
+            layout_id,
+            project_id,
+            command_list,
+            max_fluctuation_percent):
         """ Save benchmark definition with the new data provided, returns None if error """
         benchmark_def_entry = BenchmarkDefinitionEntry.objects.filter(id=benchmark_definition_id).first()
 
@@ -58,8 +64,9 @@ class BenchmarkDefinitionController(object):
                 project_id,
                 command_list):
             benchmark_def_entry.name = name
+            benchmark_def_entry.max_fluctuation_percent = max_fluctuation_percent
             benchmark_def_entry.save()
-            return None
+            return benchmark_def_entry
 
         layout_entry = BluesteelLayoutEntry.objects.filter(id=layout_id).first()
 
@@ -83,6 +90,7 @@ class BenchmarkDefinitionController(object):
         benchmark_def_entry.layout = layout_entry
         benchmark_def_entry.project = project_entry
         benchmark_def_entry.revision = benchmark_def_entry.revision + 1
+        benchmark_def_entry.max_fluctuation_percent = max_fluctuation_percent
         benchmark_def_entry.save()
 
         return benchmark_def_entry

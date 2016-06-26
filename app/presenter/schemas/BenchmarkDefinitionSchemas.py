@@ -31,5 +31,10 @@ SAVE_BENCHMARK_DEFINITION = {
                 'minLength' : 1,
             },
         },
+        'max_fluctuation_percent' : {
+            'type' : 'number',
+            'min' : 0,
+            'max' : 100,
+        },
     },
 }

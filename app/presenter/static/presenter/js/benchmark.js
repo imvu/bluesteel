@@ -27,13 +27,14 @@ saveBenchmarkDefinition = function(idFormBenchmarkDefinition) {
     obj['layout_id'] = parseInt(form.elements['layout_active'].value);
     obj['project_id'] = parseInt(form.elements['project_active'].value);
     obj['command_list'] = [];
+    obj['max_fluctuation_percent'] = '-1';
 
-    var keys = Object.keys(form.elements);
-
-    for (var i = 0; i < keys.length; i++) {
-        var key = keys[i];
-        if (key.startsWith("command_")) {
-            obj['command_list'].push(form.elements[key].value);
+    for (var i = 0; i < form.elements.length; i++) {
+        var element = form.elements[i];
+        if (element.name.startsWith("command_")) {
+            obj['command_list'].push(element.value);
+        } else if (element.name.startsWith("max_fluctuation_percent")) {
+            obj['max_fluctuation_percent'] = parseInt(element.value);
         }
     }
 

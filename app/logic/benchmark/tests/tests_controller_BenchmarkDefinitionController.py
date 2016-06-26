@@ -93,12 +93,13 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
         commands.append('command-29')
         commands.append('command-30')
 
-        definition = BenchmarkDefinitionController.save_benchmark_definition('new-name', definition.id, new_layout.id, project.id, commands)
+        definition = BenchmarkDefinitionController.save_benchmark_definition('new-name', definition.id, new_layout.id, project.id, commands, 28)
 
         self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='command-28').count())
         self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='command-29').count())
         self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='command-30').count())
         self.assertEqual(1, definition.revision)
+        self.assertEqual(28, definition.max_fluctuation_percent)
         self.assertEqual('new-name', definition.name)
 
     def test_save_same_benchmark_definition_does_not_increment_revision(self):
@@ -126,14 +127,15 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
         commands.append('command-2')
         commands.append('command-3')
 
-        result = BenchmarkDefinitionController.save_benchmark_definition('default-name', definition.id, new_layout.id, project.id, commands)
+        result = BenchmarkDefinitionController.save_benchmark_definition('default-name', definition.id, new_layout.id, project.id, commands, 0)
         definition = BenchmarkDefinitionEntry.objects.all().first()
 
-        self.assertEqual(None, result)
+        self.assertEqual(definition, result)
         self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='command-1').count())
         self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='command-2').count())
         self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='command-3').count())
         self.assertEqual(0, definition.revision)
+        self.assertEqual(0, definition.max_fluctuation_percent)
         self.assertEqual('default-name', definition.name)
 
     def test_save_benchmark_definition_does_not_delete_benchmarks_executions(self):
@@ -217,7 +219,7 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
         self.assertEqual(benchmark_execution1, BenchmarkExecutionEntry.objects.all().first())
         self.assertEqual(0, CommandEntry.objects.filter(command_set=benchmark_definition1.command_set).count())
 
-        result = BenchmarkDefinitionController.save_benchmark_definition('BenchmarkDefinition1-1', benchmark_definition1.id, bluesteel_layout.id, bluesteel_project.id, commands)
+        result = BenchmarkDefinitionController.save_benchmark_definition('BenchmarkDefinition1-1', benchmark_definition1.id, bluesteel_layout.id, bluesteel_project.id, commands, 28)
 
         self.assertEqual('BenchmarkDefinition1-1', result.name)
         self.assertEqual(1, BenchmarkExecutionEntry.objects.all().count())

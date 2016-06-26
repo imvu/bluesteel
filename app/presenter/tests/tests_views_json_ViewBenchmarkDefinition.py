@@ -130,6 +130,7 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
         obj['name'] = 'new-name-1'
         obj['layout_id'] = layout.id
         obj['project_id'] = project.id
+        obj['max_fluctuation_percent'] = 28
         obj['command_list'] = []
         obj['command_list'].append('command-28')
         obj['command_list'].append('command-29')
@@ -149,6 +150,7 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
         definition = BenchmarkDefinitionEntry.objects.filter(id=definition.id).first()
 
         self.assertEqual('new-name-1', definition.name)
+        self.assertEqual(28, definition.max_fluctuation_percent)
 
         self.assertEqual(0, CommandEntry.objects.filter(command_set=definition.command_set, command='command-1').count())
         self.assertEqual(0, CommandEntry.objects.filter(command_set=definition.command_set, command='command-2').count())
