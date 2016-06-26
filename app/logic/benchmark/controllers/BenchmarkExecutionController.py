@@ -19,7 +19,6 @@ import json
 import sys
 
 PAGINATION_HALF_RANGE = 2
-MAX_FLUCTUATION_RATIO = 0.05
 
 class BenchmarkExecutionController(object):
     """ BenchmarkExecution controller with helper functions """
@@ -311,9 +310,11 @@ class BenchmarkExecutionController(object):
             fluctuation_window=fluctuation_window
         )
 
+        max_fluctuation_ratio = float(benchmark_exec_entry.definition.max_fluctuation_percent) / 100.0
+
         for fluc in fluctuations:
             fluc_ratio = 1.0 - (float(fluc['min']) / float(fluc['max']))
-            if fluc_ratio >= MAX_FLUCTUATION_RATIO:
+            if fluc_ratio >= max_fluctuation_ratio:
                 return True
         return False
 
