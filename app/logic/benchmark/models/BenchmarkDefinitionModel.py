@@ -32,12 +32,41 @@ class BenchmarkDefinitionEntry(models.Model):
         obj['command_set'] = self.command_set.as_object()
         obj['revision'] = self.revision
         obj['max_fluctuation_percent'] = self.max_fluctuation_percent
-        obj['max_weeks_old_notify'] = self.max_weeks_old_notify
+        obj['max_weeks_old_notify'] = {}
+        obj['max_weeks_old_notify']['current_value'] = self.max_weeks_old_notify
+        obj['max_weeks_old_notify']['names'] = self.get_max_weeks_old_names_and_values()
         return obj
 
     def increment_revision(self):
         self.revision = self.revision + 1
         self.save()
+
+    def get_max_weeks_old_names_and_values(self):
+        """ Returns names, values, and current for all the possible weeks available """
+        values = [
+            {'name' : 'Allways', 'weeks' : -1},
+            {'name' : 'Never', 'weeks' : 0},
+            {'name' : '1 Week', 'weeks' : 1},
+            {'name' : '2 Weeks', 'weeks' : 2},
+            {'name' : '3 Weeks', 'weeks' : 3},
+            {'name' : '1 Month', 'weeks' : 4},
+            {'name' : '2 Months', 'weeks' : 8},
+            {'name' : '3 Months', 'weeks' : 12},
+            {'name' : '4 Months', 'weeks' : 16},
+            {'name' : '5 Months', 'weeks' : 20},
+            {'name' : '6 Months', 'weeks' : 24},
+            {'name' : '1 Year', 'weeks' : 52},
+            {'name' : '2 Years', 'weeks' : 104},
+            {'name' : '3 Years', 'weeks' : 156},
+            {'name' : '4 Years', 'weeks' : 208},
+            {'name' : '5 Years', 'weeks' : 260},
+            {'name' : '10 Years', 'weeks' : 520}
+        ]
+
+        for val in values:
+            val['current'] = val['weeks'] == self.max_weeks_old_notify
+
+        return values
 
 
 @receiver(models.signals.post_delete)
