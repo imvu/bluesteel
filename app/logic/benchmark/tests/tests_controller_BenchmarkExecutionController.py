@@ -1025,7 +1025,7 @@ class BenchmarkExecutionControllerTestCase(TestCase):
 
 
     def test_benchmark_is_young_enough_for_notify(self):
-        self.benchmark_definition1.max_week_old_notify = 2
+        self.benchmark_definition1.max_weeks_old_notify = 2
         self.benchmark_definition1.save()
 
         commit0 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash='0000000000000000000000000000000000000000', author=self.git_user1, author_date=timezone.now(), committer=self.git_user1, committer_date=timezone.now())
@@ -1036,7 +1036,7 @@ class BenchmarkExecutionControllerTestCase(TestCase):
 
 
     def test_benchmark_is_not_young_enough_for_notify(self):
-        self.benchmark_definition1.max_week_old_notify = 2
+        self.benchmark_definition1.max_weeks_old_notify = 2
         self.benchmark_definition1.save()
 
         delta = timedelta(days=25)
@@ -1048,3 +1048,32 @@ class BenchmarkExecutionControllerTestCase(TestCase):
         benchmark_execution0 = BenchmarkExecutionEntry.objects.create(definition=self.benchmark_definition1, commit=commit0, worker=self.worker1, report=report_0, invalidated=False, revision_target=28, status=BenchmarkExecutionEntry.READY)
 
         self.assertFalse(BenchmarkExecutionController.is_benchmark_young_for_notifications(benchmark_execution0))
+
+    def test_benchmark_never_is_young(self):
+        self.benchmark_definition1.max_weeks_old_notify = 0
+        self.benchmark_definition1.save()
+
+        delta = timedelta(days=0)
+
+        creation_time = timezone.now() - delta
+
+        commit0 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash='0000000000000000000000000000000000000000', author=self.git_user1, author_date=creation_time, committer=self.git_user1, committer_date=timezone.now())
+        report_0 = CommandSetEntry.objects.create(group=None)
+        definition = BenchmarkDefinitionEntry.objects.filter(id=self.benchmark_definition1.id).first()
+        benchmark_execution0 = BenchmarkExecutionEntry.objects.create(definition=definition, commit=commit0, worker=self.worker1, report=report_0, invalidated=False, revision_target=28, status=BenchmarkExecutionEntry.READY)
+
+        self.assertFalse(BenchmarkExecutionController.is_benchmark_young_for_notifications(benchmark_execution0))
+
+    def test_benchmark_is_young_allways(self):
+        self.benchmark_definition1.max_weeks_old_notify = -1
+        self.benchmark_definition1.save()
+
+        delta = timedelta(days=5)
+
+        creation_time = timezone.now() - delta
+
+        commit0 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash='0000000000000000000000000000000000000000', author=self.git_user1, author_date=creation_time, committer=self.git_user1, committer_date=timezone.now())
+        report_0 = CommandSetEntry.objects.create(group=None)
+        benchmark_execution0 = BenchmarkExecutionEntry.objects.create(definition=self.benchmark_definition1, commit=commit0, worker=self.worker1, report=report_0, invalidated=False, revision_target=28, status=BenchmarkExecutionEntry.READY)
+
+        self.assertTrue(BenchmarkExecutionController.is_benchmark_young_for_notifications(benchmark_execution0))

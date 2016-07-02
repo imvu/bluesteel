@@ -322,11 +322,15 @@ class BenchmarkExecutionController(object):
     @staticmethod
     def is_benchmark_young_for_notifications(benchmark_exec_entry):
         """ Returns true if benchmark is younger than max weeks for notify """
+        max_weeks_old_notify = benchmark_exec_entry.definition.max_weeks_old_notify
+
+        if max_weeks_old_notify < 0:
+            return True
+
         now_date = timezone.now()
         author_date = benchmark_exec_entry.commit.author_date
 
         delta = now_date - author_date
-        max_weeks_old_notify = benchmark_exec_entry.definition.max_weeks_old_notify
 
         return (float(delta.days) / 7.0) < float(max_weeks_old_notify)
 
