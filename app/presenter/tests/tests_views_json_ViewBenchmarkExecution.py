@@ -558,3 +558,4 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
         self.assertEqual(1, StackedMailEntry.objects.all().count())
         self.assertEqual('Schema failed notification', StackedMailEntry.objects.all().first().title)
         self.assertEqual('user1@test.com', StackedMailEntry.objects.all().first().receiver)
+

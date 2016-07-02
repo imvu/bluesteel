@@ -59,8 +59,9 @@ def save_benchmark_execution(request, benchmark_execution_id):
 
         report = val_resp_obj
         BenchmarkExecutionController.save_bench_execution(bench_exec_entry, report)
+        young_to_notify = BenchmarkExecutionController.is_benchmark_young_for_notifications(bench_exec_entry)
 
-        if not did_commands_succeed(report):
+        if not did_commands_succeed(report) and young_to_notify:
             ViewNotifications.notify_benchmark_command_failure(
                 bench_exec_entry.commit.author.email,
                 bench_exec_entry.id,
@@ -68,7 +69,12 @@ def save_benchmark_execution(request, benchmark_execution_id):
                 request.get_host()
             )
 
-        if BenchmarkExecutionController.does_benchmark_fluctuation_exist(bench_exec_entry, FLUCTUATION_WINDOW):
+        fluctuation_exist = BenchmarkExecutionController.does_benchmark_fluctuation_exist(
+            bench_exec_entry,
+            FLUCTUATION_WINDOW
+        )
+
+        if fluctuation_exist and young_to_notify:
             ViewNotifications.notify_benchmark_fluctuation(
                 bench_exec_entry.commit.author.email,
                 bench_exec_entry.id,
