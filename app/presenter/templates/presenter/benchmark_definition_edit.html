@@ -103,7 +103,11 @@
             <div class="middle_card white_card card_padding_large">
                 <div class="title">NOTIFICATIONS</div>
                 <ul class="no_dots">
-                    <li><div class="list_label indent_1">MAXIMUM FLUCTUATION</div></li>
+                    <li>
+                        <div class="list_label indent_1">MAXIMUM FLUCTUATION</div>
+                        <div class="normal indent_2">Maximum amount of fluctuation allowed on every benchmark execution before sending a notification.</div>
+                    </li>
+                    <br/>
                     <li>
                         <div class="container_input">
                             <select     class="selection individual"
@@ -115,6 +119,23 @@
                                     {% else %}
                                         <option value="{{forloop.counter0}}"}}>{{forloop.counter0}}% - Maximum fluctuation</option>
                                     {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </li>
+                    <br/>
+                    <li>
+                        <div class="list_label indent_1">MAXIMUM WEEKS OLD</div>
+                        <div class="normal indent_2">Maximum amount of weeks since the commit was created to send notifications about this benchmark execution.</div>
+                    </li>
+                    <br/>
+                    <li>
+                        <div class="container_input">
+                            <select     class="selection individual"
+                                        name="max_weeks_old"
+                            >
+                                {% for val in definition.max_weeks_old_notify.names %}
+                                    <option value="{{val.weeks}}" {{val.current|yesno:"selected,"}}>{{val.name}}{{val.current|yesno:" (current),"}}</option>
                                 {% endfor %}
                             </select>
                         </div>

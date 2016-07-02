@@ -34,7 +34,13 @@ class BenchmarkDefinitionEntry(models.Model):
         obj['max_fluctuation_percent'] = self.max_fluctuation_percent
         obj['max_weeks_old_notify'] = {}
         obj['max_weeks_old_notify']['current_value'] = self.max_weeks_old_notify
+        obj['max_weeks_old_notify']['current_name'] = ''
         obj['max_weeks_old_notify']['names'] = self.get_max_weeks_old_names_and_values()
+
+        for val in obj['max_weeks_old_notify']['names']:
+            if val['current']:
+                obj['max_weeks_old_notify']['current_name'] = val['name']
+
         return obj
 
     def increment_revision(self):
