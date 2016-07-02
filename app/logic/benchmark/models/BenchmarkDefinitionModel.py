@@ -13,6 +13,7 @@ class BenchmarkDefinitionEntry(models.Model):
     command_set = models.ForeignKey('commandrepo.CommandSetEntry', related_name='benchmark_command_set')
     revision = models.IntegerField(default=0)
     max_fluctuation_percent = models.IntegerField(default=0)
+    max_weeks_old_notify = models.IntegerField(default=1)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True, editable=False)
 
@@ -31,6 +32,7 @@ class BenchmarkDefinitionEntry(models.Model):
         obj['command_set'] = self.command_set.as_object()
         obj['revision'] = self.revision
         obj['max_fluctuation_percent'] = self.max_fluctuation_percent
+        obj['max_weeks_old_notify'] = self.max_weeks_old_notify
         return obj
 
     def increment_revision(self):
