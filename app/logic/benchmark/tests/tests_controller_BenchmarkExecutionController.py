@@ -3,6 +3,7 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
 from django.contrib.auth.models import AnonymousUser
+from django.utils import timezone
 from app.logic.benchmark.controllers.BenchmarkExecutionController import BenchmarkExecutionController
 from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
 from app.logic.benchmark.models.BenchmarkExecutionModel import BenchmarkExecutionEntry
@@ -22,7 +23,7 @@ from app.logic.commandrepo.models.CommandGroupModel import CommandGroupEntry
 from app.logic.commandrepo.helper import TestCommandHelper
 from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
 from app.logic.mailing.models.StackedMailModel import StackedMailEntry
-from django.utils import timezone
+from datetime import timedelta
 import json
 
 class BenchmarkExecutionControllerTestCase(TestCase):
@@ -1023,3 +1024,27 @@ class BenchmarkExecutionControllerTestCase(TestCase):
         self.assertTrue(BenchmarkExecutionController.does_benchmark_fluctuation_exist(benchmark_execution5, 1))
 
 
+    def test_benchmark_is_young_enough_for_notify(self):
+        self.benchmark_definition1.max_week_old_notify = 2
+        self.benchmark_definition1.save()
+
+        commit0 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash='0000000000000000000000000000000000000000', author=self.git_user1, author_date=timezone.now(), committer=self.git_user1, committer_date=timezone.now())
+        report_0 = CommandSetEntry.objects.create(group=None)
+        benchmark_execution0 = BenchmarkExecutionEntry.objects.create(definition=self.benchmark_definition1, commit=commit0, worker=self.worker1, report=report_0, invalidated=False, revision_target=28, status=BenchmarkExecutionEntry.READY)
+
+        self.assertTrue(BenchmarkExecutionController.is_benchmark_young_for_notifications(benchmark_execution0))
+
+
+    def test_benchmark_is_not_young_enough_for_notify(self):
+        self.benchmark_definition1.max_week_old_notify = 2
+        self.benchmark_definition1.save()
+
+        delta = timedelta(days=25)
+
+        creation_time = timezone.now() - delta
+
+        commit0 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash='0000000000000000000000000000000000000000', author=self.git_user1, author_date=creation_time, committer=self.git_user1, committer_date=timezone.now())
+        report_0 = CommandSetEntry.objects.create(group=None)
+        benchmark_execution0 = BenchmarkExecutionEntry.objects.create(definition=self.benchmark_definition1, commit=commit0, worker=self.worker1, report=report_0, invalidated=False, revision_target=28, status=BenchmarkExecutionEntry.READY)
+
+        self.assertFalse(BenchmarkExecutionController.is_benchmark_young_for_notifications(benchmark_execution0))

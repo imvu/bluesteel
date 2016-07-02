@@ -2,6 +2,7 @@
 
 from django.db.models import Q, F
 from django.core.paginator import Paginator
+from django.utils import timezone
 from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
 from app.logic.benchmark.models.BenchmarkExecutionModel import BenchmarkExecutionEntry
 from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
@@ -317,6 +318,18 @@ class BenchmarkExecutionController(object):
             if fluc_ratio >= max_fluctuation_ratio:
                 return True
         return False
+
+    @staticmethod
+    def is_benchmark_young_for_notifications(benchmark_exec_entry):
+        """ Returns true if benchmark is younger than max weeks for notify """
+        now_date = timezone.now()
+        author_date = benchmark_exec_entry.commit.author_date
+
+        delta = now_date - author_date
+        max_weeks_old_notify = benchmark_exec_entry.definition.max_weeks_old_notify
+
+        return (float(delta.days) / 7.0) < float(max_weeks_old_notify)
+
 
 
 
