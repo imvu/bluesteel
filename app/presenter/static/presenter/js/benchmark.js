@@ -28,6 +28,7 @@ saveBenchmarkDefinition = function(idFormBenchmarkDefinition) {
     obj['project_id'] = parseInt(form.elements['project_active'].value);
     obj['command_list'] = [];
     obj['max_fluctuation_percent'] = '-1';
+    obj['max_weeks_old_notify'] = '-1';
 
     for (var i = 0; i < form.elements.length; i++) {
         var element = form.elements[i];
@@ -35,6 +36,8 @@ saveBenchmarkDefinition = function(idFormBenchmarkDefinition) {
             obj['command_list'].push(element.value);
         } else if (element.name.startsWith("max_fluctuation_percent")) {
             obj['max_fluctuation_percent'] = parseInt(element.value);
+        } else if (element.name.startsWith("max_weeks_old_notify")) {
+            obj['max_weeks_old_notify'] = parseInt(element.value);
         }
     }
 

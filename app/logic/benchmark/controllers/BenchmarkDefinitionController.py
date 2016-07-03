@@ -51,7 +51,8 @@ class BenchmarkDefinitionController(object):
             layout_id,
             project_id,
             command_list,
-            max_fluctuation_percent):
+            max_fluctuation_percent,
+            max_weeks_old_notify):
         """ Save benchmark definition with the new data provided, returns None if error """
         benchmark_def_entry = BenchmarkDefinitionEntry.objects.filter(id=benchmark_definition_id).first()
 
@@ -65,6 +66,7 @@ class BenchmarkDefinitionController(object):
                 command_list):
             benchmark_def_entry.name = name
             benchmark_def_entry.max_fluctuation_percent = max_fluctuation_percent
+            benchmark_def_entry.max_weeks_old_notify = max_weeks_old_notify
             benchmark_def_entry.save()
             return benchmark_def_entry
 
@@ -91,6 +93,7 @@ class BenchmarkDefinitionController(object):
         benchmark_def_entry.project = project_entry
         benchmark_def_entry.revision = benchmark_def_entry.revision + 1
         benchmark_def_entry.max_fluctuation_percent = max_fluctuation_percent
+        benchmark_def_entry.max_weeks_old_notify = max_weeks_old_notify
         benchmark_def_entry.save()
 
         return benchmark_def_entry

@@ -132,7 +132,7 @@
                     <li>
                         <div class="container_input">
                             <select     class="selection individual"
-                                        name="max_weeks_old"
+                                        name="max_weeks_old_notify"
                             >
                                 {% for val in definition.max_weeks_old_notify.names %}
                                     <option value="{{val.weeks}}" {{val.current|yesno:"selected,"}}>{{val.name}}{{val.current|yesno:" (current),"}}</option>

@@ -11,7 +11,7 @@ SAVE_BENCHMARK_EXECUTION = {
     'properties' : {
         'command_set' : {
             'type' : 'array',
-            'min' : 1,
+            'minimum' : 1,
             'items' : {
                 'type' : 'object',
                 'additionalProperties' : False,
@@ -32,7 +32,7 @@ SAVE_BENCHMARK_EXECUTION = {
                             },
                             'out' : {
                                 'type' : 'array',
-                                'min' : 1,
+                                'minimum' : 1,
                                 'items' : {
                                     'type' : 'object',
                                     'oneOf' : [{
@@ -89,7 +89,7 @@ SAVE_BENCHMARK_EXECUTION = {
                                             },
                                             'data' : {
                                                 'type' : 'array',
-                                                'min' : 1,
+                                                'minimum' : 1,
                                                 'items' : {
                                                     'type' : 'number'
                                                 },
