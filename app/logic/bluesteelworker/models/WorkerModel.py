@@ -15,6 +15,7 @@ class WorkerEntry(models.Model):
     description = models.TextField(default='')
     user = models.ForeignKey(User, related_name='worker_user')
     git_feeder = models.BooleanField(default=False)
+    max_feed_reports = models.IntegerField(default=100)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True, editable=False)
 
@@ -30,6 +31,7 @@ class WorkerEntry(models.Model):
         obj['operative_system'] = self.operative_system
         obj['description'] = self.description
         obj['git_feeder'] = self.git_feeder
+        obj['max_feed_reports'] = self.max_feed_reports
         obj['last_update'] = trans.to_date_obj(self.updated_at)
         obj['activity'] = (timezone.now() - self.updated_at) < datetime.timedelta(seconds=30)
         return obj
