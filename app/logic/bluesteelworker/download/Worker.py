@@ -13,8 +13,10 @@ import json
 import uuid
 import socket
 import platform
-# import time
+import time
 # import pprint
+
+RETRY_CONNECTION_TIME = 3
 
 def command_string_to_vector(command):
     return command.split()
@@ -104,11 +106,22 @@ def process_get_or_create_worker(bootstrap_urls, host_info, session):
     url = '{0}{1}/'.format(bootstrap_urls['worker_info_url'], host_info['uuid'])
     resp = session.get(url, {})
 
+    connection_info = {}
+
+    if not resp['succeed']:
+        connection_info['succeed'] = False
+        connection_info['message'] = resp['content']
+        return connection_info
+
     if resp['content']['status'] == 400:
         print '- Creating Worker'
         resp = session.post(bootstrap_urls['create_worker_url'], {}, json.dumps(host_info))
 
-    connection_info = {}
+    if not resp['succeed']:
+        connection_info['succeed'] = False
+        connection_info['message'] = resp['content']
+        return connection_info
+
     connection_info['succeed'] = resp['content']['status'] == 200
     connection_info['worker'] = resp['content']['data']['worker']
     return connection_info
@@ -124,8 +137,14 @@ def process_connect_worker(bootstrap_urls, worker_info, session):
     resp = session.post(bootstrap_urls['login_worker_url'], {}, json.dumps(login_info))
 
     connection_info = {}
+
+    if not resp['succeed']:
+        connection_info['succeed'] = False
+        connection_info['message'] = resp['content']
+        return connection_info
+
     connection_info['git_feeder'] = worker_info['git_feeder']
-    connection_info['succeed'] = resp['content']['status'] == 200
+    connection_info['succeed'] = resp['succeed'] and resp['content']['status'] == 200
     return connection_info
 
 def extract_projects_from_layouts(bootstrap_urls, settings, session):
@@ -203,8 +222,9 @@ def process_get_available_benchmark_execution(bootstrap_urls, session):
 
     resp = session.post(bootstrap_urls['acquire_benchmark_execution_url'], {}, '')
     if resp['succeed'] == False:
-        # print '    - An error occurred:'
-        # print resp
+        print '    - process_get_available_benchmark_execution failed !!'
+        print '    - An error occurred:'
+        print '    out: ', resp['content']
         return None
 
     if resp['content']['status'] != 200:
@@ -306,42 +326,61 @@ def main():
         print '+ get or create worker.'
         worker_info = process_get_or_create_worker(bootstrap_urls, host_info, session)
         if worker_info['succeed'] == False:
+            print '+ process_get_or_create_worker failed.'
+            print '- out: ', worker_info['message']
+            print '+ waiting some time to retry.'
+            time.sleep(RETRY_CONNECTION_TIME)
             continue
 
         print '+ connect worker.'
         con_info = process_connect_worker(bootstrap_urls, worker_info['worker'], session)
         if con_info['succeed'] == False:
+            print '+ process_connect_worker failed.'
+            print '- out: ', con_info['message']
+            print '+ waiting some time to retry.'
+            time.sleep(RETRY_CONNECTION_TIME)
             continue
 
-        print '+ update worker activity.'
-        session.post(worker_info['worker']['url']['update_activity_point'], {}, '')
+        while con_info['succeed']:
 
-        if con_info['succeed']:
-            working = True
-            while working:
+            print '+ connect worker.'
+            con_info = process_connect_worker(bootstrap_urls, worker_info['worker'], session)
+            if con_info['succeed'] == False:
+                print '+ process_connect_worker failed.'
+                print '- out: ', con_info['message']
+                print '+ waiting some time to retry.'
+                time.sleep(RETRY_CONNECTION_TIME)
+                continue
 
-                print '+ fetch and feed gir project.'
-                process_git_fetch_and_feed(
-                    bootstrap_urls,
-                    settings,
-                    session,
-                    con_info['git_feeder'])
+            print '+ update worker activity.'
+            session.post(worker_info['worker']['url']['update_activity_point'], {}, '')
+            time.sleep(3)
 
-                print '+ get available benchmarks.'
-                bench_exec = process_get_available_benchmark_execution(bootstrap_urls, session)
+            print '+ fetch and feed git project.'
+            process_git_fetch_and_feed(
+                bootstrap_urls,
+                settings,
+                session,
+                con_info['git_feeder'])
+            time.sleep(3)
 
-                if not bench_exec:
-                    continue
+            print '+ get available benchmarks.'
+            bench_exec = process_get_available_benchmark_execution(bootstrap_urls, session)
+            time.sleep(3)
 
-                print '+ execute benchmark.'
-                res = process_execute_task(settings, bench_exec)
+            if not bench_exec:
+                continue
 
-                print '+ save benchmark results.'
-                process_feed_benchmark_execution_results(
-                    session,
-                    res,
-                    bench_exec)
+            print '+ execute benchmark.'
+            res = process_execute_task(settings, bench_exec)
+            time.sleep(3)
 
+            print '+ save benchmark results.'
+            process_feed_benchmark_execution_results(
+                session,
+                res,
+                bench_exec)
+            time.sleep(3)
 
 if __name__ == '__main__':
     main()

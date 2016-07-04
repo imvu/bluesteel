@@ -39,6 +39,10 @@ class Session(object):
             res['content'] = error.read()
             res['cookie'] = ''
             res['succeed'] = False
+        except urllib2.URLError as error:
+            res['content'] = str(error)
+            res['cookie'] = ''
+            res['succeed'] = False
         else:
             res['content'] = json.loads(response.read())
             res['cookie'] = response.headers.get('Set-Cookie')
