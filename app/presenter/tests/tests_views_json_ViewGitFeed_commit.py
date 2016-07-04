@@ -16,11 +16,14 @@ from app.logic.gitfeeder.helper import FeederTestHelper
 from app.logic.gitfeeder.models.FeedModel import FeedEntry
 from app.logic.commandrepo.models.CommandGroupModel import CommandGroupEntry
 from app.logic.commandrepo.models.CommandSetModel import CommandSetEntry
+from app.logic.commandrepo.models.CommandModel import CommandEntry
+from app.logic.commandrepo.models.CommandResultModel import CommandResultEntry
 from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
 from app.logic.benchmark.models.BenchmarkExecutionModel import BenchmarkExecutionEntry
 from app.logic.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
 from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
 from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
+from app.logic.mailing.models.StackedMailModel import StackedMailEntry
 from app.logic.httpcommon import res
 from datetime import timedelta
 import json
@@ -568,3 +571,121 @@ class GitFeedViewsCommitTestCase(TestCase):
         self.assertEqual(0, CommandGroupEntry.objects.filter(id=command_group_2.id).count())
         self.assertEqual(1, CommandGroupEntry.objects.filter(id=command_group_3.id).count())
         self.assertEqual(1, CommandGroupEntry.objects.filter(id=command_group_4.id).count())
+
+
+    def test_view_send_notifications_on_fluctuation_greater_than_45_percent(self):
+        worker1 = WorkerEntry.objects.create(name='worker-name-1', uuid='uuid-worker-1', operative_system='osx', description='long-description-1', user=self.user1, git_feeder=False)
+
+        command_group = CommandGroupEntry.objects.create()
+        command_set = CommandSetEntry.objects.create(group=command_group)
+
+        bluesteel_layout = BluesteelLayoutEntry.objects.create(name='Layout', active=True, project_index_path=0)
+        bluesteel_project = BluesteelProjectEntry.objects.create(name='Project', order=0, layout=bluesteel_layout, command_group=command_group, git_project=self.git_project1)
+        benchmark_definition1 = BenchmarkDefinitionEntry.objects.create(name='BenchmarkDefinition1', layout=bluesteel_layout, project=bluesteel_project, command_set=command_set, revision=28)
+        benchmark_definition1.max_fluctuation_percent = 45
+        benchmark_definition1.save()
+
+        commit0 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash='0000000000000000000000000000000000000000', author=self.git_user1, author_date=timezone.now(), committer=self.git_user1, committer_date=timezone.now())
+        commit1 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash='0000100001000010000100001000010000100001', author=self.git_user1, author_date=timezone.now(), committer=self.git_user1, committer_date=timezone.now())
+
+        branch_test = GitBranchEntry.objects.create(project=self.git_project1, name='branch-test', commit=commit1)
+
+        trail0 = GitBranchTrailEntry.objects.create(project=self.git_project1, branch=branch_test, commit=commit0, order=5)
+        trail1 = GitBranchTrailEntry.objects.create(project=self.git_project1, branch=branch_test, commit=commit1, order=4)
+
+        parent0_1 = GitParentEntry.objects.create(project=self.git_project1, parent=commit0, son=commit1, order=0)
+
+        report0 = CommandSetEntry.objects.create(group=None)
+        report1 = CommandSetEntry.objects.create(group=None)
+
+        com0 = CommandEntry.objects.create(command_set=report0, command='command0', order=0)
+        out0 = json.dumps([{'visual_type' : 'vertical_bars', 'id' : 'id1', 'data' : [1.0, 1.0, 1.0, 1.0, 1.0]}])
+        CommandResultEntry.objects.create(command=com0, out=out0, error='no error', status=0, start_time=timezone.now(), finish_time=timezone.now())
+
+        benchmark_execution0 = BenchmarkExecutionEntry.objects.create(definition=benchmark_definition1, commit=commit0, worker=worker1, report=report0, invalidated=False, revision_target=28, status=BenchmarkExecutionEntry.READY)
+        benchmark_execution1 = BenchmarkExecutionEntry.objects.create(definition=benchmark_definition1, commit=commit1, worker=worker1, report=report1, invalidated=False, revision_target=28, status=BenchmarkExecutionEntry.READY)
+
+        self.assertEqual(0, StackedMailEntry.objects.all().count())
+
+        com_data = {}
+        com_data['command'] = 'command-1'
+        com_data['result'] = {}
+        com_data['result']['status'] = 0
+        com_data['result']['out'] = [{'visual_type' : 'vertical_bars', 'id' : 'id1', 'data' : [2.0, 2.0, 2.0, 2.0, 2.0]}]
+        com_data['result']['error'] = ''
+        com_data['result']['start_time'] = str(timezone.now())
+        com_data['result']['finish_time'] = str(timezone.now())
+
+        bench_data = {}
+        bench_data['command_set'] = []
+        bench_data['command_set'].append(com_data)
+
+        resp = self.client.post(
+            '/main/execution/{0}/save/'.format(benchmark_execution1.id),
+            data = json.dumps(bench_data),
+            content_type='application/json')
+
+        res.check_cross_origin_headers(self, resp)
+        resp_obj = json.loads(resp.content)
+
+        self.assertEqual(200, resp_obj['status'])
+        self.assertEqual(1, StackedMailEntry.objects.filter(title='Benchmark execution fluctuation on commit: 0000100001000010000100001000010000100001').count())
+
+
+    def test_view_not_sending_notifications_because_fluctuation_not_enough(self):
+        worker1 = WorkerEntry.objects.create(name='worker-name-1', uuid='uuid-worker-1', operative_system='osx', description='long-description-1', user=self.user1, git_feeder=False)
+
+        command_group = CommandGroupEntry.objects.create()
+        command_set = CommandSetEntry.objects.create(group=command_group)
+
+        bluesteel_layout = BluesteelLayoutEntry.objects.create(name='Layout', active=True, project_index_path=0)
+        bluesteel_project = BluesteelProjectEntry.objects.create(name='Project', order=0, layout=bluesteel_layout, command_group=command_group, git_project=self.git_project1)
+        benchmark_definition1 = BenchmarkDefinitionEntry.objects.create(name='BenchmarkDefinition1', layout=bluesteel_layout, project=bluesteel_project, command_set=command_set, revision=28)
+        benchmark_definition1.max_fluctuation_percent = 15
+        benchmark_definition1.save()
+
+        commit0 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash='0000000000000000000000000000000000000000', author=self.git_user1, author_date=timezone.now(), committer=self.git_user1, committer_date=timezone.now())
+        commit1 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash='0000100001000010000100001000010000100001', author=self.git_user1, author_date=timezone.now(), committer=self.git_user1, committer_date=timezone.now())
+
+        branch_test = GitBranchEntry.objects.create(project=self.git_project1, name='branch-test', commit=commit1)
+
+        trail0 = GitBranchTrailEntry.objects.create(project=self.git_project1, branch=branch_test, commit=commit0, order=5)
+        trail1 = GitBranchTrailEntry.objects.create(project=self.git_project1, branch=branch_test, commit=commit1, order=4)
+
+        parent0_1 = GitParentEntry.objects.create(project=self.git_project1, parent=commit0, son=commit1, order=0)
+
+        report0 = CommandSetEntry.objects.create(group=None)
+        report1 = CommandSetEntry.objects.create(group=None)
+
+        com0 = CommandEntry.objects.create(command_set=report0, command='command0', order=0)
+        out0 = json.dumps([{'visual_type' : 'vertical_bars', 'id' : 'id1', 'data' : [1.0, 1.0, 1.0, 1.0, 1.0]}])
+        CommandResultEntry.objects.create(command=com0, out=out0, error='no error', status=0, start_time=timezone.now(), finish_time=timezone.now())
+
+        benchmark_execution0 = BenchmarkExecutionEntry.objects.create(definition=benchmark_definition1, commit=commit0, worker=worker1, report=report0, invalidated=False, revision_target=28, status=BenchmarkExecutionEntry.READY)
+        benchmark_execution1 = BenchmarkExecutionEntry.objects.create(definition=benchmark_definition1, commit=commit1, worker=worker1, report=report1, invalidated=False, revision_target=28, status=BenchmarkExecutionEntry.READY)
+
+        self.assertEqual(0, StackedMailEntry.objects.all().count())
+
+        com_data = {}
+        com_data['command'] = 'command-1'
+        com_data['result'] = {}
+        com_data['result']['status'] = 0
+        com_data['result']['out'] = [{'visual_type' : 'vertical_bars', 'id' : 'id1', 'data' : [1.1, 1.1, 1.1, 1.1, 1.1]}]
+        com_data['result']['error'] = ''
+        com_data['result']['start_time'] = str(timezone.now())
+        com_data['result']['finish_time'] = str(timezone.now())
+
+        bench_data = {}
+        bench_data['command_set'] = []
+        bench_data['command_set'].append(com_data)
+
+        resp = self.client.post(
+            '/main/execution/{0}/save/'.format(benchmark_execution1.id),
+            data = json.dumps(bench_data),
+            content_type='application/json')
+
+        res.check_cross_origin_headers(self, resp)
+        resp_obj = json.loads(resp.content)
+
+        self.assertEqual(200, resp_obj['status'])
+        self.assertEqual(0, StackedMailEntry.objects.all().count())
