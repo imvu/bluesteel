@@ -13,6 +13,7 @@ from app.logic.gitrepo.models.GitDiffModel import GitDiffEntry
 from app.logic.gitrepo.models.GitBranchModel import GitBranchEntry
 from app.logic.gitrepo.models.GitBranchTrailModel import GitBranchTrailEntry
 from app.logic.gitfeeder.helper import FeederTestHelper
+from app.logic.gitfeeder.models.FeedModel import FeedEntry
 from app.logic.commandrepo.models.CommandGroupModel import CommandGroupEntry
 from app.logic.commandrepo.models.CommandSetModel import CommandSetEntry
 from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
@@ -473,3 +474,97 @@ class GitFeedViewsCommitTestCase(TestCase):
         self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit__commit_hash='0000100001000010000100001000010000100001', worker=worker1, definition=benchmark_definition2).count())
         self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit__commit_hash='0000100001000010000100001000010000100001', worker=worker2, definition=benchmark_definition1).count())
         self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit__commit_hash='0000100001000010000100001000010000100001', worker=worker2, definition=benchmark_definition2).count())
+
+
+    def test_view_josn_purge_all_feed_reports_from_a_worker(self):
+        git_project2 = GitProjectEntry.objects.create(url='http://test/2/')
+
+        worker1 = WorkerEntry.objects.create(
+            name='worker-name-1',
+            uuid='uuid-worker-1',
+            operative_system='osx',
+            description='long-description-1',
+            user=self.user1,
+            git_feeder=False
+        )
+
+        command_group_1 = CommandGroupEntry.objects.create()
+        command_group_2 = CommandGroupEntry.objects.create()
+        command_group_3 = CommandGroupEntry.objects.create()
+        command_group_4 = CommandGroupEntry.objects.create()
+
+        feed_1_1 = FeedEntry.objects.create(command_group=command_group_1, git_project=self.git_project1, worker=worker1)
+        feed_1_2 = FeedEntry.objects.create(command_group=command_group_2, git_project=self.git_project1, worker=worker1)
+        feed_2_1 = FeedEntry.objects.create(command_group=command_group_3, git_project=git_project2, worker=worker1)
+        feed_2_2 = FeedEntry.objects.create(command_group=command_group_4, git_project=git_project2, worker=worker1)
+
+        self.assertEqual(4, FeedEntry.objects.all().count())
+        self.assertEqual(1, CommandGroupEntry.objects.filter(id=command_group_1.id).count())
+        self.assertEqual(1, CommandGroupEntry.objects.filter(id=command_group_2.id).count())
+        self.assertEqual(1, CommandGroupEntry.objects.filter(id=command_group_3.id).count())
+        self.assertEqual(1, CommandGroupEntry.objects.filter(id=command_group_4.id).count())
+
+        resp = self.client.post(
+            '/main/feed/report/worker/{0}/purge/all/'.format(worker1.id),
+            data = '',
+            content_type='application/json')
+
+        res.check_cross_origin_headers(self, resp)
+        resp_obj = json.loads(resp.content)
+
+        self.assertEqual(200, resp_obj['status'])
+
+        self.assertEqual(0, FeedEntry.objects.all().count())
+        self.assertEqual(0, FeedEntry.objects.filter(git_project=self.git_project1, worker=worker1).count())
+        self.assertEqual(0, FeedEntry.objects.filter(git_project=git_project2, worker=worker1).count())
+        self.assertEqual(0, CommandGroupEntry.objects.filter(id=command_group_1.id).count())
+        self.assertEqual(0, CommandGroupEntry.objects.filter(id=command_group_2.id).count())
+        self.assertEqual(0, CommandGroupEntry.objects.filter(id=command_group_3.id).count())
+        self.assertEqual(0, CommandGroupEntry.objects.filter(id=command_group_4.id).count())
+
+
+    def test_view_purge_old_feed_reports_from_a_worker(self):
+        git_project2 = GitProjectEntry.objects.create(url='http://test/2/')
+
+        worker1 = WorkerEntry.objects.create(
+            name='worker-name-1',
+            uuid='uuid-worker-1',
+            operative_system='osx',
+            description='long-description-1',
+            user=self.user1,
+            git_feeder=False
+        )
+
+        command_group_1 = CommandGroupEntry.objects.create()
+        command_group_2 = CommandGroupEntry.objects.create()
+        command_group_3 = CommandGroupEntry.objects.create()
+        command_group_4 = CommandGroupEntry.objects.create()
+
+        feed_1_1 = FeedEntry.objects.create(command_group=command_group_1, git_project=self.git_project1, worker=worker1)
+        feed_1_2 = FeedEntry.objects.create(command_group=command_group_2, git_project=self.git_project1, worker=worker1)
+        feed_2_1 = FeedEntry.objects.create(command_group=command_group_3, git_project=git_project2, worker=worker1)
+        feed_2_2 = FeedEntry.objects.create(command_group=command_group_4, git_project=git_project2, worker=worker1)
+
+        self.assertEqual(4, FeedEntry.objects.all().count())
+        self.assertEqual(1, CommandGroupEntry.objects.filter(id=command_group_1.id).count())
+        self.assertEqual(1, CommandGroupEntry.objects.filter(id=command_group_2.id).count())
+        self.assertEqual(1, CommandGroupEntry.objects.filter(id=command_group_3.id).count())
+        self.assertEqual(1, CommandGroupEntry.objects.filter(id=command_group_4.id).count())
+
+        resp = self.client.post(
+            '/main/feed/report/worker/{0}/purge/keep/2/'.format(worker1.id),
+            data = '',
+            content_type='application/json')
+
+        res.check_cross_origin_headers(self, resp)
+        resp_obj = json.loads(resp.content)
+
+        self.assertEqual(200, resp_obj['status'])
+
+        self.assertEqual(2, FeedEntry.objects.all().count())
+        self.assertEqual(0, FeedEntry.objects.filter(git_project=self.git_project1, worker=worker1).count())
+        self.assertEqual(2, FeedEntry.objects.filter(git_project=git_project2, worker=worker1).count())
+        self.assertEqual(0, CommandGroupEntry.objects.filter(id=command_group_1.id).count())
+        self.assertEqual(0, CommandGroupEntry.objects.filter(id=command_group_2.id).count())
+        self.assertEqual(1, CommandGroupEntry.objects.filter(id=command_group_3.id).count())
+        self.assertEqual(1, CommandGroupEntry.objects.filter(id=command_group_4.id).count())

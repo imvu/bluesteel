@@ -442,15 +442,15 @@ class GitFeederController(object):
 
 
     @staticmethod
-    def purge_all_reports(worker_entry):
+    def purge_all_reports(worker_id):
         """ This function will delete all feed reports for a given  """
-        FeedEntry.objects.filter(worker=worker_entry).delete()
+        FeedEntry.objects.filter(worker__id=worker_id).delete()
 
     @staticmethod
-    def purge_old_reports(worker_entry, keep_young_count):
+    def purge_old_reports(worker_id, keep_young_count):
         """ This function will delete old reports and keep some young ones """
         count = max(keep_young_count, 0)
-        report_entries = FeedEntry.objects.filter(worker=worker_entry).order_by('-created_at')[count:]
+        report_entries = FeedEntry.objects.filter(worker__id=worker_id).order_by('-created_at')[count:]
 
         for report in report_entries:
             report.delete()

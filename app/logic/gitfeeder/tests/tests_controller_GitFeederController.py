@@ -833,7 +833,7 @@ class GitFeederControllerTestCase(TestCase):
         self.assertEqual(1, CommandGroupEntry.objects.filter(id=command_group_3.id).count())
         self.assertEqual(1, CommandGroupEntry.objects.filter(id=command_group_4.id).count())
 
-        res = GitFeederController.purge_all_reports(self.worker1)
+        res = GitFeederController.purge_all_reports(self.worker1.id)
 
         self.assertEqual(0, FeedEntry.objects.all().count())
         self.assertEqual(0, FeedEntry.objects.filter(git_project=self.git_project1, worker=self.worker1).count())
@@ -862,7 +862,7 @@ class GitFeederControllerTestCase(TestCase):
         self.assertEqual(1, CommandGroupEntry.objects.filter(id=command_group_3.id).count())
         self.assertEqual(1, CommandGroupEntry.objects.filter(id=command_group_4.id).count())
 
-        res = GitFeederController.purge_old_reports(self.worker1, 2)
+        res = GitFeederController.purge_old_reports(self.worker1.id, 2)
 
         self.assertEqual(2, FeedEntry.objects.all().count())
         self.assertEqual(0, FeedEntry.objects.filter(git_project=self.git_project1, worker=self.worker1).count())
