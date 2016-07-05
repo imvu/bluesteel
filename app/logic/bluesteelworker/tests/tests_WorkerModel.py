@@ -40,3 +40,31 @@ class WorkerModelTestCase(TestCase):
         self.assertEqual('osx', obj['operative_system'])
         self.assertEqual('One Worker :)', obj['description'])
         self.assertEqual(False, obj['git_feeder'])
+
+
+    def test_get_max_feed_reports_names_and_values(self):
+        worker_entry = WorkerEntry.objects.create(
+            name='worker-1',
+            uuid='1234567890',
+            operative_system='osx',
+            description='One Worker :)',
+            user=self.user1,
+            max_feed_reports=30,
+        )
+
+        names = worker_entry.get_max_feed_reports_names_and_values()
+
+        self.assertEqual(6, len(names))
+        self.assertEqual('10 Reports', names[0]['name'])
+        self.assertEqual('20 Reports', names[1]['name'])
+        self.assertEqual('30 Reports', names[2]['name'])
+        self.assertEqual('40 Reports', names[3]['name'])
+        self.assertEqual('50 Reports', names[4]['name'])
+        self.assertEqual('100 Reports', names[5]['name'])
+
+        self.assertFalse(names[0]['current'])
+        self.assertFalse(names[1]['current'])
+        self.assertTrue(names[2]['current'])
+        self.assertFalse(names[3]['current'])
+        self.assertFalse(names[4]['current'])
+        self.assertFalse(names[5]['current'])

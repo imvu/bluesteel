@@ -418,6 +418,7 @@ class ViewsBluesteelWorkerTestCase(TestCase):
         post_data = {}
         post_data['description'] = 'description-2'
         post_data['git_feeder'] = True
+        post_data['max_feed_reports'] = 30
 
         resp = self.client.post(
             '/main/bluesteelworker/{0}/save/'.format(worker_new.id),
@@ -433,4 +434,5 @@ class ViewsBluesteelWorkerTestCase(TestCase):
         self.assertEqual(200, resp_obj['status'])
         self.assertEqual('description-2', worker.description)
         self.assertEqual(True, worker.git_feeder)
+        self.assertEqual(30, worker.max_feed_reports)
 

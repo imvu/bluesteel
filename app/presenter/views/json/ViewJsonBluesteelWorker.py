@@ -171,6 +171,7 @@ def save_worker(request, worker_id):
         else:
             worker.description = obj['description']
             worker.git_feeder = obj['git_feeder']
+            worker.max_feed_reports = obj['max_feed_reports']
             worker.save()
 
         return res.get_response(200, 'Worker Saved!', {})

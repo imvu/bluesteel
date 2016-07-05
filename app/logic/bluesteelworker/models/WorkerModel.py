@@ -31,7 +31,33 @@ class WorkerEntry(models.Model):
         obj['operative_system'] = self.operative_system
         obj['description'] = self.description
         obj['git_feeder'] = self.git_feeder
-        obj['max_feed_reports'] = self.max_feed_reports
         obj['last_update'] = trans.to_date_obj(self.updated_at)
         obj['activity'] = (timezone.now() - self.updated_at) < datetime.timedelta(seconds=30)
+
+        obj['max_feed_reports'] = {}
+        obj['max_feed_reports']['current_value'] = self.max_feed_reports
+        obj['max_feed_reports']['current_name'] = ''
+        obj['max_feed_reports']['names'] = self.get_max_feed_reports_names_and_values()
+
+        for val in obj['max_feed_reports']['names']:
+            if val['current']:
+                obj['max_feed_reports']['current_name'] = val['name']
+
+
         return obj
+
+    def get_max_feed_reports_names_and_values(self):
+        """ Returns names, values, and current for all the possible values of max feed reports """
+        values = [
+            {'name' : '10 Reports', 'reports' : 10},
+            {'name' : '20 Reports', 'reports' : 20},
+            {'name' : '30 Reports', 'reports' : 30},
+            {'name' : '40 Reports', 'reports' : 40},
+            {'name' : '50 Reports', 'reports' : 50},
+            {'name' : '100 Reports', 'reports' : 100},
+        ]
+
+        for val in values:
+            val['current'] = val['reports'] == self.max_feed_reports
+
+        return values

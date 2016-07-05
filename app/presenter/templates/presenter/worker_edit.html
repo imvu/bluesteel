@@ -38,6 +38,19 @@
                                 </select>
                             </div>
                         </li>
+                        <br/>
+                        <li>
+                            <div class="list_label indent_1">MAX FEED REPORTS</div>
+                            <div class="container_input">
+                                <select     class="selection individual"
+                                            name="max_feed_reports"
+                                >
+                                    {% for val in worker.max_feed_reports.names %}
+                                        <option value="{{val.reports}}" {{val.current|yesno:"selected,"}}>{{val.name}}{{val.current|yesno:" (current),"}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </li>
                     </ul>
                 </div>
                 <div class="lower_card white_card card_padding_small">

@@ -49,7 +49,7 @@ SAVE_WORKER_SCHEMA = {
     '$schema': 'http://json-schema.org/draft-03/schema#',
     'type' : 'object',
     'additionalProperties': False,
-    'required': ['description', 'git_feeder'],
+    'required': ['description', 'git_feeder', 'max_feed_reports'],
     'properties' : {
         'description' : {
             'type' : 'string',
@@ -57,6 +57,17 @@ SAVE_WORKER_SCHEMA = {
         },
         'git_feeder' : {
             'type': 'boolean',
+        },
+        'max_feed_reports' : {
+            'type' : 'integer',
+            'oneOf' : [
+                {"type" : "integer", "minimum" : -1, "maximum" : -1},
+                {"type" : "number", "minimum" : 10, "maximum" : 10},
+                {"type" : "number", "minimum" : 20, "maximum" : 20},
+                {"type" : "number", "minimum" : 30, "maximum" : 30},
+                {"type" : "number", "minimum" : 40, "maximum" : 40},
+                {"type" : "number", "minimum" : 50, "maximum" : 50},
+            ],
         },
     },
 }
