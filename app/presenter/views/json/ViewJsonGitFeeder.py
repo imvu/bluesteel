@@ -7,6 +7,7 @@ from app.logic.benchmark.controllers.BenchmarkExecutionController import Benchma
 from app.logic.gitrepo.models.GitProjectModel import GitProjectEntry
 from app.logic.gitfeeder.controllers.GitFeederController import GitFeederController
 from app.logic.logger.models.LogModel import LogEntry
+from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
 from app.presenter.schemas import GitFeederSchemas
 import json
 
@@ -62,6 +63,12 @@ def post_commits(request, project_id):
         GitFeederController.insert_branches(branches, project_entry)
         GitFeederController.insert_branch_trails(branches, project_entry)
         GitFeederController.update_branch_merge_target(branches, project_entry)
+
+        if request.user.is_authenticated() and not request.user.is_anonymous():
+            worker_entry = WorkerEntry.objects.filter(user=request.user).first()
+
+            if worker_entry:
+                GitFeederController.purge_old_reports(worker_entry.id, worker_entry.max_feed_reports)
 
         commit_hashes = list(commit_hash_set)
         BenchmarkExecutionController.create_bench_executions_from_commits(project_entry, commit_hashes)

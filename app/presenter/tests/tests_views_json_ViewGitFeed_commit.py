@@ -689,3 +689,73 @@ class GitFeedViewsCommitTestCase(TestCase):
 
         self.assertEqual(200, resp_obj['status'])
         self.assertEqual(0, StackedMailEntry.objects.all().count())
+
+
+
+    def test_view_purge_when_feeding(self):
+        git_project2 = GitProjectEntry.objects.create(url='http://test/2/')
+
+        worker1 = WorkerEntry.objects.create(
+            name='worker-name-1',
+            uuid='uuid-worker-1',
+            operative_system='osx',
+            description='long-description-1',
+            user=self.user1,
+            git_feeder=False,
+            max_feed_reports=3,
+        )
+
+        command_group_1 = CommandGroupEntry.objects.create()
+        command_group_2 = CommandGroupEntry.objects.create()
+        command_group_3 = CommandGroupEntry.objects.create()
+        command_group_4 = CommandGroupEntry.objects.create()
+        command_group_5 = CommandGroupEntry.objects.create()
+
+        feed_1_1 = FeedEntry.objects.create(command_group=command_group_1, git_project=self.git_project1, worker=worker1)
+        feed_1_2 = FeedEntry.objects.create(command_group=command_group_2, git_project=self.git_project1, worker=worker1)
+        feed_2_1 = FeedEntry.objects.create(command_group=command_group_3, git_project=git_project2, worker=worker1)
+        feed_2_2 = FeedEntry.objects.create(command_group=command_group_4, git_project=git_project2, worker=worker1)
+        feed_2_2 = FeedEntry.objects.create(command_group=command_group_5, git_project=git_project2, worker=worker1)
+
+        self.assertEqual(5, FeedEntry.objects.all().count())
+        self.assertEqual(1, CommandGroupEntry.objects.filter(id=command_group_1.id).count())
+        self.assertEqual(1, CommandGroupEntry.objects.filter(id=command_group_2.id).count())
+        self.assertEqual(1, CommandGroupEntry.objects.filter(id=command_group_3.id).count())
+        self.assertEqual(1, CommandGroupEntry.objects.filter(id=command_group_4.id).count())
+        self.assertEqual(1, CommandGroupEntry.objects.filter(id=command_group_5.id).count())
+
+        commit_time = str(timezone.now().isoformat())
+        commit1 = FeederTestHelper.create_commit(1, [], 'user1', 'user1@test.com', commit_time, commit_time)
+
+        branch1 = FeederTestHelper.create_branch('master', 1, 'master', 1, 1, [1], 'merge-target-content')
+
+        feed_data = {}
+        feed_data['commits'] = []
+        feed_data['commits'].append(commit1)
+        feed_data['branches'] = []
+        feed_data['branches'].append(branch1)
+
+        post_data = FeederTestHelper.create_feed_data_and_report(
+            feed_data,
+            FeederTestHelper.get_default_report(1)
+        )
+
+        self.client.login(username='user1@test.com', password='pass1')
+        resp = self.client.post(
+            '/main/feed/commit/project/{0}/'.format(self.git_project1.id),
+            data = json.dumps(post_data),
+            content_type='application/json')
+
+        res.check_cross_origin_headers(self, resp)
+        resp_obj = json.loads(resp.content)
+
+        self.assertEqual(200, resp_obj['status'])
+
+        self.assertEqual(3, FeedEntry.objects.all().count())
+        self.assertEqual(1, FeedEntry.objects.filter(git_project=self.git_project1, worker=worker1).count())
+        self.assertEqual(2, FeedEntry.objects.filter(git_project=git_project2, worker=worker1).count())
+        self.assertEqual(0, CommandGroupEntry.objects.filter(id=command_group_1.id).count())
+        self.assertEqual(0, CommandGroupEntry.objects.filter(id=command_group_2.id).count())
+        self.assertEqual(0, CommandGroupEntry.objects.filter(id=command_group_3.id).count())
+        self.assertEqual(1, CommandGroupEntry.objects.filter(id=command_group_4.id).count())
+        self.assertEqual(1, CommandGroupEntry.objects.filter(id=command_group_5.id).count())
