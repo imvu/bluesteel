@@ -51,6 +51,7 @@
 
 ### How to edit things inside BlueSteel ###
 
+- Create a super user if you don't have one with: `./manage.py createsuperuser`
 - Open a browser and go to: `localhost:28028/admin/`
 - Make login with your super user.
 - Now you have privileges to create Layouts, Projects, Benchmark Definitions, etc.
