@@ -51,6 +51,17 @@ div.white_card
     background: white;
 }
 
+div.white_card_hoverable
+{
+    background: white;
+}
+
+div.white_card_hoverable:hover
+{
+    background: #F8F8F8;
+    cursor: pointer;
+}
+
 div.card_padding_large
 {
     padding: 30px;
