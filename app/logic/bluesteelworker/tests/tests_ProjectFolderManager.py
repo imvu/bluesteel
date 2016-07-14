@@ -11,7 +11,7 @@ import hashlib
 import shutil
 import mock
 
-class GitFetcherTestCase(TestCase):
+class ProjectFolderManagerTestCase(TestCase):
 
     def setUp(self):
         self.tmp_folder = os.path.join(settings.TMP_ROOT)
@@ -107,6 +107,41 @@ class GitFetcherTestCase(TestCase):
         self.assertEqual(os.path.join(self.tmp_folder, 'tmp/folder/list/archive-name/project-name/project'), paths['project'])
         self.assertEqual(os.path.join(self.tmp_folder, 'tmp/folder/list/archive-name/project-name/log'), paths['log'])
         self.assertEqual(os.path.join(self.tmp_folder, 'tmp/folder/list/archive-name/project-name/project/test-repo'), paths['git_project_search_path'])
+
+    def test_if_local_search_path_is_dot_and_no_project_folder_then_path_equal_project(self):
+        paths = ProjectFolderManager.get_folder_paths(
+            self.tmp_folder,
+            ['tmp', 'folder', 'list'],
+            'archive-name',
+            'project-name',
+            '.'
+        )
+
+        self.assertEqual(os.path.join(self.tmp_folder, 'tmp/folder/list'), paths['temp'])
+        self.assertEqual(os.path.join(self.tmp_folder, 'tmp/folder/list/archive-name'), paths['archive'])
+        self.assertEqual(os.path.join(self.tmp_folder, 'tmp/folder/list/archive-name/project-name'), paths['project_name'])
+        self.assertEqual(os.path.join(self.tmp_folder, 'tmp/folder/list/archive-name/project-name/project'), paths['project'])
+        self.assertEqual(os.path.join(self.tmp_folder, 'tmp/folder/list/archive-name/project-name/log'), paths['log'])
+        self.assertEqual(os.path.join(self.tmp_folder, 'tmp/folder/list/archive-name/project-name/project'), paths['git_project_search_path'])
+
+    def test_if_local_search_path_is_dot_folder_then_path_equal_first_git_project(self):
+        os.makedirs(os.path.join(self.tmp_folder, 'tmp/folder/list/archive-name/project-name/project/test-repo-1/.git'))
+        os.makedirs(os.path.join(self.tmp_folder, 'tmp/folder/list/archive-name/project-name/project/test-repo-2/.git'))
+        os.makedirs(os.path.join(self.tmp_folder, 'tmp/folder/list/archive-name/project-name/project/test-repo-3/.git'))
+        paths = ProjectFolderManager.get_folder_paths(
+            self.tmp_folder,
+            ['tmp', 'folder', 'list'],
+            'archive-name',
+            'project-name',
+            '.'
+        )
+
+        self.assertEqual(os.path.join(self.tmp_folder, 'tmp/folder/list'), paths['temp'])
+        self.assertEqual(os.path.join(self.tmp_folder, 'tmp/folder/list/archive-name'), paths['archive'])
+        self.assertEqual(os.path.join(self.tmp_folder, 'tmp/folder/list/archive-name/project-name'), paths['project_name'])
+        self.assertEqual(os.path.join(self.tmp_folder, 'tmp/folder/list/archive-name/project-name/project'), paths['project'])
+        self.assertEqual(os.path.join(self.tmp_folder, 'tmp/folder/list/archive-name/project-name/log'), paths['log'])
+        self.assertEqual(os.path.join(self.tmp_folder, 'tmp/folder/list/archive-name/project-name/project/test-repo-1'), paths['git_project_search_path'])
 
     def test_is_project_folder_present(self):
         paths = self.create_project_folders()

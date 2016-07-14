@@ -35,6 +35,9 @@ class ProjectFolderManager(object):
         if local_search_path == '.' or local_search_path == '':
             obj['git_project_search_path'] = ProjectFolderManager.get_cwd_of_first_git_project_found_in(obj['project'])
 
+        if obj['git_project_search_path'] == None:
+            obj['git_project_search_path'] = obj['project'][:]
+
         obj['temp'] = os.path.normpath(obj['temp'])
         obj['archive'] = os.path.normpath(obj['archive'])
         obj['project_name'] = os.path.normpath(obj['project_name'])
