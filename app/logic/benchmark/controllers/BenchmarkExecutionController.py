@@ -13,6 +13,7 @@ from app.logic.commandrepo.models.CommandResultModel import CommandResultEntry
 from app.logic.commandrepo.controllers.CommandController import CommandController
 from app.logic.gitrepo.controllers.GitController import GitController
 from app.logic.gitrepo.models.GitCommitModel import GitCommitEntry
+from app.logic.gitrepo.models.GitParentModel import GitParentEntry
 from app.logic.gitrepo.models.GitBranchTrailModel import GitBranchTrailEntry
 from app.logic.gitrepo.models.GitBranchMergeTargetModel import GitBranchMergeTargetEntry
 from app.logic.httpcommon import pag
@@ -49,6 +50,52 @@ class BenchmarkExecutionController(object):
             execution.revision_target = execution.definition.revision
             execution.save()
             return execution
+
+    @staticmethod
+    def get_bench_execs_ordered_by_worker(commit_entry):
+        """ Returns a list of executions, ordered by worker, from a given commit """
+        entries = BenchmarkExecutionEntry.objects.filter(commit__id=commit_entry.id).order_by('worker__id')
+
+        ret = {}
+        ret['commit'] = commit_entry.as_object()
+        ret['commit']['parent'] = {}
+        ret['commit']['parent']['id'] = None
+        ret['commit']['son'] = {}
+        ret['commit']['son']['id'] = None
+
+        p_parent = GitParentEntry.objects.filter(project=commit_entry.project, son=commit_entry).first()
+        p_son = GitParentEntry.objects.filter(project=commit_entry.project, parent=commit_entry).first()
+
+        if p_parent:
+            ret['commit']['parent']['id'] = p_parent.parent.id
+
+        if p_son:
+            ret['commit']['son']['id'] = p_son.son.id
+
+
+        ret['workers'] = {}
+        for entry in entries:
+            if entry.worker.id not in ret['workers']:
+                obj = {}
+                obj['worker'] = {}
+                obj['worker']['id'] = entry.worker.id
+                obj['worker']['name'] = entry.worker.name
+                obj['worker']['uuid'] = entry.worker.uuid
+                obj['worker']['operative_system'] = entry.worker.operative_system
+                obj['executions'] = []
+                obj['executions'].append(entry.id)
+                ret['workers'][entry.worker.id] = obj
+            else:
+                ret['workers'][entry.worker.id]['executions'].append(entry.id)
+
+        worker_list = []
+        for worker_id in ret['workers']:
+            worker_list.append(ret['workers'][worker_id])
+
+        ret['workers'] = worker_list
+
+        return ret
+
 
     @staticmethod
     def get_bench_exec_commits_paginated(project_entry, branch_entry, page):

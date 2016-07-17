@@ -1077,3 +1077,43 @@ class BenchmarkExecutionControllerTestCase(TestCase):
         benchmark_execution0 = BenchmarkExecutionEntry.objects.create(definition=self.benchmark_definition1, commit=commit0, worker=self.worker1, report=report_0, invalidated=False, revision_target=28, status=BenchmarkExecutionEntry.READY)
 
         self.assertTrue(BenchmarkExecutionController.is_benchmark_young_for_notifications(benchmark_execution0))
+
+
+    def test_get_benchmark_from_commit_ordered_worker(self):
+        bench_exec = BenchmarkExecutionEntry.objects.create(
+            definition=self.benchmark_definition1,
+            commit=self.commit1,
+            worker=self.worker1,
+            report=self.report2,
+            invalidated=False,
+            revision_target=28,
+            status=BenchmarkExecutionEntry.READY,
+        )
+
+        GitParentEntry.objects.create(project=self.git_project1, parent=self.commit2, son=self.commit1)
+        GitParentEntry.objects.create(project=self.git_project1, parent=self.commit1, son=self.commit3)
+
+        ret = BenchmarkExecutionController.get_bench_execs_ordered_by_worker(self.commit1)
+
+        self.assertEqual('0000100001000010000100001000010000100001', ret['commit']['hash'])
+        self.assertEqual('user1', ret['commit']['committer']['name'])
+        self.assertEqual('user1@test.com', ret['commit']['committer']['email'])
+        self.assertEqual('user1', ret['commit']['author']['name'])
+        self.assertEqual('user1@test.com', ret['commit']['author']['email'])
+        self.assertEqual(self.commit2.id, ret['commit']['parent']['id'])
+        self.assertEqual(self.commit3.id, ret['commit']['son']['id'])
+
+        self.assertEqual(self.worker1.id, ret['workers'][0]['worker']['id'])
+        self.assertEqual('worker-name-1', ret['workers'][0]['worker']['name'])
+        self.assertEqual('uuid-worker-1', ret['workers'][0]['worker']['uuid'])
+        self.assertEqual('osx', ret['workers'][0]['worker']['operative_system'])
+        self.assertEqual(2, len(ret['workers'][0]['executions']))
+        self.assertEqual(self.benchmark_execution1.id, ret['workers'][0]['executions'][0])
+        self.assertEqual(bench_exec.id, ret['workers'][0]['executions'][1])
+
+        self.assertEqual(self.worker2.id, ret['workers'][1]['worker']['id'])
+        self.assertEqual('worker-name-2', ret['workers'][1]['worker']['name'])
+        self.assertEqual('uuid-worker-2', ret['workers'][1]['worker']['uuid'])
+        self.assertEqual('osx', ret['workers'][1]['worker']['operative_system'])
+        self.assertEqual(1, len(ret['workers'][1]['executions']))
+        self.assertEqual(self.benchmark_execution3.id, ret['workers'][1]['executions'][0])

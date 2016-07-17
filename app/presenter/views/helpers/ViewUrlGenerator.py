@@ -171,3 +171,6 @@ def get_feed_report_form_worker_url(worker_id, page_index):
 
 def get_command_download_json_url(command_id):
     return '/main/command/{0}/download/json/'.format(command_id)
+
+def get_commit_ordered_by_worker_url(commit_id):
+    return '/main/commit/{0}/ordered/worker/'.format(commit_id)
