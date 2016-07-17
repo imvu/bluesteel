@@ -12,7 +12,7 @@ class WorkerEntry(models.Model):
     name = models.TextField(default='')
     uuid = models.TextField(default='')
     operative_system = models.TextField(default='')
-    description = models.TextField(default='')
+    description = models.TextField(default='Edit this description!')
     user = models.ForeignKey(User, related_name='worker_user')
     git_feeder = models.BooleanField(default=False)
     max_feed_reports = models.IntegerField(default=100)
