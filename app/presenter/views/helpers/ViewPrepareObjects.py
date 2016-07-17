@@ -257,6 +257,10 @@ def prepare_branches_for_html(project_id, branches):
     """ Prepare branch data adding urls before html """
     ret_branches = []
     for branch in branches:
+        for commit in branch['commits']:
+            commit['url'] = {}
+            commit['url']['executions'] = ViewUrlGenerator.get_commit_ordered_by_worker_url(commit['id'])
+
         branch['url'] = {}
         branch['url']['single'] = ViewUrlGenerator.get_project_branch_single_url(project_id, branch['id'])
         branch['url']['links'] = ViewUrlGenerator.get_project_branch_single_links_url(project_id, branch['id'])

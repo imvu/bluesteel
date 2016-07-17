@@ -27,7 +27,9 @@
                     </li>
                     {% for commit in branch.commits %}
                     <li>
-                        <div class="middle_card white_card_hoverable card_padding_small">
+                        <div    class="middle_card white_card_hoverable card_padding_small"
+                                onclick="window.location='{{commit.url.executions}}'"
+                        >
                             <div class="list_label indent_1">HASH</div>
                             <div class="command">{{commit.short_hash}}</div>
                             <div class="list_label indent_1">AUTHOR</div>
