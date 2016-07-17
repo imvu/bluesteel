@@ -67,6 +67,7 @@ SAVE_WORKER_SCHEMA = {
                 {"type" : "number", "minimum" : 30, "maximum" : 30},
                 {"type" : "number", "minimum" : 40, "maximum" : 40},
                 {"type" : "number", "minimum" : 50, "maximum" : 50},
+                {"type" : "number", "minimum" : 100, "maximum" : 100},
             ],
         },
     },
