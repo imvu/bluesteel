@@ -75,6 +75,10 @@ class BenchmarkExecutionController(object):
 
         ret['workers'] = {}
         for entry in entries:
+            bench_exec = {}
+            bench_exec['id'] = entry.id
+            bench_exec['name'] = entry.definition.name
+
             if entry.worker.id not in ret['workers']:
                 obj = {}
                 obj['worker'] = {}
@@ -83,10 +87,10 @@ class BenchmarkExecutionController(object):
                 obj['worker']['uuid'] = entry.worker.uuid
                 obj['worker']['operative_system'] = entry.worker.operative_system
                 obj['executions'] = []
-                obj['executions'].append(entry.id)
+                obj['executions'].append(bench_exec)
                 ret['workers'][entry.worker.id] = obj
             else:
-                ret['workers'][entry.worker.id]['executions'].append(entry.id)
+                ret['workers'][entry.worker.id]['executions'].append(bench_exec)
 
         worker_list = []
         for worker_id in ret['workers']:

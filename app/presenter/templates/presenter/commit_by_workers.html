@@ -16,14 +16,12 @@
                 <br/>
                 <li>
                     <div class="list_label indent_1">AUTHOR</div>
-                    <div class="normal indent_2">{{commit_data.commit.author.name}}</div>
-                    <div class="normal indent_2">{{commit_data.commit.author.email}}</div>
+                    <div class="normal indent_2">{{commit_data.commit.author.name}} - ({{commit_data.commit.author.email}})</div>
                 </li>
                 <br/>
                 <li>
                     <div class="list_label indent_1">COMMITER</div>
-                    <div class="normal indent_2">{{commit_data.commit.committer.name}}</div>
-                    <div class="normal indent_2">{{commit_data.commit.committer.email}}</div>
+                    <div class="normal indent_2">{{commit_data.commit.committer.name}} - ({{commit_data.commit.committer.email}})</div>
                 </li>
             </ul>
         </div>
@@ -33,9 +31,9 @@
                 <ul class="no_dots vertical_margin">
                     <li>
                         <div class="list_label indent_1">WORKER</div>
-                        <div class="normal indent_2">{{item.worker.name}}</div>
-                        <div class="normal indent_2">{{item.worker.uuid}}</div>
-                        <div class="normal indent_2">{{item.worker.operative_system}}</div>
+                        <div class="normal indent_2">Name: {{item.worker.name}}</div>
+                        <div class="normal indent_2">UUID: {{item.worker.uuid}}</div>
+                        <div class="normal indent_2">OS: {{item.worker.operative_system}}</div>
                     </li>
                     <br/>
 
@@ -47,7 +45,7 @@
                                 <button     class="btn_round light"
                                             type='button'
                                             onclick="window.location='{{execution.url}}'"
-                                >Benchmark Execution {{execution.id}}</button>
+                                >{{execution.name}}  ({{execution.id}})</button>
                             </li>
                             {% endfor %}
                         </ul>

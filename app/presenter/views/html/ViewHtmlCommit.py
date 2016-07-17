@@ -27,8 +27,9 @@ def get_commit_ordered_by_worker(request, commit_id):
             executions = []
             for execution in worker['executions']:
                 obj = {}
-                obj['id'] = execution
-                obj['url'] = ViewUrlGenerator.get_benchmark_execution_relevant_url(execution)
+                obj['id'] = execution['id']
+                obj['name'] = execution['name']
+                obj['url'] = ViewUrlGenerator.get_benchmark_execution_relevant_url(execution['id'])
                 executions.append(obj)
             worker['executions'] = executions
 
