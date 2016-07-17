@@ -13,3 +13,9 @@ div.menu-container
     background: steelblue;
     height:35px;
 }
+
+body.wall
+{
+    margin: 0px;
+    background-image: linear-gradient(60deg, rgba(155, 155, 155, 0.5) 5%, rgba(228, 228, 228, 0.35));
+}
