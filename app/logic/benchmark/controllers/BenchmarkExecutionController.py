@@ -17,10 +17,12 @@ from app.logic.gitrepo.models.GitParentModel import GitParentEntry
 from app.logic.gitrepo.models.GitBranchTrailModel import GitBranchTrailEntry
 from app.logic.gitrepo.models.GitBranchMergeTargetModel import GitBranchMergeTargetEntry
 from app.logic.httpcommon import pag
+from datetime import timedelta
 import json
 import sys
 
 PAGINATION_HALF_RANGE = 2
+TTL_IN_PROGRESS = 3
 
 class BenchmarkExecutionController(object):
     """ BenchmarkExecution controller with helper functions """
@@ -35,12 +37,16 @@ class BenchmarkExecutionController(object):
         if worker_entry is None:
             return None
 
+        time_to_live = timezone.now() - timedelta(hours=TTL_IN_PROGRESS)
+
         q_ready = Q(status=BenchmarkExecutionEntry.READY)
         q_invalidated = Q(invalidated=True)
         q_revision = ~Q(revision_target=F('definition__revision'))
+        q_in_progress = Q(status=BenchmarkExecutionEntry.IN_PROGRESS, updated_at__lt=time_to_live)
 
         execution = BenchmarkExecutionEntry.objects.filter(
-            worker=worker_entry).filter(q_ready | q_invalidated | q_revision).order_by('-commit__author_date').first()
+            worker=worker_entry).filter(
+                q_ready | q_invalidated | q_revision | q_in_progress).order_by('-commit__author_date').first()
 
         if execution is None:
             return None

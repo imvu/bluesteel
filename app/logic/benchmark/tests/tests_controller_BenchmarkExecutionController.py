@@ -245,7 +245,6 @@ class BenchmarkExecutionControllerTestCase(TestCase):
         self.assertEqual('BenchmarkDefinition2', execution.definition.name)
         self.assertEqual('0000100001000010000100001000010000100001', execution.commit.commit_hash)
         self.assertEqual('worker-name-2', execution.worker.name)
-            
 
     def test_earliest_available_is_an_invalidated_one(self):
         self.benchmark_execution1.invalidated = True
@@ -265,6 +264,44 @@ class BenchmarkExecutionControllerTestCase(TestCase):
         self.assertEqual('BenchmarkDefinition1', execution.definition.name)
         self.assertEqual('0000100001000010000100001000010000100001', execution.commit.commit_hash)
         self.assertEqual('worker-name-1', execution.worker.name)
+
+    def test_earliest_available_is_stuck_in_progress_gt_ttl_hours(self):
+        self.benchmark_execution1.status = BenchmarkExecutionEntry.FINISHED
+        self.benchmark_execution1.save()
+
+        self.benchmark_execution2.status = BenchmarkExecutionEntry.IN_PROGRESS
+        self.benchmark_execution2.save()
+        BenchmarkExecutionEntry.objects.filter(id=self.benchmark_execution2.id).update(updated_at=(timezone.now() - timedelta(hours=5)))
+
+        self.benchmark_execution3.status = BenchmarkExecutionEntry.READY
+        self.benchmark_execution3.save()
+
+        execution = BenchmarkExecutionController.get_earliest_available_execution(self.user1)
+
+        self.assertNotEqual(None, execution)
+        self.assertEqual(self.benchmark_execution2, execution)
+        self.assertEqual(BenchmarkExecutionEntry.IN_PROGRESS, execution.status)
+        self.assertEqual(False, execution.invalidated)
+        self.assertEqual(28, self.benchmark_definition1.revision)
+        self.assertEqual(28, execution.revision_target)
+        self.assertEqual('BenchmarkDefinition1', execution.definition.name)
+        self.assertEqual('0000200002000020000200002000020000200002', execution.commit.commit_hash)
+        self.assertEqual('worker-name-1', execution.worker.name)
+
+    def test_earliest_available_is_stuck_in_progress_lt_ttl_hours(self):
+        self.benchmark_execution1.status = BenchmarkExecutionEntry.FINISHED
+        self.benchmark_execution1.save()
+
+        self.benchmark_execution2.status = BenchmarkExecutionEntry.IN_PROGRESS
+        self.benchmark_execution2.save()
+        BenchmarkExecutionEntry.objects.filter(id=self.benchmark_execution2.id).update(updated_at=(timezone.now() - timedelta(hours=2)))
+
+        self.benchmark_execution3.status = BenchmarkExecutionEntry.READY
+        self.benchmark_execution3.save()
+
+        execution = BenchmarkExecutionController.get_earliest_available_execution(self.user1)
+
+        self.assertEqual(None, execution)
 
     def test_user_anonymous_allways_get_none_benchmark_execution(self):
         anonymous = AnonymousUser()
