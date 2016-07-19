@@ -1,10 +1,12 @@
 """ View Notification generator """
 
 from django.conf import settings
+from django.contrib.auth.models import User
 from app.presenter.views.helpers import ViewUrlGenerator
 from app.logic.mailing.models.StackedMailModel import StackedMailEntry
 
-def create_notification_email(receiver_email, title, content):
+def create_notification_email(receiver_email, title, content, group_names):
+    """ Send an email notification plus the same email to users of group_names """
     StackedMailEntry.objects.create(
         sender=settings.DEFAULT_FROM_EMAIL,
         receiver=receiver_email,
@@ -12,11 +14,22 @@ def create_notification_email(receiver_email, title, content):
         content=content
     )
 
+    for group in group_names:
+        users = User.objects.filter(groups__name=group)
+        for user in users:
+            StackedMailEntry.objects.create(
+                sender=settings.DEFAULT_FROM_EMAIL,
+                receiver=user.email,
+                title=title,
+                content=content
+            )
+
+
 def notify_json_invalid(receiver_email, msg):
     """ Will send notificaiton about invalid jsons """
     title = 'Json invalid'
     content = 'Json invalid.\nOriginal Json: {0}'.format(msg)
-    create_notification_email(receiver_email, title, content)
+    create_notification_email(receiver_email, title, content, ['admin'])
 
 
 def notify_schema_failed(receiver_email, msg, schema_msg):
@@ -27,7 +40,7 @@ def notify_schema_failed(receiver_email, msg, schema_msg):
         schema_msg
     )
 
-    create_notification_email(receiver_email, title, content)
+    create_notification_email(receiver_email, title, content, ['admin'])
 
 
 def notify_benchmark_command_failure(receiver_email, benchmark_execution_id, commit_hash, domain):
@@ -39,7 +52,7 @@ def notify_benchmark_command_failure(receiver_email, benchmark_execution_id, com
             benchmark_execution_id)
         )
 
-    create_notification_email(receiver_email, title, content)
+    create_notification_email(receiver_email, title, content, ['admin'])
 
 def notify_benchmark_fluctuation(receiver_email, benchmark_execution_id, commit_hash, domain):
     """ Will send notificaiton about benchmark fluctuation """
@@ -50,4 +63,4 @@ def notify_benchmark_fluctuation(receiver_email, benchmark_execution_id, commit_
             benchmark_execution_id)
         )
 
-    create_notification_email(receiver_email, title, content)
+    create_notification_email(receiver_email, title, content, [''])
