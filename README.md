@@ -40,6 +40,7 @@
 - Execute command: `SET effective_cache_size TO '1000 MB';`
 - Modify the values of the previous commands as you need.
 - Modify Django settings files to use this DB instead of SQLite.
+- Execute command: `./manage.py migrate`
 
 ### How to run tests? ###
 
@@ -48,13 +49,13 @@
 
 ### How to run BlueSteel (development) ###
 
-- Execute `s/run-server-development.py`
+- Execute command: `s/run-server-development.py`
 - Open a browser and type the url: `localhost:28028`
 - See next step `How to edit things inside BlueSteel`
 
 ### How to run BlueSteel (production) ###
 
-- Execute `s/run-server-production.py`
+- Execute command: `s/run-server-production.py`
 - Open a browser and type the url: `localhost:8080`
 - See next step `How to edit things inside BlueSteel`
 
