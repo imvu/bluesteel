@@ -356,12 +356,17 @@ def main():
             session.post(worker_info['worker']['url']['update_activity_point'], {}, '')
             time.sleep(3)
 
+            feeder = False
+            resp = session.get(worker_info['worker']['url']['worker_info_full'], {})
+            if resp['content']['status'] == 200:
+                feeder = resp['content']['data']['worker']['git_feeder']
+
             print '+ fetch and feed git project.'
             process_git_fetch_and_feed(
                 bootstrap_urls,
                 settings,
                 session,
-                con_info['git_feeder'])
+                feeder)
             time.sleep(3)
 
             print '+ get available benchmarks.'

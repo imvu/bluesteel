@@ -30,7 +30,7 @@ def get_worker_urls(domain, worker_id, worker_uuid):
         domain,
         worker_id
     )
-    obj['worker_info'] = ViewUrlGenerator.get_worker_info_url(worker_uuid)
+    obj['worker_info_full'] = ViewUrlGenerator.get_worker_info_full_url(domain, worker_uuid)
     return obj
 
 def get_bootstrap_urls(request):

@@ -60,9 +60,6 @@ def get_worker_edit_url(worker_id):
 def get_download_worker_url():
     return '/main/bluesteelworker/download/'
 
-def get_worker_info_url(uuid):
-    return '/main/bluesteelworker/{0}/'.format(uuid)
-
 def get_worker_report_url(worker_id):
     return '/main/bluesteelworker/{0}/report/'.format(worker_id)
 
@@ -74,6 +71,9 @@ def get_worker_update_activity_full_url(domain, worker_id):
 
 def get_worker_entry_point_full_url(domain):
     return 'http://{0}/main/bluesteelworker/bootstrap/'.format(domain)
+
+def get_worker_info_full_url(domain, uuid):
+    return 'http://{0}/main/bluesteelworker/{1}/'.format(domain, uuid)
 
 def get_worker_info_point_full_url(domain):
     return 'http://{0}/main/bluesteelworker/'.format(domain)

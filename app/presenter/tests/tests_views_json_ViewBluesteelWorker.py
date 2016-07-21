@@ -94,7 +94,7 @@ class ViewsBluesteelWorkerTestCase(TestCase):
         self.assertEqual('worker-1', resp_obj['data']['worker']['name'])
         self.assertEqual('8a88432d-33db-4d24-a0a7-2f863e7e8e4a', resp_obj['data']['worker']['uuid'])
         self.assertEqual('One Worker :)', resp_obj['data']['worker']['description'])
-        self.assertEqual('/main/bluesteelworker/8a88432d-33db-4d24-a0a7-2f863e7e8e4a/', resp_obj['data']['worker']['url']['worker_info'])
+        self.assertEqual('http://testserver/main/bluesteelworker/8a88432d-33db-4d24-a0a7-2f863e7e8e4a/', resp_obj['data']['worker']['url']['worker_info_full'])
         self.assertEqual('http://testserver/main/bluesteelworker/1/update/activity/', resp_obj['data']['worker']['url']['update_activity_point'])
 
     def test_get_worker_info_not_found(self):
