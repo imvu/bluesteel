@@ -23,13 +23,14 @@ def get_entry_points_urls(domain):
     obj['acquire_benchmark_execution_url'] = ViewUrlGenerator.get_acquire_bench_exe_full_url(domain)
     return obj
 
-def get_worker_urls(domain, worker_id):
+def get_worker_urls(domain, worker_id, worker_uuid):
     """ Returns all the urls associated with a worker """
     obj = {}
     obj['update_activity_point'] = ViewUrlGenerator.get_worker_update_activity_full_url(
         domain,
         worker_id
     )
+    obj['worker_info'] = ViewUrlGenerator.get_worker_info_url(worker_uuid)
     return obj
 
 def get_bootstrap_urls(request):
@@ -52,7 +53,7 @@ def get_worker_info(request, worker_uuid):
         else:
             ret_worker = worker.as_object()
             ret_worker['last_update'] = str(ret_worker['last_update'])
-            ret_worker['url'] = get_worker_urls(request.get_host(), ret_worker['id'])
+            ret_worker['url'] = get_worker_urls(request.get_host(), ret_worker['id'], ret_worker['uuid'])
             obj['worker'] = ret_worker
             return res.get_response(200, 'Worker found', obj)
     else:
@@ -110,7 +111,7 @@ def create_worker_info(request):
 
             ret = {}
             ret['worker'] = new_worker.as_object()
-            ret['worker']['url'] = get_worker_urls(request.get_host(), ret['worker']['id'])
+            ret['worker']['url'] = get_worker_urls(request.get_host(), ret['worker']['id'], ret['worker']['uuid'])
             ret['worker']['last_update'] = str(ret['worker']['last_update'])
 
             return res.get_response(200, 'Worker created succesfuly!', ret)
