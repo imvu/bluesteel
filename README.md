@@ -28,9 +28,18 @@
 
 - Go to [http://postgresapp.com](http://postgresapp.com) and download the app.
 - Install it! (in OS X means to move it to the Applications folder)
-- Locate `pg_config` binary. It should live inside: `/Applications/Postgres.app/Contents/Versions/9.3/bin/`
-- add that path to $PATH environment variable with: `PATH=$PATH:/Applications/Postgres.app/Contents/Versions/9.3/bin/`
-- Install psycopg2 with: `sudo pip install psycopg2==2.6.1`
+- Locate `pg_config` binary. It should live inside: `/Applications/Postgres.app/Contents/Versions/9.5/bin/`
+- add that path to $PATH environment variable with: `PATH=$PATH:/Applications/Postgres.app/Contents/Versions/9.5/bin/`
+- Install psycopg2 with: `sudo pip install psycopg2==2.6.2`
+- Open a PostgreSQL shell.
+- Execute command: `CREATE DATABASE bluesteeldb;`
+- Execute command: `CREATE USER bluesteeluser;`
+- Execute command: `GRANT ALL PRIVILEGES ON DATABASE bluesteeldb TO bluesteeluser;`
+- Execute command: `ALTER USER bluesteeluser CREATEDB;`
+- Execute command: `ALTER USER bluesteeluser WITH PASSWORD 'pass';`
+- Execute command: `SET effective_cache_size TO '1000 MB';`
+- Modify the values of the previous commands as you need.
+- Modify Django settings files to use this DB instead of SQLite.
 
 ### How to run tests? ###
 
