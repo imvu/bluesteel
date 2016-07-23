@@ -48,7 +48,7 @@ def get_worker_info(request, worker_uuid):
         obj = {}
         obj['csrf_token'] = csrf.get_token(request)
 
-        if worker == None:
+        if worker is None:
             return res.get_response(400, 'Worker not found', obj)
         else:
             ret_worker = worker.as_object()
@@ -80,7 +80,7 @@ def create_worker_info(request):
         username_trimmed = obj['uuid'][:30]
 
         worker = WorkerEntry.objects.filter(uuid=username_trimmed).first()
-        if worker == None:
+        if worker is None:
             user = User.objects.filter(username=username_trimmed).first()
             if not user:
                 user = User.objects.create_user(
@@ -167,7 +167,7 @@ def save_worker(request, worker_id):
             return res.get_schema_failed(obj)
 
         worker = WorkerEntry.objects.filter(id=worker_id).first()
-        if worker == None:
+        if worker is None:
             return res.get_response(400, 'Worker not found', obj)
         else:
             worker.description = obj['description']

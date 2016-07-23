@@ -35,7 +35,7 @@ class ProjectFolderManager(object):
         if local_search_path == '.' or local_search_path == '':
             obj['git_project_search_path'] = ProjectFolderManager.get_cwd_of_first_git_project_found_in(obj['project'])
 
-        if obj['git_project_search_path'] == None:
+        if obj['git_project_search_path'] is None:
             obj['git_project_search_path'] = obj['project'][:]
 
         obj['temp'] = os.path.normpath(obj['temp'])
@@ -49,7 +49,7 @@ class ProjectFolderManager(object):
     @staticmethod
     def is_project_folder_present(paths):
         """ Checks if the folder structure exists """
-        if paths['project'] == None:
+        if paths['project'] is None:
             return False
 
         if not os.path.exists(paths['project']):
@@ -63,7 +63,7 @@ class ProjectFolderManager(object):
             return False
 
         project_path = ProjectFolderManager.get_cwd_of_first_git_project_found_in(paths['project'])
-        if project_path == None:
+        if project_path is None:
             return False
 
         return True

@@ -25,4 +25,3 @@ class CommandGroupEntry(models.Model):
         for entry in sets_list:
             obj['command_sets'].append(entry.as_object())
         return obj
-

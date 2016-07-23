@@ -26,7 +26,7 @@ def save_project(request, project_id):
     """ Save project properties """
     if request.method == 'POST':
         project_entry = BluesteelProjectEntry.objects.filter(id=project_id).first()
-        if project_entry == None:
+        if project_entry is None:
             return res.get_response(404, 'Bluesteel project not found', {})
 
         (json_valid, post_info) = val.validate_json_string(request.body)
@@ -57,7 +57,7 @@ def delete_project(request, project_id):
     """ Delete project on a layout """
     if request.method == 'POST':
         project_entry = BluesteelProjectEntry.objects.filter(id=project_id).first()
-        if project_entry == None:
+        if project_entry is None:
             return res.get_response(404, 'Bluesteel project not found', {})
 
         layout_id = project_entry.layout.id

@@ -30,7 +30,7 @@ def get_layout(request, layout_id):
     if request.method == 'GET':
         layout = BluesteelLayoutEntry.objects.filter(id=layout_id).first()
 
-        if layout == None:
+        if layout is None:
             return res.get_response(400, 'Layout not found', {})
         else:
             layout_obj = layout.as_object()
@@ -44,7 +44,7 @@ def get_project_ids_and_names_from_layout(request, layout_id):
     if request.method == 'GET':
         layout = BluesteelLayoutEntry.objects.filter(id=layout_id).first()
 
-        if layout == None:
+        if layout is None:
             return res.get_response(400, 'Layout not found', {})
 
         project_entries = BluesteelProjectEntry.objects.filter(layout=layout).order_by('order')

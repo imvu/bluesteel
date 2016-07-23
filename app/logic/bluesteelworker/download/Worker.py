@@ -3,18 +3,18 @@
 # Disable warning for relative imports
 # pylint: disable=W0403
 
-from CommandExecutioner import CommandExecutioner
-from ProjectFolderManager import ProjectFolderManager
 import logging as log
-import GitFetcher
-import Request
 import os
 import json
 import uuid
 import socket
 import platform
 import time
+import GitFetcher
+import Request
 # import pprint
+from CommandExecutioner import CommandExecutioner
+from ProjectFolderManager import ProjectFolderManager
 
 RETRY_CONNECTION_TIME = 3
 
@@ -155,14 +155,14 @@ def extract_projects_from_layouts(bootstrap_urls, settings, session):
 
     print '- Getting layout list'
     resp = session.get(bootstrap_urls['layouts_url'], {})
-    if resp['succeed'] == False:
+    if resp['succeed'] is False:
         process_info['succeed'] = False
         return process_info
 
     for layout_url in resp['content']['data']['layouts']:
         print '- Get layout'
         resp = session.get(layout_url, {})
-        if resp['succeed'] == False:
+        if resp['succeed'] is False:
             process_info['succeed'] = False
             return process_info
 
@@ -221,7 +221,7 @@ def process_get_available_benchmark_execution(bootstrap_urls, session):
     print '- Getting benchmark execution'
 
     resp = session.post(bootstrap_urls['acquire_benchmark_execution_url'], {}, '')
-    if resp['succeed'] == False:
+    if resp['succeed'] is False:
         print '    - process_get_available_benchmark_execution failed !!'
         print '    - An error occurred:'
         print '    out: ', resp['content']
@@ -325,7 +325,7 @@ def main():
     while True:
         print '+ get or create worker.'
         worker_info = process_get_or_create_worker(bootstrap_urls, host_info, session)
-        if worker_info['succeed'] == False:
+        if worker_info['succeed'] is False:
             print '+ process_get_or_create_worker failed.'
             print '- out: ', worker_info['message']
             print '+ waiting some time to retry.'
@@ -334,7 +334,7 @@ def main():
 
         print '+ connect worker.'
         con_info = process_connect_worker(bootstrap_urls, worker_info['worker'], session)
-        if con_info['succeed'] == False:
+        if con_info['succeed'] is False:
             print '+ process_connect_worker failed.'
             print '- out: ', con_info['message']
             print '+ waiting some time to retry.'
@@ -345,7 +345,7 @@ def main():
 
             print '+ connect worker.'
             con_info = process_connect_worker(bootstrap_urls, worker_info['worker'], session)
-            if con_info['succeed'] == False:
+            if con_info['succeed'] is False:
                 print '+ process_connect_worker failed.'
                 print '- out: ', con_info['message']
                 print '+ waiting some time to retry.'

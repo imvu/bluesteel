@@ -38,4 +38,3 @@ def get_pagination_urls(pagination, url):
         pag_url['pages'].append(pag)
 
     return pag_url
-

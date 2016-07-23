@@ -69,4 +69,3 @@ class Session(object):
         res = self.make_request(request)
         self.update_csrf_token(res['cookie'])
         return res
-

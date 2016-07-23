@@ -84,7 +84,7 @@ def get_benchmark_definition_edit(request, definition_id):
 
     def_entry = BenchmarkDefinitionEntry.objects.filter(id=definition_id).first()
 
-    if def_entry == None:
+    if def_entry is None:
         return res.get_template_data(request, 'presenter/not_found.html', data)
 
     obj = def_entry.as_object()
@@ -104,7 +104,7 @@ def get_benchmark_definition_confirm_delete(request, definition_id):
     """ Confirm benchmark definition deletion """
     if request.method == 'GET':
         bench_def = BenchmarkDefinitionEntry.objects.filter(id=definition_id).first()
-        if bench_def == None:
+        if bench_def is None:
             return res.get_template_data(request, 'presenter/not_found.html', {})
 
         data = {}

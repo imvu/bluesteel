@@ -3,11 +3,12 @@
 # Disable warning for relative imports
 # pylint: disable=W0403
 
-from CommandExecutioner import CommandExecutioner
-from ProjectFolderManager import ProjectFolderManager
 import json
 import datetime
 import logging as log
+from CommandExecutioner import CommandExecutioner
+from ProjectFolderManager import ProjectFolderManager
+
 
 class GitFetcher(object):
     """
@@ -708,6 +709,3 @@ class GitFetcher(object):
                 return command['result']['out'].decode('utf-8', 'ignore').encode('utf-8')
 
         return ''
-
-
-

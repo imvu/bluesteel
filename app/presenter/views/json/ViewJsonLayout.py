@@ -26,7 +26,7 @@ def delete(request, layout_id):
     """ Layout deletion """
     if request.method == 'POST':
         layout_entry = BluesteelLayoutEntry.objects.filter(id=layout_id).first()
-        if layout_entry == None:
+        if layout_entry is None:
             return res.get_response(404, 'Bluesteel layout not found', {})
 
         BluesteelLayoutController.delete_layout(layout_entry)
@@ -41,7 +41,7 @@ def wipe(request, layout_id):
     """ Layout wipe data """
     if request.method == 'POST':
         layout_entry = BluesteelLayoutEntry.objects.filter(id=layout_id).first()
-        if layout_entry == None:
+        if layout_entry is None:
             return res.get_response(404, 'Bluesteel layout not found', {})
 
         project_entries = BluesteelProjectEntry.objects.filter(layout=layout_entry)
@@ -59,7 +59,7 @@ def save_layout(request, layout_id):
     """ Save layout properties """
     if request.method == 'POST':
         layout_entry = BluesteelLayoutEntry.objects.filter(id=layout_id).first()
-        if layout_entry == None:
+        if layout_entry is None:
             return res.get_response(404, 'Bluesteel layout not found', {})
 
         (json_valid, post_info) = val.validate_json_string(request.body)
@@ -86,7 +86,7 @@ def add_default_project(request, layout_id):
     """ Add default projet to layout """
     if request.method == 'POST':
         layout_entry = BluesteelLayoutEntry.objects.filter(id=layout_id).first()
-        if layout_entry == None:
+        if layout_entry is None:
             return res.get_response(404, 'Bluesteel layout not found', {})
 
         BluesteelLayoutController.add_default_project_to_layout(layout_entry)

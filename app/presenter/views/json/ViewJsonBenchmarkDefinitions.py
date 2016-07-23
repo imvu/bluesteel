@@ -55,7 +55,7 @@ def view_save_benchmark_definition(request, benchmark_definition_id):
             max_weeks_old_notify=val_resp_obj['max_weeks_old_notify']
         )
 
-        if bench_entry == None:
+        if bench_entry is None:
             return res.get_response(404, 'Benchmark Defintion save error', {})
         else:
             return res.get_response(200, 'Benchmark Definition saved', {})

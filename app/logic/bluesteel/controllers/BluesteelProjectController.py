@@ -8,7 +8,7 @@ from app.logic.gitrepo.controllers.GitController import GitController
 from app.logic.commandrepo.models.CommandModel import CommandEntry
 from app.logic.commandrepo.models.CommandSetModel import CommandSetEntry
 from app.logic.commandrepo.models.CommandGroupModel import CommandGroupEntry
-from app.logic.commandrepo.controllers.CommandController import CommandController
+from app.logic.commandrepo.controllers import CommandController
 
 PAGINATION_HALF_RANGE = 2
 
@@ -104,7 +104,7 @@ class BluesteelProjectController(object):
 
     @staticmethod
     def delete_project(project):
-        CommandController.delete_command_group_by_id(project.command_group.id)
+        CommandController.CommandController.delete_command_group_by_id(project.command_group.id)
         GitController.delete_git_project(project.git_project)
         project.delete()
 

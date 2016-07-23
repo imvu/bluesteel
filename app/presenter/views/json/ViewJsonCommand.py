@@ -1,9 +1,9 @@
 """ Presenter json views, layout page functions """
 
+import json
 from django.http import HttpResponse
 from app.logic.commandrepo.models.CommandModel import CommandEntry
 from app.logic.httpcommon import res
-import json
 
 def download_command_as_json(request, command_id):
     """ Retrieves a command by id and generates a file to be downloaded """

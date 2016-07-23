@@ -1,8 +1,8 @@
 """ Common code for response """
 
+import json
 from django.http import HttpResponse
 from django.template import RequestContext, loader
-import json
 
 def add_cross_origin_properties(http_request):
     """ Setup the required headers to allow cross origin requests """

@@ -55,7 +55,7 @@ def confirm_delete(request, layout_id):
     """ Confirm layout deletion """
     if request.method == 'GET':
         layout_entry = BluesteelLayoutEntry.objects.filter(id=layout_id).first()
-        if layout_entry == None:
+        if layout_entry is None:
             return res.get_response(404, 'Bluesteel layout not found', {})
 
         data = {}
@@ -75,7 +75,7 @@ def confirm_wipe(request, layout_id):
     """ Confirm layout deletion """
     if request.method == 'GET':
         layout_entry = BluesteelLayoutEntry.objects.filter(id=layout_id).first()
-        if layout_entry == None:
+        if layout_entry is None:
             return res.get_response(404, 'Bluesteel layout not found', {})
 
         data = {}
@@ -90,4 +90,3 @@ def confirm_wipe(request, layout_id):
         return res.get_template_data(request, 'presenter/confirm.html', data)
     else:
         return res.get_only_get_allowed({})
-

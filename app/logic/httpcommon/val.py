@@ -1,8 +1,8 @@
 """ Common code for validation """
 
+import json
 from jsonschema import Draft4Validator
 import jsonschema
-import json
 
 def validate_json_string(text):
     """ Validates a json string, if false, returns error message """

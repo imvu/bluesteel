@@ -3,7 +3,7 @@
 from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
 from app.logic.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
 from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
-from app.logic.commandrepo.controllers.CommandController import CommandController
+from app.logic.commandrepo.controllers import CommandController
 from app.logic.commandrepo.models.CommandModel import CommandEntry
 from app.logic.commandrepo.models.CommandSetModel import CommandSetEntry
 
@@ -24,12 +24,12 @@ class BenchmarkDefinitionController(object):
         """ Creates a default benchmark definition """
         layout_entry = BluesteelLayoutEntry.objects.all().first()
 
-        if layout_entry == None:
+        if layout_entry is None:
             return None
 
         project_entry = BluesteelProjectEntry.objects.filter(layout=layout_entry).first()
 
-        if project_entry == None:
+        if project_entry is None:
             return None
 
         default_commands = BenchmarkDefinitionController.create_default_definition_commands()
@@ -56,7 +56,7 @@ class BenchmarkDefinitionController(object):
         """ Save benchmark definition with the new data provided, returns None if error """
         benchmark_def_entry = BenchmarkDefinitionEntry.objects.filter(id=benchmark_definition_id).first()
 
-        if benchmark_def_entry == None:
+        if benchmark_def_entry is None:
             return None
 
         if BenchmarkDefinitionController.is_benchmark_definition_equivalent(
@@ -72,12 +72,12 @@ class BenchmarkDefinitionController(object):
 
         layout_entry = BluesteelLayoutEntry.objects.filter(id=layout_id).first()
 
-        if layout_entry == None:
+        if layout_entry is None:
             return None
 
         project_entry = BluesteelProjectEntry.objects.filter(layout=layout_entry, id=project_id).first()
 
-        if project_entry == None:
+        if project_entry is None:
             project_entry = BluesteelProjectEntry.objects.filter(layout=layout_entry).first()
             benchmark_def_entry.name = name
             benchmark_def_entry.layout = layout_entry
@@ -85,8 +85,8 @@ class BenchmarkDefinitionController(object):
             benchmark_def_entry.save()
             return None
 
-        CommandController.delete_commands_of_command_set(benchmark_def_entry.command_set)
-        CommandController.add_commands_to_command_set(benchmark_def_entry.command_set, command_list)
+        CommandController.CommandController.delete_commands_of_command_set(benchmark_def_entry.command_set)
+        CommandController.CommandController.add_commands_to_command_set(benchmark_def_entry.command_set, command_list)
 
         benchmark_def_entry.name = name
         benchmark_def_entry.layout = layout_entry
@@ -103,7 +103,7 @@ class BenchmarkDefinitionController(object):
         """ Returns true if the new information to be saved is equivalent to the stored one """
         benchmark_def_entry = BenchmarkDefinitionEntry.objects.filter(id=benchmark_definition_id).first()
 
-        if benchmark_def_entry == None:
+        if benchmark_def_entry is None:
             return False
 
         if benchmark_def_entry.layout.id != layout_id:

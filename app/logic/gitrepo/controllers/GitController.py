@@ -1,5 +1,6 @@
 """ Git Controller file """
 
+import sys
 from django.core.paginator import Paginator
 from app.logic.httpcommon import pag
 from app.logic.gitrepo.models.GitParentModel import GitParentEntry
@@ -9,7 +10,6 @@ from app.logic.gitrepo.models.GitBranchModel import GitBranchEntry
 from app.logic.gitrepo.models.GitBranchTrailModel import GitBranchTrailEntry
 from app.logic.gitrepo.models.GitDiffModel import GitDiffEntry
 from app.logic.gitrepo.models.GitBranchMergeTargetModel import GitBranchMergeTargetEntry
-import sys
 
 PAGINATION_HALF_RANGE = 2
 
@@ -84,7 +84,7 @@ class GitController(object):
 
         for branch in branches:
             merge_target = GitBranchMergeTargetEntry.objects.filter(project=project, current_branch=branch).first()
-            if merge_target == None:
+            if merge_target is None:
                 continue
 
             branch_info = []
@@ -173,7 +173,7 @@ class GitController(object):
 
         commit_entry = GitCommitEntry.objects.filter(project=project, commit_hash=commit_hash).first()
 
-        if commit_entry == None:
+        if commit_entry is None:
             return []
 
         current_hash = commit_entry.commit_hash
@@ -181,7 +181,7 @@ class GitController(object):
         for i in range(parents_children_count):
             del i
             entry = GitParentEntry.objects.filter(project=project, parent__commit_hash=current_hash).first()
-            if entry == None:
+            if entry is None:
                 break
             else:
                 current_hash = entry.son.commit_hash
@@ -192,7 +192,7 @@ class GitController(object):
         for i in range(parents_children_count):
             del i
             entry = GitParentEntry.objects.filter(project=project, son__commit_hash=current_hash).first()
-            if entry == None:
+            if entry is None:
                 break
             else:
                 current_hash = entry.parent.commit_hash
@@ -258,4 +258,3 @@ class GitController(object):
         branch_entry.save()
 
         GitController.update_branches_order_value(project_entry)
-

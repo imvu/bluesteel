@@ -60,6 +60,3 @@ class BluesteelLayoutController(object):
         for project in project_entries:
             BluesteelProjectController.delete_project(project)
         layout.delete()
-
-
-

@@ -1,7 +1,7 @@
 """ Prepare objects for template consumption """
 
-from app.presenter.views.helpers import ViewUrlGenerator
 import json
+from app.presenter.views.helpers import ViewUrlGenerator
 
 def prepare_layout_for_html(layout):
     """ Adds information to layout objects for template interaction """
@@ -22,7 +22,7 @@ def prepare_layout_for_html(layout):
     obj_inactive['value'] = 0
     obj_inactive['selected'] = ''
 
-    if layout['active'] == True:
+    if layout['active'] is True:
         obj_active['selected'] = 'selected'
     else:
         obj_inactive['selected'] = 'selected'

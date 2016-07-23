@@ -13,7 +13,7 @@ class CommandController(object):
         """ Delete a whole command group and its associated objects """
         command_group_entry = CommandGroupEntry.objects.filter(id=command_group_id).first()
 
-        if command_group_entry == None:
+        if command_group_entry is None:
             return
 
         command_sets = CommandSetEntry.objects.filter(group=command_group_entry)
@@ -28,7 +28,7 @@ class CommandController(object):
         """ Delete a whole command set and its associated objects """
         command_set_entry = CommandSetEntry.objects.filter(id=command_set_id).first()
 
-        if command_set_entry == None:
+        if command_set_entry is None:
             return
 
         commands = CommandEntry.objects.filter(command_set=command_set_entry)
@@ -43,12 +43,12 @@ class CommandController(object):
         """ Delete a whole command and its associated objects """
         command_entry = CommandEntry.objects.filter(id=command_id).first()
 
-        if command_entry == None:
+        if command_entry is None:
             return
 
         command_result = CommandResultEntry.objects.filter(command=command_entry).first()
 
-        if command_result != None:
+        if command_result is not None:
             command_result.delete()
 
         command_entry.delete()

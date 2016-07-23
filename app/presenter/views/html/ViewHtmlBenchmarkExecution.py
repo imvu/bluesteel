@@ -22,7 +22,7 @@ def get_benchmark_execution_relevant(request, bench_exec_id):
 
     exec_entry = BenchmarkExecutionEntry.objects.filter(id=bench_exec_id).first()
 
-    if exec_entry == None:
+    if exec_entry is None:
         return res.get_template_data(request, 'presenter/not_found.html', data)
 
     obj = exec_entry.as_object()
@@ -40,7 +40,7 @@ def get_benchmark_execution_complete(request, bench_exec_id):
 
     exec_entry = BenchmarkExecutionEntry.objects.filter(id=bench_exec_id).first()
 
-    if exec_entry == None:
+    if exec_entry is None:
         return res.get_template_data(request, 'presenter/not_found.html', data)
 
     obj = exec_entry.as_object()
@@ -76,7 +76,7 @@ def get_benchmark_execution_window(request, bench_exec_id):
 
         commits_hashes = list(reversed(commits_hashes))
 
-        data = BenchmarkExecutionController.get_stacked_executions_from_branch(
+        data_exec = BenchmarkExecutionController.get_stacked_executions_from_branch(
             bench_exec.definition.project,
             branch,
             commits_hashes,
@@ -84,8 +84,8 @@ def get_benchmark_execution_window(request, bench_exec_id):
             bench_exec.worker
         )
 
-        executions = BenchmarkExecutionController.get_stacked_data_separated_by_id(data)
-        executions = ViewPrepareObjects.prepare_stacked_executions_for_html(request.get_host(), executions)
+        exec_stacked = BenchmarkExecutionController.get_stacked_data_separated_by_id(data_exec)
+        executions = ViewPrepareObjects.prepare_stacked_executions_for_html(request.get_host(), exec_stacked)
 
         data = {}
         data['stacked_executions'] = executions
@@ -99,19 +99,19 @@ def get_benchmark_executions_stacked(request, project_id, branch_id, definition_
     """ Returns benchmark executions stacked and paginated """
     if request.method == 'GET':
         project = BluesteelProjectEntry.objects.filter(id=project_id).first()
-        if project == None:
+        if project is None:
             return res.get_template_data(request, 'presenter/not_found.html', {})
 
         branch = GitBranchEntry.objects.filter(id=branch_id, project=project.git_project.id).first()
-        if branch == None:
+        if branch is None:
             return res.get_template_data(request, 'presenter/not_found.html', {})
 
         definition = BenchmarkDefinitionEntry.objects.filter(id=definition_id, project=project).first()
-        if definition == None:
+        if definition is None:
             return res.get_template_data(request, 'presenter/not_found.html', {})
 
         worker = WorkerEntry.objects.filter(id=worker_id).first()
-        if worker == None:
+        if worker is None:
             return res.get_template_data(request, 'presenter/not_found.html', {})
 
         page = Page(BENCH_EXEC_ITEMS_PER_PAGE, page_index)
@@ -128,7 +128,7 @@ def get_benchmark_executions_stacked(request, project_id, branch_id, definition_
             worker_id,
             pagination)
 
-        data = BenchmarkExecutionController.get_stacked_executions_from_branch(
+        data_exec = BenchmarkExecutionController.get_stacked_executions_from_branch(
             project,
             branch,
             commit_hashes,
@@ -136,9 +136,9 @@ def get_benchmark_executions_stacked(request, project_id, branch_id, definition_
             worker
         )
 
-        executions = BenchmarkExecutionController.get_stacked_data_separated_by_id(data)
+        exec_stacked = BenchmarkExecutionController.get_stacked_data_separated_by_id(data_exec)
 
-        executions = ViewPrepareObjects.prepare_stacked_executions_for_html(request.get_host(), executions)
+        executions = ViewPrepareObjects.prepare_stacked_executions_for_html(request.get_host(), exec_stacked)
 
         data = {}
         data['stacked_executions'] = executions

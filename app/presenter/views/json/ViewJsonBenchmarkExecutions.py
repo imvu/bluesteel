@@ -1,11 +1,11 @@
 """ Presenter json views, benchmark execution page functions """
 
+from collections import defaultdict
 from app.presenter.schemas import BenchmarkExecutionSchemas
 from app.presenter.views.helpers import ViewNotifications
 from app.logic.benchmark.models.BenchmarkExecutionModel import BenchmarkExecutionEntry
 from app.logic.benchmark.controllers.BenchmarkExecutionController import BenchmarkExecutionController
 from app.logic.httpcommon import res, val
-from collections import defaultdict
 
 FLUCTUATION_WINDOW = 2
 
@@ -36,7 +36,7 @@ def save_benchmark_execution(request, benchmark_execution_id):
     """ Check and save a benchmark execution data into the db """
     if request.method == 'POST':
         bench_exec_entry = BenchmarkExecutionEntry.objects.filter(id=benchmark_execution_id).first()
-        if bench_exec_entry == None:
+        if bench_exec_entry is None:
             return res.get_response(404, 'Bench Execution Entry not found', {})
 
         (is_json_valid, post_info) = val.validate_json_string(request.body)
@@ -91,7 +91,7 @@ def invalidate_benchmark_execution(request, benchmark_execution_id):
     """ Check and save a benchmark execution data into the db """
     if request.method == 'POST':
         bench_exec_entry = BenchmarkExecutionEntry.objects.filter(id=benchmark_execution_id).first()
-        if bench_exec_entry == None:
+        if bench_exec_entry is None:
             return res.get_response(404, 'Bench Execution Entry not found', {})
 
         bench_exec_entry.invalidated = True

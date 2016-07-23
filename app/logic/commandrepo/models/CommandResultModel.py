@@ -27,4 +27,3 @@ class CommandResultEntry(models.Model):
         obj['start_time'] = str(self.start_time)
         obj['finish_time'] = str(self.finish_time)
         return obj
-

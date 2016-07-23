@@ -1,12 +1,12 @@
 """ BenchmarkExecution model """
 
+import json
 from django.db import models
 from django.db.models import signals
 from django.dispatch.dispatcher import receiver
 from app.logic.commandrepo.models.CommandModel import CommandEntry
 from app.logic.commandrepo.models.CommandSetModel import CommandSetEntry
 from app.logic.commandrepo.models.CommandResultModel import CommandResultEntry
-import json
 
 class BenchmarkExecutionEntry(models.Model):
     """ Benchmark Execution """

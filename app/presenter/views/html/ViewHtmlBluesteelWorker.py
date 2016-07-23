@@ -1,12 +1,12 @@
 """ Presenter views, Html BluesteelWorker page functions """
 
+import os
+import zipfile
+import json
 from django.conf import settings
 from django.http import HttpResponse
 from app.logic.httpcommon import res
 from app.presenter.views.helpers import ViewUrlGenerator
-import os
-import zipfile
-import json
 
 def zip_folder_and_return_path(path_to_compress, path_destination, name_destination, settings_obj):
     """ Compress a folder and return the path of the resulting zip file """

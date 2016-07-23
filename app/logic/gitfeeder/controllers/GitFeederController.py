@@ -196,12 +196,12 @@ class GitFeederController(object):
                 commit_parent = GitCommitEntry.objects.filter(project=project, commit_hash=parent).first()
                 commit_son = GitCommitEntry.objects.filter(project=project, commit_hash=commit['hash']).first()
 
-                if commit_parent == None:
+                if commit_parent is None:
                     messages.append('Commit parent {0} not found while inserting parents!'.format(parent))
                     continue
 
 
-                if commit_son == None:
+                if commit_son is None:
                     messages.append('Commit son {0} not found while inserting parents!'.format(commit['hash']))
                     continue
 
@@ -253,13 +253,13 @@ class GitFeederController(object):
         messages = []
         for branch in branch_list:
             commit_entry = GitCommitEntry.objects.filter(project=project, commit_hash=branch['commit_hash']).first()
-            if commit_entry == None:
+            if commit_entry is None:
                 messages.append('Branch commit {0} not found!'.format(branch['commit_hash']))
                 continue
 
             branch_entry = GitBranchEntry.objects.filter(project=project, name=branch['branch_name']).first()
 
-            if branch_entry == None:
+            if branch_entry is None:
                 branch_entry = GitBranchEntry.objects.create(
                     project=project,
                     name=branch['branch_name'],
@@ -288,7 +288,7 @@ class GitFeederController(object):
 
         for branch in branch_list:
             branch_entry = GitBranchEntry.objects.filter(project=project, name=branch['branch_name']).first()
-            if branch_entry == None:
+            if branch_entry is None:
                 messages.append('Branch {0} not found while inserting trails!'.format(branch['branch_name']))
                 continue
 
@@ -347,7 +347,7 @@ class GitFeederController(object):
                 commit_parent=parent_entry
             ).first()
 
-            if diff_entry == None:
+            if diff_entry is None:
                 diff_entry = GitDiffEntry.objects.create(
                     project=project,
                     commit_son=son_entry,

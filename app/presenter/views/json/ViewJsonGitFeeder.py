@@ -1,5 +1,6 @@
 """ Git Feed json views """
 
+import json
 from django.db import transaction
 from app.logic.httpcommon import res
 from app.logic.httpcommon import val
@@ -9,14 +10,13 @@ from app.logic.gitfeeder.controllers.GitFeederController import GitFeederControl
 from app.logic.logger.models.LogModel import LogEntry
 from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
 from app.presenter.schemas import GitFeederSchemas
-import json
 
 @transaction.atomic
 def post_commits(request, project_id):
     """ Insert new commits to a given git project """
     if request.method == 'POST':
         project_entry = GitProjectEntry.objects.filter(id=project_id).first()
-        if project_entry == None:
+        if project_entry is None:
             return res.get_response(404, 'project not found', {})
 
         (json_valid, post_info) = val.validate_json_string(request.body)

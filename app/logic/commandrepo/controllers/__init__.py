@@ -1,5 +1,3 @@
 """ Automatic file """
 
-from app.logic.commandrepo.controllers.CommandController import CommandController
-
-
+from app.logic.commandrepo.controllers import CommandController

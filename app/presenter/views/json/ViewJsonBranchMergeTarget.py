@@ -14,7 +14,7 @@ def set_branch_merge_target(request, project_id):
     """ Insert new commits to a given git project """
     if request.method == 'POST':
         project_entry = GitProjectEntry.objects.filter(id=project_id).first()
-        if project_entry == None:
+        if project_entry is None:
             return res.get_response(404, 'project not found', {})
 
         (json_is_valid, post_info) = val.validate_json_string(request.body)
@@ -32,7 +32,7 @@ def set_branch_merge_target(request, project_id):
             name=val_resp_obj['current_branch_name']
         ).first()
 
-        if current_branch == None:
+        if current_branch is None:
             return res.get_response(404, 'Current branch name not found', val_resp_obj)
 
         target_branch = GitBranchEntry.objects.filter(
@@ -40,7 +40,7 @@ def set_branch_merge_target(request, project_id):
             name=val_resp_obj['target_branch_name']
         ).first()
 
-        if target_branch == None:
+        if target_branch is None:
             return res.get_response(404, 'Target branch name not found', val_resp_obj)
 
         # We search for the merge target entry with current one
@@ -49,7 +49,7 @@ def set_branch_merge_target(request, project_id):
             current_branch=current_branch,
         ).first()
 
-        if merge_target == None:
+        if merge_target is None:
             return res.get_response(404, 'Merge Target entry not found', val_resp_obj)
 
         if merge_target.target_branch.id == target_branch.id:

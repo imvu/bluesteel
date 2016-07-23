@@ -1,5 +1,8 @@
 """ Benchmark Execution Controller file """
 
+import json
+import sys
+from datetime import timedelta
 from django.db.models import Q, F
 from django.core.paginator import Paginator
 from django.utils import timezone
@@ -10,16 +13,13 @@ from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
 from app.logic.commandrepo.models.CommandSetModel import CommandSetEntry
 from app.logic.commandrepo.models.CommandModel import CommandEntry
 from app.logic.commandrepo.models.CommandResultModel import CommandResultEntry
-from app.logic.commandrepo.controllers.CommandController import CommandController
+from app.logic.commandrepo.controllers import CommandController
 from app.logic.gitrepo.controllers.GitController import GitController
 from app.logic.gitrepo.models.GitCommitModel import GitCommitEntry
 from app.logic.gitrepo.models.GitParentModel import GitParentEntry
 from app.logic.gitrepo.models.GitBranchTrailModel import GitBranchTrailEntry
 from app.logic.gitrepo.models.GitBranchMergeTargetModel import GitBranchMergeTargetEntry
 from app.logic.httpcommon import pag
-from datetime import timedelta
-import json
-import sys
 
 PAGINATION_HALF_RANGE = 2
 TTL_IN_PROGRESS = 3
@@ -266,7 +266,7 @@ class BenchmarkExecutionController(object):
     @staticmethod
     def save_bench_execution(bench_exec_entry, data):
         """ Save the report inside the benchmark execution without deleting command set object """
-        CommandController.delete_commands_of_command_set(bench_exec_entry.report)
+        CommandController.CommandController.delete_commands_of_command_set(bench_exec_entry.report)
 
         for index, command in enumerate(data['command_set']):
             command_entry = CommandEntry.objects.create(
@@ -294,7 +294,7 @@ class BenchmarkExecutionController(object):
         exec_entries = BenchmarkExecutionEntry.objects.filter(definition=benchmark_definition)
 
         for exec_entry in exec_entries:
-            CommandController.delete_command_set_by_id(exec_entry.report.id)
+            CommandController.CommandController.delete_command_set_by_id(exec_entry.report.id)
             exec_entry.delete()
 
     @staticmethod
@@ -390,7 +390,3 @@ class BenchmarkExecutionController(object):
         delta = now_date - author_date
 
         return (float(delta.days) / 7.0) < float(max_weeks_old_notify)
-
-
-
-

@@ -64,7 +64,7 @@ def get_project_branches(request, project_id, commit_depth, page_index):
     """ Display all the branches of a project """
     if request.method == 'GET':
         project_entry = BluesteelProjectEntry.objects.filter(id=project_id).first()
-        if project_entry == None:
+        if project_entry is None:
             return res.get_template_data(request, 'presenter/not_found.html', {})
 
         page = Page(PROJECTS_BRANCHES_PER_PAGE, page_index)
@@ -92,11 +92,11 @@ def get_project_single_branch(request, project_id, branch_id):
     """ Display all the branches of a project """
     if request.method == 'GET':
         project_entry = BluesteelProjectEntry.objects.filter(id=project_id).first()
-        if project_entry == None:
+        if project_entry is None:
             return res.get_template_data(request, 'presenter/not_found.html', {})
 
         branch_entry = GitBranchEntry.objects.filter(id=branch_id, project=project_entry.git_project.id).first()
-        if branch_entry == None:
+        if branch_entry is None:
             return res.get_template_data(request, 'presenter/not_found.html', {})
 
         branches = BluesteelProjectController.get_project_single_git_branch_data(
@@ -121,11 +121,11 @@ def get_project_single_branch_links(request, project_id, branch_id):
     """ Display single branch links """
     if request.method == 'GET':
         project_entry = GitProjectEntry.objects.filter(id=project_id).first()
-        if project_entry == None:
+        if project_entry is None:
             return res.get_template_data(request, 'presenter/not_found.html', {})
 
         branch_entry = GitBranchEntry.objects.filter(id=branch_id, project=project_entry).first()
-        if branch_entry == None:
+        if branch_entry is None:
             return res.get_template_data(request, 'presenter/not_found.html', {})
 
         def_entries = BenchmarkDefinitionEntry.objects.all()

@@ -1,10 +1,10 @@
 """ Worker model """
 
+import datetime
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 from app.logic.httpcommon import trans
-import datetime
 
 class WorkerEntry(models.Model):
     """ Worker Model """

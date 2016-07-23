@@ -1,10 +1,9 @@
 """ Command to send emails """
 
 from django.core.management.base import BaseCommand
-from app.logic.mailing.models.StackedMailModel import StackedMailEntry
 from django.core.mail import send_mass_mail
 from django.utils import timezone
-
+from app.logic.mailing.models.StackedMailModel import StackedMailEntry
 
 class Command(BaseCommand):
     args = ''
