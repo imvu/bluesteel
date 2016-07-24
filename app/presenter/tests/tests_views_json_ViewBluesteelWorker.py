@@ -324,7 +324,7 @@ class ViewsBluesteelWorkerTestCase(TestCase):
 
         self.assertEqual(200, resp_obj['status'])
         self.assertEqual('Access granted!', resp_obj['message'])
-        self.assertEqual(user1.pk, self.client.session['_auth_user_id'])
+        self.assertEqual(user1.id, int(self.client.session['_auth_user_id']))
 
     def test_login_worker_with_long_password_also_succeeds(self):
         post_data = {}
@@ -352,7 +352,7 @@ class ViewsBluesteelWorkerTestCase(TestCase):
 
         self.assertEqual(200, resp_obj['status'])
         self.assertEqual('Access granted!', resp_obj['message'])
-        self.assertEqual(user1.pk, self.client.session['_auth_user_id'])
+        self.assertEqual(user1.id, int(self.client.session['_auth_user_id']))
 
     def test_login_worker_with_bad_password(self):
         post_data = {}

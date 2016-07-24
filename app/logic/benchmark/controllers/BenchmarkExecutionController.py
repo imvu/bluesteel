@@ -15,6 +15,7 @@ from app.logic.commandrepo.models.CommandModel import CommandEntry
 from app.logic.commandrepo.models.CommandResultModel import CommandResultEntry
 from app.logic.commandrepo.controllers import CommandController
 from app.logic.gitrepo.controllers.GitController import GitController
+from app.logic.gitrepo.models.GitProjectModel import GitProjectEntry
 from app.logic.gitrepo.models.GitCommitModel import GitCommitEntry
 from app.logic.gitrepo.models.GitParentModel import GitParentEntry
 from app.logic.gitrepo.models.GitBranchTrailModel import GitBranchTrailEntry
@@ -362,8 +363,9 @@ class BenchmarkExecutionController(object):
     def does_benchmark_fluctuation_exist(benchmark_exec_entry, fluctuation_window):
         """ Returns true if fluctuation exists """
         commit_hash = benchmark_exec_entry.commit.commit_hash
+        project = GitProjectEntry.objects.filter(id=benchmark_exec_entry.definition.project.id).first()
         fluctuations = BenchmarkExecutionController.get_benchmark_fluctuation(
-            project=benchmark_exec_entry.definition.project,
+            project=project,
             commit_hash=commit_hash,
             fluctuation_window=fluctuation_window
         )

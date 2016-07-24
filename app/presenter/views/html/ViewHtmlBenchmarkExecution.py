@@ -7,6 +7,7 @@ from app.logic.benchmark.models.BenchmarkExecutionModel import BenchmarkExecutio
 from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
 from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
 from app.logic.gitrepo.controllers.GitController import GitController
+from app.logic.gitrepo.models.GitProjectModel import GitProjectEntry
 from app.logic.gitrepo.models.GitBranchModel import GitBranchEntry
 from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
 from app.logic.httpcommon import res
@@ -102,7 +103,11 @@ def get_benchmark_executions_stacked(request, project_id, branch_id, definition_
         if project is None:
             return res.get_template_data(request, 'presenter/not_found.html', {})
 
-        branch = GitBranchEntry.objects.filter(id=branch_id, project=project.git_project.id).first()
+        git_project = GitProjectEntry.objects.filter(id=project.git_project.id).first()
+        if git_project is None:
+            return res.get_template_data(request, 'presenter/not_found.html', {})
+
+        branch = GitBranchEntry.objects.filter(id=branch_id, project=git_project).first()
         if branch is None:
             return res.get_template_data(request, 'presenter/not_found.html', {})
 
@@ -116,7 +121,7 @@ def get_benchmark_executions_stacked(request, project_id, branch_id, definition_
 
         page = Page(BENCH_EXEC_ITEMS_PER_PAGE, page_index)
         commit_hashes, pagination = BenchmarkExecutionController.get_bench_exec_commits_paginated(
-            project,
+            git_project,
             branch,
             page
         )
@@ -129,7 +134,7 @@ def get_benchmark_executions_stacked(request, project_id, branch_id, definition_
             pagination)
 
         data_exec = BenchmarkExecutionController.get_stacked_executions_from_branch(
-            project,
+            git_project,
             branch,
             commit_hashes,
             definition,

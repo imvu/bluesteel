@@ -67,10 +67,14 @@ def get_project_branches(request, project_id, commit_depth, page_index):
         if project_entry is None:
             return res.get_template_data(request, 'presenter/not_found.html', {})
 
+        project = GitProjectEntry.objects.filter(id=project_entry.git_project.id).first()
+        if project is None:
+            return res.get_template_data(request, 'presenter/not_found.html', {})
+
         page = Page(PROJECTS_BRANCHES_PER_PAGE, page_index)
         branches, page_indices = BluesteelProjectController.get_project_git_branch_data(
             page,
-            project_entry,
+            project,
             commit_depth
         )
         branches = BenchmarkExecutionController.add_bench_exec_completed_to_branches(branches)
@@ -95,12 +99,16 @@ def get_project_single_branch(request, project_id, branch_id):
         if project_entry is None:
             return res.get_template_data(request, 'presenter/not_found.html', {})
 
-        branch_entry = GitBranchEntry.objects.filter(id=branch_id, project=project_entry.git_project.id).first()
+        git_project = GitProjectEntry.objects.filter(id=project_entry.git_project.id).first()
+        if git_project is None:
+            return res.get_template_data(request, 'presenter/not_found.html', {})
+
+        branch_entry = GitBranchEntry.objects.filter(id=branch_id, project=git_project).first()
         if branch_entry is None:
             return res.get_template_data(request, 'presenter/not_found.html', {})
 
         branches = BluesteelProjectController.get_project_single_git_branch_data(
-            project_entry,
+            git_project,
             branch_entry,
             BRANCH_COMMIT_DEPTH
         )

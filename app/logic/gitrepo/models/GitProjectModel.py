@@ -1,7 +1,6 @@
 """ Git Project model """
 
 from django.db import models
-from django.utils import timezone
 from app.logic.gitrepo.models.GitBranchModel import GitBranchEntry
 from app.logic.gitrepo.models.GitBranchMergeTargetModel import GitBranchMergeTargetEntry
 
@@ -11,7 +10,7 @@ class GitProjectEntry(models.Model):
     name = models.CharField(max_length=50, default='default-name')
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True, editable=False)
-    fetched_at = models.DateTimeField(auto_now_add=True, default=timezone.now)
+    fetched_at = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
         return u'GitProject {0} url:{1}'.format(self.id, self.url)
