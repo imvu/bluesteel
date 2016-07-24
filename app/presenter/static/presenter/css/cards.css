@@ -51,6 +51,17 @@ div.white_card
     background: white;
 }
 
+div.edit_card
+{
+    background: repeating-linear-gradient(
+      45deg,
+      #FAFAFA,
+      #FAFAFA 25px,
+      #FEFEFE 25px,
+      #FEFEFE 50px
+    );
+}
+
 div.white_card_hoverable
 {
     background: white;

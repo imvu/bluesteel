@@ -5,7 +5,7 @@
 {% block data_body %}
 <div class="container_med">
     {% if project %}
-        <div class="upper_card white_card card_padding_large">
+        <div class="upper_card edit_card card_padding_large">
             <div class="title">PROJECT</div>
             <form   action="{{project.url.save}}"
                     method="POST"
@@ -81,7 +81,7 @@
                 {% endfor %}
             </form>
         </div>
-        <div class="lower_card white_card card_padding_large">
+        <div class="lower_card edit_card card_padding_large">
             <ul class="no_dots no_indent vertical_margin horizontal_list">
                 <li class="horizontal">
                     <button     class="btn_rect primary"

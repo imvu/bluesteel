@@ -28,7 +28,7 @@ div.container_input
 {
     width: 90%;
     display: inline-block;
-    background: transparent;
+    background: white;
     color: transparent;
     border: solid 1px lightgray;
     border-radius: 5px;
