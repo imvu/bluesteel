@@ -113,7 +113,7 @@ stackedchartVerticalBars = function(objId, data) {
         barStrokeWidth : 2,
 
         //Number - Spacing between each of the X value sets
-        barValueSpacing : 5,
+        barValueSpacing : 1,
 
         //Number - Spacing between data sets within X values
         barDatasetSpacing : 0,
