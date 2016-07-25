@@ -99,6 +99,8 @@ def get_bootstrap_urls(entry_point_url, session):
         bootstrap_urls['worker_info_url'] = 'http://url/not/available/'
         bootstrap_urls['create_worker_url'] = 'http://url/not/available/'
         bootstrap_urls['login_worker_url'] = 'http://url/not/available/'
+        bootstrap_urls['acquire_benchmark_execution_url'] = 'http://url/not/available/'
+        bootstrap_urls['notifications_url'] = 'http://url/not/available/'
         return bootstrap_urls
 
 def process_get_or_create_worker(bootstrap_urls, host_info, session):
@@ -354,7 +356,9 @@ def main():
 
             print '+ update worker activity.'
             session.post(worker_info['worker']['url']['update_activity_point'], {}, '')
-            time.sleep(3)
+
+            print '+ Triggering notifications.'
+            session.post(bootstrap_urls['notifications_url'], {}, '')
 
             feeder = False
             resp = session.get(worker_info['worker']['url']['worker_info_full'], {})
