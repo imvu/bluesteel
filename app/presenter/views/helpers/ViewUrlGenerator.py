@@ -177,3 +177,6 @@ def get_command_download_json_url(command_id):
 
 def get_commit_ordered_by_worker_url(commit_id):
     return '/main/commit/{0}/ordered/worker/'.format(commit_id)
+
+def get_notification_send_all_url():
+    return '/main/notification/send/all/'

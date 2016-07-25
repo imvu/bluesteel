@@ -1,1 +1,0 @@
-*/1 * * * *  cd ~/imvu-solutions/rowpow-environment && ~/imvu-solutions/rowpow-environment/bin/python ~/imvu-solutions/rowpow-environment/rowpow/manage.py sendmail --settings=rowpow.settings.production >> ~/rowly-sendmail-error.log 2>&1

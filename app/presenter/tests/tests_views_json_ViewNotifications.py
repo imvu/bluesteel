@@ -1,17 +1,20 @@
 """ Mailing controller tests """
 
 from django.test import TestCase
+from django.test import Client
 from django.conf import settings
 from django.core import mail
 from app.logic.mailing.models.StackedMailModel import StackedMailEntry
-from app.logic.mailing.controllers import MailingController
+from app.logic.httpcommon import res
 import os
 import shutil
+import json
 
 
-class MailingControllerTestCase(TestCase):
+class ViewJsonNotificationsTestCase(TestCase):
 
     def setUp(self):
+        self.client = Client()
         self.tmp_folder = os.path.join(settings.TMP_ROOT)
 
         if not os.path.exists(self.tmp_folder):
@@ -27,7 +30,15 @@ class MailingControllerTestCase(TestCase):
         StackedMailEntry.objects.create(receiver='r3@test.com', sender='s3@test.com', title='Title3', content='Body3', is_sent=False)
         StackedMailEntry.objects.create(receiver='r4@test.com', sender='s4@test.com', title='Title4', content='Body4', is_sent=False)
 
-        MailingController.MailingController.send_stacked_emails()
+        resp = self.client.post(
+            '/main/notification/send/all/',
+            data = json.dumps({}),
+            content_type='application/json')
+
+        res.check_cross_origin_headers(self, resp)
+        resp_obj = json.loads(resp.content)
+
+        self.assertEqual(200, resp_obj['status'])
 
         mail.outbox.sort(key=lambda x: x.to[0])
 

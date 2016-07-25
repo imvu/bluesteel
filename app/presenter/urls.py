@@ -23,6 +23,7 @@ import app.presenter.views.json.ViewJsonBranch
 import app.presenter.views.json.ViewJsonBranchMergeTarget
 import app.presenter.views.json.ViewJsonBenchmark
 import app.presenter.views.json.ViewJsonCommand
+import app.presenter.views.json.ViewJsonNotifications
 
 admin.autodiscover()
 
@@ -194,4 +195,7 @@ urlpatterns = [
 
     url(r'^command/(?P<command_id>\d+)/download/json/$',
         app.presenter.views.json.ViewJsonCommand.download_command_as_json),
+
+    url(r'^notification/send/all/$',
+        app.presenter.views.json.ViewJsonNotifications.send_notifications),
 ]
