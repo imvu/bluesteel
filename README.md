@@ -14,14 +14,14 @@
 - Install pip: `sudo easy_install pip`
 - Install virtualenv: `sudo pip install virtualenv`
 - Create a Bluesteel folder: `mkdir bluesteel-project`, `cd bluesteel-project`
-- Create virtual environment: `virtualenv env`
+- Create virtual environment: `virtualenv --no-site-packages env`
 - Activate environment: ` . env/bin/activate`
 
 ### Installation ###
  
 - Create bluesteel project folder: `mkdir bluesteel`
 - Get the code: `git clone https://<user>@bitbucket.org/llorensmarti/stronghold.git bluesteel`
-- Install requisits: `cd bluesteel`, `sudo s/install-bluesteel.py`
+- Install requisits: `cd bluesteel`, `s/install-bluesteel.py`
 - Test everything is ok: `s/test-bluesteel.py`
 
 ### Install PostgreSQL database (optional)###
@@ -30,6 +30,7 @@
 - Install it! (in OS X means to move it to the Applications folder)
 - Locate `pg_config` binary. It should live inside: `/Applications/Postgres.app/Contents/Versions/9.5/bin/`
 - add that path to $PATH environment variable with: `PATH=$PATH:/Applications/Postgres.app/Contents/Versions/9.5/bin/`
+- (linux only) install postgres development package: `sudo apt-get install libpq-dev python-dev`
 - Install psycopg2 with: `sudo pip install psycopg2==2.6.2`
 - Open a PostgreSQL shell.
 - Execute command: `CREATE DATABASE bluesteeldb;`
