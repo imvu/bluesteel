@@ -5,11 +5,6 @@ import os
 import sys
 
 def main():
-
-    if not os.getuid() == 0:
-        print '- This script needs to be executed with root privileges (sudo).'
-        sys.exit(1)
-
     list_commands = []
     list_commands.append(['python', 's/internal/install-hooks.py'])
     list_commands.append(['python', 's/internal/install-pip.py'])
