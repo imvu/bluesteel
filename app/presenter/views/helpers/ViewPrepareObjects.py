@@ -274,7 +274,7 @@ def prepare_benchmark_execution_for_html(execution, domain):
     obj['url']['save'] = ViewUrlGenerator.get_save_bench_exe_full_url(domain, obj['id'])
 
     for command in execution['definition']['command_set']['commands']:
-        command['command'] = command['command'].replace('{commit}', execution['commit'])
+        command['command'] = command['command'].replace('{commit_hash}', execution['commit'])
 
     return obj
 

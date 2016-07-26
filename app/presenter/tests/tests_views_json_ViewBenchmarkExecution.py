@@ -29,7 +29,7 @@ from app.presenter.views.json import ViewJsonBenchmarkExecutions
 import json
 
 
-class BenchmarkDefinitionViewJsonTestCase(TestCase):
+class BenchmarkExecutionViewJsonTestCase(TestCase):
 
     def setUp(self):
         self.client = Client()

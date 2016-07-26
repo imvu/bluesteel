@@ -25,7 +25,7 @@ from app.presenter.views.helpers import ViewPrepareObjects
 import json
 
 
-class BenchmarkDefinitionViewJsonTestCase(TestCase):
+class PrepareObjectsTestCase(TestCase):
 
     def setUp(self):
         self.client = Client()
@@ -161,7 +161,7 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
 
         com_entries = CommandEntry.objects.filter(command_set=self.benchmark_definition1.command_set)
         for com_entry in com_entries:
-            com_entry.command = '{0} {1}'.format(com_entry.command, '{commit}')
+            com_entry.command = '{0} {1}'.format(com_entry.command, '{commit_hash}')
             com_entry.save()
 
         command_set = self.create_command_result('command-1 0000100001000010000100001000010000100001', 0, obj, 'no error')
@@ -183,11 +183,6 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
     def test_prepare_objects_from_benchmark_execution_with_command_substitution(self):
         obj = [{'visual_type' : 'vertical_bars', 'id' : 'id1', 'data' : [1, 2, 3, 4, 5]}]
 
-        com_entries = CommandEntry.objects.filter(command_set=self.benchmark_definition1.command_set)
-        for com_entry in com_entries:
-            com_entry.command = '{0} {1}'.format(com_entry.command, '{commit}')
-            com_entry.save()
-
         command_set = self.create_command_result('command-1 0000100001000010000100001000010000100001', 0, obj, 'no error')
 
         exec_entry = BenchmarkExecutionEntry.objects.create(
@@ -197,6 +192,7 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
             report=command_set)
 
         exec_obj = exec_entry.as_object()
+
         results = ViewPrepareObjects.prepare_results_from_bench_exec_to_html(exec_obj)
 
         self.assertEqual('command-1 0000100001000010000100001000010000100001', results[0]['command'])
