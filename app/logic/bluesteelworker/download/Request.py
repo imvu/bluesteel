@@ -3,6 +3,7 @@
 # Disable warning for relative imports
 # pylint: disable=W0403
 
+import httplib
 import urllib2
 import cookielib
 import Cookie
@@ -40,6 +41,10 @@ class Session(object):
             res['cookie'] = ''
             res['succeed'] = False
         except urllib2.URLError as error:
+            res['content'] = str(error)
+            res['cookie'] = ''
+            res['succeed'] = False
+        except httplib.BadStatusLine as error:
             res['content'] = str(error)
             res['cookie'] = ''
             res['succeed'] = False
