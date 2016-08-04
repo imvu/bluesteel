@@ -56,17 +56,18 @@ class ViewsBluesteelWorkerTestCase(TestCase):
 
         self.assertIsNone(zipped_file.testzip())
         self.assertIn('__init__.py', zipped_file.namelist())
-        self.assertIn('GitFetcher.py', zipped_file.namelist())
-        self.assertIn('Request.py', zipped_file.namelist())
-        self.assertIn('settings.json', zipped_file.namelist())
-        self.assertIn('Worker.py', zipped_file.namelist())
+        self.assertIn('core/__init__.py', zipped_file.namelist())
+        self.assertIn('core/GitFetcher.py', zipped_file.namelist())
+        self.assertIn('core/Request.py', zipped_file.namelist())
+        self.assertIn('core/settings.json', zipped_file.namelist())
+        self.assertIn('core/Worker.py', zipped_file.namelist())
 
-        settings_file = zipped_file.open('settings.json', 'r')
+        settings_file = zipped_file.open('core/settings.json', 'r')
         settings = settings_file.read()
         obj = json.loads(settings)
 
         self.assertEqual('http://testserver/main/bluesteelworker/bootstrap/', obj['entry_point'])
-        self.assertEqual(['tmp', 'worker_tmp'], obj['tmp_path'])
+        self.assertEqual(['..', 'tmp', 'worker_tmp'], obj['tmp_path'])
 
         settings_file.close()
         zipped_file.close()

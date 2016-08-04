@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.conf import settings
 from django.utils import timezone
 from django.utils.six import StringIO
-from app.logic.bluesteelworker.download.ProjectFolderManager import ProjectFolderManager
+from app.logic.bluesteelworker.download.core.ProjectFolderManager import ProjectFolderManager
 import os
 import json
 import hashlib

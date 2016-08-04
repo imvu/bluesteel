@@ -64,7 +64,7 @@ def fragment_layout_in_project_infos(layout, tmp_path):
 
 def read_settings():
     """ Reads and return an objects with settings """
-    settings_file = open('settings.json')
+    settings_file = open(os.path.join('core', 'settings.json'))
     settings_obj = {}
     try:
         settings_obj = json.loads(settings_file.read())

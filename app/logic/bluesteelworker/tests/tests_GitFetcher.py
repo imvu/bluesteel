@@ -4,8 +4,8 @@ from django.test import TestCase
 from django.conf import settings
 from django.utils import timezone
 from django.utils.six import StringIO
-from app.logic.bluesteelworker.download.GitFetcher import GitFetcher
-from app.logic.bluesteelworker.download.ProjectFolderManager import ProjectFolderManager
+from app.logic.bluesteelworker.download.core.GitFetcher import GitFetcher
+from app.logic.bluesteelworker.download.core.ProjectFolderManager import ProjectFolderManager
 from datetime import timedelta
 import logging as log
 import os
@@ -102,7 +102,7 @@ class GitFetcherTestCase(TestCase):
 
         self.assertEqual(os.path.join(self.tmp_folder, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1', 'project', 'test-repo-git-2'), found_path)
 
-    @mock.patch('app.logic.bluesteelworker.download.CommandExecutioner.subprocess.call')
+    @mock.patch('app.logic.bluesteelworker.download.core.CommandExecutioner.subprocess.call')
     def test_clone_project(self, mock_subprocess):
         mock_subprocess.return_value = 0
         self.create_paths(self.obj1)
@@ -135,7 +135,7 @@ class GitFetcherTestCase(TestCase):
         self.assertEqual('', reports['commands'][1]['result']['out'])
 
 
-    @mock.patch('app.logic.bluesteelworker.download.CommandExecutioner.subprocess.call')
+    @mock.patch('app.logic.bluesteelworker.download.core.CommandExecutioner.subprocess.call')
     def test_fetch_project(self, mock_subprocess):
         mock_subprocess.return_value = 0
         self.create_paths(self.obj1)
@@ -192,7 +192,7 @@ class GitFetcherTestCase(TestCase):
         self.assertEqual('', reports['commands'][4]['result']['error'])
         self.assertEqual('', reports['commands'][4]['result']['out'])
 
-    @mock.patch('app.logic.bluesteelworker.download.CommandExecutioner.subprocess.call')
+    @mock.patch('app.logic.bluesteelworker.download.core.CommandExecutioner.subprocess.call')
     def test_fetch_project_with_incorrect_git_project_search_path(self, mock_subprocess):
         mock_subprocess.return_value = 0
         self.create_paths(self.obj1)
@@ -207,7 +207,7 @@ class GitFetcherTestCase(TestCase):
         self.assertTrue('tmp/test/tmp-gitfetcher-folder/archive-28-0123ABC/test-repo-1/project/this-folder-does-not-exists \nProject current working directory not found' in reports['commands'][0]['result']['error'])
         self.assertEqual('', reports['commands'][0]['result']['out'])
 
-    @mock.patch('app.logic.bluesteelworker.download.CommandExecutioner.subprocess.call')
+    @mock.patch('app.logic.bluesteelworker.download.core.CommandExecutioner.subprocess.call')
     def test_get_branch_names(self, mock_subprocess):
         mock_subprocess.return_value = 0
         self.create_paths(self.obj1)
@@ -232,7 +232,7 @@ class GitFetcherTestCase(TestCase):
         self.assertEqual('', reports['commands'][0]['result']['error'])
         self.assertEqual('', reports['commands'][0]['result']['out'])
 
-    @mock.patch('app.logic.bluesteelworker.download.CommandExecutioner.subprocess.call')
+    @mock.patch('app.logic.bluesteelworker.download.core.CommandExecutioner.subprocess.call')
     def test_get_branch_names(self, mock_subprocess):
         mock_subprocess.return_value = 0
         self.create_paths(self.obj1)
@@ -361,7 +361,7 @@ class GitFetcherTestCase(TestCase):
 
         self.assertEqual(0, len(branch_names))
 
-    @mock.patch('app.logic.bluesteelworker.download.CommandExecutioner.subprocess.call')
+    @mock.patch('app.logic.bluesteelworker.download.core.CommandExecutioner.subprocess.call')
     def test_checkout_remote_branches_to_local(self, mock_subprocess):
         branch_names = ['origin/master', 'origin/branch-1', 'origin/branch-2', 'origin/branch-test-1']
         mock_subprocess.return_value = 0
@@ -407,7 +407,7 @@ class GitFetcherTestCase(TestCase):
         self.assertEqual('', reports['commands'][3]['result']['out'])
 
 
-    @mock.patch('app.logic.bluesteelworker.download.CommandExecutioner.subprocess.call')
+    @mock.patch('app.logic.bluesteelworker.download.core.CommandExecutioner.subprocess.call')
     def test_commands_get_branch_names_and_hashes(self, mock_subprocess):
         branch_names = ['master', 'branch-1', 'branch-2']
         mock_subprocess.return_value = 0
@@ -483,7 +483,7 @@ class GitFetcherTestCase(TestCase):
         self.assertEqual('branch-1', branch_names[1]['name'])
         self.assertEqual('0000200002000020000200002000020000200002', branch_names[1]['commit_hash'])
 
-    @mock.patch('app.logic.bluesteelworker.download.CommandExecutioner.subprocess.call')
+    @mock.patch('app.logic.bluesteelworker.download.core.CommandExecutioner.subprocess.call')
     def test_commands_get_commits_from_branch(self, mock_subprocess):
         branch_name = 'branch-1'
         branch_hash = '0000100001000010000100001000010000100001'
@@ -784,7 +784,7 @@ class GitFetcherTestCase(TestCase):
         self.assertEqual('0000100001000010000100001000010000100001', res[0]['hash'])
         self.assertEqual('0000200002000020000200002000020000200002', res[1]['hash'])
 
-    @mock.patch('app.logic.bluesteelworker.download.CommandExecutioner.subprocess.call')
+    @mock.patch('app.logic.bluesteelworker.download.core.CommandExecutioner.subprocess.call')
     def test_commands_get_shared_commit_between_branches(self, mock_subprocess):
         branch1 = {}
         branch1['name'] = 'branch-1'
@@ -1066,7 +1066,7 @@ class GitFetcherTestCase(TestCase):
 
         self.assertEqual('', res)
 
-    @mock.patch('app.logic.bluesteelworker.download.CommandExecutioner.subprocess.call')
+    @mock.patch('app.logic.bluesteelworker.download.core.CommandExecutioner.subprocess.call')
     def test_commands_get_diff_between_commits(self, mock_subprocess):
         commit_1 = '0000100001000010000100001000010000100001'
         commit_2 = '0000200002000020000200002000020000200002'
@@ -1145,7 +1145,7 @@ class GitFetcherTestCase(TestCase):
         self.assertEqual('this-is-a-text-that--contains-non-utf-8-characters', diff)
 
 
-    @mock.patch('app.logic.bluesteelworker.download.CommandExecutioner.subprocess.call')
+    @mock.patch('app.logic.bluesteelworker.download.core.CommandExecutioner.subprocess.call')
     def test_step_remove_local_branches(self, mock_subprocess):
         mock_subprocess.return_value = 0
         self.create_paths(self.obj1)
@@ -1165,7 +1165,7 @@ class GitFetcherTestCase(TestCase):
         name2, args2, side2 = mock_subprocess.mock_calls[1]
         self.assertEqual(['git', 'branch', '-D', 'branch-4'], args2[0])
 
-    @mock.patch('app.logic.bluesteelworker.download.CommandExecutioner.subprocess.call')
+    @mock.patch('app.logic.bluesteelworker.download.core.CommandExecutioner.subprocess.call')
     def test_step_remove_local_branches_with_same_start_name(self, mock_subprocess):
         mock_subprocess.return_value = 0
         self.create_paths(self.obj1)

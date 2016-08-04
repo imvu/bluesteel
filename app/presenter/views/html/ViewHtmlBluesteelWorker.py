@@ -14,15 +14,19 @@ def zip_folder_and_return_path(path_to_compress, path_destination, name_destinat
         os.makedirs(path_destination)
 
     path_final = os.path.join(path_destination, name_destination)
-    zip_file = zipfile.ZipFile(path_final, 'w')
 
-    for root, dirs, files in os.walk(path_to_compress):
-        del dirs
-        for file_entry in files:
-            if file_entry.endswith('.py'):
-                zip_file.write(os.path.join(root, file_entry), os.path.basename(file_entry))
-    zip_file.writestr('settings.json', json.dumps(settings_obj))
-    zip_file.close()
+    rel_root = os.path.abspath(path_to_compress)
+    with zipfile.ZipFile(path_final, "w", zipfile.ZIP_DEFLATED) as zip_file:
+        zip_file.writestr(os.path.join('core', 'settings.json'), json.dumps(settings_obj))
+        for root, dirs, files in os.walk(path_to_compress):
+            del dirs
+            zip_file.write(root, os.path.relpath(root, rel_root))
+            for fil in files:
+                file_name = os.path.join(root, fil)
+                if os.path.isfile(file_name) and file_name.endswith('.py'):
+                    archive_name = os.path.join(os.path.relpath(root, rel_root), fil)
+                    zip_file.write(file_name, archive_name)
+
     return path_final
 
 def get_worker(request):
@@ -30,7 +34,7 @@ def get_worker(request):
     if request.method == 'GET':
         settings_obj = {}
         settings_obj['entry_point'] = ViewUrlGenerator.get_worker_entry_point_full_url(request.get_host())
-        settings_obj['tmp_path'] = ['tmp', 'worker_tmp']
+        settings_obj['tmp_path'] = ['..', 'tmp', 'worker_tmp']
 
         path_final = zip_folder_and_return_path(
             os.path.join(settings.BASE_DIR, '..', 'app', 'logic', 'bluesteelworker', 'download'),

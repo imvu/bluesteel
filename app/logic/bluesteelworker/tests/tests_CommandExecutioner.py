@@ -2,7 +2,7 @@
 
 from django.test import TestCase
 from django.conf import settings
-from app.logic.bluesteelworker.download.CommandExecutioner import CommandExecutioner
+from app.logic.bluesteelworker.download.core.CommandExecutioner import CommandExecutioner
 import os
 import shutil
 import mock
@@ -31,7 +31,7 @@ class CommandExecutionerTestCase(TestCase):
         self.assertFalse(os.path.exists(os.path.join(project_path, 'log1.txt')))
 
 
-    @mock.patch('app.logic.bluesteelworker.download.CommandExecutioner.subprocess.call')
+    @mock.patch('app.logic.bluesteelworker.download.core.CommandExecutioner.subprocess.call')
     def test_fetch_project(self, mock_subprocess):
         mock_subprocess.return_value = 0
         commands = []
