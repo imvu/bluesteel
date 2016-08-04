@@ -32,7 +32,11 @@
 - add that path to $PATH environment variable with: `PATH=$PATH:/Applications/Postgres.app/Contents/Versions/9.5/bin/`
 - (linux only) install postgres development package: `sudo apt-get install libpq-dev python-dev`
 - Install psycopg2 with: `sudo pip install psycopg2==2.6.2`
-- Open a PostgreSQL shell. (in linux you can execute: `psql -d postgres` to open a shell)
+- Open a PostgreSQL shell. 
+    * in macOS you can open the Postgres App shell through the icon.
+    * in linux you can execute:
+        * `sudo su - postgres`
+        * `psql -d postgres`
 - Execute command: `CREATE DATABASE bluesteeldb;`
 - Execute command: `CREATE USER bluesteeluser;`
 - Execute command: `GRANT ALL PRIVILEGES ON DATABASE bluesteeldb TO bluesteeluser;`
