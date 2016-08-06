@@ -3,11 +3,11 @@
 # (duplicate-code)
 # pylint: disable=R0801
 
-GIT_FEEDER_SCHEMA = {
+GIT_FEED_COMMITS_SCHEMA = {
     '$schema': 'http://json-schema.org/draft-03/schema#',
     'type' : 'object',
     'additionalProperties' : True,
-    'required' : ['reports'],
+    'required' : ['feed_data'],
     'properties' : {
         'feed_data' : {
             'type' : 'object',
@@ -167,6 +167,15 @@ GIT_FEEDER_SCHEMA = {
                 },
             },
         },
+    }
+}
+
+GIT_FEED_REPORTS_SCHEMA = {
+    '$schema': 'http://json-schema.org/draft-03/schema#',
+    'type' : 'object',
+    'additionalProperties' : True,
+    'required' : ['reports'],
+    'properties' : {
         'reports' : {
             'type' : 'array',
             'minItems' : 1,
@@ -218,6 +227,7 @@ GIT_FEEDER_SCHEMA = {
         }
     }
 }
+
 
 # 'project' : {
 #     'type' : 'object',

@@ -64,10 +64,9 @@ def create_branch(current_name, current_hash, target_name, target_hash, fork_poi
     return branch
 
 
-def create_feed_data_and_report(feed_data, reports):
+def create_feed_data(feed_data):
     obj = {}
     obj['feed_data'] = feed_data
-    obj['reports'] = reports
     return obj
 
 def get_default_report(command_count):

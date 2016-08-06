@@ -75,7 +75,8 @@ class BluesteelViewTestCase(TestCase):
         self.assertEqual(1, resp_obj['data']['id'])
         self.assertEqual('layout-1', resp_obj['data']['name'])
         self.assertEqual('archive-1', resp_obj['data']['uuid'])
-        self.assertEqual('http://testserver/main/feed/commit/project/1/', resp_obj['data']['projects'][0]['feed_url'])
+        self.assertEqual('http://testserver/main/feed/commit/project/1/', resp_obj['data']['projects'][0]['feed_commits_url'])
+        self.assertEqual('http://testserver/main/feed/report/project/1/', resp_obj['data']['projects'][0]['feed_reports_url'])
 
 
     def test_get_layout_project_ids_and_names_and_selected(self):

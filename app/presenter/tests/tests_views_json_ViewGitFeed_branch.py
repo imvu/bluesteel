@@ -49,10 +49,7 @@ class GitFeedViewsBranchTestCase(TestCase):
         feed_data['branches'] = []
         feed_data['branches'].append(branch1)
 
-        post_data = FeederTestHelper.create_feed_data_and_report(
-            feed_data,
-            FeederTestHelper.get_default_report(1)
-        )
+        post_data = FeederTestHelper.create_feed_data(feed_data)
 
         resp = self.client.post(
             '/main/feed/commit/project/{0}/'.format(self.git_project1.id),
@@ -101,10 +98,7 @@ class GitFeedViewsBranchTestCase(TestCase):
         self.assertEqual(1, GitBranchTrailEntry.objects.filter(project=self.git_project1, branch=branch_a, commit=commit_a).count())
         self.assertEqual(1, GitBranchTrailEntry.objects.filter(project=self.git_project1, branch=branch_a, commit=commit_b).count())
 
-        post_data = FeederTestHelper.create_feed_data_and_report(
-            feed_data,
-            FeederTestHelper.get_default_report(1)
-        )
+        post_data = FeederTestHelper.create_feed_data(feed_data)
 
         resp = self.client.post(
             '/main/feed/commit/project/{0}/'.format(self.git_project1.id),
@@ -154,10 +148,7 @@ class GitFeedViewsBranchTestCase(TestCase):
         feed_data['branches'] = []
         feed_data['branches'].append(branch1)
 
-        post_data = FeederTestHelper.create_feed_data_and_report(
-            feed_data,
-            FeederTestHelper.get_default_report(1)
-        )
+        post_data = FeederTestHelper.create_feed_data(feed_data)
 
         resp = self.client.post(
             '/main/feed/commit/project/{0}/'.format(self.git_project1.id),
@@ -220,10 +211,7 @@ class GitFeedViewsBranchTestCase(TestCase):
         feed_data['branches'] = []
         feed_data['branches'].append(branch1)
 
-        post_data = FeederTestHelper.create_feed_data_and_report(
-            feed_data,
-            FeederTestHelper.get_default_report(1)
-        )
+        post_data = FeederTestHelper.create_feed_data(feed_data)
 
         resp = self.client.post(
             '/main/feed/commit/project/{0}/'.format(self.git_project1.id),

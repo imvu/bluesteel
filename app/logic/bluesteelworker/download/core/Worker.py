@@ -32,7 +32,8 @@ def fragment_layout_in_project_infos(layout, tmp_path):
 
         obj = {}
         obj['feed'] = {}
-        obj['feed']['url'] = project['feed_url']
+        obj['feed']['commits_url'] = project['feed_commits_url']
+        obj['feed']['reports_url'] = project['feed_reports_url']
         obj['feed']['active'] = index == project_to_feed
         obj['git'] = {}
         obj['git']['project'] = {}
@@ -202,12 +203,22 @@ def process_git_fetch_and_feed(bootstrap_urls, settings, session, feed):
         if feed:
             print '- Fetching git project'
             fetcher.fetch_and_feed_git_project(project)
-            obj_json = json.dumps(fetcher.feed_data)
-            print '- Feeding git project'
-            resp = session.post(project['feed']['url'], {}, obj_json)
+            commits_json = {}
+            commits_json['feed_data'] = fetcher.feed_data['feed_data']
+            print '- Feeding git project: ', project['feed']['commits_url']
+            resp = session.post(project['feed']['commits_url'], {}, json.dumps(commits_json))
             # ppi.pprint(resp)
             if not resp['succeed']:
-                print '- Error occurred while feeding project'
+                print '- Error occurred while feeding project commits'
+                process_info = resp
+                return process_info
+
+            reports_json = {}
+            reports_json['reports'] = fetcher.feed_data['reports']
+            resp = session.post(project['feed']['reports_url'], {}, json.dumps(reports_json))
+            # ppi.pprint(resp)
+            if not resp['succeed']:
+                print '- Error occurred while feeding project reports'
                 process_info = resp
                 return process_info
         else:

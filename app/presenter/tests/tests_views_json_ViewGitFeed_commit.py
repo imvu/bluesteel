@@ -64,10 +64,7 @@ class GitFeedViewsCommitTestCase(TestCase):
         feed_data['branches'] = []
         feed_data['branches'].append(branch1)
 
-        post_data = FeederTestHelper.create_feed_data_and_report(
-            feed_data,
-            FeederTestHelper.get_default_report(1)
-        )
+        post_data = FeederTestHelper.create_feed_data(feed_data)
 
         resp = self.client.post(
             '/main/feed/commit/project/{0}/'.format(self.git_project1.id),
@@ -86,25 +83,12 @@ class GitFeedViewsCommitTestCase(TestCase):
         self.assertEqual('master', branch_entry.name)
 
     def test_feed_reports_have_correct_user_assign(self):
-        commit_time = str(timezone.now().isoformat())
-        commit1 = FeederTestHelper.create_commit(1, [], 'user1', 'user1@test.com', commit_time, commit_time)
-
-        branch1 = FeederTestHelper.create_branch('master', 1, 'master', 1, 1, [1], 'merge-target-content')
-
-        feed_data = {}
-        feed_data['commits'] = []
-        feed_data['commits'].append(commit1)
-        feed_data['branches'] = []
-        feed_data['branches'].append(branch1)
-
-        post_data = FeederTestHelper.create_feed_data_and_report(
-            feed_data,
-            FeederTestHelper.get_default_report(1)
-        )
+        post_data = {}
+        post_data['reports'] = FeederTestHelper.get_default_report(1)
 
         self.client.login(username='user1@test.com', password='pass1')
         resp = self.client.post(
-            '/main/feed/commit/project/{0}/'.format(self.git_project1.id),
+            '/main/feed/report/project/{0}/'.format(self.git_project1.id),
             data = json.dumps(post_data),
             content_type='application/json')
 
@@ -136,10 +120,7 @@ class GitFeedViewsCommitTestCase(TestCase):
         feed_data['branches'] = []
         feed_data['branches'].append(branch1)
 
-        post_data = FeederTestHelper.create_feed_data_and_report(
-            feed_data,
-            FeederTestHelper.get_default_report(1)
-        )
+        post_data = FeederTestHelper.create_feed_data(feed_data)
 
         resp = self.client.post(
             '/main/feed/commit/project/{0}/'.format(self.git_project1.id),
@@ -176,10 +157,7 @@ class GitFeedViewsCommitTestCase(TestCase):
         feed_data['branches'] = []
         feed_data['branches'].append(branch1)
 
-        post_data = FeederTestHelper.create_feed_data_and_report(
-            feed_data,
-            FeederTestHelper.get_default_report(1)
-        )
+        post_data = FeederTestHelper.create_feed_data(feed_data)
 
         resp = self.client.post(
             '/main/feed/commit/project/{0}/'.format(self.git_project1.id),
@@ -211,10 +189,7 @@ class GitFeedViewsCommitTestCase(TestCase):
         feed_data['branches'] = []
         feed_data['branches'].append(branch1)
 
-        post_data = FeederTestHelper.create_feed_data_and_report(
-            feed_data,
-            FeederTestHelper.get_default_report(1)
-        )
+        post_data = FeederTestHelper.create_feed_data(feed_data)
 
         resp = self.client.post(
             '/main/feed/commit/project/{0}/'.format(self.git_project1.id),
@@ -252,10 +227,7 @@ class GitFeedViewsCommitTestCase(TestCase):
         feed_data['branches'] = []
         feed_data['branches'].append(branch1)
 
-        post_data = FeederTestHelper.create_feed_data_and_report(
-            feed_data,
-            FeederTestHelper.get_default_report(1)
-        )
+        post_data = FeederTestHelper.create_feed_data(feed_data)
 
         resp = self.client.post(
             '/main/feed/commit/project/{0}/'.format(self.git_project1.id),
@@ -282,10 +254,7 @@ class GitFeedViewsCommitTestCase(TestCase):
         feed_data['branches'] = []
         feed_data['branches'].append(branch1)
 
-        post_data = FeederTestHelper.create_feed_data_and_report(
-            feed_data,
-            FeederTestHelper.get_default_report(1)
-        )
+        post_data = FeederTestHelper.create_feed_data(feed_data)
 
         resp = self.client.post(
             '/main/feed/commit/project/{0}/'.format(self.git_project1.id),
@@ -317,10 +286,7 @@ class GitFeedViewsCommitTestCase(TestCase):
         feed_data['branches'].append(branch1)
         feed_data['branches'].append(branch2)
 
-        post_data = FeederTestHelper.create_feed_data_and_report(
-            feed_data,
-            FeederTestHelper.get_default_report(1)
-        )
+        post_data = FeederTestHelper.create_feed_data(feed_data)
 
         resp = self.client.post(
             '/main/feed/commit/project/{0}/'.format(self.git_project1.id),
@@ -345,10 +311,7 @@ class GitFeedViewsCommitTestCase(TestCase):
         feed_data['branches'].append(branch1)
         feed_data['branches'].append(branch2)
 
-        post_data = FeederTestHelper.create_feed_data_and_report(
-            feed_data,
-            FeederTestHelper.get_default_report(1)
-        )
+        post_data = FeederTestHelper.create_feed_data(feed_data)
 
         resp = self.client.post(
             '/main/feed/commit/project/{0}/'.format(self.git_project1.id),
@@ -450,10 +413,7 @@ class GitFeedViewsCommitTestCase(TestCase):
         feed_data['branches'] = []
         feed_data['branches'].append(branch1)
 
-        post_data = FeederTestHelper.create_feed_data_and_report(
-            feed_data,
-            FeederTestHelper.get_default_report(1)
-        )
+        post_data = FeederTestHelper.create_feed_data(feed_data)
 
         self.assertEqual(0, BenchmarkExecutionEntry.objects.all().count())
 
@@ -692,7 +652,7 @@ class GitFeedViewsCommitTestCase(TestCase):
 
 
 
-    def test_view_purge_when_feeding(self):
+    def test_view_purge_when_feeding_reports(self):
         git_project2 = GitProjectEntry.objects.create(url='http://test/2/')
 
         worker1 = WorkerEntry.objects.create(
@@ -724,25 +684,12 @@ class GitFeedViewsCommitTestCase(TestCase):
         self.assertEqual(1, CommandGroupEntry.objects.filter(id=command_group_4.id).count())
         self.assertEqual(1, CommandGroupEntry.objects.filter(id=command_group_5.id).count())
 
-        commit_time = str(timezone.now().isoformat())
-        commit1 = FeederTestHelper.create_commit(1, [], 'user1', 'user1@test.com', commit_time, commit_time)
-
-        branch1 = FeederTestHelper.create_branch('master', 1, 'master', 1, 1, [1], 'merge-target-content')
-
-        feed_data = {}
-        feed_data['commits'] = []
-        feed_data['commits'].append(commit1)
-        feed_data['branches'] = []
-        feed_data['branches'].append(branch1)
-
-        post_data = FeederTestHelper.create_feed_data_and_report(
-            feed_data,
-            FeederTestHelper.get_default_report(1)
-        )
+        post_data = {}
+        post_data['reports'] = FeederTestHelper.get_default_report(1)
 
         self.client.login(username='user1@test.com', password='pass1')
         resp = self.client.post(
-            '/main/feed/commit/project/{0}/'.format(self.git_project1.id),
+            '/main/feed/report/project/{0}/'.format(self.git_project1.id),
             data = json.dumps(post_data),
             content_type='application/json')
 

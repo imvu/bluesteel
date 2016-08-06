@@ -12,7 +12,7 @@ from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
 from app.presenter.schemas import GitFeederSchemas
 
 @transaction.atomic
-def post_commits(request, project_id):
+def post_feed_commits(request, project_id):
     """ Insert new commits to a given git project """
     if request.method == 'POST':
         project_entry = GitProjectEntry.objects.filter(id=project_id).first()
@@ -24,12 +24,10 @@ def post_commits(request, project_id):
             LogEntry.error(request.user, 'Json parser failed.\n{0}'.format(json.dumps(post_info)))
             return res.get_json_parser_failed({})
 
-        (obj_validated, val_resp_obj) = val.validate_obj_schema(post_info, GitFeederSchemas.GIT_FEEDER_SCHEMA)
+        (obj_validated, val_resp_obj) = val.validate_obj_schema(post_info, GitFeederSchemas.GIT_FEED_COMMITS_SCHEMA)
         if not obj_validated:
             LogEntry.error(request.user, 'Json schema failed.\n{0}'.format(json.dumps(val_resp_obj)))
             return res.get_schema_failed(val_resp_obj)
-
-        GitFeederController.insert_reports(request.user, val_resp_obj['reports'], project_entry)
 
         if 'feed_data' not in val_resp_obj:
             return res.get_response(200, 'Only reports added', {})
@@ -64,16 +62,41 @@ def post_commits(request, project_id):
         GitFeederController.insert_branch_trails(branches, project_entry)
         GitFeederController.update_branch_merge_target(branches, project_entry)
 
+        commit_hashes = list(commit_hash_set)
+        BenchmarkExecutionController.create_bench_executions_from_commits(project_entry, commit_hashes)
+
+        return res.get_response(200, 'Commits added correctly', {})
+    else:
+        return res.get_response(400, 'Only post allowed', {})
+
+
+@transaction.atomic
+def post_feed_reports(request, project_id):
+    """ Insert feed reports to a given git project """
+    if request.method == 'POST':
+        project_entry = GitProjectEntry.objects.filter(id=project_id).first()
+        if project_entry is None:
+            return res.get_response(404, 'project not found', {})
+
+        (json_valid, post_info) = val.validate_json_string(request.body)
+        if not json_valid:
+            LogEntry.error(request.user, 'Json parser failed.\n{0}'.format(json.dumps(post_info)))
+            return res.get_json_parser_failed({})
+
+        (obj_validated, val_resp_obj) = val.validate_obj_schema(post_info, GitFeederSchemas.GIT_FEED_REPORTS_SCHEMA)
+        if not obj_validated:
+            LogEntry.error(request.user, 'Json schema failed.\n{0}'.format(json.dumps(val_resp_obj)))
+            return res.get_schema_failed(val_resp_obj)
+
+        GitFeederController.insert_reports(request.user, val_resp_obj['reports'], project_entry)
+
         if request.user.is_authenticated() and not request.user.is_anonymous():
             worker_entry = WorkerEntry.objects.filter(user=request.user).first()
 
             if worker_entry:
                 GitFeederController.purge_old_reports(worker_entry.id, worker_entry.max_feed_reports)
 
-        commit_hashes = list(commit_hash_set)
-        BenchmarkExecutionController.create_bench_executions_from_commits(project_entry, commit_hashes)
-
-        return res.get_response(200, 'Commits added correctly', {})
+        return res.get_response(200, 'Reports added correctly', {})
     else:
         return res.get_response(400, 'Only post allowed', {})
 

@@ -66,7 +66,7 @@ class GitFeedViewsReportsTestCase(TestCase):
         obj['reports'] = reports
 
         resp = self.client.post(
-            '/main/feed/commit/project/{0}/'.format(self.git_project1.id),
+            '/main/feed/report/project/{0}/'.format(self.git_project1.id),
             data = json.dumps(obj),
             content_type='application/json')
 
@@ -74,7 +74,7 @@ class GitFeedViewsReportsTestCase(TestCase):
         resp_obj = json.loads(resp.content)
 
         self.assertEqual(200, resp_obj['status'])
-        self.assertEqual('Only reports added', resp_obj['message'])
+        self.assertEqual('Reports added correctly', resp_obj['message'])
 
         reports_entry = CommandGroupEntry.objects.all()
         self.assertEqual(1, len(reports_entry))
@@ -104,7 +104,7 @@ class GitFeedViewsReportsTestCase(TestCase):
         obj['reports'] = report_1
 
         resp = self.client.post(
-            '/main/feed/commit/project/{0}/'.format(self.git_project1.id),
+            '/main/feed/report/project/{0}/'.format(self.git_project1.id),
             data = json.dumps(obj),
             content_type='application/json')
 
@@ -112,12 +112,12 @@ class GitFeedViewsReportsTestCase(TestCase):
         resp_obj = json.loads(resp.content)
 
         self.assertEqual(200, resp_obj['status'])
-        self.assertEqual('Only reports added', resp_obj['message'])
+        self.assertEqual('Reports added correctly', resp_obj['message'])
 
         obj['reports'] = report_2
 
         resp = self.client.post(
-            '/main/feed/commit/project/{0}/'.format(self.git_project1.id),
+            '/main/feed/report/project/{0}/'.format(self.git_project1.id),
             data = json.dumps(obj),
             content_type='application/json')
 
@@ -125,7 +125,7 @@ class GitFeedViewsReportsTestCase(TestCase):
         resp_obj = json.loads(resp.content)
 
         self.assertEqual(200, resp_obj['status'])
-        self.assertEqual('Only reports added', resp_obj['message'])
+        self.assertEqual('Reports added correctly', resp_obj['message'])
 
         reports_entry = CommandGroupEntry.objects.all()
         self.assertEqual(2, len(reports_entry))

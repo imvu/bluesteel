@@ -173,7 +173,10 @@ urlpatterns = [
         app.presenter.views.json.ViewJsonBluesteelWorker.save_worker),
 
     url(r'^feed/commit/project/(?P<project_id>\d+)/$',
-        app.presenter.views.json.ViewJsonGitFeeder.post_commits),
+        app.presenter.views.json.ViewJsonGitFeeder.post_feed_commits),
+
+    url(r'^feed/report/project/(?P<project_id>\d+)/$',
+        app.presenter.views.json.ViewJsonGitFeeder.post_feed_reports),
 
     url(r'^feed/report/worker/(?P<worker_id>\d+)/purge/all/$',
         app.presenter.views.json.ViewJsonGitFeeder.purge_all_feed_reports),
