@@ -23,7 +23,7 @@ TESTING = False
 SECRET_KEY = 'rgs$vr920yd6i&+p2f!-xx+=+pios(bqn&j&59b%&213%7q1co'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
     '.com'
@@ -57,6 +57,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 )
 
 PASSWORD_HASHERS = (
@@ -136,7 +137,7 @@ STATIC_ROOT = os.path.abspath(os.path.join(TMP_ROOT, 'static'))
 STATIC_URL = '/static/'
 
 EMAIL_USE_TLS = False
-EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST = 'ssmtp.corp.imvu.com'
 EMAIL_PORT = 25
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend' # production backend
 DEFAULT_FROM_EMAIL = 'bluesteel@bluesteel.com'
