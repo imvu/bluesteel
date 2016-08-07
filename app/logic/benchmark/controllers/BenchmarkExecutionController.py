@@ -16,6 +16,7 @@ from app.logic.commandrepo.models.CommandResultModel import CommandResultEntry
 from app.logic.commandrepo.controllers import CommandController
 from app.logic.gitrepo.controllers.GitController import GitController
 from app.logic.gitrepo.models.GitProjectModel import GitProjectEntry
+from app.logic.gitrepo.models.GitBranchModel import GitBranchEntry
 from app.logic.gitrepo.models.GitCommitModel import GitCommitEntry
 from app.logic.gitrepo.models.GitParentModel import GitParentEntry
 from app.logic.gitrepo.models.GitBranchTrailModel import GitBranchTrailEntry
@@ -57,6 +58,44 @@ class BenchmarkExecutionController(object):
             execution.revision_target = execution.definition.revision
             execution.save()
             return execution
+
+    @staticmethod
+    def get_benchmark_execution_window(bench_exec_entry, window_half_apperture):
+        """ Returns a list of stacked executions centered on a specific benchmark execution """
+        project = GitProjectEntry.objects.filter(id=bench_exec_entry.definition.project.id).first()
+
+        if not project:
+            return {}
+
+        commits_hashes = GitController.get_commit_hashes_parents_and_children(
+            project=project,
+            commit_hash=bench_exec_entry.commit.commit_hash,
+            parents_children_count=window_half_apperture
+        )
+
+        branch_name = GitController.get_best_branch_from_a_commit(
+            project_entry=project,
+            commit_hash=bench_exec_entry.commit.commit_hash
+        )
+
+        branch = GitBranchEntry.objects.filter(project=project, name=branch_name).first()
+
+        if not branch:
+            print 'No best branch found!'
+            return {}
+
+        commits_hashes = list(reversed(commits_hashes))
+
+        data_exec = BenchmarkExecutionController.get_stacked_executions_from_branch(
+            project,
+            branch,
+            commits_hashes,
+            bench_exec_entry.definition,
+            bench_exec_entry.worker
+        )
+
+        return BenchmarkExecutionController.get_stacked_data_separated_by_id(data_exec)
+
 
     @staticmethod
     def get_bench_execs_ordered_by_worker(commit_entry):
@@ -170,6 +209,7 @@ class BenchmarkExecutionController(object):
             slot['current_branch'] = not past_fork_point
             slot['commit'] = benchmark_entry.commit.commit_hash
             bench_data.append(slot)
+
         return list(reversed(bench_data))
 
 

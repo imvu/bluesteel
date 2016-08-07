@@ -6,7 +6,6 @@ from app.logic.benchmark.controllers.BenchmarkExecutionController import Benchma
 from app.logic.benchmark.models.BenchmarkExecutionModel import BenchmarkExecutionEntry
 from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
 from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
-from app.logic.gitrepo.controllers.GitController import GitController
 from app.logic.gitrepo.models.GitProjectModel import GitProjectEntry
 from app.logic.gitrepo.models.GitBranchModel import GitBranchEntry
 from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
@@ -59,33 +58,7 @@ def get_benchmark_execution_window(request, bench_exec_id):
         if not bench_exec:
             return res.get_template_data(request, 'presenter/not_found.html', {})
 
-        commits_hashes = GitController.get_commit_hashes_parents_and_children(
-            project=bench_exec.definition.project,
-            commit_hash=bench_exec.commit.commit_hash,
-            parents_children_count=BENCH_EXEC_WINDOW_HALF
-        )
-
-        branch_name = GitController.get_best_branch_from_a_commit(
-            project_entry=bench_exec.definition.project,
-            commit_hash=bench_exec.commit.commit_hash
-        )
-
-        branch = GitBranchEntry.objects.filter(project=bench_exec.definition.project, name=branch_name).first()
-
-        if not branch:
-            return res.get_template_data(request, 'presenter/not_found.html', {})
-
-        commits_hashes = list(reversed(commits_hashes))
-
-        data_exec = BenchmarkExecutionController.get_stacked_executions_from_branch(
-            bench_exec.definition.project,
-            branch,
-            commits_hashes,
-            bench_exec.definition,
-            bench_exec.worker
-        )
-
-        exec_stacked = BenchmarkExecutionController.get_stacked_data_separated_by_id(data_exec)
+        exec_stacked = BenchmarkExecutionController.get_benchmark_execution_window(bench_exec, BENCH_EXEC_WINDOW_HALF)
         executions = ViewPrepareObjects.prepare_stacked_executions_for_html(request.get_host(), exec_stacked)
 
         data = {}

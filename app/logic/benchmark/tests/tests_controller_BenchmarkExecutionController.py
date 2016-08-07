@@ -16,6 +16,7 @@ from app.logic.gitrepo.models.GitUserModel import GitUserEntry
 from app.logic.gitrepo.models.GitCommitModel import GitCommitEntry
 from app.logic.gitrepo.models.GitBranchModel import GitBranchEntry
 from app.logic.gitrepo.models.GitBranchTrailModel import GitBranchTrailEntry
+from app.logic.gitrepo.models.GitBranchMergeTargetModel import GitBranchMergeTargetEntry
 from app.logic.commandrepo.models.CommandModel import CommandEntry
 from app.logic.commandrepo.models.CommandResultModel import CommandResultEntry
 from app.logic.commandrepo.models.CommandSetModel import CommandSetEntry
@@ -1157,3 +1158,81 @@ class BenchmarkExecutionControllerTestCase(TestCase):
         self.assertEqual(1, len(ret['workers'][1]['executions']))
         self.assertEqual(self.benchmark_execution3.id, ret['workers'][1]['executions'][0]['id'])
         self.assertEqual('BenchmarkDefinition2', ret['workers'][1]['executions'][0]['name'])
+
+
+    def test_get_benchmark_execution_window(self):
+        commit0 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash='0000400004000040000400004000040000400004', author=self.git_user1, author_date=timezone.now(), committer=self.git_user1, committer_date=timezone.now())
+        commit1 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash='0000500005000050000500005000050000500005', author=self.git_user1, author_date=timezone.now(), committer=self.git_user1, committer_date=timezone.now())
+        commit2 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash='0000600006000060000600006000060000600006', author=self.git_user1, author_date=timezone.now(), committer=self.git_user1, committer_date=timezone.now())
+        commit3 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash='0000700007000070000700007000070000700007', author=self.git_user1, author_date=timezone.now(), committer=self.git_user1, committer_date=timezone.now())
+        commit4 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash='0000800008000080000800008000080000800008', author=self.git_user1, author_date=timezone.now(), committer=self.git_user1, committer_date=timezone.now())
+        commit5 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash='0000900009000090000900009000090000900009', author=self.git_user1, author_date=timezone.now(), committer=self.git_user1, committer_date=timezone.now())
+
+        branch_test = GitBranchEntry.objects.create(project=self.git_project1, name='branch-test', commit=commit5)
+        GitBranchMergeTargetEntry.objects.create(project=self.git_project1, current_branch=branch_test, target_branch=branch_test, fork_point=commit0)
+
+        trail0 = GitBranchTrailEntry.objects.create(project=self.git_project1, branch=branch_test, commit=commit0, order=5)
+        trail1 = GitBranchTrailEntry.objects.create(project=self.git_project1, branch=branch_test, commit=commit1, order=4)
+        trail2 = GitBranchTrailEntry.objects.create(project=self.git_project1, branch=branch_test, commit=commit2, order=3)
+        trail3 = GitBranchTrailEntry.objects.create(project=self.git_project1, branch=branch_test, commit=commit3, order=2)
+        trail4 = GitBranchTrailEntry.objects.create(project=self.git_project1, branch=branch_test, commit=commit4, order=1)
+        trail5 = GitBranchTrailEntry.objects.create(project=self.git_project1, branch=branch_test, commit=commit5, order=0)
+
+        parent0_1 = GitParentEntry.objects.create(project=self.git_project1, parent=commit0, son=commit1, order=0)
+        parent1_2 = GitParentEntry.objects.create(project=self.git_project1, parent=commit1, son=commit2, order=1)
+        parent2_3 = GitParentEntry.objects.create(project=self.git_project1, parent=commit2, son=commit3, order=2)
+        parent3_4 = GitParentEntry.objects.create(project=self.git_project1, parent=commit3, son=commit4, order=3)
+        parent4_5 = GitParentEntry.objects.create(project=self.git_project1, parent=commit4, son=commit5, order=4)
+
+        report_0 = CommandSetEntry.objects.create(group=None)
+        report_1 = CommandSetEntry.objects.create(group=None)
+        report_2 = CommandSetEntry.objects.create(group=None)
+        report_3 = CommandSetEntry.objects.create(group=None)
+        report_4 = CommandSetEntry.objects.create(group=None)
+        report_5 = CommandSetEntry.objects.create(group=None)
+
+        com0_1 = CommandEntry.objects.create(command_set=report_0, command='command0-1', order=0)
+        com1_1 = CommandEntry.objects.create(command_set=report_1, command='command1-1', order=1)
+        com2_1 = CommandEntry.objects.create(command_set=report_2, command='command2-1', order=2)
+        com3_1 = CommandEntry.objects.create(command_set=report_3, command='command3-1', order=3)
+        com4_1 = CommandEntry.objects.create(command_set=report_4, command='command4-1', order=4)
+        com5_1 = CommandEntry.objects.create(command_set=report_5, command='command5-1', order=5)
+
+        out_0_1 = json.dumps([{'visual_type' : 'vertical_bars', 'id' : 'id1', 'data' : [1.0, 1.0, 1.0, 1.0, 1.0]}, {'visual_type' : 'vertical_bars', 'id' : 'id2', 'data' : [1,1,1,1,1]}])
+        out_1_1 = json.dumps([{'visual_type' : 'vertical_bars', 'id' : 'id1', 'data' : [1.0, 1.0, 1.0, 1.0, 1.0]}, {'visual_type' : 'vertical_bars', 'id' : 'id2', 'data' : [1,1,1,1,1]}])
+        out_2_1 = json.dumps([{'visual_type' : 'vertical_bars', 'id' : 'id1', 'data' : [1.0, 1.0, 1.0, 1.0, 1.0]}, {'visual_type' : 'vertical_bars', 'id' : 'id2', 'data' : [1,1,1,1,1]}])
+        out_3_1 = json.dumps([{'visual_type' : 'vertical_bars', 'id' : 'id1', 'data' : [1.0, 1.0, 1.0, 1.0, 1.0]}, {'visual_type' : 'vertical_bars', 'id' : 'id2', 'data' : [1,1,1,1,1]}])
+        out_4_1 = json.dumps([{'visual_type' : 'vertical_bars', 'id' : 'id1', 'data' : [1.0, 1.0, 1.0, 1.0, 1.0]}, {'visual_type' : 'vertical_bars', 'id' : 'id2', 'data' : [1,1,1,1,1]}])
+        out_5_1 = json.dumps([{'visual_type' : 'vertical_bars', 'id' : 'id1', 'data' : [1.5, 1.5, 1.5, 1.5, 1.5]}, {'visual_type' : 'vertical_bars', 'id' : 'id2', 'data' : [2,2,2,2,2]}])
+
+        CommandResultEntry.objects.create(command=com0_1, out=out_0_1, error='no error', status=0, start_time=timezone.now(), finish_time=timezone.now())
+        CommandResultEntry.objects.create(command=com1_1, out=out_1_1, error='no error', status=0, start_time=timezone.now(), finish_time=timezone.now())
+        CommandResultEntry.objects.create(command=com2_1, out=out_2_1, error='no error', status=0, start_time=timezone.now(), finish_time=timezone.now())
+        CommandResultEntry.objects.create(command=com3_1, out=out_3_1, error='no error', status=0, start_time=timezone.now(), finish_time=timezone.now())
+        CommandResultEntry.objects.create(command=com4_1, out=out_4_1, error='no error', status=0, start_time=timezone.now(), finish_time=timezone.now())
+        CommandResultEntry.objects.create(command=com5_1, out=out_5_1, error='no error', status=0, start_time=timezone.now(), finish_time=timezone.now())
+
+        benchmark_execution0 = BenchmarkExecutionEntry.objects.create(definition=self.benchmark_definition1, commit=commit0, worker=self.worker1, report=report_0, invalidated=False, revision_target=28, status=BenchmarkExecutionEntry.READY)
+        benchmark_execution1 = BenchmarkExecutionEntry.objects.create(definition=self.benchmark_definition1, commit=commit1, worker=self.worker1, report=report_1, invalidated=False, revision_target=28, status=BenchmarkExecutionEntry.READY)
+        benchmark_execution2 = BenchmarkExecutionEntry.objects.create(definition=self.benchmark_definition1, commit=commit2, worker=self.worker1, report=report_2, invalidated=False, revision_target=28, status=BenchmarkExecutionEntry.READY)
+        benchmark_execution3 = BenchmarkExecutionEntry.objects.create(definition=self.benchmark_definition1, commit=commit3, worker=self.worker1, report=report_3, invalidated=False, revision_target=28, status=BenchmarkExecutionEntry.READY)
+        benchmark_execution4 = BenchmarkExecutionEntry.objects.create(definition=self.benchmark_definition1, commit=commit4, worker=self.worker1, report=report_4, invalidated=False, revision_target=28, status=BenchmarkExecutionEntry.READY)
+        benchmark_execution5 = BenchmarkExecutionEntry.objects.create(definition=self.benchmark_definition1, commit=commit5, worker=self.worker1, report=report_5, invalidated=False, revision_target=28, status=BenchmarkExecutionEntry.READY)
+
+        ret = BenchmarkExecutionController.get_benchmark_execution_window(benchmark_execution4, 1)
+
+        self.assertEqual(3, len(ret['id2']))
+        self.assertEqual('00007', ret['id2'][0]['benchmark_execution_hash'])
+        self.assertEqual('00008', ret['id2'][1]['benchmark_execution_hash'])
+        self.assertEqual('00009', ret['id2'][2]['benchmark_execution_hash'])
+        self.assertEqual(1.0, ret['id2'][0]['average'])
+        self.assertEqual(1.0, ret['id2'][1]['average'])
+        self.assertEqual(2.0, ret['id2'][2]['average'])
+
+        self.assertEqual(3, len(ret['id1']))
+        self.assertEqual('00007', ret['id1'][0]['benchmark_execution_hash'])
+        self.assertEqual('00008', ret['id1'][1]['benchmark_execution_hash'])
+        self.assertEqual('00009', ret['id1'][2]['benchmark_execution_hash'])
+        self.assertEqual(1.0, ret['id1'][0]['average'])
+        self.assertEqual(1.0, ret['id1'][1]['average'])
+        self.assertEqual(1.5, ret['id1'][2]['average'])
