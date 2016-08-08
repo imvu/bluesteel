@@ -17,6 +17,7 @@ def main():
         shutil.rmtree(static_dir)
     os.makedirs(static_dir)
 
+    subprocess.call(['python', 's/internal/install-pip-requirements.py'])
     subprocess.call(['python', 'manage.py', 'migrate', '--settings=bluesteel.settings.production'])
     subprocess.call(['python', 'manage.py', 'collectstatic', '--settings=bluesteel.settings.production', '--noinput'])
     subprocess.call(['python', 'manage.py', 'runserver', '0.0.0.0:8080', '--settings=bluesteel.settings.production'])
