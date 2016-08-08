@@ -5,6 +5,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
+from app.logic.bluesteelworker.models.WorkerFilesHashModel import WorkerFilesHashEntry
 from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
 from app.logic.benchmark.controllers.BenchmarkExecutionController import BenchmarkExecutionController
 from app.logic.gitrepo.models.GitCommitModel import GitCommitEntry
@@ -57,6 +58,20 @@ def get_worker_info(request, worker_uuid):
             ret_worker['url'] = get_worker_urls(request.get_host(), ret_worker['id'], ret_worker['uuid'])
             obj['worker'] = ret_worker
             return res.get_response(200, 'Worker found', obj)
+    else:
+        return res.get_only_get_allowed({})
+
+def get_worker_files_hash(request):
+    """ Returns the hash of all the files of the worker source code """
+    if request.method == 'GET':
+        worker_files_hash = WorkerFilesHashEntry.objects.all().first()
+
+        if not worker_files_hash:
+            return res.get_response(400, 'Worker files hash not found', {})
+        else:
+            obj = {}
+            obj['worker_files_hash'] = worker_files_hash.files_hash
+            return res.get_response(200, 'Worker files hash', obj)
     else:
         return res.get_only_get_allowed({})
 

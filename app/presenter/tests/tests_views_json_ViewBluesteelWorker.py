@@ -7,6 +7,7 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from app.logic.httpcommon import res
 from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
+from app.logic.bluesteelworker.models.WorkerFilesHashModel import WorkerFilesHashEntry
 from app.logic.benchmark.models.BenchmarkExecutionModel import BenchmarkExecutionEntry
 from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
 from app.logic.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
@@ -437,3 +438,24 @@ class ViewsBluesteelWorkerTestCase(TestCase):
         self.assertEqual('description-2', worker.description)
         self.assertEqual(True, worker.git_feeder)
         self.assertEqual(30, worker.max_feed_reports)
+
+
+    def test_get_worker_files_hash_exists(self):
+        WorkerFilesHashEntry.objects.create(files_hash='aaaa')
+
+        resp = self.client.get('/main/bluesteelworker/hash/')
+
+        res.check_cross_origin_headers(self, resp)
+        resp_obj = json.loads(resp.content)
+
+        self.assertEqual(200, resp_obj['status'])
+        self.assertEqual('aaaa', resp_obj['data']['worker_files_hash'])
+
+    def test_get_worker_files_hash_does_not_exists(self):
+        resp = self.client.get('/main/bluesteelworker/hash/')
+
+        res.check_cross_origin_headers(self, resp)
+        resp_obj = json.loads(resp.content)
+
+        self.assertEqual(400, resp_obj['status'])
+        self.assertEqual('Worker files hash not found', resp_obj['message'])

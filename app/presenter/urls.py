@@ -166,6 +166,9 @@ urlpatterns = [
     url(r'^bluesteelworker/login/',
         app.presenter.views.json.ViewJsonBluesteelWorker.login_worker_info),
 
+    url(r'^bluesteelworker/hash/',
+        app.presenter.views.json.ViewJsonBluesteelWorker.get_worker_files_hash),
+
     url(r'^bluesteelworker/(?P<worker_id>\d+)/update/activity/',
         app.presenter.views.json.ViewJsonBluesteelWorker.update_worker_activity),
 
