@@ -11,11 +11,35 @@
                     <div class="title centered">Benchmark Definition - {{definition.name}}</div>
                 </div>
                 <div class="middle_card white_card card_padding_large">
+                    <div class="list_label indent_1">NAME</div>
+                    <ul class="no_dots vertical_margin">
+                        <li><div class="normal">Name of the Benchmark Definition.</div></li>
+                        <li>
+                            <div class="container_input">
+                                <input  class="command_input" type="text" value="{{definition.name}}" readonly></input>
+                            </div>
+                        </li>
+                    </ul>
+                    <br/>
                     <div class="list_label indent_1">LAYOUT</div>
-                    <div class="normal indent_2">{{definition.layout.name}}</div>
+                    <ul class="no_dots vertical_margin">
+                        <li><div class="normal">Layout name where this Benchmark Definition is associated with.</div></li>
+                        <li>
+                            <div class="container_input">
+                                <input  class="command_input" type="text" value="{{definition.layout.name}}" readonly></input>
+                            </div>
+                        </li>
+                    </ul>
                     <br/>
                     <div class="list_label indent_1">PROJECT</div>
-                    <div class="normal indent_2">{{definition.project.name}}</div>
+                    <ul class="no_dots vertical_margin">
+                        <li><div class="normal">Name of the project used by this Benchmark Definition to execute the commands.</div></li>
+                        <li>
+                            <div class="container_input">
+                                <input  class="command_input" type="text" value="{{definition.project.name}}" readonly></input>
+                            </div>
+                        </li>
+                    </ul>
                     <br/>
                     <div class="list_label indent_1">COMMANDS</div>
                     <ul class="no_dots vertical_margin">
@@ -36,8 +60,8 @@
                 </div>
                 <div class="middle_card white_card card_padding_large">
                     <div class="list_label indent_1">MAXIMUM FLUCTUATION</div>
-                    <div class="normal indent_2">Maximum amount of fluctuation allowed on every benchmark execution before sending a notification.</div>
                     <ul class="no_dots vertical_margin">
+                        <li><div class="normal">Maximum amount of fluctuation allowed on every benchmark execution before sending a notification.</div></li>
                         <li>
                             <div class="container_input">
                                 <input  class="command_input" type="text" value="{{definition.max_fluctuation_percent}}% Fluctuation" readonly></input>
@@ -46,8 +70,8 @@
                     </ul>
                     <br/>
                     <div class="list_label indent_1">MAXIMUM WEEKS OLD</div>
-                    <div class="normal indent_2">Maximum amount of weeks since the commit was created to send notifications about this benchmark execution.</div>
                     <ul class="no_dots vertical_margin">
+                        <li><div class="normal">Maximum amount of weeks since the commit was created to send notifications about this benchmark execution.</div></li>
                         <li>
                             <div class="container_input">
                                 <input  class="command_input" type="text" value="{{definition.max_weeks_old_notify.current_name}}" readonly></input>
