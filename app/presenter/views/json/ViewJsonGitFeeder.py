@@ -11,7 +11,6 @@ from app.logic.logger.models.LogModel import LogEntry
 from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
 from app.presenter.schemas import GitFeederSchemas
 
-@transaction.atomic
 def post_feed_commits(request, project_id):
     """ Insert new commits to a given git project """
     if request.method == 'POST':
@@ -70,7 +69,6 @@ def post_feed_commits(request, project_id):
         return res.get_response(400, 'Only post allowed', {})
 
 
-@transaction.atomic
 def post_feed_reports(request, project_id):
     """ Insert feed reports to a given git project """
     if request.method == 'POST':
