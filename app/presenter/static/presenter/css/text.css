@@ -22,6 +22,16 @@ div.list_label
     -webkit-font-smoothing: antialiased;
 }
 
+div.quote
+{
+    font-family: arial, sans-serif;
+    color: gray;
+    font-size: 15px;
+    line-height: 20px;
+    text-align: left;
+    -webkit-font-smoothing: antialiased;
+}
+
 div.normal
 {
     font-family: arial, sans-serif;
