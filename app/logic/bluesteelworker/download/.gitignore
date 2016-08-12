@@ -1,0 +1,5 @@
+# This tmp folder serves as a temporary place where worker temporary files will live
+# The content of this folder can be deleted many times while testing.
+
+# Ignore everything in this directory
+tmp

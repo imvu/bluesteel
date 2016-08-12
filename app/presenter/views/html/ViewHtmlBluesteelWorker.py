@@ -18,8 +18,9 @@ def zip_folder_and_return_path(path_to_compress, path_destination, name_destinat
     rel_root = os.path.abspath(path_to_compress)
     with zipfile.ZipFile(path_final, "w", zipfile.ZIP_DEFLATED) as zip_file:
         zip_file.writestr(os.path.join('core', 'settings.json'), json.dumps(settings_obj))
-        for root, dirs, files in os.walk(path_to_compress):
-            del dirs
+        exclude = set(['tmp'])
+        for root, dirs, files in os.walk(path_to_compress, topdown=True):
+            dirs[:] = [exc_d for exc_d in dirs if exc_d not in exclude]
             zip_file.write(root, os.path.relpath(root, rel_root))
             for fil in files:
                 file_name = os.path.join(root, fil)

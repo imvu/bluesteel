@@ -7,16 +7,22 @@ import logging as log
 import os
 import json
 import uuid
+import sys
 import socket
 import platform
 import time
+import shutil
+# import pprint
+from StringIO import StringIO
+from zipfile import ZipFile
+
 import GitFetcher
 import Request
-# import pprint
 from CommandExecutioner import CommandExecutioner
 from ProjectFolderManager import ProjectFolderManager
+from FileHasher import FileHasher
 
-RETRY_CONNECTION_TIME = 3
+RETRY_CONNECTION_TIME = 15
 
 def command_string_to_vector(command):
     return command.split()
@@ -183,6 +189,47 @@ def extract_projects_from_layouts(bootstrap_urls, settings, session):
 
     return process_info
 
+
+def process_update_worker_files(bootstrap_urls, settings, session):
+    """ Updates worker files if the hash stored in the server is different """
+    print '+ get worker files hash.'
+
+    resp = session.get(bootstrap_urls['worker_files_hash_url'], {})
+    files_hash = FileHasher.get_hash_from_files_in_a_folder(get_cwd(), ['.py', '.json'])
+
+    if resp['content']['status'] == 200 and resp['content']['data']['worker_files_hash'] == files_hash:
+        pass
+    else:
+        resp_f = session.get('http://localhost:28028/main/bluesteelworker/download/', {})
+        if resp_f['succeed'] and resp_f['type'] == 'application/zip':
+            zip_ext = ZipFile(StringIO(resp_f['content']))
+            tmp_zip_folder = str(os.path.join(get_cwd(), os.sep.join(settings['tmp_path']), '..', 'worker_zip'))
+            tmp_zip_folder = os.path.normpath(tmp_zip_folder)
+
+            if os.path.exists(tmp_zip_folder):
+                shutil.rmtree(tmp_zip_folder)
+                os.makedirs(tmp_zip_folder)
+
+            for name in zip_ext.namelist():
+                zip_ext.extract(name, tmp_zip_folder)
+
+            zip_files_hash = FileHasher.get_hash_from_files_in_a_folder(
+                os.path.join(tmp_zip_folder, 'core'),
+                ['.py', '.json']
+            )
+
+            if zip_files_hash == files_hash:
+                print 'Downloaded Worker and current worker are equal!'
+                return
+
+            if os.path.exists(get_cwd()):
+                shutil.rmtree(get_cwd())
+                shutil.copytree(os.path.join(tmp_zip_folder, 'core'), get_cwd())
+                os.execv(sys.executable, [sys.executable] + sys.argv)
+
+        print resp_f
+
+    time.sleep(5)
 
 def process_git_fetch_and_feed(bootstrap_urls, settings, session, feed):
     """ Fetch all layouts and feed them to BlueSteel """
@@ -355,6 +402,7 @@ def main():
             continue
 
         while con_info['succeed']:
+            process_update_worker_files(bootstrap_urls, settings, session)
 
             print '+ connect worker.'
             con_info = process_connect_worker(bootstrap_urls, worker_info['worker'], session)

@@ -16,7 +16,7 @@ class Command(BaseCommand):
         this_folder_path = os.path.dirname(os.path.dirname(__file__))
         core_folder_path = os.path.join(this_folder_path, '..', 'download', 'core')
 
-        sha_hash = FileHasher.get_hash_from_files_in_a_folder(core_folder_path)
+        sha_hash = FileHasher.get_hash_from_files_in_a_folder(core_folder_path, ['.py', '.json'])
 
         WorkerFilesHashEntry.objects.create(
             files_hash=sha_hash)

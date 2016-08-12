@@ -75,6 +75,9 @@ def get_worker_entry_point_full_url(domain):
 def get_worker_info_full_url(domain, uuid):
     return 'http://{0}/main/bluesteelworker/{1}/'.format(domain, uuid)
 
+def get_worker_files_hash_full_url(domain):
+    return 'http://{0}/main/bluesteelworker/hash/'.format(domain)
+
 def get_worker_info_point_full_url(domain):
     return 'http://{0}/main/bluesteelworker/'.format(domain)
 

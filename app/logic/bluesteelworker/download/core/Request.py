@@ -34,6 +34,7 @@ class Session(object):
     def make_request(self, request):
         """ makes a request and returns an object with the result """
         res = {}
+        res['type'] = 'unknown'
         try:
             response = self.opener.open(request)
         except urllib2.HTTPError as error:
@@ -49,11 +50,8 @@ class Session(object):
             res['cookie'] = ''
             res['succeed'] = False
         else:
-            res['content'] = json.loads(response.read())
-            res['cookie'] = response.headers.get('Set-Cookie')
-            res['succeed'] = True
+            res = Session.transform_content_to_response(response)
         return res
-
 
     def get(self, url, headers):
         """ Performs a GET to a url, with headers and using a opener with cookies """
@@ -73,4 +71,27 @@ class Session(object):
         request = urllib2.Request(url=url, data=data, headers=headers)
         res = self.make_request(request)
         self.update_csrf_token(res['cookie'])
+        return res
+
+    @staticmethod
+    def transform_content_to_response(response):
+        """ Transform received data and packs it inside an envelope """
+        res = {}
+        info = response.info()
+
+        res['cookie'] = response.headers.get('Set-Cookie')
+        res['type'] = info.type
+
+        if info.maintype == 'text':
+            res['content'] = json.loads(response.read())
+            res['succeed'] = True
+            return res
+
+        if info.type == 'application/zip':
+            res['content'] = response.read()
+            res['succeed'] = True
+            return res
+
+        res['content'] = ''
+        res['succeed'] = False
         return res

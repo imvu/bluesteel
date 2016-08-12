@@ -1,4 +1,1 @@
-{
-    "entry_point" : "http://localhost:28028/main/bluesteelworker/bootstrap/",
-    "tmp_path" : ["..", "..", "..", "..", "tmp", "worker_tmp"]
-}
+{"tmp_path": ["..", "tmp", "worker_tmp"], "entry_point": "http://localhost:28028/main/bluesteelworker/bootstrap/"}
