@@ -35,6 +35,7 @@ button.primary
 button.primary:hover
 {
     background: #6B9BC3;
+    cursor: pointer;
 }
 
 button.danger
@@ -46,6 +47,7 @@ button.danger
 button.danger:hover
 {
     background: red;
+    cursor: pointer;
 }
 
 button.light
@@ -57,4 +59,5 @@ button.light
 button.light:hover
 {
     background: #969696;
+    cursor: pointer;
 }

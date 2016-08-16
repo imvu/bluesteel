@@ -20,5 +20,6 @@ button.light
 
 button.light:hover
 {
+    cursor: pointer;
     background: #969696;
 }
