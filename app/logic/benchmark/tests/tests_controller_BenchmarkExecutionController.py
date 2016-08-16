@@ -1054,12 +1054,24 @@ class BenchmarkExecutionControllerTestCase(TestCase):
         benchmark_execution4 = BenchmarkExecutionEntry.objects.create(definition=self.benchmark_definition1, commit=commit4, worker=self.worker1, report=report_4, invalidated=False, revision_target=28, status=BenchmarkExecutionEntry.READY)
         benchmark_execution5 = BenchmarkExecutionEntry.objects.create(definition=self.benchmark_definition1, commit=commit5, worker=self.worker1, report=report_5, invalidated=False, revision_target=28, status=BenchmarkExecutionEntry.READY)
 
-        self.assertFalse(BenchmarkExecutionController.does_benchmark_fluctuation_exist(benchmark_execution0, 1))
-        self.assertFalse(BenchmarkExecutionController.does_benchmark_fluctuation_exist(benchmark_execution1, 1))
-        self.assertFalse(BenchmarkExecutionController.does_benchmark_fluctuation_exist(benchmark_execution2, 1))
-        self.assertFalse(BenchmarkExecutionController.does_benchmark_fluctuation_exist(benchmark_execution3, 1))
-        self.assertTrue(BenchmarkExecutionController.does_benchmark_fluctuation_exist(benchmark_execution4, 1))
-        self.assertTrue(BenchmarkExecutionController.does_benchmark_fluctuation_exist(benchmark_execution5, 1))
+        self.assertFalse(BenchmarkExecutionController.does_benchmark_fluctuation_exist(benchmark_execution0, 1)[0])
+        self.assertFalse(BenchmarkExecutionController.does_benchmark_fluctuation_exist(benchmark_execution1, 1)[0])
+        self.assertFalse(BenchmarkExecutionController.does_benchmark_fluctuation_exist(benchmark_execution2, 1)[0])
+        self.assertFalse(BenchmarkExecutionController.does_benchmark_fluctuation_exist(benchmark_execution3, 1)[0])
+
+        flucs1 = BenchmarkExecutionController.does_benchmark_fluctuation_exist(benchmark_execution4, 1)
+        self.assertTrue(flucs1[0])
+        self.assertEqual(1, len(flucs1[1]))
+        self.assertEqual('id1', flucs1[1][0]['id'])
+        self.assertEqual(1.0, flucs1[1][0]['min'])
+        self.assertEqual(1.5, flucs1[1][0]['max'])
+
+        flucs2 = BenchmarkExecutionController.does_benchmark_fluctuation_exist(benchmark_execution5, 1)
+        self.assertTrue(flucs2[0])
+        self.assertEqual(1, len(flucs2[1]))
+        self.assertEqual('id1', flucs2[1][0]['id'])
+        self.assertEqual(1.0, flucs2[1][0]['min'])
+        self.assertEqual(1.5, flucs2[1][0]['max'])
 
 
     def test_benchmark_is_young_enough_for_notify(self):

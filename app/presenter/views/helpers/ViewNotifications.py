@@ -54,13 +54,41 @@ def notify_benchmark_command_failure(receiver_email, benchmark_execution_id, com
 
     create_notification_email(receiver_email, title, content, ['admin'])
 
-def notify_benchmark_fluctuation(receiver_email, benchmark_execution_id, commit_hash, domain):
+def notify_benchmark_fluctuation(benchmark_execution, domain, fluctuations):
     """ Will send notificaiton about benchmark fluctuation """
-    title = 'Benchmark execution fluctuation on commit: {0}'.format(commit_hash)
-    content = 'There were fluctuations on the benchmark execution.\nTake a look at: {0}'.format(
+
+    title = 'Benchmark execution fluctuation around commit: {0}'.format(benchmark_execution.commit.commit_hash)
+    content = ''
+    content += 'When Benchmark Execution with id: {0} was submitted, ' \
+        'the system noticed a fluctuation around it.\n'.format(
+            benchmark_execution.id
+        )
+    content += '    - This is the information of the Benchmark Execution:\n'
+    content += '        Commit Hash: {0}.\n'.format(benchmark_execution.commit.commit_hash)
+    content += '        Commit Author: {0}.\n'.format(benchmark_execution.commit.author.name)
+    content += '        Commit Author Email: {0}.\n'.format(benchmark_execution.commit.author.email)
+    content += '        Commit Author Date: {0}.\n'.format(benchmark_execution.commit.author_date)
+    content += '\n'
+    content += '        Worker Name: {0}.\n'.format(benchmark_execution.worker.name)
+    content += '        Worker Operative System: {0}.\n'.format(benchmark_execution.worker.operative_system)
+    content += '\n'
+    content += '        Benchmark Definition Name: {0}.\n'.format(benchmark_execution.definition.name)
+    content += '\n'
+    content += '    - Around this commit there were fluctuations with those information:\n'
+
+    for fluc in fluctuations:
+        content += '\n'
+        content += '        Result ID with fluctuations: {0}\n'.format(fluc['id'])
+        content += '            Minimum Value: {0}\n'.format(fluc['min'])
+        content += '            Maximum Value: {0}\n'.format(fluc['max'])
+        content += '            Percent Value: {0}%\n'.format((1.0 - (float(fluc['min']) / float(fluc['max']))) * 100.0)
+        content += '\n'
+
+    content += '    - You can visualize the result with:\n'
+    content += '        URL: {0}\n'.format(
         ViewUrlGenerator.get_benchmark_execution_window_full_url(
             domain,
-            benchmark_execution_id)
+            benchmark_execution.id)
         )
 
-    create_notification_email(receiver_email, title, content, [''])
+    create_notification_email(benchmark_execution.commit.author.email, title, content, [''])

@@ -412,11 +412,13 @@ class BenchmarkExecutionController(object):
 
         max_fluctuation_ratio = float(benchmark_exec_entry.definition.max_fluctuation_percent) / 100.0
 
+        ret_fluctuations = []
         for fluc in fluctuations:
             fluc_ratio = 1.0 - (float(fluc['min']) / float(fluc['max']))
             if fluc_ratio >= max_fluctuation_ratio:
-                return True
-        return False
+                ret_fluctuations.append(fluc)
+
+        return (len(ret_fluctuations) > 0, ret_fluctuations)
 
     @staticmethod
     def is_benchmark_young_for_notifications(benchmark_exec_entry):

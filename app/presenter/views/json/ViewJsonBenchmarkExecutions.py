@@ -74,12 +74,11 @@ def save_benchmark_execution(request, benchmark_execution_id):
             FLUCTUATION_WINDOW
         )
 
-        if fluctuation_exist and young_to_notify:
+        if fluctuation_exist[0] and young_to_notify:
             ViewNotifications.notify_benchmark_fluctuation(
-                bench_exec_entry.commit.author.email,
-                bench_exec_entry.id,
-                bench_exec_entry.commit.commit_hash,
-                request.get_host()
+                bench_exec_entry,
+                request.get_host(),
+                fluctuation_exist[1]
             )
 
         return res.get_response(200, 'Benchmark Execution saved', {})
