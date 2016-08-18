@@ -197,39 +197,40 @@ def process_update_worker_files(bootstrap_urls, settings, session):
     resp = session.get(bootstrap_urls['worker_files_hash_url'], {})
     files_hash = FileHasher.get_hash_from_files_in_a_folder(get_cwd(), ['.py', '.json'])
 
+    if not resp['succeed']:
+        return
+
     if resp['content']['status'] == 200 and resp['content']['data']['worker_files_hash'] == files_hash:
-        pass
-    else:
-        resp_f = session.get('http://localhost:28028/main/bluesteelworker/download/', {})
-        if resp_f['succeed'] and resp_f['type'] == 'application/zip':
-            zip_ext = ZipFile(StringIO(resp_f['content']))
-            tmp_zip_folder = str(os.path.join(get_cwd(), os.sep.join(settings['tmp_path']), '..', 'worker_zip'))
-            tmp_zip_folder = os.path.normpath(tmp_zip_folder)
+        return
 
-            if os.path.exists(tmp_zip_folder):
-                shutil.rmtree(tmp_zip_folder)
-                os.makedirs(tmp_zip_folder)
+    resp_f = session.get(bootstrap_urls['worker_download_url'], {})
+    if resp_f['succeed'] and resp_f['type'] == 'application/zip':
+        zip_ext = ZipFile(StringIO(resp_f['content']))
+        tmp_zip_folder = str(os.path.join(get_cwd(), os.sep.join(settings['tmp_path']), '..', 'worker_zip'))
+        tmp_zip_folder = os.path.normpath(tmp_zip_folder)
 
-            for name in zip_ext.namelist():
-                zip_ext.extract(name, tmp_zip_folder)
+        if os.path.exists(tmp_zip_folder):
+            shutil.rmtree(tmp_zip_folder)
+            os.makedirs(tmp_zip_folder)
 
-            zip_files_hash = FileHasher.get_hash_from_files_in_a_folder(
-                os.path.join(tmp_zip_folder, 'core'),
-                ['.py', '.json']
-            )
+        for name in zip_ext.namelist():
+            zip_ext.extract(name, tmp_zip_folder)
 
-            if zip_files_hash == files_hash:
-                print 'Downloaded Worker and current worker are equal!'
-                return
+        zip_files_hash = FileHasher.get_hash_from_files_in_a_folder(
+            os.path.join(tmp_zip_folder, 'core'),
+            ['.py', '.json']
+        )
 
-            if os.path.exists(get_cwd()):
-                shutil.rmtree(get_cwd())
-                shutil.copytree(os.path.join(tmp_zip_folder, 'core'), get_cwd())
-                os.execv(sys.executable, [sys.executable] + sys.argv)
+        if zip_files_hash == files_hash:
+            print 'Downloaded Worker and current worker are equal!'
+            return
 
-        print resp_f
+        if os.path.exists(get_cwd()):
+            shutil.rmtree(get_cwd())
+            shutil.copytree(os.path.join(tmp_zip_folder, 'core'), get_cwd())
+            os.execv(sys.executable, [sys.executable] + sys.argv)
 
-    time.sleep(5)
+    print resp_f
 
 def process_git_fetch_and_feed(bootstrap_urls, settings, session, feed):
     """ Fetch all layouts and feed them to BlueSteel """

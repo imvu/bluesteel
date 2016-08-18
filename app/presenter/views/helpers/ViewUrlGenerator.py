@@ -60,6 +60,9 @@ def get_worker_edit_url(worker_id):
 def get_download_worker_url():
     return '/main/bluesteelworker/download/'
 
+def get_download_worker_full_url(domain):
+    return 'http://{0}/main/bluesteelworker/download/'.format(domain)
+
 def get_worker_report_url(worker_id):
     return '/main/bluesteelworker/{0}/report/'.format(worker_id)
 

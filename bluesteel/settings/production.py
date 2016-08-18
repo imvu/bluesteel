@@ -26,7 +26,7 @@ SECRET_KEY = 'rgs$vr920yd6i&+p2f!-xx+=+pios(bqn&j&59b%&213%7q1co'
 DEBUG = False
 
 ALLOWED_HOSTS = [
-    '.com'
+    '.com',
 ]
 # Application definition
 
@@ -137,7 +137,7 @@ STATIC_ROOT = os.path.abspath(os.path.join(TMP_ROOT, 'static'))
 STATIC_URL = '/static/'
 
 EMAIL_USE_TLS = False
-EMAIL_HOST = 'ssmtp.corp.imvu.com'
+EMAIL_HOST = 'smtp.corp.imvu.com'
 EMAIL_PORT = 25
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend' # production backend
 DEFAULT_FROM_EMAIL = 'bluesteel@bluesteel.com'
