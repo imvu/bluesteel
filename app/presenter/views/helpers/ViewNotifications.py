@@ -47,7 +47,7 @@ def notify_benchmark_command_failure(receiver_email, benchmark_execution_id, com
     """ Will send a notification about command failures """
     title = 'Benchmark execution with failed commands on commit: {0}'.format(commit_hash)
     content = 'There were commands that failed to execute.\nTake a look at: {0}'.format(
-        ViewUrlGenerator.get_benchmark_execution_full_url(
+        ViewUrlGenerator.get_benchmark_execution_complete_full_url(
             domain,
             benchmark_execution_id)
         )

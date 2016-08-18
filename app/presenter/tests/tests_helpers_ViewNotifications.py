@@ -47,3 +47,38 @@ class NotificationHelperTestCase(TestCase):
         self.assertEqual(1, StackedMailEntry.objects.filter(sender='bluesteel@bluesteel.com', receiver='a@b.c', title='title1', content='content1').count())
         self.assertEqual(1, StackedMailEntry.objects.filter(sender='bluesteel@bluesteel.com', receiver='user2@test.com', title='title1', content='content1').count())
         self.assertEqual(1, StackedMailEntry.objects.filter(sender='bluesteel@bluesteel.com', receiver='user1@test.com', title='title1', content='content1').count())
+
+    def test_notifying_on_command_failure(self):
+        self.assertEqual(0, StackedMailEntry.objects.all().count())
+
+        ViewNotifications.notify_benchmark_command_failure('a@b.c', 28, '0000100001000010000100001000010000100001', 'test.com')
+
+        self.assertEqual(2, StackedMailEntry.objects.all().count())
+        self.assertEqual(1, StackedMailEntry.objects.filter(sender='bluesteel@bluesteel.com', receiver='a@b.c').count())
+        self.assertEqual(1, StackedMailEntry.objects.filter(sender='bluesteel@bluesteel.com', receiver='user2@test.com').count())
+        self.assertTrue('http://test.com/main/execution/28/complete/' in StackedMailEntry.objects.filter(sender='bluesteel@bluesteel.com', receiver='a@b.c').first().content)
+        self.assertTrue('http://test.com/main/execution/28/complete/' in StackedMailEntry.objects.filter(sender='bluesteel@bluesteel.com', receiver='user2@test.com').first().content)
+
+    def test_notifying_on_schema_failure(self):
+        self.assertEqual(0, StackedMailEntry.objects.all().count())
+
+        ViewNotifications.notify_schema_failed('a@b.c', 'message-1-1-1-1', 'schema-1-1-1-1')
+
+        self.assertEqual(2, StackedMailEntry.objects.all().count())
+        self.assertEqual(1, StackedMailEntry.objects.filter(sender='bluesteel@bluesteel.com', receiver='a@b.c').count())
+        self.assertEqual(1, StackedMailEntry.objects.filter(sender='bluesteel@bluesteel.com', receiver='user2@test.com').count())
+        self.assertTrue('message-1-1-1-1' in StackedMailEntry.objects.filter(sender='bluesteel@bluesteel.com', receiver='a@b.c').first().content)
+        self.assertTrue('schema-1-1-1-1' in StackedMailEntry.objects.filter(sender='bluesteel@bluesteel.com', receiver='a@b.c').first().content)
+        self.assertTrue('message-1-1-1-1' in StackedMailEntry.objects.filter(sender='bluesteel@bluesteel.com', receiver='user2@test.com').first().content)
+        self.assertTrue('schema-1-1-1-1' in StackedMailEntry.objects.filter(sender='bluesteel@bluesteel.com', receiver='user2@test.com').first().content)
+
+    def test_notifying_on_json_failure(self):
+        self.assertEqual(0, StackedMailEntry.objects.all().count())
+
+        ViewNotifications.notify_json_invalid('a@b.c', 'message-1-1-1-1')
+
+        self.assertEqual(2, StackedMailEntry.objects.all().count())
+        self.assertEqual(1, StackedMailEntry.objects.filter(sender='bluesteel@bluesteel.com', receiver='a@b.c').count())
+        self.assertEqual(1, StackedMailEntry.objects.filter(sender='bluesteel@bluesteel.com', receiver='user2@test.com').count())
+        self.assertTrue('message-1-1-1-1' in StackedMailEntry.objects.filter(sender='bluesteel@bluesteel.com', receiver='a@b.c').first().content)
+        self.assertTrue('message-1-1-1-1' in StackedMailEntry.objects.filter(sender='bluesteel@bluesteel.com', receiver='user2@test.com').first().content)
