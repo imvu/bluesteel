@@ -15,12 +15,17 @@ button.btn_round
 
 button.light
 {
-    background: lightgray;
-    color: white;
+    border: 1px solid lightgray;
+    background: white;
+    color: lightgray;
 }
 
 button.light:hover
 {
+    border: 1px solid lightgray;
+    border-image: linear-gradient(45deg, rgba(211, 211, 211, 1.0) 0%, rgba(228, 228, 228, 1.0) 100%);
+    background: linear-gradient(45deg, rgba(211, 211, 211, 1.0) 0%, rgba(228, 228, 228, 1.0) 100%);
+
+    color: white;
     cursor: pointer;
-    background: #969696;
 }
