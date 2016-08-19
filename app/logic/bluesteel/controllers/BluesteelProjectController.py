@@ -10,7 +10,7 @@ from app.logic.commandrepo.models.CommandSetModel import CommandSetEntry
 from app.logic.commandrepo.models.CommandGroupModel import CommandGroupEntry
 from app.logic.commandrepo.controllers import CommandController
 
-PAGINATION_HALF_RANGE = 2
+PAGINATION_HALF_RANGE = 5
 
 class BluesteelProjectController(object):
     """ BluesteelProject controller with helper functions """
