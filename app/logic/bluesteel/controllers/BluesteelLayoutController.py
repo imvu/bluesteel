@@ -60,3 +60,18 @@ class BluesteelLayoutController(object):
         for project in project_entries:
             BluesteelProjectController.delete_project(project)
         layout.delete()
+
+
+    @staticmethod
+    def get_project_names_of_layout(layout_id):
+        """ Returns a list of names with id of the projects inside a layout """
+        project_entries = BluesteelProjectEntry.objects.filter(layout_id=layout_id).values('id', 'name').order_by('id')
+
+        projects = []
+        for entry in project_entries:
+            obj = {}
+            obj['name'] = entry['name']
+            obj['id'] = entry['id']
+            projects.append(obj)
+
+        return projects

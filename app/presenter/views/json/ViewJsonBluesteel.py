@@ -2,6 +2,7 @@
 
 from app.logic.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
 from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
+from app.logic.bluesteel.controllers.BluesteelLayoutController import BluesteelLayoutController
 from app.presenter.views.helpers import ViewUrlGenerator
 from app.logic.httpcommon import res
 
@@ -35,6 +36,7 @@ def get_layout(request, layout_id):
             return res.get_response(400, 'Layout not found', {})
         else:
             layout_obj = layout.as_object()
+            layout_obj['projects'] = BluesteelLayoutController.get_project_names_of_layout(layout_obj['id'])
             layout_obj = add_project_feed_url(request, layout_obj)
             return res.get_response(200, 'Layout found', layout_obj)
     else:

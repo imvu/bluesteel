@@ -49,13 +49,9 @@ class BluesteelLayoutTestCase(TestCase):
 
         self.assertEqual('layout-1', obj['name'])
         self.assertEqual('archive-{0}'.format(self.layout.id), obj['uuid'])
-        self.assertEqual(2, len(obj['projects']))
-
-        self.assertEqual('project-1', obj['projects'][0]['name'])
-        # self.assertEqual(self.git_project_1.id, obj['projects'][0]['git_project']['id'])
-
-        self.assertEqual('project-2', obj['projects'][1]['name'])
-        # self.assertEqual(self.git_project_2.id, obj['projects'][1]['git_project']['id'])
+        self.assertEqual(False, obj['active'])
+        self.assertEqual(0, obj['project_index_path'])
+        self.assertEqual(self.layout.id, obj['id'])
 
     def test_clamp_project_index_path_succesful(self):
         self.layout.project_index_path = 28
