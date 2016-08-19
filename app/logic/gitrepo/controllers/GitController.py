@@ -75,12 +75,8 @@ class GitController(object):
     @staticmethod
     def get_branches_trimmed_by_merge_target(project, branches, max_commits):
         """ Returns branch data trimmed by its merge target information from branches input """
-        all_branches = GitBranchEntry.objects.filter(project=project)
+        branch_names = GitBranchEntry.objects.filter(project=project).values_list('name', flat=True)
         ret_branches = []
-
-        branch_names = []
-        for branch in all_branches:
-            branch_names.append(branch.name)
 
         for branch in branches:
             merge_target = GitBranchMergeTargetEntry.objects.filter(project=project, current_branch=branch).first()
