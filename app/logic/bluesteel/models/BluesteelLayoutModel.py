@@ -18,12 +18,19 @@ class BluesteelLayoutEntry(models.Model):
 
     def as_object(self):
         """ Returns a layout entry as an object """
+        project_entries = BluesteelProjectEntry.objects.filter(layout_id=self.id).order_by('id')
+
+        projects = []
+        for entry in project_entries:
+            projects.append(entry.as_object())
+
         obj = {}
         obj['name'] = self.name
         obj['uuid'] = self.get_uuid()
         obj['active'] = self.active
         obj['project_index_path'] = self.project_index_path
         obj['id'] = self.id
+        obj['projects'] = projects
         return obj
 
     def get_uuid(self):

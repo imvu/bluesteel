@@ -6,7 +6,6 @@ from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEnt
 from app.logic.bluesteel.controllers.BluesteelLayoutController import BluesteelLayoutController
 from app.logic.gitrepo.models.GitProjectModel import GitProjectEntry
 from app.logic.commandrepo.models.CommandModel import CommandEntry
-from app.logic.commandrepo.models.CommandGroupModel import CommandGroupEntry
 from app.logic.httpcommon import res
 from app.logic.httpcommon.Page import Page
 import json
@@ -110,21 +109,3 @@ class BluesteelLayoutControllerTestCase(TestCase):
         self.assertEqual(3, page_indices3['current'])
         self.assertEqual(3, page_indices3['next'])
         self.assertEqual([1, 2, 3], page_indices3['page_indices'])
-
-    def test_get_project_names_from_layout_id(self):
-        git_project = GitProjectEntry.objects.create(url='http://www.test.com', name='git-project-28',)
-        command_group = CommandGroupEntry.objects.create()
-        layout = BluesteelLayoutEntry.objects.create(name='layout-1')
-
-        project = BluesteelProjectEntry.objects.create(
-            name='project-1',
-            layout=layout,
-            command_group=command_group,
-            git_project=git_project,
-        )
-
-        names = BluesteelLayoutController.get_project_names_of_layout(layout.id)
-
-        self.assertEqual(1, len(names))
-        self.assertEqual(project.id, names[0]['id'])
-        self.assertEqual('project-1', names[0]['name'])

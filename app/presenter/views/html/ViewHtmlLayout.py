@@ -15,7 +15,6 @@ def get_layouts(request, page_index):
     layout_list, page_indices = BluesteelLayoutController.get_paginated_layouts_as_objects(page)
 
     for layout in layout_list:
-        layout['projects'] = BluesteelLayoutController.get_project_names_of_layout(layout['id'])
         layout = ViewPrepareObjects.prepare_layout_for_html(layout)
 
     control = {}
