@@ -38,17 +38,17 @@ def post_feed_commits(request, project_id):
 
         correct, msgs = GitFeederController.are_commits_unique(commits)
         if not correct:
-            LogEntry.error(request.user, (msg for msg in msgs))
+            LogEntry.error(request.user, 'Commits not correct.\n{0}'.format(json.dumps(msgs)))
             return res.get_response(400, 'Commits not correct', {})
 
         correct, msgs = GitFeederController.are_parent_hashes_correct(commits, commit_hash_set, project_entry)
         if not correct:
-            LogEntry.error(request.user, (msg for msg in msgs))
+            LogEntry.error(request.user, 'Parents not correct.\n{0}'.format(json.dumps(msgs)))
             return res.get_response(400, 'Parents not correct', {})
 
         correct, msgs = GitFeederController.are_branches_correct(commit_hash_set, branches, project_entry)
         if not correct:
-            LogEntry.error(request.user, (msg for msg in msgs))
+            LogEntry.error(request.user, 'Branches not correct.\n{0}'.format(json.dumps(msgs)))
             return res.get_response(400, 'Branches not correct', {})
 
         branches_to_remove = GitFeederController.get_branch_names_to_remove(branches, project_entry)
