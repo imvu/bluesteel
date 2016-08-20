@@ -53,6 +53,8 @@ class WorkerEntry(models.Model):
     def get_max_feed_reports_names_and_values(self):
         """ Returns names, values, and current for all the possible values of max feed reports """
         values = [
+            {'name' : '1 Reports', 'reports' : 1},
+            {'name' : '5 Reports', 'reports' : 5},
             {'name' : '10 Reports', 'reports' : 10},
             {'name' : '20 Reports', 'reports' : 20},
             {'name' : '30 Reports', 'reports' : 30},

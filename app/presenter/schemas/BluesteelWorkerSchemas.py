@@ -62,6 +62,8 @@ SAVE_WORKER_SCHEMA = {
             'type' : 'integer',
             'oneOf' : [
                 {"type" : "integer", "minimum" : -1, "maximum" : -1},
+                {"type" : "number", "minimum" : 1, "maximum" : 1},
+                {"type" : "number", "minimum" : 5, "maximum" : 5},
                 {"type" : "number", "minimum" : 10, "maximum" : 10},
                 {"type" : "number", "minimum" : 20, "maximum" : 20},
                 {"type" : "number", "minimum" : 30, "maximum" : 30},
