@@ -167,9 +167,11 @@ class GitFeederController(object):
     @staticmethod
     def insert_commits(commit_list, project):
         """ Inserts all the commits into the db """
+        commit_hashes = GitCommitEntry.objects.filter(project=project).values_list('commit_hash', flat=True)
+
         bulk_commits = []
         for commit in commit_list:
-            if not GitCommitEntry.objects.filter(project=project, commit_hash=commit['hash']).exists():
+            if commit['hash'] not in commit_hashes:
                 author = GitFeederController.insert_user(project, commit['author']['name'], commit['author']['email'])
                 committer = GitFeederController.insert_user(
                     project,

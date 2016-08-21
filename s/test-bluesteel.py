@@ -39,7 +39,7 @@ def get_test_list():
     test_list.append((['database'], ['python', 's/internal/test-db.py']))
 
     for pack in packs:
-        test_list.append((pack['tags'], ['python', 'manage.py', 'test', '{0}/tests/'.format(pack['path']), '--settings=bluesteel.settings.testing']))
+        test_list.append((pack['tags'], ['python', 'manage.py', 'test', '{0}/tests/'.format(pack['path']), '--settings=bluesteel.settings.testing', '--failfast']))
 
     for pack in packs:
         test_list.append((['pylint'], ['pylint', '--rcfile=s/internal/pylint-config-file.py', '--generated-members=objects', '--msg-template={path}:{line}: [{msg_id}({symbol}), {obj}] {msg}', pack['path']]))

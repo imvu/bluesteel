@@ -231,6 +231,24 @@ class GitFeederControllerTestCase(TestCase):
         self.assertEqual(True, res[0])
         self.assertEqual(0, len(res[1]))
 
+    def test_insert_commit_correctly(self):
+        commit_time = str(timezone.now().isoformat())
+
+        commit1 = FeederTestHelper.create_commit(1, [], 'user1', 'user1@test.com', commit_time, commit_time)
+        commit2 = FeederTestHelper.create_commit(2, [1], 'user1', 'user1@test.com', commit_time, commit_time)
+        commit3 = FeederTestHelper.create_commit(3, [2], 'user1', 'user1@test.com', commit_time, commit_time)
+        commits = [commit1, commit2, commit3]
+
+        self.assertEqual(0, GitCommitEntry.objects.all().count())
+
+        GitFeederController.insert_commits(commits, self.git_project1)
+
+        self.assertEqual(3, GitCommitEntry.objects.all().count())
+        self.assertEqual(1, GitCommitEntry.objects.filter(commit_hash='0000100001000010000100001000010000100001').count())
+        self.assertEqual(1, GitCommitEntry.objects.filter(commit_hash='0000200002000020000200002000020000200002').count())
+        self.assertEqual(1, GitCommitEntry.objects.filter(commit_hash='0000300003000030000300003000030000300003').count())
+
+
     def test_insert_branch_correctly(self):
         commit_time = str(timezone.now().isoformat())
 
