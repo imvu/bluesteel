@@ -55,7 +55,7 @@ class GitFetcher(object):
             self.step_setup_merge_target_forevery_branch,
             self.step_setup_diff_on_merge_target,
             self.step_create_branch_trails,
-            self.step_trim_commits,
+            # self.step_trim_commits,
             self.step_create_unique_list_commits,
             self.step_create_branch_list,
         ]
