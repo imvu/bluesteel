@@ -397,21 +397,21 @@ def main():
     host_info = get_host_info()
     session = Request.Session()
 
-    # log.basicConfig(level=log.DEBUG)
+    log.basicConfig(level=log.DEBUG)
 
     bootstrap_urls = get_bootstrap_urls(settings['entry_point'], session)
 
     while True:
-        print '+ get or create worker.'
+        log.info('Get or Create Worker.')
         worker_info = process_get_or_create_worker(bootstrap_urls, host_info, session)
         if worker_info['succeed'] is False:
-            print '+ process_get_or_create_worker failed.'
-            print '- out: ', worker_info['message']
-            print '+ waiting some time to retry.'
+            log.error('process_get_or_create_worker failed.')
+            log.debug('out: %s', worker_info['message'])
+            log.debug('waiting some time to retry.')
             time.sleep(RETRY_CONNECTION_TIME)
             continue
 
-        print '+ connect worker.'
+        log.info('Connecting Worker.')
         con_info = process_connect_worker(bootstrap_urls, worker_info['worker'], session)
         if con_info['succeed'] is False:
             print '+ process_connect_worker failed.'
@@ -422,9 +422,10 @@ def main():
 
         while con_info['succeed']:
             if args.auto_update == 'yes':
+                log.info('Auto updating Worker files.')
                 process_update_worker_files(bootstrap_urls, settings, session)
 
-            print '+ connect worker.'
+            log.info('Connecting Worker.')
             con_info = process_connect_worker(bootstrap_urls, worker_info['worker'], session)
             if con_info['succeed'] is False:
                 print '+ process_connect_worker failed.'
@@ -433,10 +434,10 @@ def main():
                 time.sleep(RETRY_CONNECTION_TIME)
                 continue
 
-            print '+ update worker activity.'
+            log.info('Updating Worker activity.')
             session.post(worker_info['worker']['url']['update_activity_point'], {}, '')
 
-            print '+ Triggering notifications.'
+            log.info('Triggering notifications.')
             session.post(bootstrap_urls['notifications_url'], {}, '')
 
             feeder = False
@@ -450,25 +451,22 @@ def main():
                 settings,
                 session,
                 feeder)
-            time.sleep(3)
 
-            print '+ get available benchmarks.'
+            log.info('Getting available benchmarks.')
             bench_exec = process_get_available_benchmark_execution(bootstrap_urls, session)
-            time.sleep(3)
 
             if not bench_exec:
+                log.info('No benchmark available. To the next loop.')
                 continue
 
-            print '+ execute benchmark.'
+            log.info('Executing benchmark.')
             res = process_execute_task(settings, bench_exec)
-            time.sleep(3)
 
-            print '+ save benchmark results.'
+            log.info('Saving benchmark results.')
             process_feed_benchmark_execution_results(
                 session,
                 res,
                 bench_exec)
-            time.sleep(3)
 
 if __name__ == '__main__':
     main()
