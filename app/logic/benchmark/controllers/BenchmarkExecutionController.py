@@ -414,7 +414,8 @@ class BenchmarkExecutionController(object):
 
         ret_fluctuations = []
         for fluc in fluctuations:
-            fluc_ratio = 1.0 - (float(fluc['min']) / float(fluc['max']))
+            fluc_change = float(fluc['max']) - float(fluc['min'])
+            fluc_ratio = fluc_change / float(fluc['min'])
             if fluc_ratio >= max_fluctuation_ratio:
                 ret_fluctuations.append(fluc)
 

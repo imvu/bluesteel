@@ -77,11 +77,14 @@ def notify_benchmark_fluctuation(benchmark_execution, domain, fluctuations):
     content += '    - Around this commit there were fluctuations with those information:\n'
 
     for fluc in fluctuations:
+        fluc_change = float(fluc['max']) - float(fluc['min'])
+        fluc_percent = (fluc_change / float(fluc['min'])) * 100.0
+
         content += '\n'
         content += '        Result ID with fluctuations: {0}\n'.format(fluc['id'])
         content += '            Minimum Value: {0}\n'.format(fluc['min'])
         content += '            Maximum Value: {0}\n'.format(fluc['max'])
-        content += '            Percent Value: {0}%\n'.format((1.0 - (float(fluc['min']) / float(fluc['max']))) * 100.0)
+        content += '            Percent Value: {0}%\n'.format(fluc_percent)
         content += '\n'
 
     content += '    - You can visualize the result with:\n'

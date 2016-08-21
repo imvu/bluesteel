@@ -972,7 +972,7 @@ class BenchmarkExecutionControllerTestCase(TestCase):
         self.assertEqual(8.0, fluctuation[3]['max'])
 
     def test_does_benchmark_fluctuation_exist(self):
-        self.benchmark_definition1.max_fluctuation_percent = 5
+        self.benchmark_definition1.max_fluctuation_percent = 49
         self.benchmark_definition1.save()
 
         commit0 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash='0000000000000000000000000000000000000000', author=self.git_user1, author_date=timezone.now(), committer=self.git_user1, committer_date=timezone.now())
