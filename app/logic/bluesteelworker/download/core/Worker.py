@@ -4,6 +4,7 @@
 # pylint: disable=W0403
 
 import logging as log
+import argparse
 import os
 import json
 import uuid
@@ -23,6 +24,20 @@ from ProjectFolderManager import ProjectFolderManager
 from FileHasher import FileHasher
 
 RETRY_CONNECTION_TIME = 15
+
+def parse_arguments():
+    """ Argument definition for Worker """
+    parser = argparse.ArgumentParser(prog='Worker.py')
+    parser.add_argument(
+        '--auto-update',
+        help='Indicates that the Worker will try to auto-update itself or not.',
+        dest='auto_update',
+        action='store',
+        default='no',
+        choices=['yes', 'no'],
+        required=False,
+    )
+    return parser.parse_args()
 
 def command_string_to_vector(command):
     return command.split()
@@ -377,9 +392,12 @@ def process_feed_benchmark_execution_results(session, results, bench_exec):
 
 def main():
     """ Main """
+    args = parse_arguments()
     settings = read_settings()
     host_info = get_host_info()
     session = Request.Session()
+
+    # log.basicConfig(level=log.DEBUG)
 
     bootstrap_urls = get_bootstrap_urls(settings['entry_point'], session)
 
@@ -403,7 +421,8 @@ def main():
             continue
 
         while con_info['succeed']:
-            process_update_worker_files(bootstrap_urls, settings, session)
+            if args.auto_update == 'yes':
+                process_update_worker_files(bootstrap_urls, settings, session)
 
             print '+ connect worker.'
             con_info = process_connect_worker(bootstrap_urls, worker_info['worker'], session)
