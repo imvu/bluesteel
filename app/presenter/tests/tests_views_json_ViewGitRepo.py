@@ -118,3 +118,14 @@ class ViewsGitRepoTestCase(TestCase):
         self.assertEqual('branch-3', resp_obj['data'][1]['name'])
         self.assertEqual('0000300003000030000300003000030000300003', resp_obj['data'][1]['commit_hash'])
         self.assertEqual('branch-1', resp_obj['data'][1]['target_branch_name'])
+
+    def test_get_known_commit_hashes(self):
+        resp = self.client.get('/main/commit/all/project/{0}/hashes/'.format(self.git_project1.id))
+
+        res.check_cross_origin_headers(self, resp)
+        resp_obj = json.loads(resp.content)
+
+        self.assertEqual(2, len(resp_obj['data']['hashes']))
+        self.assertTrue('0000100001000010000100001000010000100001' in resp_obj['data']['hashes'])
+        self.assertFalse('0000200002000020000200002000020000200002' in resp_obj['data']['hashes'])
+        self.assertTrue('0000300003000030000300003000030000300003' in resp_obj['data']['hashes'])
