@@ -21,7 +21,7 @@ class FileHasher(object):
                     continue
 
                 filepath = os.path.join(root, names)
-                file_to_hash = open(filepath, 'rb')
+                file_to_hash = open(filepath, 'r')
 
                 while True:
                     file_chunk = file_to_hash.read(4096)
