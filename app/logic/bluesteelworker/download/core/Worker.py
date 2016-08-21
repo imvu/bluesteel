@@ -207,17 +207,24 @@ def extract_projects_from_layouts(bootstrap_urls, settings, session):
 
 def process_update_worker_files(bootstrap_urls, settings, session):
     """ Updates worker files if the hash stored in the server is different """
-    print '+ get worker files hash.'
-
     resp = session.get(bootstrap_urls['worker_files_hash_url'], {})
     files_hash = FileHasher.get_hash_from_files_in_a_folder(get_cwd(), ['.py', '.json'])
 
     if not resp['succeed']:
+        log.error('Error trying to GET on url: %s', bootstrap_urls['worker_files_hash_url'])
         return
 
     if resp['content']['status'] == 200 and resp['content']['data']['worker_files_hash'] == files_hash:
+        log.info('Worker files hash are equal.')
         return
 
+    log.debug(
+        'Worker files hash are not equal, remote: %s, local: %s',
+        resp['content']['data']['worker_files_hash'],
+        files_hash
+    )
+
+    log.info('Downloading remote Worker files.')
     resp_f = session.get(bootstrap_urls['worker_download_url'], {})
     if resp_f['succeed'] and resp_f['type'] == 'application/zip':
         zip_ext = ZipFile(StringIO(resp_f['content']))
@@ -237,10 +244,11 @@ def process_update_worker_files(bootstrap_urls, settings, session):
         )
 
         if zip_files_hash == files_hash:
-            print 'Downloaded Worker and current worker are equal!'
+            log.info('Downloaded remote Worker files and local ones are equal.')
             return
 
         if os.path.exists(get_cwd()):
+            log.info('Executing downloaded Worker.')
             shutil.rmtree(get_cwd())
             shutil.copytree(os.path.join(tmp_zip_folder, 'core'), get_cwd())
             os.execv(sys.executable, [sys.executable] + sys.argv)
