@@ -288,32 +288,34 @@ def process_git_fetch_and_feed(bootstrap_urls, settings, session, feed):
 
             known_commit_hashes = resp['content']['data']['hashes']
 
-            print '- Fetching git project'
+            log.debug('Fetching git project.')
             fetcher.fetch_and_feed_git_project(project, known_commit_hashes)
             commits_json = {}
             commits_json['feed_data'] = fetcher.feed_data['feed_data']
-            print '- Feeding git project: ', project['feed']['commits_url']
+
+            log.debug('Feeding git commits to url: %s', project['feed']['commits_url'])
             resp = session.post(project['feed']['commits_url'], {}, json.dumps(commits_json))
-            # ppi.pprint(resp)
+
             if not resp['succeed']:
-                print '- Error occurred while feeding project commits'
+                log.error('Error while feeding project commits!')
                 process_info = resp
                 return process_info
 
             reports_json = {}
             reports_json['reports'] = fetcher.feed_data['reports']
+
+            log.debug('Feeding git commits to url: %s', project['feed']['reports_url'])
             resp = session.post(project['feed']['reports_url'], {}, json.dumps(reports_json))
-            # ppi.pprint(resp)
+
             if not resp['succeed']:
-                print '- Error occurred while feeding project reports'
+                log.error('Error while feeding reports!')
                 process_info = resp
                 return process_info
         else:
-            print '- Only Fetching git project'
+            log.debug('Only fetching git project.')
             fetcher.fetch_only_git_project(project)
 
-
-    print '- Finshed fetching and feeding'
+    log.debug('Finshed fetching and feeding.')
     return process_info
 
 def process_get_available_benchmark_execution(bootstrap_urls, session):
