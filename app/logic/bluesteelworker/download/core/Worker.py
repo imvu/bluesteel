@@ -3,6 +3,10 @@
 # Disable warning for relative imports
 # pylint: disable=W0403
 
+#Disable error for too many statments
+# This code needs a refactor :)
+# pylint: disable=R0915
+
 import logging as log
 import argparse
 import os
@@ -24,6 +28,7 @@ from ProjectFolderManager import ProjectFolderManager
 from FileHasher import FileHasher
 
 RETRY_CONNECTION_TIME = 15
+FEED_ERROR_TIME = 60 * 60
 
 def parse_arguments():
     """ Argument definition for Worker """
@@ -278,7 +283,7 @@ def process_git_fetch_and_feed(bootstrap_urls, settings, session, feed):
             resp = session.get(commits_hashes_url, {})
             if not resp['succeed']:
                 log.error('Error while getting list of known commit hashes at url: %s', commits_hashes_url)
-                process_info['succeed'] = False
+                process_info = resp
                 return process_info
 
             known_commit_hashes = resp['content']['data']['hashes']
@@ -465,11 +470,16 @@ def main():
                 feeder = resp['content']['data']['worker']['git_feeder']
 
             print '+ fetch and feed git project.'
-            process_git_fetch_and_feed(
+            res = process_git_fetch_and_feed(
                 bootstrap_urls,
                 settings,
                 session,
                 feeder)
+
+            if not res['succeed']:
+                log.error('Error while process_git_fetch_and_feed! Going to sleep for a while.')
+                print res
+                time.sleep(FEED_ERROR_TIME)
 
             log.info('Getting available benchmarks.')
             bench_exec = process_get_available_benchmark_execution(bootstrap_urls, session)
