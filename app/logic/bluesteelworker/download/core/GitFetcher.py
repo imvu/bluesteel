@@ -275,28 +275,34 @@ class GitFetcher(object):
         """Create a unique list of commits"""
         del project_info
         hash_dict = {}
+        commits_to_check = []
         for branch in self.branches_data:
             for commit in branch['commits']:
-                hsh = commit['hash']
-
-                if hsh == branch['commit_hash']:
-                    self.unique_commmits.append(commit)
-                    hash_dict[hsh] = hsh
+                if commit['hash'] == branch['commit_hash']:
+                    commits_to_check.append(commit)
                     continue
 
-                if hsh == branch['merge_target']['fork_point']:
-                    self.unique_commmits.append(commit)
-                    hash_dict[hsh] = hsh
+                if commit['hash'] == branch['merge_target']['fork_point']:
+                    commits_to_check.append(commit)
                     continue
 
-                if hsh in hash_dict:
+                if commit['hash'] in hash_dict:
                     continue
 
-                if hsh in self.known_commit_hashes:
+                if commit['hash'] in self.known_commit_hashes:
                     continue
 
                 self.unique_commmits.append(commit)
-                hash_dict[hsh] = hsh
+                hash_dict[commit['hash']] = commit['hash']
+
+        # All commits directly pointed by a Branch will be allways feeded
+        for commit in commits_to_check:
+            if commit['hash'] in hash_dict:
+                continue
+
+            self.unique_commmits.append(commit)
+            hash_dict[commit['hash']] = commit['hash']
+
         return True
 
     def step_create_branch_list(self, project_info):

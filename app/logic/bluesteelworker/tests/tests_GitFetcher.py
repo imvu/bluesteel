@@ -1197,6 +1197,10 @@ class GitFetcherTestCase(TestCase):
         commits_extracted_2.append({'hash' : '0000300003000030000300003000030000300003'})
         commits_extracted_2.append({'hash' : '0000400004000040000400004000040000400004'})
         commits_extracted_2.append({'hash' : '0000600006000060000600006000060000600006'})
+
+        commits_extracted_3 = []
+        commits_extracted_3.append({'hash' : '0000600006000060000600006000060000600006'})
+
         self.fetcher.branches_data = [{
                 'commits': commits_extracted_1,
                 'commit_hash' : '0000500005000050000500005000050000500005',
@@ -1206,6 +1210,11 @@ class GitFetcherTestCase(TestCase):
                 'commits': commits_extracted_2,
                 'commit_hash' : '0000600006000060000600006000060000600006',
                 'merge_target' : {'fork_point' : '0000300003000030000300003000030000300003'}
+
+            }, {
+                'commits': commits_extracted_3,
+                'commit_hash' : '0000600006000060000600006000060000600006',
+                'merge_target' : {'fork_point' : '0000600006000060000600006000060000600006'}
             }]
 
         commits_known = []
