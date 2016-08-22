@@ -55,6 +55,7 @@ def fragment_layout_in_project_infos(layout, tmp_path):
         obj['feed'] = {}
         obj['feed']['commits_url'] = project['feed_commits_url']
         obj['feed']['reports_url'] = project['feed_reports_url']
+        obj['feed']['commits_hashes_url'] = project['commits_hashes_url']
         obj['feed']['active'] = index == project_to_feed
         obj['git'] = {}
         obj['git']['project'] = {}
@@ -272,8 +273,18 @@ def process_git_fetch_and_feed(bootstrap_urls, settings, session, feed):
         fetcher = GitFetcher.GitFetcher(log.DEBUG)
 
         if feed:
+            log.debug('Getting list of known commit hashes.')
+            commits_hashes_url = project['feed']['commits_hashes_url']
+            resp = session.get(commits_hashes_url, {})
+            if not resp['succeed']:
+                log.error('Error while getting list of known commit hashes at url: %s', commits_hashes_url)
+                process_info['succeed'] = False
+                return process_info
+
+            known_commit_hashes = resp['content']['data']['hashes']
+
             print '- Fetching git project'
-            fetcher.fetch_and_feed_git_project(project)
+            fetcher.fetch_and_feed_git_project(project, known_commit_hashes)
             commits_json = {}
             commits_json['feed_data'] = fetcher.feed_data['feed_data']
             print '- Feeding git project: ', project['feed']['commits_url']

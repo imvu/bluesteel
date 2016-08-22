@@ -1151,8 +1151,8 @@ class GitFetcherTestCase(TestCase):
         self.create_paths(self.obj1)
         self.create_git_hidden_folder(settings.TMP_ROOT, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1')
 
-        self.fetcher.remote_branch_names = ['branch-1', 'branch-3', 'branch-5']
-        self.fetcher.local_branch_names = ['branch-1', 'branch-2', 'branch-3', 'branch-4']
+        self.fetcher.branch_names['remote'] = ['branch-1', 'branch-3', 'branch-5']
+        self.fetcher.branch_names['local'] = ['branch-1', 'branch-2', 'branch-3', 'branch-4']
 
         res = self.fetcher.step_remove_local_branches(self.obj1)
 
@@ -1171,8 +1171,8 @@ class GitFetcherTestCase(TestCase):
         self.create_paths(self.obj1)
         self.create_git_hidden_folder(settings.TMP_ROOT, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1')
 
-        self.fetcher.remote_branch_names = ['origin/branch-1-1', 'origin/branch-3', 'origin/branch-5']
-        self.fetcher.local_branch_names = ['branch-1', 'branch-1-1', 'branch-3', 'branch-4']
+        self.fetcher.branch_names['remote'] = ['origin/branch-1-1', 'origin/branch-3', 'origin/branch-5']
+        self.fetcher.branch_names['local'] = ['branch-1', 'branch-1-1', 'branch-3', 'branch-4']
 
         res = self.fetcher.step_remove_local_branches(self.obj1)
 
@@ -1185,5 +1185,79 @@ class GitFetcherTestCase(TestCase):
         name2, args2, side2 = mock_subprocess.mock_calls[1]
         self.assertEqual(['git', 'branch', '-D', 'branch-4'], args2[0])
 
+    def test_step_create_unique_list_commits(self):
+        commits_extracted_1 = []
+        commits_extracted_1.append({'hash' : '0000100001000010000100001000010000100001'})
+        commits_extracted_1.append({'hash' : '0000200002000020000200002000020000200002'})
+        commits_extracted_1.append({'hash' : '0000500005000050000500005000050000500005'})
 
+        commits_extracted_2 = []
+        commits_extracted_2.append({'hash' : '0000100001000010000100001000010000100001'})
+        commits_extracted_2.append({'hash' : '0000200002000020000200002000020000200002'})
+        commits_extracted_2.append({'hash' : '0000300003000030000300003000030000300003'})
+        commits_extracted_2.append({'hash' : '0000400004000040000400004000040000400004'})
+        commits_extracted_2.append({'hash' : '0000600006000060000600006000060000600006'})
+        self.fetcher.branches_data = [{
+                'commits': commits_extracted_1,
+                'commit_hash' : '0000500005000050000500005000050000500005',
+                'merge_target' : {'fork_point' : '0000300003000030000300003000030000300003'}
 
+            }, {
+                'commits': commits_extracted_2,
+                'commit_hash' : '0000600006000060000600006000060000600006',
+                'merge_target' : {'fork_point' : '0000300003000030000300003000030000300003'}
+            }]
+
+        commits_known = []
+        commits_known.append('0000100001000010000100001000010000100001')
+        commits_known.append('0000400004000040000400004000040000400004')
+        self.fetcher.known_commit_hashes = commits_known
+
+        res = self.fetcher.step_create_unique_list_commits(self.obj1)
+
+        self.assertTrue(res)
+        self.assertEqual(4, len(self.fetcher.unique_commmits))
+        self.assertTrue({'hash' : '0000200002000020000200002000020000200002'} in self.fetcher.unique_commmits)
+        self.assertTrue({'hash' : '0000300003000030000300003000030000300003'} in self.fetcher.unique_commmits)
+        self.assertTrue({'hash' : '0000500005000050000500005000050000500005'} in self.fetcher.unique_commmits)
+        self.assertTrue({'hash' : '0000600006000060000600006000060000600006'} in self.fetcher.unique_commmits)
+
+    def test_step_create_unique_list_commits_with_all_known(self):
+        commits_extracted_1 = []
+        commits_extracted_1.append({'hash' : '0000100001000010000100001000010000100001'})
+        commits_extracted_1.append({'hash' : '0000200002000020000200002000020000200002'})
+        commits_extracted_1.append({'hash' : '0000500005000050000500005000050000500005'})
+
+        commits_extracted_2 = []
+        commits_extracted_2.append({'hash' : '0000100001000010000100001000010000100001'})
+        commits_extracted_2.append({'hash' : '0000200002000020000200002000020000200002'})
+        commits_extracted_2.append({'hash' : '0000300003000030000300003000030000300003'})
+        commits_extracted_2.append({'hash' : '0000400004000040000400004000040000400004'})
+        commits_extracted_2.append({'hash' : '0000600006000060000600006000060000600006'})
+        self.fetcher.branches_data = [{
+                'commits': commits_extracted_1,
+                'commit_hash' : '0000500005000050000500005000050000500005',
+                'merge_target' : {'fork_point' : '0000300003000030000300003000030000300003'}
+
+            }, {
+                'commits': commits_extracted_2,
+                'commit_hash' : '0000600006000060000600006000060000600006',
+                'merge_target' : {'fork_point' : '0000300003000030000300003000030000300003'}
+            }]
+
+        commits_known = []
+        commits_known.append('0000100001000010000100001000010000100001')
+        commits_known.append('0000200002000020000200002000020000200002')
+        commits_known.append('0000300003000030000300003000030000300003')
+        commits_known.append('0000400004000040000400004000040000400004')
+        commits_known.append('0000500005000050000500005000050000500005')
+        commits_known.append('0000600006000060000600006000060000600006')
+        self.fetcher.known_commit_hashes = commits_known
+
+        res = self.fetcher.step_create_unique_list_commits(self.obj1)
+
+        self.assertTrue(res)
+        self.assertEqual(3, len(self.fetcher.unique_commmits))
+        self.assertTrue({'hash' : '0000300003000030000300003000030000300003'} in self.fetcher.unique_commmits)
+        self.assertTrue({'hash' : '0000500005000050000500005000050000500005'} in self.fetcher.unique_commmits)
+        self.assertTrue({'hash' : '0000600006000060000600006000060000600006'} in self.fetcher.unique_commmits)

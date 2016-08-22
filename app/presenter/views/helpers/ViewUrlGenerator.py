@@ -99,6 +99,10 @@ def get_gitfeeder_commits_full_url(domain, project_id):
 def get_gitfeeder_reports_full_url(domain, project_id):
     return 'http://{0}/main/feed/report/project/{1}/'.format(domain, project_id)
 
+def get_commits_known_hashes_full_url(domain, project_id):
+    return 'http://{0}/main/commit/all/project/{1}/hashes/'.format(domain, project_id)
+
+
 def get_change_merge_target_url(project_id):
     return '/main/branch/merge/target/project/{0}/'.format(project_id)
 

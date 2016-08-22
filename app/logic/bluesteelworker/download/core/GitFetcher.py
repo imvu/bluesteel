@@ -19,11 +19,13 @@ class GitFetcher(object):
         """ Constructor """
         self.log_level = log_level
         self.report_stack = []
-        self.remote_branch_names = []
-        self.local_branch_names = []
-        self.branch_names = []
-        self.branch_names_and_hashes = []
+        self.branch_names = {}
+        self.branch_names['remote'] = []
+        self.branch_names['local'] = []
+        self.branch_names['names_and_hashes'] = []
+        self.branch_names['names'] = []
         self.branches_data = []
+        self.known_commit_hashes = []
         self.unique_commmits = []
         self.branch_list = []
         self.feed_data = {}
@@ -39,9 +41,10 @@ class GitFetcher(object):
         self.execute_steps(project_info, steps)
         return True
 
-    def fetch_and_feed_git_project(self, project_info):
+    def fetch_and_feed_git_project(self, project_info, known_commit_hashes):
         """ Performs fetch and all the remaining steps to feed the data """
         log.basicConfig(level=self.log_level)
+        self.known_commit_hashes = known_commit_hashes
 
         steps = [
             self.step_fetch_git_project,
@@ -110,9 +113,9 @@ class GitFetcher(object):
             log.error('Fetch Remote Branches -- Error while fetching remote branches')
             return False
 
-        self.remote_branch_names = self.extract_remote_branch_names_from_reports(remote_branches_report)
+        self.branch_names['remote'] = self.extract_remote_branch_names_from_reports(remote_branches_report)
 
-        if len(self.remote_branch_names) == 0:
+        if len(self.branch_names['remote']) == 0:
             msg = 'No remote branches found, looks strange'
             no_branches_report = GitFetcher.create_report('No command executed', 0, msg, '')
             self.save_report('step_fetch_remote_branches', no_branches_report)
@@ -127,9 +130,9 @@ class GitFetcher(object):
             log.error('Fetch Local Branches -- Error while fetching local branches')
             return False
 
-        self.local_branch_names = self.extract_local_branch_names_from_reports(local_branches_report)
+        self.branch_names['local'] = self.extract_local_branch_names_from_reports(local_branches_report)
 
-        if len(self.local_branch_names) == 0:
+        if len(self.branch_names['local']) == 0:
             msg = 'No local branches found, looks strange'
             no_branches_report = GitFetcher.create_report('No command executed', 0, msg, '')
             self.save_report('step_fetch_local_branches', no_branches_report)
@@ -140,9 +143,9 @@ class GitFetcher(object):
         """ Removes local branches that were deleted on remote """
         branches_to_remove = []
 
-        for local_name in self.local_branch_names:
+        for local_name in self.branch_names['local']:
             found = False
-            for remote_name in self.remote_branch_names:
+            for remote_name in self.branch_names['remote']:
                 if remote_name.endswith(local_name):
                     found = True
                     break
@@ -159,7 +162,7 @@ class GitFetcher(object):
 
     def step_transform_remote_to_local_branch(self, project_info):
         """ Transform remote to local branches """
-        remote_to_local_reports = self.checkout_remote_branches_to_local(project_info, self.remote_branch_names)
+        remote_to_local_reports = self.checkout_remote_branches_to_local(project_info, self.branch_names['remote'])
         self.save_report('step_transform_remote_to_local_branch', remote_to_local_reports)
         if not GitFetcher.is_report_ok(remote_to_local_reports):
             return False
@@ -172,22 +175,22 @@ class GitFetcher(object):
         if not GitFetcher.is_report_ok(branch_names_report):
             return False
 
-        self.branch_names = self.extract_branch_names_from_report(branch_names_report)
+        self.branch_names['names'] = self.extract_branch_names_from_report(branch_names_report)
         return True
 
     def step_get_name_and_hash_from_local_branch(self, project_info):
         """ Get the branch names and hashes per every name """
-        names_and_hashes_report = self.commands_get_branch_names_and_hashes(project_info, self.branch_names)
+        names_and_hashes_report = self.commands_get_branch_names_and_hashes(project_info, self.branch_names['names'])
         self.save_report('step_get_name_and_hash_from_local_branch', names_and_hashes_report)
         if not GitFetcher.is_report_ok(names_and_hashes_report):
             return False
 
-        self.branch_names_and_hashes = self.extract_branch_names_hashes_from_report(names_and_hashes_report)
+        self.branch_names['names_and_hashes'] = self.extract_branch_names_hashes_from_report(names_and_hashes_report)
         return True
 
     def step_get_all_commits_from_branch(self, project_info):
         """ For every branch we get all the commits from that branch """
-        for name_and_hash in self.branch_names_and_hashes:
+        for name_and_hash in self.branch_names['names_and_hashes']:
             branch_name = name_and_hash['name']
             branch_hash = name_and_hash['commit_hash']
             log.debug('Commit -- Getting all commits of: %s - %s', branch_hash, branch_name)
@@ -274,9 +277,26 @@ class GitFetcher(object):
         hash_dict = {}
         for branch in self.branches_data:
             for commit in branch['commits']:
-                if commit['hash'] not in hash_dict:
+                hsh = commit['hash']
+
+                if hsh == branch['commit_hash']:
                     self.unique_commmits.append(commit)
-                    hash_dict[commit['hash']] = commit['hash']
+                    hash_dict[hsh] = hsh
+                    continue
+
+                if hsh == branch['merge_target']['fork_point']:
+                    self.unique_commmits.append(commit)
+                    hash_dict[hsh] = hsh
+                    continue
+
+                if hsh in hash_dict:
+                    continue
+
+                if hsh in self.known_commit_hashes:
+                    continue
+
+                self.unique_commmits.append(commit)
+                hash_dict[hsh] = hsh
         return True
 
     def step_create_branch_list(self, project_info):

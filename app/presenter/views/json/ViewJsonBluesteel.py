@@ -6,9 +6,12 @@ from app.presenter.views.helpers import ViewUrlGenerator
 from app.logic.httpcommon import res
 
 def add_project_feed_url(request, layout):
+    """ Returns urls associated with every project on a given layout """
+    domain = request.get_host()
     for project in layout['projects']:
-        project['feed_commits_url'] = ViewUrlGenerator.get_gitfeeder_commits_full_url(request.get_host(), project['id'])
-        project['feed_reports_url'] = ViewUrlGenerator.get_gitfeeder_reports_full_url(request.get_host(), project['id'])
+        project['feed_commits_url'] = ViewUrlGenerator.get_gitfeeder_commits_full_url(domain, project['id'])
+        project['feed_reports_url'] = ViewUrlGenerator.get_gitfeeder_reports_full_url(domain, project['id'])
+        project['commits_hashes_url'] = ViewUrlGenerator.get_commits_known_hashes_full_url(domain, project['id'])
     return layout
 
 def get_all_layouts_urls(request):
