@@ -43,16 +43,29 @@ def notify_schema_failed(receiver_email, msg, schema_msg):
     create_notification_email(receiver_email, title, content, ['admin'])
 
 
-def notify_benchmark_command_failure(receiver_email, benchmark_execution_id, commit_hash, domain):
+def notify_benchmark_command_failure(bench_exec_id, bench_exec_receiver_email, bench_exec_commit_hash, report, domain):
     """ Will send a notification about command failures """
-    title = 'Benchmark execution with failed commands on commit: {0}'.format(commit_hash)
-    content = 'There were commands that failed to execute.\nTake a look at: {0}'.format(
+
+    title = 'Benchmark execution with failed commands on commit: {0}'.format(bench_exec_commit_hash)
+    content = ''
+    content += 'There were commands that failed to execute.\n\n'
+    content += 'Executed commands:\n'
+
+    for com in report['command_set']:
+        content += '---------------------------------------\n'
+        content += 'Command:\n{0}\n\n'.format(com['command'])
+        content += 'Command Result Status:\n{0}\n\n'.format(com['result']['status'])
+        content += 'Command Result Out:\n{0}\n\n'.format(com['result']['out'])
+        content += 'Command Result Err:\n{0}\n\n'.format(com['result']['error'])
+        content += '---------------------------------------\n'
+
+    content += 'Take a look at: {0}'.format(
         ViewUrlGenerator.get_benchmark_execution_complete_full_url(
             domain,
-            benchmark_execution_id)
+            bench_exec_id)
         )
 
-    create_notification_email(receiver_email, title, content, ['admin'])
+    create_notification_email(bench_exec_receiver_email, title, content, ['admin'])
 
 def notify_benchmark_fluctuation(benchmark_execution, domain, fluctuations):
     """ Will send notificaiton about benchmark fluctuation """
