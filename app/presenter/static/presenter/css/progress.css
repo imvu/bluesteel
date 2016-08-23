@@ -5,7 +5,7 @@ div.progress_bar
     margin-left: 20px;
     margin-right: 20px;
     border-radius: 80px;
-    border: 1px solid lightgray;
+    border: 1px solid lightsteelblue;
 }
 
 div.progress_value
@@ -19,6 +19,6 @@ div.progress_value
 
 div.progress_normal
 {
-    color: lightsteelblue;
-    background-color: lightsteelblue;
+    color: linear-gradient(60deg, rgba(120, 180, 230, 1.0) 0%, rgba(140, 200, 250, 1.0) 100%);
+    background: linear-gradient(60deg, rgba(120, 180, 230, 1.0) 0%, rgba(140, 200, 250, 1.0) 100%);
 }
