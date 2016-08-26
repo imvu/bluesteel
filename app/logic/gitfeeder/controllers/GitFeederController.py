@@ -282,11 +282,13 @@ class GitFeederController(object):
         messages = []
         bulk_trails = []
 
-        all_commits = list(GitCommitEntry.objects.filter(project=project))
+        all_commits = GitCommitEntry.objects.filter(project=project).values('id', 'commit_hash')
         commits_dict = {}
 
         for commit in all_commits:
-            commits_dict[commit.commit_hash] = commit
+            commits_dict[commit['commit_hash']] = commit['id']
+
+        del all_commits
 
         for branch in branch_list:
             branch_entry = GitBranchEntry.objects.filter(project=project, name=branch['branch_name']).first()
@@ -301,7 +303,7 @@ class GitFeederController(object):
                     trail = GitBranchTrailEntry(
                         project=project,
                         branch=branch_entry,
-                        commit=commits_dict[git_hash],
+                        commit_id=commits_dict[git_hash],
                         order=index
                     )
 
