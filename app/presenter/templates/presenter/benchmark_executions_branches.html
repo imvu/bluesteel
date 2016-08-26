@@ -1,0 +1,57 @@
+{% extends "presenter/base.html" %}
+
+{% load staticfiles %}
+
+{% block data_body %}
+<ul class="no_dots no_indent horizontal_list">
+        <li class="horizontal">
+            <div class="container_med container_height">
+                <ul class="no_dots no_indent">
+                    {% for layout in layouts %}
+                    <li>
+                        <div class="upper_card white_card card_padding_small">
+                            <div class="title centered">Layout - {{layout.name}}</div>
+                        </div>
+                    </li>
+                    <li>
+                        {% for project in layout.projects %}
+                            {% if forloop.last %}
+                            <div class="lower_card white_card card_padding_large">
+                            {% else %}
+                            <div class="middle_card white_card card_padding_large">
+                            {% endif%}
+                            <ul class="no_dots">
+                                <li>
+                                    <div class="list_label indent_1">PROJECT</div>
+                                    <div class="container_input">
+                                        <input  class="command_input" type="text" value="{{project.name}}" readonly></input>
+                                    </div>
+                                </li>
+                                <br/>
+
+                                <li><div class="list_label indent_1">EXECUTIONS PER BRANCH</div></li>
+                                <li><div class="normal indent_2">Select one branch to see all the executions of that branch sorted by benchmark definition and worker.</div></li>
+                                <li>
+                                    <div class="container_input">
+                                        <select     class="selection individual"
+                                                    name="merge_target_select"
+                                                    onchange="window.location=this.options[this.selectedIndex].value;"
+                                                    onfocus="this.selectedIndex = 0;"
+                                        >
+                                            <option value="." selected>select ...</option>
+                                            {% for sel in project.branches %}
+                                                <option value="{{sel.url.executions_branch}}">{{sel.order}} Branch: {{sel.name}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        {% endfor %}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </li>
+</ul>
+{% endblock %}

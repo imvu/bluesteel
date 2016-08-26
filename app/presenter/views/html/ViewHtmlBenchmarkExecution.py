@@ -5,7 +5,9 @@ from app.presenter.views.helpers import ViewUrlGenerator
 from app.logic.benchmark.controllers.BenchmarkExecutionController import BenchmarkExecutionController
 from app.logic.benchmark.models.BenchmarkExecutionModel import BenchmarkExecutionEntry
 from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
+from app.logic.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
 from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
+from app.logic.gitrepo.controllers.GitController import GitController
 from app.logic.gitrepo.models.GitProjectModel import GitProjectEntry
 from app.logic.gitrepo.models.GitBranchModel import GitBranchEntry
 from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
@@ -14,6 +16,54 @@ from app.logic.httpcommon.Page import Page
 
 BENCH_EXEC_ITEMS_PER_PAGE = 25
 BENCH_EXEC_WINDOW_HALF = 4
+
+def get_benchmark_executions_of_branch(request):
+    if request.method == 'GET':
+        layouts_obj = []
+        layouts = BluesteelLayoutEntry.objects.all()
+
+        for layout in layouts:
+            layout_obj = {}
+            layout_obj['id'] = layout.id
+            layout_obj['name'] = layout.name
+            layout_obj['projects'] = []
+
+            projects = BluesteelProjectEntry.objects.filter(layout__id=layout.id)
+
+            for project in projects:
+                git_project = GitProjectEntry.objects.filter(id=project.git_project.id).first()
+
+                if git_project is None:
+                    continue
+
+                branch_names_and_orders = GitController.get_branch_names_and_order_values(git_project)
+                executions_branch = []
+                for name_and_order in branch_names_and_orders:
+                    obj = {}
+                    obj['name'] = name_and_order['name']
+                    obj['order'] = name_and_order['order']
+                    obj['url'] = {}
+                    obj['url']['executions_branch'] = ViewUrlGenerator.get_project_branch_single_links_url(
+                        git_project.id,
+                        name_and_order['id'])
+                    executions_branch.append(obj)
+
+                project_obj = {}
+                project_obj['name'] = project.name
+                project_obj['git_project_id'] = git_project.id
+                project_obj['branches'] = executions_branch
+                layout_obj['projects'].append(project_obj)
+
+            layouts_obj.append(layout_obj)
+
+
+        data = {}
+        data['menu'] = ViewPrepareObjects.prepare_menu_for_html([])
+        data['layouts'] = layouts_obj
+
+        return res.get_template_data(request, 'presenter/benchmark_executions_branches.html', data)
+    else:
+        return res.get_template_data(request, 'presenter/not_found.html', {})
 
 def get_benchmark_execution_relevant(request, bench_exec_id):
     """ Returns a benchmark execution """

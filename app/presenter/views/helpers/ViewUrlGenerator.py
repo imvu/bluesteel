@@ -125,6 +125,9 @@ def get_project_branch_single_links_url(project_id, branch_id):
 def get_benchmark_definitions_url(page_index):
     return '/main/definitions/all/page/{0}/'.format(page_index)
 
+def get_benchmark_executions_url():
+    return '/main/executions/'
+
 def get_benchmark_execution_complete_full_url(domain, bench_id):
     return 'http://{0}/main/execution/{1}/complete/'.format(domain, bench_id)
 

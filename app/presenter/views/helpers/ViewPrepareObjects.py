@@ -215,11 +215,17 @@ def prepare_menu_for_html(menu):
     item_5['icon'] = ''
     item_5['link'] = ViewUrlGenerator.get_benchmark_definitions_url(1)
 
+    item_6 = {}
+    item_6['name'] = 'Executions'
+    item_6['icon'] = ''
+    item_6['link'] = ViewUrlGenerator.get_benchmark_executions_url()
+
     menu_items.append(item_1)
     menu_items.append(item_2)
     menu_items.append(item_3)
     menu_items.append(item_4)
     menu_items.append(item_5)
+    menu_items.append(item_6)
 
     for item in menu:
         menu_items.append(item)
