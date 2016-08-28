@@ -88,6 +88,9 @@ class GitFetcher(object):
 
         self.feed_data['reports'] = self.report_stack
 
+    def has_feed_data(self):
+        return 'feed_data' in self.feed_data
+
     def step_fetch_git_project(self, project_info):
         """ Fetch a git project using project info """
         paths = GitFetcher.get_project_paths(project_info)

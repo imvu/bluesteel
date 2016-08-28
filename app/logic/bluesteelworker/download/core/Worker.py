@@ -290,16 +290,19 @@ def process_git_fetch_and_feed(bootstrap_urls, settings, session, feed):
 
             log.debug('Fetching git project.')
             fetcher.fetch_and_feed_git_project(project, known_commit_hashes)
-            commits_json = {}
-            commits_json['feed_data'] = fetcher.feed_data['feed_data']
 
-            log.debug('Feeding git commits to url: %s', project['feed']['commits_url'])
-            resp = session.post(project['feed']['commits_url'], {}, json.dumps(commits_json))
 
-            if not resp['succeed']:
-                log.error('Error while feeding project commits!')
-                process_info = resp
-                return process_info
+            if fetcher.has_feed_data():
+                commits_json = {}
+                commits_json['feed_data'] = fetcher.feed_data['feed_data']
+
+                log.debug('Feeding git commits to url: %s', project['feed']['commits_url'])
+                resp = session.post(project['feed']['commits_url'], {}, json.dumps(commits_json))
+
+                if not resp['succeed']:
+                    log.error('Error while feeding project commits!')
+                    process_info = resp
+                    return process_info
 
             reports_json = {}
             reports_json['reports'] = fetcher.feed_data['reports']
