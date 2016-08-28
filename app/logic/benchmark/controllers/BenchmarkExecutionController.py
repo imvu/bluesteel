@@ -309,6 +309,8 @@ class BenchmarkExecutionController(object):
         """ Save the report inside the benchmark execution without deleting command set object """
         CommandController.CommandController.delete_commands_of_command_set(bench_exec_entry.report)
 
+        without_errors = True
+
         for index, command in enumerate(data['command_set']):
             command_entry = CommandEntry.objects.create(
                 command_set=bench_exec_entry.report,
@@ -316,6 +318,8 @@ class BenchmarkExecutionController(object):
                 order=index)
 
             result = command['result']
+
+            without_errors = without_errors and (int(result['status']) is 0)
 
             CommandResultEntry.objects.create(
                 command=command_entry,
@@ -325,7 +329,10 @@ class BenchmarkExecutionController(object):
                 start_time=result['start_time'],
                 finish_time=result['finish_time'])
 
-        bench_exec_entry.status = BenchmarkExecutionEntry.FINISHED
+        if without_errors:
+            bench_exec_entry.status = BenchmarkExecutionEntry.FINISHED
+        else:
+            bench_exec_entry.status = BenchmarkExecutionEntry.FINISHED_WITH_ERRORS
         bench_exec_entry.save()
 
     @staticmethod
@@ -349,7 +356,7 @@ class BenchmarkExecutionController(object):
                 finished = BenchmarkExecutionEntry.objects.filter(
                     commit__commit_hash=commit['hash'],
                     invalidated=False,
-                    status=BenchmarkExecutionEntry.FINISHED,
+                    status__in=[BenchmarkExecutionEntry.FINISHED, BenchmarkExecutionEntry.FINISHED_WITH_ERRORS],
                     revision_target=F('definition__revision')
                 ).count()
 

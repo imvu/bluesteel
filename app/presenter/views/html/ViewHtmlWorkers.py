@@ -22,7 +22,7 @@ def get_workers_with_benchmark_info(worker_entries):
 
         bench_execs = BenchmarkExecutionEntry.objects.filter(
             worker__id=entry.id,
-            status=BenchmarkExecutionEntry.FINISHED
+            status__in=[BenchmarkExecutionEntry.FINISHED, BenchmarkExecutionEntry.FINISHED_WITH_ERRORS],
         ).order_by('-updated_at')[:MAX_LATEST_BENCHMARKS]
 
         for bench in bench_execs:
