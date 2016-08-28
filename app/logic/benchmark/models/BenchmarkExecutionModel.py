@@ -14,10 +14,12 @@ class BenchmarkExecutionEntry(models.Model):
     READY = 0
     IN_PROGRESS = 1
     FINISHED = 2
+    FINISHED_WITH_ERRORS = 3
     STATUS_TYPE = (
         (READY, 'Ready'),
         (IN_PROGRESS, 'In_Progress'),
         (FINISHED, 'Finished'),
+        (FINISHED_WITH_ERRORS, 'Finished_With_Errors'),
     )
 
     definition = models.ForeignKey('benchmark.BenchmarkDefinitionEntry', related_name='benchmark_exec_definition')
