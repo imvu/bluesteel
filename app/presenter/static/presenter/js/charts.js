@@ -69,9 +69,15 @@ stackedchartVerticalBars = function(objId, data) {
     }
 
     var values = [];
+    var accum_average = 0.0;
     for (var i = 0; i < data.length; i++) {
-        values.push(parseFloat(data[i]['average']));
+        var float_value = parseFloat(data[i]['average']);
+        accum_average = accum_average + float_value;
+        values.push(float_value);
     }
+
+    accum_average = accum_average / Math.max(data.length, 1.0);
+
 
     var chartData = {}
     chartData['labels'] = labels
@@ -130,29 +136,72 @@ stackedchartVerticalBars = function(objId, data) {
     for (var i = 0; i < data.length; i++) {
         labels.push(data[i]['benchmark_execution_hash'].toString());
 
-        if (data[i]['invalidated']) {
-            // if (data[i]['bar_type'] === 'current_branch') {
-            //     myBarChart.datasets[0].bars[i].fillColor = "#bfbfbf";
-            // } else if (data[i]['bar_type'] === 'other_branch') {
-            //     myBarChart.datasets[0].bars[i].fillColor = "#e6e6e6";
-            // }
-            if (data[i]['bar_type'] === 'current_branch') {
-                myBarChart.datasets[0].bars[i].fillColor = "#ff6666";
-            } else if (data[i]['bar_type'] === 'other_branch') {
-                myBarChart.datasets[0].bars[i].fillColor = "#ffcccc";
+        var color = "#000000";
+        var color_hi = "#FF0000";
+        var ele = data[i];
+
+        if (ele['invalidated']) {
+            if (ele['bar_type'] === 'current_branch') {
+                color = "#ff6666";
+            } else if (ele['bar_type'] === 'other_branch') {
+                color = "#ffcccc";
             }
 
-            myBarChart.datasets[0].bars[i].highlightFill = "darkred"
+            color_hi = "darkred"
         } else {
-            if (data[i]['bar_type'] === 'current_branch') {
-                myBarChart.datasets[0].bars[i].fillColor = "#B0C4DE";
-            } else if (data[i]['bar_type'] === 'other_branch') {
-                myBarChart.datasets[0].bars[i].fillColor = "#dbe4f0";
-            }
+            if (ele['status'] === 'Ready') {
+                if (ele['bar_type'] === 'current_branch') {
+                    color = "#E0E0E0";
+                    color_hi = "#D0D0D0";
+                } else if (ele['bar_type'] === 'other_branch') {
+                    color = "#F0F0F0";
+                    color_hi = "#E0E0E0";
+                }
 
-            myBarChart.datasets[0].bars[i].highlightFill = "steelblue"
+                if (myBarChart.datasets[0].bars[i].value === 0) {
+                    myBarChart.datasets[0].bars[i].value = Math.max(1, Math.trunc(accum_average * 0.2));
+                    myBarChart.datasets[0].bars[i].label = "No result yet";
+                    color = "#F0F0F0";
+                    color_hi = "#E0E0E0";
+                }
+
+            } else if (ele['status'] === 'In_Progress') {
+
+                if (ele['bar_type'] === 'current_branch') {
+                    color = "#FFD770";
+                    color_hi = "#F8D060";
+                } else if (ele['bar_type'] === 'other_branch') {
+                    color = "#FFE7F0";
+                    color_hi = "#F8E0E0";
+                }
+
+            } else if (ele['status'] === 'Finished') {
+
+                if (ele['bar_type'] === 'current_branch') {
+                    color = "#B0C4DE";
+                    color_hi = "steelblue";
+                } else if (ele['bar_type'] === 'other_branch') {
+                    color = "#dbe4f0";
+                    color_hi = "steelblue";
+                }
+
+            } else if (ele['status'] === 'Finished_With_Errors') {
+
+                if (ele['bar_type'] === 'current_branch') {
+                    color = "#FF77FF";
+                    color_hi = "#EE66EE";
+                } else if (ele['bar_type'] === 'other_branch') {
+                    color = "#FFDDFF";
+                    color_hi = "#EECCEE";
+                }
+
+            }
+            else {
+            }
         }
 
+        myBarChart.datasets[0].bars[i].fillColor = color;
+        myBarChart.datasets[0].bars[i].highlightFill = color_hi;
         myBarChart.datasets[0].bars[i].benchmarkExecutionUrl = data[i]['benchmark_execution_url'];
     }
 

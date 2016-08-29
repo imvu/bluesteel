@@ -315,11 +315,13 @@ class BenchmarkExecutionControllerBranchTestCase(TestCase):
         res3 = CommandResultEntry.objects.create(command=self.com3, out=out_3, error='no error', status=0, start_time=timezone.now(), finish_time=timezone.now())
 
         self.benchmark_execution1.report = self.report_1
+        self.benchmark_execution1.status = BenchmarkExecutionEntry.IN_PROGRESS
         self.benchmark_execution1.save()
 
         self.benchmark_execution2.delete()
 
         self.benchmark_execution3.report = self.report_3
+        self.benchmark_execution3.status = BenchmarkExecutionEntry.FINISHED_WITH_ERRORS
         self.benchmark_execution3.save()
 
         commit_hashes = []
@@ -342,6 +344,7 @@ class BenchmarkExecutionControllerBranchTestCase(TestCase):
         self.assertEqual(self.benchmark_execution3.id, bench_data[0]['benchmark_execution_id'])
         self.assertEqual('00003', bench_data[0]['benchmark_execution_hash'])
         self.assertEqual([11,12,13,14,15], bench_data[0]['results'][0]['data'])
+        self.assertEqual('Finished_With_Errors', bench_data[0]['status'])
 
         self.assertEqual(False, bench_data[1]['current_branch'])
         self.assertEqual(False, bench_data[1]['exists'])
@@ -352,6 +355,7 @@ class BenchmarkExecutionControllerBranchTestCase(TestCase):
         self.assertEqual(self.benchmark_execution1.id, bench_data[2]['benchmark_execution_id'])
         self.assertEqual('00001', bench_data[2]['benchmark_execution_hash'])
         self.assertEqual([1,2,3,4,5], bench_data[2]['results'][0]['data'])
+        self.assertEqual('In_Progress', bench_data[2]['status'])
 
 
     def test_get_stacked_data_different_id(self):
@@ -457,6 +461,9 @@ class BenchmarkExecutionControllerBranchTestCase(TestCase):
         self.assertEqual('00001', bench_data['id1'][2]['benchmark_execution_hash'])
         self.assertEqual('00002', bench_data['id1'][1]['benchmark_execution_hash'])
         self.assertEqual('00003', bench_data['id1'][0]['benchmark_execution_hash'])
+        self.assertEqual('Ready', bench_data['id1'][2]['status'])
+        self.assertEqual('Ready', bench_data['id1'][1]['status'])
+        self.assertEqual('Ready', bench_data['id1'][0]['status'])
 
     def test_get_stacked_data_multiple_id_per_execution(self):
         out_1 = json.dumps([{'visual_type' : 'vertical_bars', 'id' : 'id1', 'data' : [1,2,3,4,5]},     {'visual_type' : 'vertical_bars', 'id' : 'id4', 'data' : [21,22,23,24,25]}])

@@ -48,13 +48,16 @@ class BenchmarkExecutionEntry(models.Model):
         obj['invalidated'] = self.is_invalidated()
         obj['status'] = {}
         obj['status']['index'] = self.status
-        obj['status']['name'] = self.STATUS_TYPE[obj['status']['index']][1]
+        obj['status']['name'] = self.get_status()
         return obj
 
 
     def is_invalidated(self):
         """ Returns true if Benchmark execution is invalidated """
         return self.definition.revision != self.revision_target or self.invalidated
+
+    def get_status(self):
+        return self.STATUS_TYPE[int(self.status)][1]
 
     def get_benchmark_results(self):
         """ Returns all the results for a given benchmark flattened on a list """
