@@ -929,7 +929,7 @@ class BenchmarkExecutionControllerTestCase(TestCase):
         benchmark_execution4 = BenchmarkExecutionEntry.objects.create(definition=self.benchmark_definition1, commit=commit4, worker=self.worker1, report=report_4, invalidated=False, revision_target=28, status=BenchmarkExecutionEntry.READY)
         benchmark_execution5 = BenchmarkExecutionEntry.objects.create(definition=self.benchmark_definition1, commit=commit5, worker=self.worker1, report=report_5, invalidated=False, revision_target=28, status=BenchmarkExecutionEntry.READY)
 
-        fluctuation = BenchmarkExecutionController.get_benchmark_fluctuation(self.git_project1, commit2.commit_hash, 2)
+        fluctuation = BenchmarkExecutionController.get_benchmark_fluctuation(self.git_project1, self.benchmark_definition1.id, self.worker1.id, commit2.commit_hash, 2)
         fluctuation.sort(key=lambda x: x['id'])
 
         self.assertEqual(4, len(fluctuation))
@@ -1026,7 +1026,7 @@ class BenchmarkExecutionControllerTestCase(TestCase):
         benchmark_execution4 = BenchmarkExecutionEntry.objects.create(definition=self.benchmark_definition1, commit=commit4, worker=self.worker1, report=report_4, invalidated=False, revision_target=28, status=BenchmarkExecutionEntry.READY)
         benchmark_execution5 = BenchmarkExecutionEntry.objects.create(definition=self.benchmark_definition1, commit=commit5, worker=self.worker1, report=report_5, invalidated=False, revision_target=28, status=BenchmarkExecutionEntry.READY)
 
-        fluctuation = BenchmarkExecutionController.get_benchmark_fluctuation(self.git_project1, commit2.commit_hash, 2)
+        fluctuation = BenchmarkExecutionController.get_benchmark_fluctuation(self.git_project1, self.benchmark_definition1.id, self.worker1.id, commit2.commit_hash, 2)
         fluctuation.sort(key=lambda x: x['id'])
 
         self.assertEqual(4, len(fluctuation))
@@ -1042,6 +1042,76 @@ class BenchmarkExecutionControllerTestCase(TestCase):
         self.assertEqual('id4', fluctuation[3]['id'])
         self.assertEqual(2.0, fluctuation[3]['min'])
         self.assertEqual(8.0, fluctuation[3]['max'])
+
+    def test_get_benchmark_fluctuation_among_others(self):
+        self.benchmark_execution1.delete()
+        self.benchmark_execution2.delete()
+        self.benchmark_execution3.delete()
+
+        commit0 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash='0000000000000000000000000000000000000000', author=self.git_user1, author_date=timezone.now(), committer=self.git_user1, committer_date=timezone.now())
+        commit1 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash='0000100001000010000100001000010000100001', author=self.git_user1, author_date=timezone.now(), committer=self.git_user1, committer_date=timezone.now())
+
+        branch_test = GitBranchEntry.objects.create(project=self.git_project1, name='branch-test', commit=commit1)
+
+        trail0 = GitBranchTrailEntry.objects.create(project=self.git_project1, branch=branch_test, commit=commit0, order=5)
+        trail1 = GitBranchTrailEntry.objects.create(project=self.git_project1, branch=branch_test, commit=commit1, order=4)
+
+        parent0_1 = GitParentEntry.objects.create(project=self.git_project1, parent=commit0, son=commit1, order=0)
+
+        # First group of Benchmark Executions
+        report_0_0 = CommandSetEntry.objects.create(group=None)
+        report_0_1 = CommandSetEntry.objects.create(group=None)
+
+        com0_0 = CommandEntry.objects.create(command_set=report_0_0, command='command0-0', order=0)
+        com0_1 = CommandEntry.objects.create(command_set=report_0_1, command='command0-1', order=1)
+
+        out_0_0 = json.dumps([{'visual_type' : 'vertical_bars', 'id' : 'id1', 'data' : [1,1,2,3,3]}, {'visual_type' : 'vertical_bars', 'id' : 'id2', 'data' : [1,1,2,3,3]}])
+        out_0_1 = json.dumps([{'visual_type' : 'vertical_bars', 'id' : 'id1', 'data' : [1,1,2,6,6]}, {'visual_type' : 'vertical_bars', 'id' : 'id2', 'data' : [1,1,2,5,5]}])
+
+        CommandResultEntry.objects.create(command=com0_0, out=out_0_0, error='no error', status=0, start_time=timezone.now(), finish_time=timezone.now())
+        CommandResultEntry.objects.create(command=com0_1, out=out_0_1, error='no error', status=0, start_time=timezone.now(), finish_time=timezone.now())
+
+        benchmark_execution0 = BenchmarkExecutionEntry.objects.create(definition=self.benchmark_definition1, commit=commit0, worker=self.worker1, report=report_0_0, invalidated=False, revision_target=28, status=BenchmarkExecutionEntry.READY)
+        benchmark_execution1 = BenchmarkExecutionEntry.objects.create(definition=self.benchmark_definition1, commit=commit1, worker=self.worker1, report=report_0_1, invalidated=False, revision_target=28, status=BenchmarkExecutionEntry.READY)
+
+        # Second group of Benchmark Executions
+        report_1_0 = CommandSetEntry.objects.create(group=None)
+        report_1_1 = CommandSetEntry.objects.create(group=None)
+
+        com1_0 = CommandEntry.objects.create(command_set=report_1_0, command='command1-0', order=0)
+        com1_1 = CommandEntry.objects.create(command_set=report_1_1, command='command1-1', order=1)
+
+        out_1_0 = json.dumps([{'visual_type' : 'vertical_bars', 'id' : 'id1', 'data' : [1,1,2,3,3]}, {'visual_type' : 'vertical_bars', 'id' : 'id2', 'data' : [1,1,2,3,3]}])
+        out_1_1 = json.dumps([{'visual_type' : 'vertical_bars', 'id' : 'id1', 'data' : [1,1,2,7,7]}, {'visual_type' : 'vertical_bars', 'id' : 'id2', 'data' : [1,1,2,8,8]}])
+
+        CommandResultEntry.objects.create(command=com1_0, out=out_1_0, error='no error', status=0, start_time=timezone.now(), finish_time=timezone.now())
+        CommandResultEntry.objects.create(command=com1_1, out=out_1_1, error='no error', status=0, start_time=timezone.now(), finish_time=timezone.now())
+
+        benchmark_execution2 = BenchmarkExecutionEntry.objects.create(definition=self.benchmark_definition2, commit=commit0, worker=self.worker2, report=report_1_0, invalidated=False, revision_target=28, status=BenchmarkExecutionEntry.READY)
+        benchmark_execution3 = BenchmarkExecutionEntry.objects.create(definition=self.benchmark_definition2, commit=commit1, worker=self.worker2, report=report_1_1, invalidated=False, revision_target=28, status=BenchmarkExecutionEntry.READY)
+
+        fluctuation1 = BenchmarkExecutionController.get_benchmark_fluctuation(self.git_project1, self.benchmark_definition1.id, self.worker1.id, commit0.commit_hash, 2)
+        fluctuation1.sort(key=lambda x: x['id'])
+
+        self.assertEqual(2, len(fluctuation1))
+        self.assertEqual('id1', fluctuation1[0]['id'])
+        self.assertEqual(2.0, fluctuation1[0]['min'])
+        self.assertEqual(3.2, fluctuation1[0]['max'])
+        self.assertEqual('id2', fluctuation1[1]['id'])
+        self.assertEqual(2.0, fluctuation1[1]['min'])
+        self.assertEqual(2.8, fluctuation1[1]['max'])
+
+        fluctuation2 = BenchmarkExecutionController.get_benchmark_fluctuation(self.git_project1, self.benchmark_definition2.id, self.worker2.id, commit0.commit_hash, 2)
+        fluctuation2.sort(key=lambda x: x['id'])
+
+        self.assertEqual(2, len(fluctuation2))
+        self.assertEqual('id1', fluctuation2[0]['id'])
+        self.assertEqual(2.0, fluctuation2[0]['min'])
+        self.assertEqual(3.6, fluctuation2[0]['max'])
+        self.assertEqual('id2', fluctuation2[1]['id'])
+        self.assertEqual(2.0, fluctuation2[1]['min'])
+        self.assertEqual(4.0, fluctuation2[1]['max'])
+
 
     def test_does_benchmark_fluctuation_exist(self):
         self.benchmark_definition1.max_fluctuation_percent = 49

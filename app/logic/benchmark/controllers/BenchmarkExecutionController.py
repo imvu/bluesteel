@@ -373,18 +373,22 @@ class BenchmarkExecutionController(object):
         return branches
 
     @staticmethod
-    def get_benchmark_fluctuation(project, commit_hash, fluctuation_window):
+    def get_benchmark_fluctuation(project, benchmark_def_id, worker_id, commit_hash, fluctuation_window):
         """ Returns fluctuation information from a commit range """
         hashes = GitController.get_commit_hashes_parents_and_children(project, commit_hash, fluctuation_window)
         benchmarks = {}
         fluctuations = []
 
         for commit_hash in hashes:
-            bench = BenchmarkExecutionEntry.objects.filter(commit__commit_hash=commit_hash).first()
+            bench = BenchmarkExecutionEntry.objects.filter(
+                definition__id=benchmark_def_id,
+                worker__id=worker_id,
+                commit__commit_hash=commit_hash).first()
             if not bench:
                 continue
 
             results = bench.get_benchmark_results()
+
             for result in results:
                 if result['id'] not in benchmarks:
                     benchmarks[result['id']] = []
@@ -414,15 +418,21 @@ class BenchmarkExecutionController(object):
     @staticmethod
     def does_benchmark_fluctuation_exist(benchmark_exec_entry, fluctuation_window):
         """ Returns true if fluctuation exists """
-        commit_hash = benchmark_exec_entry.commit.commit_hash
-        project = GitProjectEntry.objects.filter(id=benchmark_exec_entry.definition.project.id).first()
+        bench_exec = BenchmarkExecutionEntry.objects.filter(id=benchmark_exec_entry.id).first()
+        if bench_exec is None:
+            return (False, [])
+
+        commit_hash = bench_exec.commit.commit_hash
+        project = GitProjectEntry.objects.filter(id=bench_exec.definition.project.id).first()
         fluctuations = BenchmarkExecutionController.get_benchmark_fluctuation(
             project=project,
+            benchmark_def_id=bench_exec.definition.id,
+            worker_id=bench_exec.worker.id,
             commit_hash=commit_hash,
             fluctuation_window=fluctuation_window
         )
 
-        max_fluctuation_ratio = float(benchmark_exec_entry.definition.max_fluctuation_percent) / 100.0
+        max_fluctuation_ratio = float(bench_exec.definition.max_fluctuation_percent) / 100.0
 
         ret_fluctuations = []
         for fluc in fluctuations:

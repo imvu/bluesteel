@@ -1,6 +1,7 @@
 """ Presenter json views, benchmark execution page functions """
 
 from collections import defaultdict
+from django.db import transaction
 from app.presenter.schemas import BenchmarkExecutionSchemas
 from app.presenter.views.helpers import ViewNotifications
 from app.logic.benchmark.models.BenchmarkExecutionModel import BenchmarkExecutionEntry
@@ -31,7 +32,7 @@ def did_commands_succeed(report):
             return False
     return True
 
-
+@transaction.atomic
 def save_benchmark_execution(request, benchmark_execution_id):
     """ Check and save a benchmark execution data into the db """
     if request.method == 'POST':
