@@ -7,6 +7,7 @@ from django.utils import timezone
 from app.logic.benchmark.controllers.BenchmarkExecutionController import BenchmarkExecutionController
 from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
 from app.logic.benchmark.models.BenchmarkExecutionModel import BenchmarkExecutionEntry
+from app.logic.benchmark.models.BenchmarkFluctuationOverrideModel import BenchmarkFluctuationOverrideEntry
 from app.logic.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
 from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
 from app.logic.bluesteel.controllers.BluesteelProjectController import BluesteelProjectController
@@ -1390,3 +1391,62 @@ class BenchmarkExecutionControllerTestCase(TestCase):
         self.assertEqual(1.0, ret['id1'][0]['average'])
         self.assertEqual(1.0, ret['id1'][1]['average'])
         self.assertEqual(1.5, ret['id1'][2]['average'])
+
+    def test_get_fluctuation_overrides(self):
+        fluc_override_1 = BenchmarkFluctuationOverrideEntry.objects.create(definition=self.benchmark_definition1, result_id='id1', override_value=28)
+        fluc_override_2 = BenchmarkFluctuationOverrideEntry.objects.create(definition=self.benchmark_definition1, result_id='id2', override_value=29)
+        fluc_override_3 = BenchmarkFluctuationOverrideEntry.objects.create(definition=self.benchmark_definition1, result_id='id3', override_value=30)
+
+        ret = BenchmarkExecutionController.get_fluctuation_overrides(self.benchmark_definition1.id)
+
+        self.assertEqual(3, len(ret))
+
+        self.assertTrue('id1' in ret)
+        self.assertTrue('id2' in ret)
+        self.assertTrue('id3' in ret)
+
+        self.assertEqual(0.28, ret['id1'])
+        self.assertEqual(0.29, ret['id2'])
+        self.assertEqual(0.30, ret['id3'])
+
+
+    def test_get_fluctuation_with_overrides_applied(self):
+        max_fluctuation = 0.4
+
+        fluc_overrides = {}
+        fluc_overrides['id2'] = 0.75
+        fluc_overrides['id4'] = 0.28
+
+        fluc_1 = {'id' : 'id1', 'min' : 1.0, 'max' : 1.5}
+        fluc_2 = {'id' : 'id2', 'min' : 1.0, 'max' : 1.5}
+        fluc_3 = {'id' : 'id3', 'min' : 1.0, 'max' : 1.5}
+        fluc_4 = {'id' : 'id4', 'min' : 1.0, 'max' : 1.5}
+        fluc_5 = {'id' : 'id5', 'min' : 1.0, 'max' : 3.5}
+
+        fluctuations = [fluc_1, fluc_2, fluc_3, fluc_4, fluc_5]
+
+        flucs = BenchmarkExecutionController.get_fluctuations_with_overrides_applied(fluctuations, max_fluctuation, fluc_overrides)
+        self.assertTrue(flucs[0])
+
+        fluc_res = flucs[1]
+        fluc_res.sort(key=lambda x: x['id'])
+
+        self.assertEqual('id1', fluc_res[0]['id'])
+        self.assertEqual('id3', fluc_res[1]['id'])
+        self.assertEqual('id4', fluc_res[2]['id'])
+        self.assertEqual('id5', fluc_res[3]['id'])
+
+        self.assertEqual(1.0, fluc_res[0]['min'])
+        self.assertEqual(1.0, fluc_res[1]['min'])
+        self.assertEqual(1.0, fluc_res[2]['min'])
+        self.assertEqual(1.0, fluc_res[3]['min'])
+
+        self.assertEqual(1.5, fluc_res[0]['max'])
+        self.assertEqual(1.5, fluc_res[1]['max'])
+        self.assertEqual(1.5, fluc_res[2]['max'])
+        self.assertEqual(3.5, fluc_res[3]['max'])
+
+        self.assertEqual(0.4, fluc_res[0]['max_fluctuation_applied'])
+        self.assertEqual(0.4, fluc_res[1]['max_fluctuation_applied'])
+        self.assertEqual(0.28, fluc_res[2]['max_fluctuation_applied'])
+        self.assertEqual(0.4, fluc_res[3]['max_fluctuation_applied'])

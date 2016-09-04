@@ -601,7 +601,8 @@ class GitFeedViewsCommitTestCase(TestCase):
         self.assertTrue('BenchmarkDefinition1' in email.content)
         self.assertTrue('Minimum Value: 1.0' in email.content)
         self.assertTrue('Maximum Value: 2.0' in email.content)
-        self.assertTrue('Percent Value: 100.0%' in email.content)
+        self.assertTrue('Max Fluctuation Allowed: 45.0%' in email.content)
+        self.assertTrue('Current Fluctuation Value: 100.0%' in email.content)
         self.assertTrue('http://testserver/main/execution/2/window/' in email.content)
 
 

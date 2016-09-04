@@ -97,7 +97,8 @@ def notify_benchmark_fluctuation(benchmark_execution, domain, fluctuations):
         content += '        Result ID with fluctuations: {0}\n'.format(fluc['id'])
         content += '            Minimum Value: {0}\n'.format(fluc['min'])
         content += '            Maximum Value: {0}\n'.format(fluc['max'])
-        content += '            Percent Value: {0}%\n'.format(fluc_percent)
+        content += '            Current Fluctuation Value: {0}%\n'.format(fluc_percent)
+        content += '            Max Fluctuation Allowed: {0}%\n'.format(float(fluc['max_fluctuation_applied']) * 100.0)
         content += '\n'
 
     content += '    - You can visualize the result with:\n'

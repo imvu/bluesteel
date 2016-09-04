@@ -8,6 +8,7 @@ from django.core.paginator import Paginator
 from django.utils import timezone
 from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
 from app.logic.benchmark.models.BenchmarkExecutionModel import BenchmarkExecutionEntry
+from app.logic.benchmark.models.BenchmarkFluctuationOverrideModel import BenchmarkFluctuationOverrideEntry
 from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
 from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
 from app.logic.commandrepo.models.CommandSetModel import CommandSetEntry
@@ -433,15 +434,12 @@ class BenchmarkExecutionController(object):
         )
 
         max_fluctuation_ratio = float(bench_exec.definition.max_fluctuation_percent) / 100.0
+        fluctuation_overrides = BenchmarkExecutionController.get_fluctuation_overrides(bench_exec.definition.id)
 
-        ret_fluctuations = []
-        for fluc in fluctuations:
-            fluc_change = float(fluc['max']) - float(fluc['min'])
-            fluc_ratio = fluc_change / float(fluc['min'])
-            if fluc_ratio >= max_fluctuation_ratio:
-                ret_fluctuations.append(fluc)
-
-        return (len(ret_fluctuations) > 0, ret_fluctuations)
+        return BenchmarkExecutionController.get_fluctuations_with_overrides_applied(
+            fluctuations,
+            max_fluctuation_ratio,
+            fluctuation_overrides)
 
     @staticmethod
     def is_benchmark_young_for_notifications(benchmark_exec_entry):
@@ -457,3 +455,36 @@ class BenchmarkExecutionController(object):
         delta = now_date - author_date
 
         return (float(delta.days) / 7.0) < float(max_weeks_old_notify)
+
+
+    @staticmethod
+    def get_fluctuation_overrides(benchmark_definition_id):
+        """ Return a dictionary with all the fluctuation overrides (id + value) """
+        fluctuations_overrides = BenchmarkFluctuationOverrideEntry.objects.filter(
+            definition__id=benchmark_definition_id)
+
+        fluc_dict = {}
+
+        for overrides in fluctuations_overrides:
+            fluc_dict[overrides.result_id] = float(overrides.override_value) / 100.0
+
+        return fluc_dict
+
+
+    @staticmethod
+    def get_fluctuations_with_overrides_applied(fluctuations, default_fluctuation_ratio, fluctuation_overrides):
+        """ Returns a list of fluctuations with the fluctuation overrides already applied """
+        ret_fluctuations = []
+        for fluc in fluctuations:
+
+            ratio_to_apply = default_fluctuation_ratio
+            if fluc['id'] in fluctuation_overrides:
+                ratio_to_apply = fluctuation_overrides[fluc['id']]
+
+            fluc_change = float(fluc['max']) - float(fluc['min'])
+            fluc_ratio = fluc_change / float(fluc['min'])
+            if fluc_ratio >= ratio_to_apply:
+                fluc['max_fluctuation_applied'] = ratio_to_apply
+                ret_fluctuations.append(fluc)
+
+        return (len(ret_fluctuations) > 0, ret_fluctuations)
