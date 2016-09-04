@@ -1,5 +1,6 @@
 """ Presenter json views, Project page functions """
 
+from django.db import transaction
 from app.presenter.views.helpers import ViewUrlGenerator
 from app.presenter.schemas import BluesteelSchemas
 from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
@@ -22,6 +23,7 @@ def filter_folder_path(path):
     return local_search_path
 
 
+@transaction.atomic
 def save_project(request, project_id):
     """ Save project properties """
     if request.method == 'POST':
@@ -53,6 +55,7 @@ def save_project(request, project_id):
     else:
         return res.get_only_post_allowed({})
 
+@transaction.atomic
 def delete_project(request, project_id):
     """ Delete project on a layout """
     if request.method == 'POST':

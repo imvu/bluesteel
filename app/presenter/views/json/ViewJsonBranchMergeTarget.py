@@ -1,5 +1,6 @@
 """ Git BranchMergetTarget views """
 
+from django.db import transaction
 from app.logic.httpcommon import res, val
 from app.logic.logger.models.LogModel import LogEntry
 from app.logic.gitrepo.models.GitProjectModel import GitProjectEntry
@@ -9,7 +10,7 @@ from app.logic.gitrepo.models.GitBranchMergeTargetModel import GitBranchMergeTar
 from app.logic.gitrepo.controllers.GitController import GitController
 from app.presenter.schemas import GitRepoSchemas
 
-
+@transaction.atomic
 def set_branch_merge_target(request, project_id):
     """ Insert new commits to a given git project """
     if request.method == 'POST':

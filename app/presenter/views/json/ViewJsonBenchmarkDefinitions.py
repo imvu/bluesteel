@@ -1,5 +1,6 @@
 """ Presenter json views, benchmark definition page functions """
 
+from django.db import transaction
 from app.presenter.views.helpers import ViewUrlGenerator
 from app.presenter.schemas import BenchmarkDefinitionSchemas
 from app.logic.benchmark.controllers.BenchmarkDefinitionController import BenchmarkDefinitionController
@@ -8,6 +9,7 @@ from app.logic.gitrepo.models.GitCommitModel import GitCommitEntry
 from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
 from app.logic.httpcommon import res, val
 
+@transaction.atomic
 def create_new_benchmark_definition(request):
     """ Creates a new benchmark defintion """
     if request.method == 'POST':
@@ -29,7 +31,7 @@ def create_new_benchmark_definition(request):
     else:
         return res.get_response(400, 'Only post allowed', {})
 
-
+@transaction.atomic
 def view_save_benchmark_definition(request, benchmark_definition_id):
     """ Save benchmark definition properties """
     if request.method == 'POST':
@@ -62,6 +64,7 @@ def view_save_benchmark_definition(request, benchmark_definition_id):
     else:
         return res.get_only_post_allowed({})
 
+@transaction.atomic
 def view_delete_benchmark_definition(request, benchmark_definition_id):
     """ Delete benchmark definition properties """
     if request.method == 'POST':

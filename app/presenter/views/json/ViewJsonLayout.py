@@ -1,5 +1,6 @@
 """ Presenter json views, layout page functions """
 
+from django.db import transaction
 from app.presenter.views.helpers import ViewUrlGenerator
 from app.presenter.schemas import BluesteelSchemas
 from app.logic.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
@@ -8,6 +9,7 @@ from app.logic.bluesteel.controllers.BluesteelLayoutController import BluesteelL
 from app.logic.httpcommon import res
 from app.logic.httpcommon import val
 
+@transaction.atomic
 def post_create_new_layout(request):
     """ Create a new layout and return the ID of it """
     if request.method == 'POST':
@@ -22,6 +24,7 @@ def post_create_new_layout(request):
     else:
         return res.get_only_post_allowed({})
 
+@transaction.atomic
 def delete(request, layout_id):
     """ Layout deletion """
     if request.method == 'POST':
@@ -37,6 +40,7 @@ def delete(request, layout_id):
     else:
         return res.get_only_post_allowed({})
 
+@transaction.atomic
 def wipe(request, layout_id):
     """ Layout wipe data """
     if request.method == 'POST':
@@ -55,6 +59,7 @@ def wipe(request, layout_id):
     else:
         return res.get_only_post_allowed({})
 
+@transaction.atomic
 def save_layout(request, layout_id):
     """ Save layout properties """
     if request.method == 'POST':
@@ -82,6 +87,7 @@ def save_layout(request, layout_id):
     else:
         return res.get_only_post_allowed({})
 
+@transaction.atomic
 def add_default_project(request, layout_id):
     """ Add default projet to layout """
     if request.method == 'POST':

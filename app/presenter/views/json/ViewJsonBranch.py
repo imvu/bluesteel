@@ -1,10 +1,12 @@
 """ Git Branch json views """
 
+from django.db import transaction
 from app.logic.httpcommon import res
 from app.logic.gitrepo.models.GitProjectModel import GitProjectEntry
 from app.logic.gitrepo.models.GitBranchModel import GitBranchEntry
 from app.logic.gitrepo.controllers.GitController import GitController
 
+@transaction.atomic
 def update_branch_order_value(request, branch_id, project_id, order_value):
     """ Change branch order value """
     if request.method == 'POST':
