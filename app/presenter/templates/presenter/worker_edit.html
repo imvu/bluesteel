@@ -12,10 +12,10 @@
                 id="save_worker_form"
         >
             <li class="horizontal">
-                <div class="upper_card edit_card card_padding_small card_small">
+                <div class="upper_card edit_card card_padding_small">
                     <div class="title">Worker - {{worker.name}}</div>
                 </div>
-                <div class="midle_card edit_card card_padding_large card_small">
+                <div class="midle_card edit_card card_padding_large">
                     <ul class="no_dots no_indent">
                         <li>
                             <div class="list_label indent_1">DESCRIPTION</div>
@@ -61,6 +61,13 @@
                                         id='worker_edit_save_button'
                                         onclick="saveWorker('save_worker_form');"
                             >Save</button>
+                        </li>
+                        <li class="horizontal">
+                            <button     class="btn_rect danger"
+                                        type='button'
+                                        id='worker_edit_save_button'
+                                        onclick="executeAndRedirect('{{worker.url.delete}}', '');"
+                            >Delete</button>
                         </li>
                     </ul>
                 </div>

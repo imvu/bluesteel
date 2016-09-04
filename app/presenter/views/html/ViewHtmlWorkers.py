@@ -79,6 +79,7 @@ def get_worker_edit(request, worker_id):
         data['worker'] = worker_entry.as_object()
         data['worker']['url'] = {}
         data['worker']['url']['save'] = ViewUrlGenerator.get_worker_save_url(worker_id)
+        data['worker']['url']['delete'] = ViewUrlGenerator.get_worker_delete_url(worker_id)
 
         return res.get_template_data(request, 'presenter/worker_edit.html', data)
     else:

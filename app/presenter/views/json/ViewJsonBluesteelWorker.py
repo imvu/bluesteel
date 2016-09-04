@@ -1,5 +1,6 @@
 """ Presenter views, Json BluesteelWorker functions """
 
+from django.db import transaction
 from django.middleware import csrf
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
@@ -138,7 +139,7 @@ def create_worker_info(request):
     else:
         return res.get_only_post_allowed({})
 
-
+@transaction.atomic
 def login_worker_info(request):
     if request.method == 'POST':
         (json_valid, post_info) = val.validate_json_string(request.body)
@@ -163,6 +164,7 @@ def login_worker_info(request):
     else:
         return res.get_only_post_allowed({})
 
+@transaction.atomic
 def update_worker_activity(request, worker_id):
     if request.method == 'POST':
         worker = WorkerEntry.objects.filter(id=worker_id).first()
@@ -174,6 +176,7 @@ def update_worker_activity(request, worker_id):
     else:
         return res.get_only_post_allowed({})
 
+@transaction.atomic
 def save_worker(request, worker_id):
     if request.method == 'POST':
         (json_valid, post_info) = val.validate_json_string(request.body)
@@ -194,5 +197,20 @@ def save_worker(request, worker_id):
             worker.save()
 
         return res.get_response(200, 'Worker Saved!', {})
+    else:
+        return res.get_only_post_allowed({})
+
+@transaction.atomic
+def delete_worker(request, worker_id):
+    if request.method == 'POST':
+        worker = WorkerEntry.objects.filter(id=worker_id).first()
+        if worker is None:
+            return res.get_response(400, 'Worker not found', {})
+        else:
+            worker.delete()
+
+        obj = {}
+        obj['redirect'] = ViewUrlGenerator.get_worker_all_url(1)
+        return res.get_response(200, 'Worker Deleted!', obj)
     else:
         return res.get_only_post_allowed({})

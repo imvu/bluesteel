@@ -439,6 +439,30 @@ class ViewsBluesteelWorkerTestCase(TestCase):
         self.assertEqual(True, worker.git_feeder)
         self.assertEqual(30, worker.max_feed_reports)
 
+    def test_delete_worker(self):
+        worker_new = WorkerEntry.objects.create(
+            name='worker-new',
+            uuid='8a88432d-33db-4d24-a0a7-2f863e111111',
+            description='description-1',
+            git_feeder=False,
+            user=self.user1
+        )
+
+        self.assertEqual(1, WorkerEntry.objects.filter(id=worker_new.id).count())
+
+        resp = self.client.post(
+            '/main/bluesteelworker/{0}/delete/'.format(worker_new.id),
+            data='',
+            content_type='text/plain'
+        )
+
+        res.check_cross_origin_headers(self, resp)
+        resp_obj = json.loads(resp.content)
+
+        self.assertEqual(200, resp_obj['status'])
+        self.assertEqual('/main/worker/all/page/1/', resp_obj['data']['redirect'])
+        self.assertEqual(0, WorkerEntry.objects.filter(id=worker_new.id).count())
+
 
     def test_get_worker_files_hash_exists(self):
         WorkerFilesHashEntry.objects.create(files_hash='aaaa')

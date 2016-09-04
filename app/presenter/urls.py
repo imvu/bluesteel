@@ -178,6 +178,9 @@ urlpatterns = [
     url(r'^bluesteelworker/(?P<worker_id>\d+)/save/',
         app.presenter.views.json.ViewJsonBluesteelWorker.save_worker),
 
+    url(r'^bluesteelworker/(?P<worker_id>\d+)/delete/',
+        app.presenter.views.json.ViewJsonBluesteelWorker.delete_worker),
+
     url(r'^feed/commit/project/(?P<project_id>\d+)/$',
         app.presenter.views.json.ViewJsonGitFeeder.post_feed_commits),
 
