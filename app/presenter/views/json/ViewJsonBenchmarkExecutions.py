@@ -87,7 +87,7 @@ def save_benchmark_execution(request, benchmark_execution_id):
     else:
         return res.get_response(400, 'Only post allowed', {})
 
-
+@transaction.atomic
 def invalidate_benchmark_execution(request, benchmark_execution_id):
     """ Check and save a benchmark execution data into the db """
     if request.method == 'POST':
