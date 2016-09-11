@@ -4,25 +4,34 @@
 
 {% block data_body %}
 <div class="container_med container_height">
-    <div class="upper_card white_card card_padding_small">
-        <div class="normal centered">{{confirm.title}}</div>
+    <div class="upper_card white_card card_padding_small card_medium">
+        <div class="grid grid-pad-2">
+            <div class="grid-col-1-1 grid-cell-pad-2-10">
+                <div class="normal centered">{{confirm.title}}</div>
+            </div>
+        </div>
     </div>
-    <div class="lower_card white_card card_padding_large">
-        <div class="normal indent_1">{{confirm.text}}</div>
-        <ul class="no_dots no_indent vertical_margin horizontal_list">
-                <li class="horizontal">
-                    <button     class="btn_rect primary"
-                                type='button'
-                                onclick="window.location='{{confirm.url.cancel}}';"
-                    >Cancel</button>
-                </li>
-                <li class="horizontal">
-                    <button     class="btn_rect danger"
-                                type='button'
-                                onclick="executeAndRedirect('{{confirm.url.accept}}', '');"
-                    >Accept</button>
-                </li>
-            </ul>
+    <div class="lower_card white_card card_padding_large card_medium">
+        <div class="grid grid-pad-2">
+            <div class="grid-col-1-1 grid-cell-pad-2-10">
+                <div class="normal">{{confirm.text}}</div>
+            </div>
+        </div>
+
+        <div class="grid grid-pad-20">
+            <div class="grid-col-1-2 grid-cell-pad-2-10 grid-cell-centered">
+                <button     class="btn_rect primary"
+                            type='button'
+                            onclick="window.location='{{confirm.url.cancel}}';"
+                >Cancel</button>
+            </div>
+            <div class="grid-col-1-2 grid-cell-pad-2-10 grid-cell-centered">
+                <button     class="btn_rect danger"
+                            type='button'
+                            onclick="executeAndRedirect('{{confirm.url.accept}}', '');"
+                >Accept</button>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

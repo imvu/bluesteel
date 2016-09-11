@@ -6,67 +6,86 @@
 {% block data_body %}
 <div class="container_med">
     {% if commit_data %}
-        <div class="upper_card white_card card_padding_small">
-            <div class="title">COMMIT</div>
-            <ul class="no_dots vertical_margin">
-                <li>
-                    <div class="list_label indent_1">HASH</div>
-                    <div class="normal indent_2">{{commit_data.commit.hash}}</div>
-                </li>
-                <br/>
-                <li>
-                    <div class="list_label indent_1">AUTHOR</div>
-                    <div class="normal indent_2">{{commit_data.commit.author.name}} - ({{commit_data.commit.author.email}})</div>
-                </li>
-                <br/>
-                <li>
-                    <div class="list_label indent_1">COMMITER</div>
-                    <div class="normal indent_2">{{commit_data.commit.committer.name}} - ({{commit_data.commit.committer.email}})</div>
-                </li>
-            </ul>
+        <div class="upper_card white_card card_padding_small card_medium">
+            <div class="grid grid-pad-2">
+                <div class="grid-col-1-1 grid-cell-pad-2-10">
+                    <div class="title centered">Commit by Workers</div>
+                </div>
+            </div>
         </div>
-        <div class="middle_card white_card card_padding_small">
-            <div class="title">WORKERS</div>
-            {% for item in commit_data.workers %}
-                <ul class="no_dots vertical_margin">
-                    <li>
-                        <div class="list_label indent_1">WORKER</div>
-                        <div class="normal indent_2">Name: {{item.worker.name}}</div>
-                        <div class="normal indent_2">UUID: {{item.worker.uuid}}</div>
-                        <div class="normal indent_2">OS: {{item.worker.operative_system}}</div>
-                    </li>
-                    <br/>
+        <div class="middle_card white_card card_padding_small card_medium">
+            <div class="grid grid-pad-2">
+                <div class="grid-col-1-1 grid-cell-pad-2-10">
+                    <div class="list_label">HASH</div>
+                </div>
+                <div class="grid-col-1-1 grid-cell-pad-2-10">
+                    <div class="normal">{{commit_data.commit.hash}}</div>
+                </div>
+            </div>
 
-                    <li>
-                        <div class="list_label indent_1">EXECUTIONS</div>
-                        <ul class="no_dots no_indent vertical_margin horizontal_list">
-                            {% for execution in item.executions %}
-                            <li class="horizontal">
-                                <button     class="btn_round light"
-                                            type='button'
-                                            onclick="window.location='{{execution.url}}'"
-                                >{{execution.name}}  ({{execution.id}})</button>
-                            </li>
-                            {% endfor %}
-                        </ul>
-                    </li>
-                    <br/>
-                </ul>
+            <div class="grid grid-pad-10">
+                <div class="grid-col-1-1 grid-cell-pad-2-10">
+                    <div class="list_label">AUTHOR</div>
+                </div>
+                <div class="grid-col-1-1 grid-cell-pad-2-10">
+                    <div class="normal">{{commit_data.commit.author.name}} - ({{commit_data.commit.author.email}})</div>
+                </div>
+            </div>
+
+            <div class="grid grid-pad-10">
+                <div class="grid-col-1-1 grid-cell-pad-2-10">
+                    <div class="list_label">COMMITER</div>
+                </div>
+                <div class="grid-col-1-1 grid-cell-pad-2-10">
+                    <div class="normal">{{commit_data.commit.committer.name}} - ({{commit_data.commit.committer.email}})</div>
+                </div>
+            </div>
+        </div>
+        <div class="middle_card white_card card_padding_small card_medium">
+            {% for item in commit_data.workers %}
+                <div class="grid grid-pad-10">
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="list_label">WORKER</div>
+                    </div>
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="normal">Name: {{item.worker.name}}</div>
+                    </div>
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="normal">UUID: {{item.worker.uuid}}</div>
+                    </div>
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="normal">OS: {{item.worker.operative_system}}</div>
+                    </div>
+                </div>
+
+                <div class="grid grid-pad-10">
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="list_label">EXECUTIONS</div>
+                    </div>
+                        {% for execution in item.executions %}
+                        <div class="grid-col-1-1 grid-cell-pad-2-10 grid-cell-centered">
+                            <button     class="btn_round light"
+                                        type='button'
+                                        onclick="window.location='{{execution.url}}'"
+                            >{{execution.name}}  ({{execution.id}})</button>
+                        </div>
+                        {% endfor %}
+                </div>
             {% endfor %}
         </div>
-        <div class="lower_card white_card card_padding_small">
-            <ul class="no_dots no_indent vertical_margin horizontal_list">
-                <li class="horizontal">
+        <div class="lower_card white_card card_padding_small card_medium">
+            <div class="grid grid-pad-10">
+                <div class="grid-col-1-2 grid-cell-pad-2-10 grid-cell-centered">
                     <button     class="btn_round light"
                                 onclick="window.location='{{commit_data.commit.parent.url}}'"
                     >Parent Commit</button>
-                </li>
-                <li class="horizontal">
+                </div>
+                <div class="grid-col-1-2 grid-cell-pad-2-10 grid-cell-centered">
                     <button     class="btn_round light"
                                 onclick="window.location='{{commit_data.commit.son.url}}'"
                     >Son Commit</button>
-                </li>
-            </ul>
+                </div>
+            </div>
         </div>
     {% endif %}
 </div>

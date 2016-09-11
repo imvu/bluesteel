@@ -7,44 +7,66 @@
     <ul class="no_dots no_indent">
         {% for definition in definitions %}
             <li>
-                <div class="upper_card white_card card_padding_small">
-                    <div class="title centered">Benchmark Definition - {{definition.name}}</div>
+                <div class="upper_card white_card card_padding_small card_medium">
+                    <div class="grid grid-pad-2">
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
+                            <div class="title centered">Benchmark Definition - {{definition.name}}</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="middle_card white_card card_padding_large">
-                    <div class="list_label indent_1">NAME</div>
-                    <ul class="no_dots vertical_margin">
-                        <li><div class="normal">Name of the Benchmark Definition.</div></li>
-                        <li>
+                <div class="middle_card white_card card_padding_large card_medium">
+                    <div class="grid grid-pad-20">
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
+                            <div class="list_label">NAME</div>
+                        </div>
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
+                            <div class="normal">Name of the Benchmark Definition.</div>
+                        </div>
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
                             <div class="container_input">
                                 <input  class="command_input" type="text" value="{{definition.name}}" readonly></input>
                             </div>
-                        </li>
-                    </ul>
-                    <br/>
-                    <div class="list_label indent_1">LAYOUT</div>
-                    <ul class="no_dots vertical_margin">
-                        <li><div class="normal">Layout name where this Benchmark Definition is associated with.</div></li>
-                        <li>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-pad-20">
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
+                            <div class="list_label">LAYOUT</div>
+                        </div>
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
+                            <div class="normal">Layout name where this Benchmark Definition is associated with.</div>
+                        </div>
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
                             <div class="container_input">
                                 <input  class="command_input" type="text" value="{{definition.layout.name}}" readonly></input>
                             </div>
-                        </li>
-                    </ul>
-                    <br/>
-                    <div class="list_label indent_1">PROJECT</div>
-                    <ul class="no_dots vertical_margin">
-                        <li><div class="normal">Name of the project used by this Benchmark Definition to execute the commands.</div></li>
-                        <li>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-pad-20">
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
+                            <div class="list_label">PROJECT</div>
+                        </div>
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
+                            <div class="normal">Name of the project used by this Benchmark Definition to execute the commands.</div>
+                        </div>
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
                             <div class="container_input">
                                 <input  class="command_input" type="text" value="{{definition.project.name}}" readonly></input>
                             </div>
-                        </li>
-                    </ul>
-                    <br/>
-                    <div class="list_label indent_1">COMMANDS</div>
-                    <ul class="no_dots vertical_margin">
-                    {% for command in definition.command_set.commands %}
-                        <li>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-pad-20">
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
+                            <div class="list_label">COMMANDS</div>
+                        </div>
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
+                            <div class="normal">Sequence of commands that will be executed for every Benchmark Execution.</div>
+                        </div>
+
+                        {% for command in definition.command_set.commands %}
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
                             <div class="container_input">
                                 <input  class="command_input"
                                         type="text"
@@ -54,42 +76,74 @@
                                         readonly
                                 ></input>
                             </div>
-                        </li>
-                    {% endfor %}
-                    </ul>
+                        </div>
+                        {% endfor %}
+                    </div>
                 </div>
-                <div class="middle_card white_card card_padding_large">
-                    <div class="list_label indent_1">MAXIMUM FLUCTUATION</div>
-                    <ul class="no_dots vertical_margin">
-                        <li><div class="normal">Maximum amount of fluctuation allowed on every benchmark execution before sending a notification.</div></li>
-                        <li>
+                <div class="middle_card white_card card_padding_large card_medium">
+                    <div class="grid grid-pad-20">
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
+                            <div class="list_label">MAXIMUM DEFAULT FLUCTUATION</div>
+                        </div>
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
+                            <div class="normal">Maximum amount of fluctuation allowed on every benchmark execution before sending a notification.</div>
+                        </div>
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
                             <div class="container_input">
                                 <input  class="command_input" type="text" value="{{definition.max_fluctuation_percent}}% Fluctuation" readonly></input>
                             </div>
-                        </li>
-                    </ul>
-                    <br/>
-                    <div class="list_label indent_1">MAXIMUM WEEKS OLD</div>
-                    <ul class="no_dots vertical_margin">
-                        <li><div class="normal">Maximum amount of weeks since the commit was created to send notifications about this benchmark execution.</div></li>
-                        <li>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-pad-20">
+                        <div class="grid-col-1-1 grid-cell-pad-5-10">
+                            <div class="list_label">MAXIMUM FLUCTUATION OVERRIDES</div>
+                        </div>
+                        <div class="grid-col-7-8 grid-cell-pad-5-10">
                             <div class="container_input">
                                 <input  class="command_input" type="text" value="{{definition.max_weeks_old_notify.current_name}}" readonly></input>
                             </div>
-                        </li>
-                    </ul>
-                    <br/>
+                        </div>
+                        <div class="grid-col-1-8 grid-cell-pad-5-10">
+                            <button     class="btn_icon icon_gray"
+                                        type='button'
+                                        onclick=""
+                            >
+                                <i class="fa fa-times-circle fa-3x"></i>
+                            </button>
+                        </div>
+                        <div class="grid-col-1-1 grid-cell-pad-5-10 grid-cell-centered">
+                            <button     class="btn_round light"
+                                        type='button'
+                                        onclick=""
+                            >Add Override</button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-pad-20">
+                        <div class="grid-col-1-1 grid-cell-pad-5-10">
+                            <div class="list_label">MAXIMUM WEEKS OLD</div>
+                        </div>
+                        <div class="grid-col-1-1 grid-cell-pad-5-10">
+                            <div class="normal">Maximum amount of weeks since the commit was created to send notifications about this benchmark execution.</div>
+                        </div>
+                        <div class="grid-col-1-1 grid-cell-pad-5-10">
+                            <div class="container_input">
+                                <input  class="command_input" type="text" value="{{definition.max_weeks_old_notify.current_name}}" readonly></input>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="lower_card white_card card_padding_small">
-                <ul class="no_dots no_indent vertical_margin horizontal_list">
-                    <li class="horizontal">
-                        <button     class="btn_round light"
-                                    type='button'
-                                    onclick="window.location='{{definition.url.edit}}'"
-                        >Edit</button>
-                    </li>
-                </ul>
-            </div>
+                <div class="lower_card white_card card_padding_small card_medium">
+                    <div class="grid grid-pad-2">
+                        <div class="grid-col-1-1 grid-cell-pad-5-10 grid-cell-centered">
+                            <button     class="btn_round light"
+                                        type='button'
+                                        onclick="window.location='{{definition.url.edit}}'"
+                            >Edit</button>
+                        </div>
+                    </div>
+                </div>
             </li>
         {% endfor %}
     </ul>

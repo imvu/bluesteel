@@ -4,28 +4,41 @@
 
 {% block data_body %}
 <div class="container_med">
-    <div class="upper_card edit_card card_padding_large">
-        <div class="title">LAYOUT</div>
+    <div class="upper_card edit_card card_padding_small card_medium">
+        <div class="grid grid-pad-2">
+            <div class="grid-col-1-1 grid-cell-pad-2-10">
+                <div class="title centered">Layout - {{layout.id}}</div>
+            </div>
+        </div>
+    </div>
+    <div class="middle_card edit_card card_padding_large card_medium">
         <form   action="{{layout.url.save}}"
                 method="POST"
                 name="layoutForm"
                 id="layout_form"
         >
-            <ul class="no_dots">
-                <li>
-                    <div class="list_label indent_1">NAME</div>
-                </li>
-                <li>
+            <div class="grid grid-pad-20">
+                <div class="grid-col-1-1 grid-cell-pad-2-10">
+                    <div class="list_label">NAME</div>
+                </div>
+                <div class="grid-col-1-1 grid-cell-pad-2-10">
+                    <div class="normal">Name of the Layout.</div>
+                </div>
+                <div class="grid-col-1-1 grid-cell-pad-2-10">
                     <div class="container_input">
                         <input class="command_input" type="text" name="layout_name" value="{{layout.name}}" maxlength="50"></input>
                     </div>
-                </li>
-            </ul>
-            <ul class="no_dots">
-                <li>
-                    <div class="list_label indent_1">STATUS</div>
-                </li>
-                <li>
+                </div>
+            </div>
+
+            <div class="grid grid-pad-20">
+                <div class="grid-col-1-1 grid-cell-pad-2-10">
+                    <div class="list_label">STATUS</div>
+                </div>
+                <div class="grid-col-1-1 grid-cell-pad-2-10">
+                    <div class="normal">Determines if this layout is active or not to allow workers to work on it.</div>
+                </div>
+                <div class="grid-col-1-1 grid-cell-pad-2-10">
                     <div class="container_input">
                         <select     class="selection individual"
                                     name="layout_active"
@@ -35,13 +48,17 @@
                             {% endfor %}
                         </select>
                     </div>
-                </li>
-            </ul>
-            <ul class="no_dots">
-                <li>
-                    <div class="list_label indent_1">FEED COMMITS FROM</div>
-                </li>
-                <li>
+                </div>
+            </div>
+
+            <div class="grid grid-pad-20">
+                <div class="grid-col-1-1 grid-cell-pad-2-10">
+                    <div class="list_label">FEED COMMITS FROM</div>
+                </div>
+                <div class="grid-col-1-1 grid-cell-pad-2-10">
+                    <div class="normal">From all the projects associated with this Layout, specifies which is the one that will be used to feed commits to BlueSteel.</div>
+                </div>
+                <div class="grid-col-1-1 grid-cell-pad-2-10">
                     <div class="container_input">
                         <select     class="selection individual"
                                     name="layout_project_index_path"
@@ -51,37 +68,40 @@
                             {% endfor %}
                         </select>
                     </div>
-                </li>
-            </ul>
-            <ul class="no_dots no_indent vertical_margin horizontal_list">
-                <li class="horizontal">
+                </div>
+            </div>
+
+            <div class="grid grid-pad-2">
+                <div class="grid-col-1-2 grid-cell-pad-2-10 grid-cell-centered">
                     <button     class="btn_rect primary"
                                 type='button'
                                 onclick="saveLayout('layout_form');"
                     >Save</button>
-                </li>
-                <li class="horizontal">
+                </div>
+                <div class="grid-col-1-2 grid-cell-pad-2-10 grid-cell-centered">
                     <button     class="btn_rect danger"
                                 type='button'
                                 onclick="window.location='{{layout.url.confirm_delete}}';"
                     >Delete</button>
-                </li>
-            </ul>
+                </div>
+            </div>
         </form>
     </div>
     {% for project in layout.projects %}
-        <div class="middle_card edit_card card_padding_large">
-            <div class="title">PROJECT</div>
+        <div class="middle_card edit_card card_padding_large card_medium">
             <form   action="{{project.url.save}}"
                     method="POST"
                     name="projectForm"
                     id="project_form_{{forloop.counter0}}"
             >
-                <ul class="no_dots vertical_margin">
-                    <li>
-                        <div class="list_label indent_1">NAME</div>
-                    </li>
-                    <li>
+                <div class="grid grid-pad-20">
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="list_label">PROJECT NAME</div>
+                    </div>
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="normal">Name of the Project associated with the Layout above.</div>
+                    </div>
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
                         <div class="container_input">
                             <input  class="command_input"
                                     type="text"
@@ -90,13 +110,17 @@
                                     maxlength="50"
                             ></input>
                         </div>
-                    </li>
-                </ul>
-                <ul class="no_dots vertical_margin">
-                    <li>
-                        <div class="list_label indent_1">GIT PROJECT LOCAL SEARCH PATH</div>
-                    </li>
-                    <li>
+                    </div>
+                </div>
+
+                <div class="grid grid-pad-20">
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="list_label">GIT PROJECT LOCAL SEARCH PATH</div>
+                    </div>
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="normal">Local search path to help the workers find the correct git project inside the Layout project hierarchy.</div>
+                    </div>
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
                         <div class="container_input">
                             <input  class="command_input"
                                     type="text"
@@ -105,79 +129,90 @@
                                     maxlength="255"
                             ></input>
                         </div>
-                    </li>
-                </ul>
+                    </div>
+                </div>
 
                 {% for command_set in project.command_group.command_sets %}
-                    <ul     id="command_list_{{forloop.parentloop.counter0}}_{{forloop.counter0}}"
-                            class="no_dots vertical_margin"
-                    >
-                        <li>
-                            <div class="list_label indent_1">{{command_set.name}}</div>
-                        </li>
-                        {% for command in command_set.commands %}
-                        <li     class="no_text"
-                                id="command_{{command_set.name}}_{{forloop.counter0}}">
+                <div class="grid grid-pad-20" id="command_list_{{forloop.parentloop.counter0}}_{{forloop.counter0}}">
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="list_label">{{command_set.name}} COMMANDS</div>
+                    </div>
+
+                    {% if command_set.name == "CLONE" %}
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="normal">Sequence of commands that the workers will use to clone this project the first time it is retrieved from inet.</div>
+                    </div>
+                    {% elif command_set.name == "FETCH" %}
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="normal">Sequence of commands that the workers will use to fetch this project to get the latests changes in the code.</div>
+                    </div>
+                    {% endif %}
+                    {% for command in command_set.commands %}
+                    <div id="command_{{command_set.name}}_{{forloop.counter0}}">
+                        <div class="grid-col-7-8 grid-cell-pad-2-10">
                             <div class="container_input">
                                 <input  class="command_input"
                                         type="text"
-                                        name="command_{{command_set.name}}_{{forloop.counter0}}"
+                                        name="command_{{forloop.counter0}}"
                                         value="{{command.command}}"
                                         maxlength="255"
                                 ></input>
                             </div>
+                        </div>
+                        <div class="grid-col-1-8 grid-cell-pad-2-10">
                             <button     class="btn_icon icon_gray"
                                         type='button'
                                         onclick="removeListElement('command_{{command_set.name}}_{{forloop.counter0}}');"
                             >
                                 <i class="fa fa-times-circle fa-2x"></i>
                             </button>
-                        </li>
-                        {% endfor %}
-                    </ul>
-                    <ul class="no_dots no_indent vertical_margin horizontal_list">
-                        <li class="horizontal">
-                            <!-- <button class="btn_icon icon_gray"><i class="fa fa-plus-circle fa-2x"></i></button> -->
-                            <button     class="btn_round light"
-                                        type='button'
-                                        onclick="addListElement(this, '{{forloop.counter0}}', 'command_list_{{forloop.parentloop.counter0}}_{{forloop.counter0}}', 'command_{{command_set.name}}_');"
-                            >Add Command</button>
-                        </li>
-                    </ul>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="grid grid-pad-10">
+                    <div class="grid-col-1-1 grid-cell-pad-2-10 grid-cell-centered">
+                        <button     class="btn_round light"
+                                    type='button'
+                                    onclick="addListElement(this, '{{forloop.counter0}}', 'command_list_{{forloop.parentloop.counter0}}_{{forloop.counter0}}', 'command_{{command_set.name}}_');"
+                        >Add Command</button>
+                    </div>
+                </div>
                 {% endfor %}
+
+                <div class="grid grid-pad-2">
+                    <div class="grid-col-1-2 grid-cell-pad-2-10 grid-cell-centered">
+                        <button     class="btn_rect primary"
+                                    onclick="saveProject('project_form_{{forloop.counter0}}');"
+                        >Save</button>
+                    </div>
+                    <div class="grid-col-1-2 grid-cell-pad-2-10 grid-cell-centered">
+                        <button     class="btn_rect danger"
+                                    onclick="executeAndRedirect('{{project.url.delete}}', '');"
+                        >Delete</button>
+                    </div>
+                </div>
             </form>
-            <ul class="no_dots no_indent vertical_margin horizontal_list">
-                <li class="horizontal">
-                    <button     class="btn_rect primary"
-                                onclick="saveProject('project_form_{{forloop.counter0}}');"
-                    >Save</button>
-                </li>
-                <li class="horizontal">
-                    <button     class="btn_rect danger"
-                                onclick="executeAndRedirect('{{project.url.delete}}', '');"
-                    >Delete</button>
-                </li>
-            </ul>
         </div>
     {% endfor %}
-    <div class="middle_card edit_card card_padding_small">
-        <ul class="no_dots no_indent vertical_margin horizontal_list">
-            <li class="horizontal">
+    <div class="middle_card edit_card card_padding_small card_medium">
+        <div class="grid grid-pad-2">
+            <div class="grid-col-1-1 grid-cell-pad-2-10 grid-cell-centered">
                 <button     class="btn_rect danger"
                             onclick="window.location='{{layout.url.confirm_wipe}}';"
                 >Wipe Data</button>
-            </li>
-        </ul>
+            </div>
+        </div>
     </div>
 
-    <div class="lower_card edit_card card_padding_small">
-        <ul class="no_dots no_indent vertical_margin horizontal_list">
-            <li class="horizontal">
+    <div class="lower_card edit_card card_padding_small card_medium">
+        <div class="grid grid-pad-2">
+            <div class="grid-col-1-1 grid-cell-pad-2-10 grid-cell-centered">
                 <button     class="btn_round light"
                             onclick="executeAndRedirect('{{layout.url.add_project}}', '');"
                 >Add Project</button>
-            </li>
-        </ul>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

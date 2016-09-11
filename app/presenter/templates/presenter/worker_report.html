@@ -4,47 +4,71 @@
 
 {% block data_body %}
 <div class="container_large container_height">
-    <ul class="no_dots no_indent">
-        <li>
-            <div class="upper_card white_card card_padding_large">
+    <div class="upper_card white_card card_padding_large card_big">
+        <div class="grid grid-pad-2">
+            <div class="grid-col-1-1 grid-cell-pad-2-10">
                 <div class="title">REPORT {{report.id}}</div>
+            </div>
+            <div class="grid-col-1-1 grid-cell-pad-2-10">
                 <div class="list_label indent_1">date: {{report.date}}</div>
+            </div>
+            <div class="grid-col-1-1 grid-cell-pad-2-10">
                 <div class="list_label indent_1">worker: {{report.worker.uuid}}</div>
             </div>
-            {% for set in report.command_group.command_sets %}
-                {% if forloop.last %}
-                <div class="lower_card white_card card_padding_large">
-                {% else %}
-                <div class="middle_card white_card card_padding_large">
-                {% endif%}
-                    <ul class="no_dots no_indent">
-                        {% for command in set.commands %}
-                        <li>
-                            <div class="list_label indent_1">COMMAND</div>
-                            <div class="command indent_2">{{command.command}}</div>
-                            {% if command.result.out != "" %}
-                                <div class="list_label indent_1">OUT</div>
-                                <div class="command indent_2">{{command.result.out}}</div>
-                            {% endif %}
-                            {% if command.result.status != 0 %}
-                                <div class="list_label indent_1">ERR (status code: {{command.result.status}})</div>
-                                <div class="command indent_2">{{command.result.error}}</div>
-                            {% endif %}
-                            {% if command.url %}
-                                <div class="list_label indent_1">DOWNLOAD</div>
-                                <a class="normal_link indent_2" href="{{command.url.download}}">Download complete command output</a>
-                            {% endif %}
-
-                            {% if not forloop.last %}
-                                <br/>
-                                <br/>
-                            {% endif %}
-                        </li>
-                        {% endfor %}
-                    </ul>
+        </div>
+    </div>
+    {% for set in report.command_group.command_sets %}
+        {% if forloop.last %}
+        <div class="lower_card white_card card_padding_large card_big">
+        {% else %}
+        <div class="middle_card white_card card_padding_large card_big">
+        {% endif%}
+            {% for command in set.commands %}
+                <div class="grid grid-pad-2">
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="list_label">COMMAND</div>
+                    </div>
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="command">{{command.command}}</div>
+                    </div>
                 </div>
+
+                {% if command.result.out != "" %}
+                    <div class="grid grid-pad-2">
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
+                            <div class="list_label">OUT</div>
+                        </div>
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
+                            <div class="command">{{command.result.out}}</div>
+                        </div>
+                    </div>
+                {% endif %}
+                {% if command.result.status != 0 %}
+                    <div class="grid grid-pad-2">
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
+                            <div class="list_label">ERR (status code: {{command.result.status}})</div>
+                        </div>
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
+                            <div class="command">{{command.result.error}}</div>
+                        </div>
+                    </div>
+                {% endif %}
+                {% if command.url %}
+                    <div class="grid grid-pad-2">
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
+                            <div class="list_label">DOWNLOAD</div>
+                        </div>
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
+                            <a class="normal_link" href="{{command.url.download}}">Download complete command output</a>
+                        </div>
+                    </div>
+                {% endif %}
+                {% if not forloop.last %}
+                    <br/>
+                    <br/>
+                {% endif %}
             {% endfor %}
-        </li>
-    </ul>
+        </div>
+    {% endfor %}
 </div>
 {% endblock %}

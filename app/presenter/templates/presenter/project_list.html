@@ -8,31 +8,51 @@
         {% for project in projects %}
         <li class="horizontal">
             <div class="upper_card card_small white_card card_padding_small">
-                <div class="title centered">Project - {{project.name}}</div>
+                <div class="grid grid-pad-2">
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="title centered">Project - {{project.name}}</div>
+                    </div>
+                </div>
             </div>
             <div class="middle_card card_small white_card card_padding_large">
-                <div class="list_label indent_1">NAME</div>
-                <div class="normal indent_2">{{project.name}}</div>
-                <br/>
-                <div class="list_label indent_1">BRANCHES</div>
-                <ul class="no_dots no_indent vertical_margin horizontal_list">
-                    <li class="horizontal">
+                <div class="grid grid-pad-20">
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="list_label">NAME</div>
+                    </div>
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="normal">Name of the Project.</div>
+                    </div>
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="container_input">
+                            <input  class="command_input" type="text" value="{{project.name}}" readonly></input>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-pad-20">
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="list_label">BRANCHES</div>
+                    </div>
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="normal">List of all the branches of this Project.</div>
+                    </div>
+                    <div class="grid-col-1-1 grid-cell-pad-2-10 grid-cell-centered">
                         <button     class="btn_round light"
                                     type='button'
                                     onclick="window.location='{{project.url.branches}}'"
                         >See project's branches</button>
-                    </li>
-                </ul>
+                    </div>
+                </div>
             </div>
             <div class="lower_card card_small white_card card_padding_small">
-                <ul class="no_dots no_indent vertical_margin horizontal_list">
-                    <li class="horizontal">
+                <div class="grid grid-pad-2">
+                    <div class="grid-col-1-1 grid-cell-pad-2-10 grid-cell-centered">
                         <button     class="btn_round light"
                                     type='button'
                                     onclick="window.location='{{project.url.edit}}'"
                         >Edit</button>
-                    </li>
-                </ul>
+                    </div>
+                </div>
             </div>
         </li>
         {% endfor %}

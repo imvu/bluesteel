@@ -4,70 +4,97 @@
 
 {% block data_body %}
 <div class="container_med container_height">
-    <ul class="no_dots no_indent">
-        {% if results %}
-            <li>
-                <div class="upper_card white_card card_padding_small">
-                    <div class="centered"><a class="title_link" href="{{definition.url.edit}}">my execution</a></div>
+    {% if results %}
+        <div class="upper_card white_card card_padding_small card_medium">
+            <div class="grid grid-pad-2">
+                <div class="grid-col-1-1 grid-cell-pad-2-10">
+                    <div class="title centered">TODO: Change this title</div>
                 </div>
-                {% for res in results %}
-                    <div class="middle_card white_card card_padding_large">
-                        <div class="list_label indent_1">COMMAND</div>
-                        <div class="command indent_2">{{res.command}}</div>
-                        <br/>
-                        <div class="list_label indent_1">RETURN CODE</div>
-                        <div class="command indent_2">{{res.status}}</div>
-                        <br/>
-                        <div class="list_label indent_1">OUT</div>
-                        <br/>
-                        {% for entry in res.out %}
-                            {% if entry.obj.visual_type == 'vertical_bars' %}
-                                <div class="command indent_2">{{entry.obj.id}}</div>
+            </div>
+        </div>
+        {% for res in results %}
+            <div class="middle_card white_card card_padding_large card_medium">
+                <div class="grid grid-pad-2">
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="list_label">COMMAND</div>
+                    </div>
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="command">{{res.command}}</div>
+                    </div>
+                </div>
+                <div class="grid grid-pad-2">
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="list_label">RETURN CODE</div>
+                    </div>
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="command">{{res.status}}</div>
+                    </div>
+                </div>
+
+                <div class="grid grid-pad-2">
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="list_label">OUT</div>
+                    </div>
+                    {% for entry in res.out %}
+                        {% if entry.obj.visual_type == 'vertical_bars' %}
+                            <div class="grid-col-1-1 grid-cell-pad-2-10">
+                                <div class="command">{{entry.obj.id}}</div>
+                            </div>
+                            <div class="grid-col-1-1 grid-cell-pad-2-10">
                                 <canvas id="chart-{{forloop.counter0}}" width="540" height="220"></canvas>
                                 <script>chartVerticalBars('chart-{{forloop.counter0}}', {{entry.json|safe}});</script>
-                            {% elif entry.obj.visual_type == 'text' %}
-                                <div class="command indent_2 break_line">{{entry.obj.data}}</div>
-                            {% elif entry.obj.visual_type == 'unknown' %}
-                                <div class="command indent_2 break_line">{{entry.obj.data}}</div>
-                            {% else %}
-                                <div class="command indent_2">{{res.out}}</div>
-                            {% endif %}
-                            {% if res.out.count > 0 %}
-                            <br/>
-                            <br/>
-                            {% endif %}
-                        {% endfor %}
-
-                        {% if res.error %}
-                            <div class="list_label indent_1">ERROR</div>
-                            <div class="command indent_2">{{res.error}}</div>
+                            </div>
+                        {% elif entry.obj.visual_type == 'text' %}
+                            <div class="grid-col-1-1 grid-cell-pad-2-10">
+                                <div class="command break_line">{{entry.obj.data}}</div>
+                            </div>
+                        {% elif entry.obj.visual_type == 'unknown' %}
+                            <div class="grid-col-1-1 grid-cell-pad-2-10">
+                                <div class="command break_line">{{entry.obj.data}}</div>
+                            </div>
+                        {% else %}
+                            <div class="grid-col-1-1 grid-cell-pad-2-10">
+                                <div class="command">{{res.out}}</div>
+                            </div>
                         {% endif %}
+                        {% if res.out.count > 0 %}
+                        <br/>
+                        <br/>
+                        {% endif %}
+                    {% endfor %}
 
+                    {% if res.error %}
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
+                            <div class="list_label">ERROR</div>
+                        </div>
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
+                            <div class="command">{{res.error}}</div>
+                        </div>
+                    {% endif %}
                 </div>
-                {% endfor %}
-                <div class="middle_card white_card card_padding_large">
-                    <ul class="no_dots no_indent vertical_margin horizontal_list">
-                        <li class="horizontal">
-                            <button     class="btn_round light"
-                                        type='button'
-                                        onclick="window.location='{{url.relevant}}';"
-                            >View Relevant</button>
-                        </li>
-                    </ul>
+        </div>
+        {% endfor %}
+        <div class="middle_card white_card card_padding_small card_medium">
+            <div class="grid grid-pad-2">
+                <div class="grid-col-1-1 grid-cell-pad-2-10 grid-cell-centered">
+                    <button     class="btn_round light"
+                                type='button'
+                                onclick="window.location='{{url.relevant}}';"
+                    >View Relevant</button>
                 </div>
-                <div class="lower_card white_card card_padding_large">
-                    <ul class="no_dots no_indent vertical_margin horizontal_list">
-                        <li class="horizontal">
-                            <button     class="btn_rect danger"
-                                        type='button'
-                                        id='invalidate_button'
-                                        onclick="executeAndDisableButton('{{url.invalidate}}' ,'invalidate_button', 'Invalidated');"
-                            >Invalidate Execution</button>
-                        </li>
-                    </ul>
+            </div>
+        </div>
+        <div class="lower_card white_card card_padding_small card_medium">
+            <div class="grid grid-pad-2">
+                <div class="grid-col-1-1 grid-cell-pad-2-10 grid-cell-centered">
+                    <button     class="btn_rect danger"
+                                type='button'
+                                id='invalidate_button'
+                                onclick="executeAndDisableButton('{{url.invalidate}}' ,'invalidate_button', 'Invalidated');"
+                    >Invalidate Execution</button>
                 </div>
-            </li>
-        {% endif %}
-    </ul>
+            </div>
+        </div>
+    {% endif %}
 </div>
 {% endblock %}

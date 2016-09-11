@@ -13,32 +13,40 @@ addListElement = function(thisObj, idParent, idListToAddElement, startName) {
 
     var childCount = listToAddElement.children.length;
 
-    var eleDiv = document.createElement('div');
-    eleDiv.className = "container_input";
+    var wrapDiv = document.createElement('div');
+    wrapDiv.id = startName.toString() + (new Date()).getTime().toString() + '_new';
 
-    var eleLi = document.createElement('li');
-    eleLi.className = "no_text";
-    eleLi.id = startName.toString() + (new Date()).getTime().toString() + '_new';
+    var eleComDiv = document.createElement('div');
+    eleComDiv.className = "grid-col-7-8 grid-cell-pad-2-10";
+
+    var eleContainerInput = document.createElement('div');
+    eleContainerInput.className = "container_input";
 
     var eleInput = document.createElement('input');
     eleInput.className = "command_input";
     eleInput.type = "text";
-    eleInput.name = eleLi.id;
+    eleInput.name = wrapDiv.id;
     eleInput.value = "<edit command here>";
     eleInput.maxlength = "255";
 
+    var eleIconDiv = document.createElement('div');
+    eleIconDiv.className = "grid-col-1-8 grid-cell-pad-2-10";
+
     var eleButton = document.createElement('button');
     eleButton.className = "btn_icon icon_gray";
-    eleButton.onclick = createRemoveListElementCallback(eleLi.id);
+    eleButton.onclick = createRemoveListElementCallback(wrapDiv.id);
 
     var eleI = document.createElement('i');
     eleI.className = "fa fa-times-circle fa-2x";
 
     eleButton.appendChild(eleI);
-    eleDiv.appendChild(eleInput)
-    eleLi.appendChild(eleDiv);
-    eleLi.appendChild(eleButton);
-    listToAddElement.appendChild(eleLi);
+    eleIconDiv.appendChild(eleButton);
+    eleContainerInput.appendChild(eleInput);
+    eleComDiv.appendChild(eleContainerInput);
+    wrapDiv.appendChild(eleComDiv);
+    wrapDiv.appendChild(eleIconDiv);
+
+    listToAddElement.appendChild(wrapDiv);
 }
 
 saveProject = function(idFormProject) {

@@ -4,30 +4,36 @@
 
 {% block data_body %}
 <div class="container_med container_height">
-    <ul class="no_dots no_indent">
-        {% if stacked_executions %}
-            <li>
-                <div class="upper_card white_card card_padding_small">
-                    <div class="centered">my execution</div>
+    {% if stacked_executions %}
+        <div class="upper_card white_card card_padding_small card_medium">
+            <div class="grid grid-pad-2">
+                <div class="grid-col-1-1 grid-cell-pad-2-10">
+                    <div class="title centered">TODO: Change this title</div>
                 </div>
-                {% for exec in stacked_executions %}
-                    {% if forloop.last %}
-                        <div class="lower_card white_card card_padding_large">
-                    {% else %}
-                        <div class="middle_card white_card card_padding_large">
-                    {% endif %}
+            </div>
+        </div>
+        {% for exec in stacked_executions %}
+            {% if forloop.last %}
+                <div class="lower_card white_card card_padding_large card_medium">
+            {% else %}
+                <div class="middle_card white_card card_padding_large card_medium">
+            {% endif %}
 
-                        <div class="list_label indent_1">STACKED BENCHMARK</div>
-                        <div class="command indent_2">{{exec.id}}</div>
-                        <br/>
-                        <canvas id="stacked-chart-{{forloop.counter0}}" width="540" height="220"></canvas>
-                        <script>stackedchartVerticalBars('stacked-chart-{{forloop.counter0}}', {{exec.json|safe}});</script>
-                        <br/>
+                    <div class="grid grid-pad-2">
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
+                            <div class="list_label">STACKED BENCHMARK</div>
+                        </div>
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
+                            <div class="command">{{exec.id}}</div>
+                        </div>
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
+                            <canvas id="stacked-chart-{{forloop.counter0}}" width="540" height="220"></canvas>
+                            <script>stackedchartVerticalBars('stacked-chart-{{forloop.counter0}}', {{exec.json|safe}});</script>
+                        </div>
                     </div>
+            </div>
 
-                {% endfor %}
-            </li>
-        {% endif %}
-    </ul>
+        {% endfor %}
+    {% endif %}
 </div>
 {% endblock %}

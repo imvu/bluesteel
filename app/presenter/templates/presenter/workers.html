@@ -7,90 +7,121 @@
     <ul class="no_dots no_indent horizontal_list">
         {% for worker in workers %}
         <li class="horizontal">
-            <div class="upper_card white_card card_padding_small card_small">
-                <div class="title centered">Worker - {{worker.name}}</div>
+            <div class="upper_card white_card card_padding_small card_thin">
+                <div class="grid-col-1-1 grid-cell-pad-2-10">
+                    <div class="title centered">Worker - {{worker.name}}</div>
+                </div>
             </div>
-            <div class="middle_card white_card card_padding_large card_small">
-                <ul class="no_dots no_indent">
-                    <li>
-                        <div class="list_label indent_1">OPERATIVE SYSTEM</div>
-                        <div class="normal indent_2">{{worker.operative_system}}</div>
-                    </li>
-                    <br/>
-                    <li>
-                        <div class="list_label indent_1">DESCRIPTION</div>
-                        <div class="normal indent_2">{{worker.description}}</div>
-                    </li>
-                    <br/>
-                    <li>
-                        <div class="list_label indent_1">COMMIT FEEDER</div>
-                        {% if worker.git_feeder %}
-                            <div class="normal indent_2">Yes</div>
-                        {% else %}
-                            <div class="normal indent_2">No</div>
-                        {% endif %}
-                    </li>
-                    <br/>
-                    {% if worker.git_feeder %}
-                        <li>
-                            <div class="list_label indent_1">FEED REPORTS</div>
-                            <ul class="no_dots no_indent vertical_margin horizontal_list">
-                                <li class="horizontal">
-                                    <button     class="btn_round light"
-                                                type='button'
-                                                onclick="window.location='{{worker.url.feed_report}}'"
-                                    >See reports</button>
-                                </li>
-                            </ul>
-                        </li>
+            <div class="middle_card white_card card_padding_large card_thin">
+                <div class="grid grid-pad-20">
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="list_label">OPERATIVE SYSTEM</div>
+                    </div>
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="normal">{{worker.operative_system}}</div>
+                    </div>
+                </div>
 
-                        <br/>
-                        <li>
-                            <div class="list_label indent_1">MAX ALLOWED FEED REPORTS</div>
-                            <div class="container_input">
-                                <input  class="command_input" type="text" value="{{worker.max_feed_reports.current_name}}" readonly></input>
-                            </div>
-                        </li>
+                <div class="grid grid-pad-20">
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="list_label">DESCRIPTION</div>
+                    </div>
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="normal">{{worker.description}}</div>
+                    </div>
+                </div>
 
-                        <br/>
-                    {% endif %}
-                    <li>
-                        <div class="list_label indent_1">LATEST BENCHMARKS</div>
-                        <ul class="no_dots no_indent vertical_margin horizontal_list">
-                            {% for bench_info in worker.latest_benchmarks %}
-                            <li class="horizontal">
-                                <button     class="btn_round light"
-                                            type='button'
-                                            onclick="window.location='{{bench_info.url}}'"
-                                >Benchmark {{bench_info.id}}</button>
-                            </li>
-                            {% endfor %}
-                        </ul>
-                    </li>
-                    <br/>
-                    <li>
-                        <div class="list_label indent_1">LAST ACTIVITY</div>
-                        <div class="normal indent_2">
-                            {% if worker.activity %}
-                            <div class="normal inline color_correct"><i class="fa fa-check-circle"></i></div>
-                            <div class="normal inline">{{worker.last_update.year}}-{{worker.last_update.month}}-{{worker.last_update.day}}, {{worker.last_update.hour}}:{{worker.last_update.minute}}:{{worker.last_update.second}}</div>
+                <div class="grid grid-pad-20">
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="list_label">COMMIT FEEDER</div>
+                    </div>
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="normal">Determines if this worker will feed data into BlueSteel.</div>
+                        <div class="container_input">
+                            {% if worker.git_feeder %}
+                                <input  class="command_input" type="text" value="Yes" readonly></input>
                             {% else %}
-                            <div class="normal inline color_error"><i class="fa fa-exclamation-circle"></i></i></div>
-                            <div class="normal inline color_error">{{worker.last_update.year}}-{{worker.last_update.month}}-{{worker.last_update.day}}, {{worker.last_update.hour}}:{{worker.last_update.minute}}:{{worker.last_update.second}}</div>
+                                <input  class="command_input" type="text" value="No" readonly></input>
                             {% endif %}
                         </div>
-                    </li>
-                </ul>
-            </div>
-            <div class="lower_card card_small white_card card_padding_small">
-                <ul class="no_dots no_indent vertical_margin horizontal_list">
-                    <li class="horizontal">
+                    </div>
+                </div>
+
+                <div class="grid grid-pad-20">
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="list_label">FEED REPORTS</div>
+                    </div>
+                    {% if worker.git_feeder %}
+                        <div class="grid-col-1-1 grid-cell-pad-2-10 grid-cell-centered">
+                            <button     class="btn_round light"
+                                        type='button'
+                                        onclick="window.location='{{worker.url.feed_report}}'"
+                            >See reports</button>
+                        </div>
+                    {% else %}
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
+                            <div class="normal">No reports because not a feeder.</div>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="grid grid-pad-20">
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="list_label">MAX FEED REPORTS</div>
+                    </div>
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="normal">Maximum allowed feed reports at all times for this worker.</div>
+                    </div>
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="container_input">
+                            <input  class="command_input" type="text" value="{{worker.max_feed_reports.current_name}}" readonly></input>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-pad-20">
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="list_label">LATEST BENCHMARKS</div>
+                    </div>
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="normal">Last submitted benchmark executions from this worker.</div>
+                    </div>
+
+                    {% for bench_info in worker.latest_benchmarks %}
+                    <div class="grid-col-1-1 grid-cell-pad-2-10 grid-cell-centered">
                         <button     class="btn_round light"
                                     type='button'
-                                    onclick="window.location='{{worker.url.edit}}'"
-                        >Edit</button>
-                    </li>
-                </ul>
+                                    onclick="window.location='{{bench_info.url}}'"
+                        >Benchmark {{bench_info.id}}</button>
+                    </div>
+                    {% endfor %}
+                </div>
+
+
+                <div class="grid grid-pad-20">
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="list_label">LAST ACTIVITY</div>
+                    </div>
+                    {% if worker.activity %}
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="normal inline color_correct"><i class="fa fa-check-circle"></i></div>
+                        <div class="normal inline">{{worker.last_update.year}}-{{worker.last_update.month}}-{{worker.last_update.day}}, {{worker.last_update.hour}}:{{worker.last_update.minute}}:{{worker.last_update.second}}</div>
+                    </div>
+                    {% else %}
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="normal inline color_error"><i class="fa fa-exclamation-circle"></i></i></div>
+                        <div class="normal inline color_error">{{worker.last_update.year}}-{{worker.last_update.month}}-{{worker.last_update.day}}, {{worker.last_update.hour}}:{{worker.last_update.minute}}:{{worker.last_update.second}}</div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="lower_card white_card card_padding_small card_thin">
+                <div class="grid-col-1-1 grid-cell-pad-2-10 grid-cell-centered">
+                    <button     class="btn_round light"
+                                type='button'
+                                onclick="window.location='{{worker.url.edit}}'"
+                    >Edit</button>
+                </div>
             </div>
         </li>
         {% endfor %}

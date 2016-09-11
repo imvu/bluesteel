@@ -6,45 +6,55 @@
 <ul class="no_dots no_indent horizontal_list">
         <li class="horizontal">
             <div class="container_med container_height">
-                <ul class="no_dots no_indent">
-                    <li>
-                        <div class="upper_card white_card card_padding_small">
+                <div class="upper_card white_card card_padding_small card_medium">
+                    <div class="grid grid-pad-2">
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
                             <div class="title centered">Branch Data - {{branch.name}}</div>
                         </div>
-                    </li>
-                    <li>
-                        <div class="lower_card white_card card_padding_large">
-                            <div class="list_label indent_1">SINGLE VIEW</div>
-                            <ul class="no_dots no_indent vertical_margin horizontal_list">
-                                <li class="horizontal">
-                                    <button     class="btn_round light"
-                                                type='button'
-                                                onclick="window.location='{{branch.url.single}}'"
-                                    >See single branch view</button>
-                                </li>
-                            </ul>
-                            <br/>
-
-                            {% if branch.links|length > 0 %}
-                                <div class="list_label indent_1">STACKED BENCHMARKS</div>
-                                {% for definition in branch.links %}
-                                    <div class="normal indent_2">Benchmark Definition: {{definition.name}} ({{definition.id}})</div>
-                                    {% for worker in definition.workers %}
-                                        <ul class="no_dots no_indent vertical_margin horizontal_list">
-                                            <li class="horizontal">
-                                                <button     class="btn_round light"
-                                                            type='button'
-                                                            onclick="window.location='{{worker.stacked_benchmarks}}'"
-                                                >See benchmarks from: {{worker.name}}</button>
-                                            </li>
-                                        </ul>
-                                    {% endfor %}
+                    </div>
+                </div>
+                <div class="lower_card white_card card_padding_large card_medium">
+                    <div class="grid grid-pad-2">
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
+                            <div class="list_label">SINGLE VIEW</div>
+                        </div>
+                        <div class="grid-col-1-1 grid-cell-pad-2-10 grid-cell-centered">
+                            <button     class="btn_round light"
+                                        type='button'
+                                        onclick="window.location='{{branch.url.single}}'"
+                            >See single branch view</button>
+                        </div>
+                    </div>
+                    <br/>
+                    <div class="grid grid-pad-2">
+                        {% if branch.links|length > 0 %}
+                            <div class="grid-col-1-1 grid-cell-pad-2-10">
+                                <div class="list_label">STACKED BENCHMARKS</div>
+                            </div>
+                            {% for definition in branch.links %}
+                                <div class="grid-col-1-1 grid-cell-pad-2-10">
+                                    <div class="normal">Benchmark Definition: {{definition.name}} ({{definition.id}})</div>
+                                </div>
+                                {% for worker in definition.workers %}
+                                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                                        <button     class="btn_round light"
+                                                    type='button'
+                                                    onclick="window.location='{{worker.stacked_benchmarks}}'"
+                                        >See benchmarks from: {{worker.name}}</button>
+                                    </div>
                                 {% endfor %}
-                                <br/>
-                            {% endif %}
-
-                            <div class="list_label indent_1">BRANCH ORDER</div>
-                            <div class="normal indent_2">Update '{{branch.name}}' branch order value to be located at:</div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    <br/>
+                    <div class="grid grid-pad-2">
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
+                            <div class="list_label">BRANCH ORDER</div>
+                        </div>
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
+                            <div class="normal">Update '{{branch.name}}' branch order value to be located at:</div>
+                        </div>
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
                             <div class="container_input">
                                 <select     class="selection individual"
                                             name="merge_target_select"
@@ -55,10 +65,9 @@
                                     {% endfor %}
                                 </select>
                             </div>
-                            <br/>
                         </div>
-                    </li>
-                </ul>
+                    </div>
+                </div>
             </div>
         </li>
 </ul>

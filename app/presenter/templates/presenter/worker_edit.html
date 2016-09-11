@@ -12,23 +12,44 @@
                 id="save_worker_form"
         >
             <li class="horizontal">
-                <div class="upper_card edit_card card_padding_small">
-                    <div class="title">Worker - {{worker.name}}</div>
+                <div class="upper_card edit_card card_padding_small card_medium">
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="title">Worker - {{worker.name}}</div>
+                    </div>
                 </div>
-                <div class="midle_card edit_card card_padding_large">
-                    <ul class="no_dots no_indent">
-                        <li>
-                            <div class="list_label indent_1">DESCRIPTION</div>
-                            <div class="indent_2">
-                                <textarea   class="default_textarea"
-                                            rows="4"
-                                            name="worker_description"
-                                >{{worker.description}}</textarea>
-                            </div>
-                        </li>
-                        <br/>
-                        <li>
-                            <div class="list_label indent_1">COMMIT FEEDER</div>
+                <div class="midle_card edit_card card_padding_large card_medium">
+                    <div class="grid grid-pad-20">
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
+                            <div class="list_label">OPERATIVE SYSTEM</div>
+                        </div>
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
+                            <div class="normal">{{worker.operative_system}}</div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-pad-20">
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
+                            <div class="list_label">DESCRIPTION</div>
+                        </div>
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
+                            <div class="normal">Short description of this worker.</div>
+                        </div>
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
+                            <textarea   class="default_textarea"
+                                        rows="4"
+                                        name="worker_description"
+                            >{{worker.description}}</textarea>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-pad-20">
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
+                            <div class="list_label">COMMIT FEEDER</div>
+                        </div>
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
+                            <div class="normal">Specify if this worker will feed data into BlueSteel.</div>
+                        </div>
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
                             <div class="container_input">
                                 <select     class="selection individual"
                                             name="worker_git_feeder"
@@ -37,10 +58,17 @@
                                     <option value="no" {{worker.git_feeder|yesno:",selected" }}>NO</option>
                                 </select>
                             </div>
-                        </li>
-                        <br/>
-                        <li>
-                            <div class="list_label indent_1">MAX FEED REPORTS</div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-pad-20">
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
+                            <div class="list_label">MAX FEED REPORTS</div>
+                        </div>
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
+                            <div class="normal">Max allowed feed reports submitted by this worker.</div>
+                        </div>
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
                             <div class="container_input">
                                 <select     class="selection individual"
                                             name="max_feed_reports"
@@ -50,26 +78,27 @@
                                     {% endfor %}
                                 </select>
                             </div>
-                        </li>
-                    </ul>
+                        </div>
+                    </div>
+
                 </div>
-                <div class="lower_card edit_card card_padding_small">
-                    <ul class="no_dots no_indent vertical_margin horizontal_list">
-                        <li class="horizontal">
+                <div class="lower_card edit_card card_padding_small card_medium">
+                    <div class="grid grid-pad-20">
+                        <div class="grid-col-1-2 grid-cell-pad-2-10 grid-cell-centered">
                             <button     class="btn_rect primary"
                                         type='button'
                                         id='worker_edit_save_button'
                                         onclick="saveWorker('save_worker_form');"
                             >Save</button>
-                        </li>
-                        <li class="horizontal">
+                        </div>
+                        <div class="grid-col-1-2 grid-cell-pad-2-10 grid-cell-centered">
                             <button     class="btn_rect danger"
                                         type='button'
                                         id='worker_edit_save_button'
                                         onclick="executeAndRedirect('{{worker.url.delete}}', '');"
                             >Delete</button>
-                        </li>
-                    </ul>
+                        </div>
+                    </div>
                 </div>
             </li>
         </form>

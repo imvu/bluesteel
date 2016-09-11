@@ -9,29 +9,42 @@
                 <ul class="no_dots no_indent">
                     {% for layout in layouts %}
                     <li>
-                        <div class="upper_card white_card card_padding_small">
-                            <div class="title centered">Layout - {{layout.name}}</div>
+                        <div class="upper_card white_card card_padding_small card_medium">
+                            <div class="grid grid-pad-2">
+                                <div class="grid-col-1-1 grid-cell-pad-2-10">
+                                    <div class="title centered">Layout - {{layout.name}}</div>
+                                </div>
+                            </div>
                         </div>
-                    </li>
-                    <li>
                         {% for project in layout.projects %}
                             {% if forloop.last %}
-                            <div class="lower_card white_card card_padding_large">
+                            <div class="lower_card white_card card_padding_large card_medium">
                             {% else %}
-                            <div class="middle_card white_card card_padding_large">
+                            <div class="middle_card white_card card_padding_large card_medium">
                             {% endif%}
-                            <ul class="no_dots">
-                                <li>
-                                    <div class="list_label indent_1">PROJECT</div>
+
+                            <div class="grid grid-pad-20">
+                                <div class="grid-col-1-1 grid-cell-pad-2-10">
+                                    <div class="list_label">PROJECT</div>
+                                </div>
+                                <div class="grid-col-1-1 grid-cell-pad-2-10">
+                                    <div class="normal">Project name.</div>
+                                </div>
+                                <div class="grid-col-1-1 grid-cell-pad-2-10">
                                     <div class="container_input">
                                         <input  class="command_input" type="text" value="{{project.name}}" readonly></input>
                                     </div>
-                                </li>
-                                <br/>
+                                </div>
+                            </div>
 
-                                <li><div class="list_label indent_1">EXECUTIONS PER BRANCH</div></li>
-                                <li><div class="normal indent_2">Select one branch to see all the executions of that branch sorted by benchmark definition and worker.</div></li>
-                                <li>
+                            <div class="grid grid-pad-20">
+                                <div class="grid-col-1-1 grid-cell-pad-2-10">
+                                    <div class="list_label">EXECUTIONS PER BRANCH</div>
+                                </div>
+                                <div class="grid-col-1-1 grid-cell-pad-2-10">
+                                    <div class="normal">Select one branch to see all the executions of that branch sorted by benchmark definition and worker.</div>
+                                </div>
+                                <div class="grid-col-1-1 grid-cell-pad-2-10">
                                     <div class="container_input">
                                         <select     class="selection individual"
                                                     name="merge_target_select"
@@ -44,8 +57,8 @@
                                             {% endfor %}
                                         </select>
                                     </div>
-                                </li>
-                            </ul>
+                                </div>
+                            </div>
                         </div>
                         {% endfor %}
                     </li>

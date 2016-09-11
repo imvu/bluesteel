@@ -7,44 +7,58 @@
     {% for branch in branches %}
         <li class="horizontal">
             <div class="container_small container_height">
-                <ul class="no_dots no_indent">
-                    <li>
-                        <div class="upper_card white_card card_padding_small">
+                <div class="upper_card white_card card_padding_small card_thin">
+                    <div class="grid grid-pad-2">
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
                             <div class="title centered">Branch - {{branch.name}}</div>
                         </div>
-                    </li>
-                    <li>
-                        <div class="middle_card white_card card_padding_small">
-                            <ul class="no_dots no_indent vertical_margin horizontal_list">
-                                <li class="horizontal">
-                                    <button     class="btn_round light"
-                                                type='button'
-                                                onclick="window.location='{{branch.url.links}}'"
-                                    >Branch data</button>
-                                </li>
-                            </ul>
+                    </div>
+                </div>
+                <div class="middle_card white_card card_padding_small card_thin">
+                    <div class="grid grid-pad-2">
+                        <div class="grid-col-1-1 grid-cell-pad-2-10 grid-cell-centered">
+                            <button     class="btn_round light"
+                                        type='button'
+                                        onclick="window.location='{{branch.url.links}}'"
+                            >Branch data</button>
                         </div>
-                    </li>
-                    {% for commit in branch.commits %}
-                    <li>
-                        <div    class="middle_card white_card_hoverable card_padding_small"
-                                onclick="window.location='{{commit.url.executions}}'"
-                        >
+                    </div>
+                </div>
+            {% for commit in branch.commits %}
+                <div    class="middle_card white_card_hoverable card_padding_small card_thin"
+                        onclick="window.location='{{commit.url.executions}}'"
+                >
+
+                    <div class="grid grid-pad-2">
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
                             <div class="command">{{commit.short_hash}}</div>
+                        </div>
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
                             <div class="normal indent_2">{{commit.author.name}}</div>
-                            <!-- </br> -->
-                            <!-- <div class="list_label indent_1">STATUS</div> -->
+                        </div>
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
                             <div class="progress_bar">
                                 <div class="progress_value progress_normal" style="width: {{commit.benchmark_completed}}%"></div>
                             </div>
                         </div>
-                    </li>
-                    {% endfor %}
-                    <li>
-                        <div class="lower_card white_card card_padding_large">
+                    </div>
+                </div>
+            {% endfor %}
+                <div class="lower_card white_card card_padding_large card_thin">
+                    <div class="grid grid-pad-2">
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
                             <div class="list_label indent_1">FORK COMMIT</div>
+                        </div>
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
                             <div class="command indent_2">{{branch.merge_target.fork_point.short_hash}}</div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-pad-2">
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
                             <div class="list_label indent_1">MERGE TARGET</div>
+                        </div>
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
                             <div class="container_input">
                                 <select     class="selection individual"
                                             name="merge_target_select"
@@ -56,8 +70,8 @@
                                 </select>
                             </div>
                         </div>
-                    </li>
-                </ul>
+                    </div>
+                </div>
             </div>
         </li>
     {% endfor %}
