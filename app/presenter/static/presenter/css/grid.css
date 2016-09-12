@@ -60,6 +60,14 @@ div.grid-col-1-8 {
     width: 12.5%;
 }
 
+div.grid-col-3-8 {
+    width: 37.5%;
+}
+
+div.grid-col-4-8 {
+    width: 50.0%;
+}
+
 div.grid-col-6-8 {
     width: 75.0%;
 }
