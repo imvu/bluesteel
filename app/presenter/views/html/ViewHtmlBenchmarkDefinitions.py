@@ -1,13 +1,12 @@
 """ Presenter views, benchmark definition page functions """
 
-from django.core.paginator import Paginator
 from app.presenter.views.helpers import ViewUrlGenerator
 from app.presenter.views.helpers import ViewPrepareObjects
 from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
+from app.logic.benchmark.controllers.BenchmarkDefinitionController import BenchmarkDefinitionController
 from app.logic.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
 from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
-from app.logic.httpcommon import res, pag
-from app.logic.httpcommon.Page import Page
+from app.logic.httpcommon import res
 
 DEFINITION_ITEMS_PER_PAGE = 12
 PAGINATION_HALF_RANGE = 2
@@ -53,21 +52,17 @@ def get_project_selection(layout, project):
 
 def get_benchmark_definitions(request, page_index):
     """ Returns html for the benchmark definition page """
-    def_entries = BenchmarkDefinitionEntry.objects.all()
 
-    page = Page(DEFINITION_ITEMS_PER_PAGE, page_index)
-    pager = Paginator(def_entries, page.items_per_page)
-    current_page = pager.page(page.page_index)
-    def_entries = current_page.object_list
-    page_indices = pag.get_pagination_indices(page, PAGINATION_HALF_RANGE, pager.num_pages)
+    (definitions, page_indices) = BenchmarkDefinitionController.get_benchmark_definitions_with_pagination(
+        DEFINITION_ITEMS_PER_PAGE,
+        page_index,
+        PAGINATION_HALF_RANGE
+    )
 
-    definitions = []
-    for entry in def_entries:
-        obj = entry.as_object()
-        obj['url'] = {}
-        obj['url']['edit'] = ViewUrlGenerator.get_edit_benchmark_definition_url(entry.id)
-        obj['url']['save'] = ViewUrlGenerator.get_save_benchmark_definition_url(entry.id)
-        definitions.append(obj)
+    for definition in definitions:
+        definition['url'] = {}
+        definition['url']['edit'] = ViewUrlGenerator.get_edit_benchmark_definition_url(definition['id'])
+        definition['url']['save'] = ViewUrlGenerator.get_save_benchmark_definition_url(definition['id'])
 
     data = {}
     data['definitions'] = definitions

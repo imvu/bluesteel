@@ -6,6 +6,7 @@ from django.utils import timezone
 from app.logic.benchmark.controllers.BenchmarkDefinitionController import BenchmarkDefinitionController
 from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
 from app.logic.benchmark.models.BenchmarkExecutionModel import BenchmarkExecutionEntry
+from app.logic.benchmark.models.BenchmarkFluctuationOverrideModel import BenchmarkFluctuationOverrideEntry
 from app.logic.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
 from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
 from app.logic.bluesteel.controllers.BluesteelProjectController import BluesteelProjectController
@@ -284,3 +285,48 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
         commands.append('command-3')
 
         self.assertEqual(True, BenchmarkDefinitionController.is_benchmark_definition_equivalent(definition.id, layout.id, project.id, commands))
+
+    def test_get_benchmark_definitions_paginated_with_fluctuations(self):
+        user1 = User.objects.create_user('user1@test.com', 'user1@test.com', 'pass')
+        user1.save()
+
+        git_project1 = GitProjectEntry.objects.create(url='http://test/')
+
+        command_group = CommandGroupEntry.objects.create()
+        command_set = CommandSetEntry.objects.create(group=command_group)
+
+        bluesteel_layout = BluesteelLayoutEntry.objects.create(name='Layout', active=True, project_index_path=0)
+
+        bluesteel_project = BluesteelProjectEntry.objects.create(name='Project', order=0, layout=bluesteel_layout, command_group=command_group, git_project=git_project1)
+
+        benchmark_definition1 = BenchmarkDefinitionEntry.objects.create(name='BenchmarkDefinition1', layout=bluesteel_layout, project=bluesteel_project, command_set=command_set, revision=28)
+        benchmark_definition2 = BenchmarkDefinitionEntry.objects.create(name='BenchmarkDefinition2', layout=bluesteel_layout, project=bluesteel_project, command_set=command_set, revision=28)
+        benchmark_definition3 = BenchmarkDefinitionEntry.objects.create(name='BenchmarkDefinition3', layout=bluesteel_layout, project=bluesteel_project, command_set=command_set, revision=28)
+        benchmark_definition4 = BenchmarkDefinitionEntry.objects.create(name='BenchmarkDefinition4', layout=bluesteel_layout, project=bluesteel_project, command_set=command_set, revision=28)
+        benchmark_definition5 = BenchmarkDefinitionEntry.objects.create(name='BenchmarkDefinition5', layout=bluesteel_layout, project=bluesteel_project, command_set=command_set, revision=28)
+        benchmark_definition6 = BenchmarkDefinitionEntry.objects.create(name='BenchmarkDefinition6', layout=bluesteel_layout, project=bluesteel_project, command_set=command_set, revision=28)
+
+        fluc1 = BenchmarkFluctuationOverrideEntry.objects.create(definition=benchmark_definition1, result_id='id1', override_value=28)
+        fluc2 = BenchmarkFluctuationOverrideEntry.objects.create(definition=benchmark_definition2, result_id='id2', override_value=29)
+        fluc3 = BenchmarkFluctuationOverrideEntry.objects.create(definition=benchmark_definition2, result_id='id3', override_value=30)
+
+        (definitions1, paginations1) = BenchmarkDefinitionController.get_benchmark_definitions_with_pagination(2, 1, 1)
+        definitions1.sort(key=lambda x: x['name'])
+
+        self.assertEqual(2, len(definitions1))
+        self.assertEqual('BenchmarkDefinition1', definitions1[0]['name'])
+        self.assertEqual(1, len(definitions1[0]['fluctuation_overrides']))
+        self.assertEqual('id1', definitions1[0]['fluctuation_overrides'][0]['result_id'])
+        self.assertEqual(28, definitions1[0]['fluctuation_overrides'][0]['override_value'])
+
+        self.assertEqual('BenchmarkDefinition2', definitions1[1]['name'])
+        self.assertEqual(2, len(definitions1[1]['fluctuation_overrides']))
+        self.assertEqual('id2', definitions1[1]['fluctuation_overrides'][0]['result_id'])
+        self.assertEqual(29, definitions1[1]['fluctuation_overrides'][0]['override_value'])
+        self.assertEqual('id3', definitions1[1]['fluctuation_overrides'][1]['result_id'])
+        self.assertEqual(30, definitions1[1]['fluctuation_overrides'][1]['override_value'])
+
+        self.assertEqual(1, paginations1['current'])
+        self.assertEqual(1, paginations1['prev'])
+        self.assertEqual(2, paginations1['next'])
+        self.assertEqual([1, 2, 3], paginations1['page_indices'])

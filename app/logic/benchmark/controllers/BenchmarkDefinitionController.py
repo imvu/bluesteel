@@ -1,11 +1,15 @@
 """ Benchmark Definition Controller file """
 
+from django.core.paginator import Paginator
 from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
+from app.logic.benchmark.models.BenchmarkFluctuationOverrideModel import BenchmarkFluctuationOverrideEntry
 from app.logic.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
 from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
 from app.logic.commandrepo.controllers import CommandController
 from app.logic.commandrepo.models.CommandModel import CommandEntry
 from app.logic.commandrepo.models.CommandSetModel import CommandSetEntry
+from app.logic.httpcommon.Page import Page
+from app.logic.httpcommon import pag
 
 class BenchmarkDefinitionController(object):
     """ BenchmarkDefinition controller with helper functions """
@@ -134,3 +138,31 @@ class BenchmarkDefinitionController(object):
             return True
         else:
             return False
+
+
+    @staticmethod
+    def get_benchmark_definitions_with_pagination(items_per_page, page_index, pagination_half_range):
+        """ Returns Benchmark Definitions given a page index """
+        def_entries = BenchmarkDefinitionEntry.objects.all()
+
+        page = Page(items_per_page, page_index)
+        pager = Paginator(def_entries, page.items_per_page)
+        current_page = pager.page(page.page_index)
+        def_entries = current_page.object_list
+        page_indices = pag.get_pagination_indices(page, pagination_half_range, pager.num_pages)
+
+        definitions = []
+
+        for def_entry in def_entries:
+            def_obj = def_entry.as_object()
+            def_obj['fluctuation_overrides'] = []
+
+            flucs = BenchmarkFluctuationOverrideEntry.objects.filter(definition__id=def_entry.id)
+            for fluc in flucs:
+                obj = {}
+                obj['result_id'] = fluc.result_id
+                obj['override_value'] = fluc.override_value
+                def_obj['fluctuation_overrides'].append(obj)
+            definitions.append(def_obj)
+
+        return (definitions, page_indices)
