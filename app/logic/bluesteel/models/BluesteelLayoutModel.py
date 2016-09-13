@@ -25,6 +25,7 @@ class BluesteelLayoutEntry(models.Model):
             projects.append(entry.as_object())
 
         obj = {}
+        obj['id'] = self.id
         obj['name'] = self.name
         obj['uuid'] = self.get_uuid()
         obj['active'] = self.active

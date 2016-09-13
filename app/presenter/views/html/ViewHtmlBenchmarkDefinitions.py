@@ -23,7 +23,7 @@ def get_definition_controls():
     controls.append(control)
     return controls
 
-def get_layout_selection(layout):
+def get_layout_selection(layout_id):
     """ Return a complete list of layout selection """
     layout_entries = BluesteelLayoutEntry.objects.all().order_by('name')
 
@@ -32,21 +32,21 @@ def get_layout_selection(layout):
         obj = {}
         obj['name'] = entry.name
         obj['id'] = entry.id
-        obj['selected'] = layout.id == entry.id
+        obj['selected'] = layout_id == entry.id
 
         layouts.append(obj)
     return layouts
 
-def get_project_selection(layout, project):
+def get_project_selection(layout_id, project_id):
     """ Return a complete list of project selection """
-    project_entries = BluesteelProjectEntry.objects.filter(layout=layout)
+    project_entries = BluesteelProjectEntry.objects.filter(layout__id=layout_id)
 
     projects = []
     for prj in project_entries:
         obj = {}
         obj['name'] = prj.name
         obj['id'] = prj.id
-        obj['selected'] = prj.id == project.id
+        obj['selected'] = prj.id == project_id
         projects.append(obj)
     return projects
 
@@ -77,18 +77,18 @@ def get_benchmark_definition_edit(request, definition_id):
     data['menu'] = ViewPrepareObjects.prepare_menu_for_html([])
     data['controls'] = get_definition_controls()
 
-    def_entry = BenchmarkDefinitionEntry.objects.filter(id=definition_id).first()
+    def_entry = BenchmarkDefinitionController.get_benchmark_definition(definition_id)
 
     if def_entry is None:
         return res.get_template_data(request, 'presenter/not_found.html', data)
 
-    obj = def_entry.as_object()
+    obj = def_entry
     obj['url'] = {}
-    obj['url']['save'] = ViewUrlGenerator.get_save_benchmark_definition_url(def_entry.id)
-    obj['url']['delete'] = ViewUrlGenerator.get_confirm_delete_benchmark_def_url(def_entry.id)
+    obj['url']['save'] = ViewUrlGenerator.get_save_benchmark_definition_url(definition_id)
+    obj['url']['delete'] = ViewUrlGenerator.get_confirm_delete_benchmark_def_url(definition_id)
     obj['url']['project_info'] = ViewUrlGenerator.get_editable_projects_info_url()
-    obj['layout_selection'] = get_layout_selection(def_entry.layout)
-    obj['project_selection'] = get_project_selection(def_entry.layout, def_entry.project)
+    obj['layout_selection'] = get_layout_selection(def_entry['layout']['id'])
+    obj['project_selection'] = get_project_selection(def_entry['layout']['id'], def_entry['project']['id'])
 
     data['definition'] = obj
 

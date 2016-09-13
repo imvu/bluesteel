@@ -139,6 +139,27 @@ class BenchmarkDefinitionController(object):
         else:
             return False
 
+    @staticmethod
+    def get_benchmark_definition(benchmark_definition_id):
+        """ Returns Benchmark Definitions given a page index """
+        def_entry = BenchmarkDefinitionEntry.objects.filter(id=benchmark_definition_id).first()
+
+        if def_entry is None:
+            return None
+
+        def_obj = def_entry.as_object()
+        def_obj['fluctuation_overrides'] = []
+
+        flucs = BenchmarkFluctuationOverrideEntry.objects.filter(definition__id=benchmark_definition_id)
+        for fluc in flucs:
+            obj = {}
+            obj['result_id'] = fluc.result_id
+            obj['override_value'] = fluc.override_value
+            def_obj['fluctuation_overrides'].append(obj)
+
+        return def_obj
+
+
 
     @staticmethod
     def get_benchmark_definitions_with_pagination(items_per_page, page_index, pagination_half_range):
