@@ -96,13 +96,13 @@
                     </div>
 
                     <div class="grid grid-pad-20">
+                        <div class="grid-col-1-1 grid-cell-pad-5-10">
+                            <div class="list_label">MAXIMUM FLUCTUATION OVERRIDES</div>
+                        </div>
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
+                            <div class="normal">Fluctuation override values for selected result ids.</div>
+                        </div>
                         {% for override in definition.fluctuation_overrides %}
-                            <div class="grid-col-1-1 grid-cell-pad-5-10">
-                                <div class="list_label">MAXIMUM FLUCTUATION OVERRIDES</div>
-                            </div>
-                            <div class="grid-col-1-1 grid-cell-pad-2-10">
-                                <div class="normal">Fluctuation override values for selected result ids.</div>
-                            </div>
                             <div class="grid-col-4-8 grid-cell-pad-5-10">
                                 <div class="container_input">
                                     <input  class="command_input" type="text" value="{{override.result_id}}" readonly></input>
