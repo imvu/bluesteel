@@ -54,6 +54,7 @@ def view_save_benchmark_definition(request, benchmark_definition_id):
             project_id=val_resp_obj['project_id'],
             command_list=val_resp_obj['command_list'],
             max_fluctuation_percent=val_resp_obj['max_fluctuation_percent'],
+            overrides=val_resp_obj['overrides'],
             max_weeks_old_notify=val_resp_obj['max_weeks_old_notify']
         )
 

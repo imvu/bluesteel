@@ -1,5 +1,9 @@
 """ Benchmark Definition Controller file """
 
+# Disable warning for max 7 params on a function.
+# I need to refactor save_benchmark_definition to take an object instead.
+# pylint: disable=R0913
+
 from django.core.paginator import Paginator
 from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
 from app.logic.benchmark.models.BenchmarkFluctuationOverrideModel import BenchmarkFluctuationOverrideEntry
@@ -56,12 +60,23 @@ class BenchmarkDefinitionController(object):
             project_id,
             command_list,
             max_fluctuation_percent,
+            overrides,
             max_weeks_old_notify):
         """ Save benchmark definition with the new data provided, returns None if error """
         benchmark_def_entry = BenchmarkDefinitionEntry.objects.filter(id=benchmark_definition_id).first()
 
         if benchmark_def_entry is None:
             return None
+
+        BenchmarkFluctuationOverrideEntry.objects.filter(definition__id=benchmark_definition_id).delete()
+
+        for override in overrides:
+            BenchmarkFluctuationOverrideEntry.objects.create(
+                definition=benchmark_def_entry,
+                result_id=override['result_id'],
+                override_value=override['override_value'],
+            )
+
 
         if BenchmarkDefinitionController.is_benchmark_definition_equivalent(
                 benchmark_definition_id,

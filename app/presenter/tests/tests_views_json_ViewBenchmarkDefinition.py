@@ -8,6 +8,7 @@ from app.logic.benchmark.controllers.BenchmarkDefinitionController import Benchm
 from app.logic.benchmark.controllers.BenchmarkExecutionController import BenchmarkExecutionController
 from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
 from app.logic.benchmark.models.BenchmarkExecutionModel import BenchmarkExecutionEntry
+from app.logic.benchmark.models.BenchmarkFluctuationOverrideModel import BenchmarkFluctuationOverrideEntry
 from app.logic.bluesteel.controllers.BluesteelLayoutController import BluesteelLayoutController
 from app.logic.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
 from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
@@ -123,6 +124,7 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
         self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='command-1').count())
         self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='command-2').count())
         self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='command-3').count())
+        self.assertEqual(0, BenchmarkFluctuationOverrideEntry.objects.all().count())
 
         project = BluesteelProjectEntry.objects.filter(layout=layout).first()
 
@@ -137,6 +139,9 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
         obj['command_list'].append('command-29')
         obj['command_list'].append('command-30')
         obj['command_list'].append('command-31')
+        obj['overrides'] = []
+        obj['overrides'].append({'result_id' : 'id1', 'override_value' : 28})
+        obj['overrides'].append({'result_id' : 'id2', 'override_value' : 29})
 
         resp = self.client.post(
             '/main/definition/{0}/save/'.format(definition.id),
@@ -162,6 +167,10 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
         self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='command-29').count())
         self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='command-30').count())
         self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='command-31').count())
+
+        self.assertEqual(2, BenchmarkFluctuationOverrideEntry.objects.all().count())
+        self.assertEqual(1, BenchmarkFluctuationOverrideEntry.objects.filter(result_id='id1', override_value=28).count())
+        self.assertEqual(1, BenchmarkFluctuationOverrideEntry.objects.filter(result_id='id2', override_value=29).count())
 
 
     def test_delete_benchmark_definition_also_deletes_benchmark_executions(self):

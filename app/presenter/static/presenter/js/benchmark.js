@@ -52,7 +52,6 @@ createSelectElement = function(className, name, count, template) {
         var eleOption = document.createElement('option');
         eleOption.value = i;
         eleOption.text = value;
-        console.log(eleOption.value);
         eleSelect.appendChild(eleOption);
     }
 
@@ -115,6 +114,9 @@ saveBenchmarkDefinition = function(idFormBenchmarkDefinition) {
     obj['command_list'] = [];
     obj['max_fluctuation_percent'] = '-1';
     obj['max_weeks_old_notify'] = '-1';
+    obj['overrides'] = [];
+
+    var overrides = {};
 
     for (var i = 0; i < form.elements.length; i++) {
         var element = form.elements[i];
@@ -124,7 +126,26 @@ saveBenchmarkDefinition = function(idFormBenchmarkDefinition) {
             obj['max_fluctuation_percent'] = parseInt(element.value);
         } else if (element.name.startsWith("max_weeks_old_notify")) {
             obj['max_weeks_old_notify'] = parseInt(element.value);
+        } else if (element.name.startsWith("override_result_id")) {
+            var inpId = element.name.replace("override_result_id_", "");
+            if (overrides[inpId] === undefined) {overrides[inpId] = {};}
+
+            overrides[inpId]['result_id'] = element.value;
+        } else if (element.name.startsWith("max_override_fluctuation_percent")) {
+            var inpId = element.name.replace("max_override_fluctuation_percent_", "");
+            if (overrides[inpId] === undefined) {overrides[inpId] = {};}
+
+            if (element.value.startsWith('<') && element.value.endsWith('>')) {continue;}
+
+            overrides[inpId]['override_value'] = parseInt(element.value);
         }
+    }
+
+    for (var key in overrides) {
+        if (!overrides.hasOwnProperty(key)) {continue;}
+        if (overrides[key]['result_id'].startsWith('<') && overrides[key]['result_id'].endsWith('>')) {continue;}
+
+        obj['overrides'].push(overrides[key]);
     }
 
     executeAndReload(form.action, JSON.stringify(obj));

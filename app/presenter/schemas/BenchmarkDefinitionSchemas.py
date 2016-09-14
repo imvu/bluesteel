@@ -7,7 +7,15 @@ SAVE_BENCHMARK_DEFINITION = {
     '$schema': 'http://json-schema.org/draft-03/schema#',
     'type' : 'object',
     'additionalProperties': False,
-    'required': ['name', 'layout_id', 'project_id', 'command_list'],
+    'required': [
+        'name',
+        'layout_id',
+        'project_id',
+        'command_list',
+        'max_fluctuation_percent',
+        'overrides',
+        'max_weeks_old_notify'
+    ],
     'properties' : {
         'name' : {
             'type' : 'string',
@@ -35,6 +43,26 @@ SAVE_BENCHMARK_DEFINITION = {
             'type' : 'number',
             'minimum' : 0,
             'maximum' : 100,
+        },
+        'overrides' : {
+            'type' : 'array',
+            'items' : {
+                'type' : 'object',
+                'additionalProperties' : False,
+                'required': ['result_id', 'override_value'],
+                'properties' : {
+                    'result_id' : {
+                        'type' : 'string',
+                        'minLength' : 1,
+                        'maxLength' : 32,
+                    },
+                    'override_value' : {
+                        'type' : 'number',
+                        'minimum' : 0,
+                        'maximum' : 100,
+                    },
+                }
+            }
         },
         'max_weeks_old_notify' : {
             'type' : 'integer',
