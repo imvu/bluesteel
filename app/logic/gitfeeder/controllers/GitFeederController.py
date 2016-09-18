@@ -420,6 +420,13 @@ class GitFeederController(object):
                 )
 
     @staticmethod
+    def delete_branch(project, branch_name):
+        """ This function deletes a branch and all the commits not shared with any other branch """
+        GitBranchEntry.objects.filter(project=project, name=branch_name).delete()
+        GitCommitEntry.objects.filter(project=project, git_trail_commit=None).delete()
+
+
+    @staticmethod
     def delete_commits_of_only_branch(project, branch_name):
         """ This function will delete all the commits that are only referenced by one branch """
         branch_entry = GitBranchEntry.objects.filter(project=project, name=branch_name).first()

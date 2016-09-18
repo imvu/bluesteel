@@ -653,6 +653,110 @@ class GitFeederControllerTestCase(TestCase):
         self.assertEqual('branch2', branches_to_remove[0])
         self.assertEqual('branch3', branches_to_remove[1])
 
+    def test_delete_branch(self):
+        # 1   2   3
+        # ----------
+        #     10  13
+        # 6   9   12
+        # 5   8 - 11
+        # 4 - 7
+        # 3
+        # 2
+        # 1
+
+        commit_time = str(timezone.now().isoformat())
+        git_commit1 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash=FeederTestHelper.hash_string(1), author=self.git_user1, author_date=commit_time, committer=self.git_user1, committer_date=commit_time)
+        git_commit2 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash=FeederTestHelper.hash_string(2), author=self.git_user1, author_date=commit_time, committer=self.git_user1, committer_date=commit_time)
+        git_commit3 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash=FeederTestHelper.hash_string(3), author=self.git_user1, author_date=commit_time, committer=self.git_user1, committer_date=commit_time)
+        git_commit4 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash=FeederTestHelper.hash_string(4), author=self.git_user1, author_date=commit_time, committer=self.git_user1, committer_date=commit_time)
+        git_commit5 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash=FeederTestHelper.hash_string(5), author=self.git_user1, author_date=commit_time, committer=self.git_user1, committer_date=commit_time)
+        git_commit6 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash=FeederTestHelper.hash_string(6), author=self.git_user1, author_date=commit_time, committer=self.git_user1, committer_date=commit_time)
+        git_commit7 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash=FeederTestHelper.hash_string(7), author=self.git_user1, author_date=commit_time, committer=self.git_user1, committer_date=commit_time)
+        git_commit8 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash=FeederTestHelper.hash_string(8), author=self.git_user1, author_date=commit_time, committer=self.git_user1, committer_date=commit_time)
+        git_commit9 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash=FeederTestHelper.hash_string(9), author=self.git_user1, author_date=commit_time, committer=self.git_user1, committer_date=commit_time)
+        git_commit10 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash=FeederTestHelper.hash_string(10), author=self.git_user1, author_date=commit_time, committer=self.git_user1, committer_date=commit_time)
+        git_commit11 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash=FeederTestHelper.hash_string(11), author=self.git_user1, author_date=commit_time, committer=self.git_user1, committer_date=commit_time)
+        git_commit12 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash=FeederTestHelper.hash_string(12), author=self.git_user1, author_date=commit_time, committer=self.git_user1, committer_date=commit_time)
+        git_commit13 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash=FeederTestHelper.hash_string(13), author=self.git_user1, author_date=commit_time, committer=self.git_user1, committer_date=commit_time)
+
+        branch1 = GitBranchEntry.objects.create(project=self.git_project1, name='branch1', commit=git_commit6)
+        branch2 = GitBranchEntry.objects.create(project=self.git_project1, name='branch2', commit=git_commit10)
+        branch3 = GitBranchEntry.objects.create(project=self.git_project1, name='branch3', commit=git_commit13)
+
+        diff1 = GitDiffEntry.objects.create(project=self.git_project1, commit_son=git_commit10, commit_parent=git_commit4, content='diff-content')
+        diff2 = GitDiffEntry.objects.create(project=self.git_project1, commit_son=git_commit13, commit_parent=git_commit8, content='diff-content')
+
+        merge_target_1 = GitBranchMergeTargetEntry.objects.create(project=self.git_project1, current_branch=branch2, target_branch=branch1, fork_point=git_commit4, diff=diff1, invalidated=False)
+        merge_target_2 = GitBranchMergeTargetEntry.objects.create(project=self.git_project1, current_branch=branch3, target_branch=branch2, fork_point=git_commit8, diff=diff2, invalidated=False)
+
+        parent_1_2 = GitParentEntry.objects.create(project=self.git_project1, parent=git_commit1, son=git_commit2, order=0)
+        parent_2_3 = GitParentEntry.objects.create(project=self.git_project1, parent=git_commit2, son=git_commit3, order=1)
+        parent_3_4 = GitParentEntry.objects.create(project=self.git_project1, parent=git_commit3, son=git_commit4, order=2)
+        parent_4_5 = GitParentEntry.objects.create(project=self.git_project1, parent=git_commit4, son=git_commit5, order=3)
+        parent_5_6 = GitParentEntry.objects.create(project=self.git_project1, parent=git_commit5, son=git_commit6, order=4)
+
+        parent_4_7 = GitParentEntry.objects.create(project=self.git_project1, parent=git_commit4, son=git_commit7, order=5)
+        parent_7_8 = GitParentEntry.objects.create(project=self.git_project1, parent=git_commit7, son=git_commit8, order=6)
+        parent_8_9 = GitParentEntry.objects.create(project=self.git_project1, parent=git_commit8, son=git_commit9, order=7)
+        parent_9_10 = GitParentEntry.objects.create(project=self.git_project1, parent=git_commit9, son=git_commit10, order=8)
+
+        parent_8_11 = GitParentEntry.objects.create(project=self.git_project1, parent=git_commit8, son=git_commit11, order=9)
+        parent_11_12 = GitParentEntry.objects.create(project=self.git_project1, parent=git_commit11, son=git_commit12, order=10)
+        parent_12_13 = GitParentEntry.objects.create(project=self.git_project1, parent=git_commit12, son=git_commit13, order=11)
+
+        trail1_1 = GitBranchTrailEntry.objects.create(project=self.git_project1, branch=branch1, commit=git_commit1, order=5)
+        trail2_1 = GitBranchTrailEntry.objects.create(project=self.git_project1, branch=branch1, commit=git_commit2, order=4)
+        trail3_1 = GitBranchTrailEntry.objects.create(project=self.git_project1, branch=branch1, commit=git_commit3, order=3)
+        trail4_1 = GitBranchTrailEntry.objects.create(project=self.git_project1, branch=branch1, commit=git_commit4, order=2)
+        trail5_1 = GitBranchTrailEntry.objects.create(project=self.git_project1, branch=branch1, commit=git_commit5, order=1)
+        trail6_1 = GitBranchTrailEntry.objects.create(project=self.git_project1, branch=branch1, commit=git_commit6, order=0)
+
+        trail1_2 = GitBranchTrailEntry.objects.create(project=self.git_project1, branch=branch2, commit=git_commit1, order=7)
+        trail2_2 = GitBranchTrailEntry.objects.create(project=self.git_project1, branch=branch2, commit=git_commit2, order=6)
+        trail3_2 = GitBranchTrailEntry.objects.create(project=self.git_project1, branch=branch2, commit=git_commit3, order=5)
+        trail4_2 = GitBranchTrailEntry.objects.create(project=self.git_project1, branch=branch2, commit=git_commit4, order=4)
+        trail7_2 = GitBranchTrailEntry.objects.create(project=self.git_project1, branch=branch2, commit=git_commit7, order=3)
+        trail8_2 = GitBranchTrailEntry.objects.create(project=self.git_project1, branch=branch2, commit=git_commit8, order=2)
+        trail9_2 = GitBranchTrailEntry.objects.create(project=self.git_project1, branch=branch2, commit=git_commit9, order=1)
+        trail10_2 = GitBranchTrailEntry.objects.create(project=self.git_project1, branch=branch2, commit=git_commit10, order=0)
+
+        trail1_3 = GitBranchTrailEntry.objects.create(project=self.git_project1, branch=branch3, commit=git_commit1, order=8)
+        trail2_3 = GitBranchTrailEntry.objects.create(project=self.git_project1, branch=branch3, commit=git_commit2, order=7)
+        trail3_3 = GitBranchTrailEntry.objects.create(project=self.git_project1, branch=branch3, commit=git_commit3, order=6)
+        trail4_3 = GitBranchTrailEntry.objects.create(project=self.git_project1, branch=branch3, commit=git_commit4, order=5)
+        trail7_3 = GitBranchTrailEntry.objects.create(project=self.git_project1, branch=branch3, commit=git_commit7, order=4)
+        trail8_3 = GitBranchTrailEntry.objects.create(project=self.git_project1, branch=branch3, commit=git_commit8, order=3)
+        trail11_3 = GitBranchTrailEntry.objects.create(project=self.git_project1, branch=branch3, commit=git_commit11, order=2)
+        trail12_3 = GitBranchTrailEntry.objects.create(project=self.git_project1, branch=branch3, commit=git_commit12, order=1)
+        trail13_3 = GitBranchTrailEntry.objects.create(project=self.git_project1, branch=branch3, commit=git_commit13, order=0)
+
+        self.assertEqual(23, GitBranchTrailEntry.objects.all().count())
+        self.assertEqual(12, GitParentEntry.objects.all().count())
+        self.assertEqual(13, GitCommitEntry.objects.all().count())
+
+        GitFeederController.delete_branch(self.git_project1, 'branch2')
+
+        self.assertEqual(15, GitBranchTrailEntry.objects.all().count())
+        self.assertEqual(10, GitParentEntry.objects.all().count())
+        self.assertEqual(11, GitCommitEntry.objects.all().count())
+
+        self.assertEqual(1, GitBranchTrailEntry.objects.filter(commit__commit_hash='0000100001000010000100001000010000100001', branch__name='branch1', project=self.git_project1).count())
+        self.assertEqual(1, GitBranchTrailEntry.objects.filter(commit__commit_hash='0000200002000020000200002000020000200002', branch__name='branch1', project=self.git_project1).count())
+        self.assertEqual(1, GitBranchTrailEntry.objects.filter(commit__commit_hash='0000300003000030000300003000030000300003', branch__name='branch1', project=self.git_project1).count())
+        self.assertEqual(1, GitBranchTrailEntry.objects.filter(commit__commit_hash='0000400004000040000400004000040000400004', branch__name='branch1', project=self.git_project1).count())
+        self.assertEqual(1, GitBranchTrailEntry.objects.filter(commit__commit_hash='0000500005000050000500005000050000500005', branch__name='branch1', project=self.git_project1).count())
+        self.assertEqual(1, GitBranchTrailEntry.objects.filter(commit__commit_hash='0000600006000060000600006000060000600006', branch__name='branch1', project=self.git_project1).count())
+        self.assertEqual(1, GitBranchTrailEntry.objects.filter(commit__commit_hash='0000700007000070000700007000070000700007', branch__name='branch3', project=self.git_project1).count())
+        self.assertEqual(1, GitBranchTrailEntry.objects.filter(commit__commit_hash='0000800008000080000800008000080000800008', branch__name='branch3', project=self.git_project1).count())
+        self.assertEqual(1, GitBranchTrailEntry.objects.filter(commit__commit_hash='0001100011000110001100011000110001100011', branch__name='branch3', project=self.git_project1).count())
+        self.assertEqual(1, GitBranchTrailEntry.objects.filter(commit__commit_hash='0001200012000120001200012000120001200012', branch__name='branch3', project=self.git_project1).count())
+        self.assertEqual(1, GitBranchTrailEntry.objects.filter(commit__commit_hash='0001300013000130001300013000130001300013', branch__name='branch3', project=self.git_project1).count())
+
+        self.assertEqual(6, GitBranchTrailEntry.objects.filter(branch__name='branch1', project=self.git_project1).count())
+        self.assertEqual(0, GitBranchTrailEntry.objects.filter(branch__name='branch2', project=self.git_project1).count())
+        self.assertEqual(9, GitBranchTrailEntry.objects.filter(branch__name='branch3', project=self.git_project1).count())
+
+
     def test_delete_commits_only_associated_with_a_branch(self):
         #     8
         #     7
