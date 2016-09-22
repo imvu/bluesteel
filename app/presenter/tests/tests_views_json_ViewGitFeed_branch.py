@@ -244,3 +244,33 @@ class GitFeedViewsBranchTestCase(TestCase):
 
         self.assertIsNotNone(GitBranchTrailEntry.objects.filter(commit__commit_hash='0000300003000030000300003000030000300003').first())
         self.assertIsNotNone(2, GitBranchTrailEntry.objects.filter(commit__commit_hash='0000300003000030000300003000030000300003').first().order)
+
+
+    def test_delete_branches(self):
+        commit1 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash='0000100001000010000100001000010000100001', author=self.git_user1, author_date=timezone.now(), committer=self.git_user1, committer_date=timezone.now())
+        commit2 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash='0000200002000020000200002000020000200002', author=self.git_user1, author_date=timezone.now(), committer=self.git_user1, committer_date=timezone.now())
+        commit3 = GitCommitEntry.objects.create(project=self.git_project1, commit_hash='0000300003000030000300003000030000300003', author=self.git_user1, author_date=timezone.now(), committer=self.git_user1, committer_date=timezone.now())
+
+        branch1 = GitBranchEntry.objects.create(project=self.git_project1, name='branch-1', commit=commit1)
+        branch2 = GitBranchEntry.objects.create(project=self.git_project1, name='branch-2', commit=commit2)
+        branch3 = GitBranchEntry.objects.create(project=self.git_project1, name='branch-3', commit=commit3)
+
+        GitBranchTrailEntry.objects.create(project=self.git_project1, branch=branch1, commit=commit1, order=2)
+        GitBranchTrailEntry.objects.create(project=self.git_project1, branch=branch2, commit=commit2, order=1)
+        GitBranchTrailEntry.objects.create(project=self.git_project1, branch=branch3, commit=commit3, order=0)
+
+        post_data = {'branch_names' : ['branch-2', 'branch-3']}
+
+        resp = self.client.post(
+            '/main/feed/branch/project/{0}/delete/'.format(self.git_project1.id),
+            data = json.dumps(post_data),
+            content_type='application/json')
+
+        res.check_cross_origin_headers(self, resp)
+        resp_obj = json.loads(resp.content)
+
+        self.assertEqual(200, resp_obj['status'])
+        self.assertEqual(1, GitBranchEntry.objects.all().count())
+        self.assertEqual(1, GitBranchEntry.objects.filter(id=branch1.id).count())
+        self.assertEqual(1, GitCommitEntry.objects.all().count())
+        self.assertEqual(1, GitCommitEntry.objects.filter(id=commit1.id).count())

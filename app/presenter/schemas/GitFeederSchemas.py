@@ -228,6 +228,22 @@ GIT_FEED_REPORTS_SCHEMA = {
     }
 }
 
+GIT_FEED_DELETE_BRANCHES_SCHEMA = {
+    '$schema': 'http://json-schema.org/draft-03/schema#',
+    'type' : 'object',
+    'additionalProperties' : False,
+    'required' : ['branch_names'],
+    'properties' : {
+        'branch_names' : {
+            'type' : 'array',
+            'minItems' : 1,
+            'items' : {
+                'type' : 'string',
+                'minLength' : 1
+            }
+        }
+    }
+}
 
 # 'project' : {
 #     'type' : 'object',

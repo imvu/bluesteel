@@ -117,3 +117,29 @@ def purge_old_feed_reports(request, worker_id, keep_young_count):
         return res.get_response(200, 'Feed reports purged', {})
     else:
         return res.get_response(400, 'Only post allowed', {})
+
+@transaction.atomic
+def delete_branches(request, project_id):
+    if request.method == 'POST':
+        project_entry = GitProjectEntry.objects.filter(id=project_id).first()
+        if project_entry is None:
+            return res.get_response(404, 'project not found', {})
+
+        (json_valid, post_info) = val.validate_json_string(request.body)
+        if not json_valid:
+            LogEntry.error(request.user, 'Json parser failed.\n{0}'.format(json.dumps(post_info)))
+            return res.get_json_parser_failed({})
+
+        (obj_validated, val_resp_obj) = val.validate_obj_schema(
+            post_info,
+            GitFeederSchemas.GIT_FEED_DELETE_BRANCHES_SCHEMA)
+        if not obj_validated:
+            LogEntry.error(request.user, 'Json schema failed.\n{0}'.format(json.dumps(val_resp_obj)))
+            return res.get_schema_failed(val_resp_obj)
+
+        for name in val_resp_obj['branch_names']:
+            GitFeederController.delete_branch(project_entry, name)
+
+        return res.get_response(200, 'Branches removed correctly', {})
+    else:
+        return res.get_response(400, 'Only post allowed', {})

@@ -184,6 +184,9 @@ urlpatterns = [
     url(r'^feed/commit/project/(?P<project_id>\d+)/$',
         app.presenter.views.json.ViewJsonGitFeeder.post_feed_commits),
 
+    url(r'^feed/branch/project/(?P<project_id>\d+)/delete/$',
+        app.presenter.views.json.ViewJsonGitFeeder.delete_branches),
+
     url(r'^feed/report/project/(?P<project_id>\d+)/$',
         app.presenter.views.json.ViewJsonGitFeeder.post_feed_reports),
 
