@@ -422,6 +422,13 @@ class GitFeederController(object):
     @staticmethod
     def delete_branch(project, branch_name):
         """ This function deletes a branch and all the commits not shared with any other branch """
+        merge_targets = GitBranchMergeTargetEntry.objects.filter(project=project, target_branch__name=branch_name)
+
+        for target in merge_targets:
+            target.target_branch = target.current_branch
+            target.fork_point = target.current_branch.commit
+            target.save()
+
         GitBranchEntry.objects.filter(project=project, name=branch_name).delete()
         GitCommitEntry.objects.filter(project=project, git_trail_commit=None).delete()
 

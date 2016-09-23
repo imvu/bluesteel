@@ -756,6 +756,8 @@ class GitFeederControllerTestCase(TestCase):
         self.assertEqual(0, GitBranchTrailEntry.objects.filter(branch__name='branch2', project=self.git_project1).count())
         self.assertEqual(9, GitBranchTrailEntry.objects.filter(branch__name='branch3', project=self.git_project1).count())
 
+        self.assertEqual(1, GitBranchMergeTargetEntry.objects.filter(current_branch__id=branch3.id).count())
+
 
     def test_delete_commits_only_associated_with_a_branch(self):
         #     8
