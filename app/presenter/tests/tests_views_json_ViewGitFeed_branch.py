@@ -64,63 +64,6 @@ class GitFeedViewsBranchTestCase(TestCase):
         self.assertEqual(0, GitCommitEntry.objects.all().count())
         self.assertEqual(0, GitBranchEntry.objects.all().count())
 
-    def test_branches_are_deleted_if_not_in_feed_data(self):
-        commit_a = GitCommitEntry.objects.create(project=self.git_project1, commit_hash='0000100001000010000100001000010000100001', author=self.git_user1, author_date=timezone.now(), committer=self.git_user1, committer_date=timezone.now())
-        commit_b = GitCommitEntry.objects.create(project=self.git_project1, commit_hash='0000200002000020000200002000020000200002', author=self.git_user1, author_date=timezone.now(), committer=self.git_user1, committer_date=timezone.now())
-
-        branch_a = GitBranchEntry.objects.create(project=self.git_project1, name='branch-old', commit=commit_b)
-
-        diff1 = GitDiffEntry.objects.create(project=self.git_project1, commit_son=commit_b, commit_parent=commit_a, content='diff-content')
-
-        merge_target_1 = GitBranchMergeTargetEntry.objects.create(project=self.git_project1, current_branch=branch_a, target_branch=branch_a, fork_point=commit_a, diff=diff1, invalidated=False)
-
-        trail_a = GitBranchTrailEntry.objects.create(project=self.git_project1, branch=branch_a, commit=commit_a, order=1)
-        trail_b = GitBranchTrailEntry.objects.create(project=self.git_project1, branch=branch_a, commit=commit_b, order=0)
-
-        commit_time = str(timezone.now().isoformat())
-        commit1 = FeederTestHelper.create_commit(5, [], 'user1', 'user1@test.com', commit_time, commit_time)
-        commit2 = FeederTestHelper.create_commit(6, [], 'user1', 'user1@test.com', commit_time, commit_time)
-
-        branch1 = FeederTestHelper.create_branch('master', 5, 'master', 5, 5, [5], 'merge-target-content')
-        branch2 = FeederTestHelper.create_branch('branch2', 6, 'branch2', 6, 6, [6], 'merge-target-content')
-
-        feed_data = {}
-        feed_data['commits'] = []
-        feed_data['commits'].append(commit1)
-        feed_data['commits'].append(commit2)
-        feed_data['branches'] = []
-        feed_data['branches'].append(branch1)
-        feed_data['branches'].append(branch2)
-
-        self.assertEqual(1, GitCommitEntry.objects.filter(project=self.git_project1, commit_hash='0000100001000010000100001000010000100001').count())
-        self.assertEqual(1, GitCommitEntry.objects.filter(project=self.git_project1, commit_hash='0000200002000020000200002000020000200002').count())
-        self.assertEqual(1, GitBranchEntry.objects.filter(project=self.git_project1, name='branch-old').count())
-        self.assertEqual(1, GitBranchTrailEntry.objects.filter(project=self.git_project1, branch=branch_a, commit=commit_a).count())
-        self.assertEqual(1, GitBranchTrailEntry.objects.filter(project=self.git_project1, branch=branch_a, commit=commit_b).count())
-
-        post_data = FeederTestHelper.create_feed_data(feed_data)
-
-        resp = self.client.post(
-            '/main/feed/commit/project/{0}/'.format(self.git_project1.id),
-            data = json.dumps(post_data),
-            content_type='application/json')
-
-        res.check_cross_origin_headers(self, resp)
-        resp_obj = json.loads(resp.content)
-
-        self.assertEqual(200, resp_obj['status'])
-        self.assertEqual(1, GitCommitEntry.objects.filter(project=self.git_project1, commit_hash='0000100001000010000100001000010000100001').count())
-        self.assertEqual(0, GitCommitEntry.objects.filter(project=self.git_project1, commit_hash='0000200002000020000200002000020000200002').count())
-        self.assertEqual(0, GitBranchEntry.objects.filter(project=self.git_project1, name='branch-old').count())
-        self.assertEqual(0, GitBranchTrailEntry.objects.filter(project=self.git_project1, branch=branch_a, commit=commit_a).count())
-        self.assertEqual(0, GitBranchTrailEntry.objects.filter(project=self.git_project1, branch=branch_a, commit=commit_b).count())
-
-        self.assertEqual(1, GitCommitEntry.objects.filter(project=self.git_project1, commit_hash='0000500005000050000500005000050000500005').count())
-        self.assertEqual(1, GitCommitEntry.objects.filter(project=self.git_project1, commit_hash='0000600006000060000600006000060000600006').count())
-        self.assertEqual(1, GitBranchEntry.objects.filter(project=self.git_project1, name='master').count())
-        self.assertEqual(1, GitBranchEntry.objects.filter(project=self.git_project1, name='branch2').count())
-
-
     def test_branch_update_and_no_merge_target(self):
         commit_entry = GitCommitEntry.objects.create(
             project=self.git_project1,
