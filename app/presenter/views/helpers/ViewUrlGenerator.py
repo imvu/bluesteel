@@ -99,6 +99,9 @@ def get_worker_delete_url(worker_id):
 def get_gitfeeder_commits_full_url(domain, project_id):
     return 'http://{0}/main/feed/commit/project/{1}/'.format(domain, project_id)
 
+def get_gitfeeder_delete_branches_full_url(domain, project_id):
+    return 'http://{0}/main/feed/branch/project/{1}/delete/'.format(domain, project_id)
+
 def get_gitfeeder_reports_full_url(domain, project_id):
     return 'http://{0}/main/feed/report/project/{1}/'.format(domain, project_id)
 

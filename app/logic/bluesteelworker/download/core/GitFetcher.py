@@ -21,6 +21,7 @@ class GitFetcher(object):
         self.report_stack = []
         self.branch_names = {}
         self.branch_names['remote'] = []
+        self.branch_names['remove'] = []
         self.branch_names['local'] = []
         self.branch_names['names_and_hashes'] = []
         self.branch_names['names'] = []
@@ -54,6 +55,7 @@ class GitFetcher(object):
             self.step_transform_remote_to_local_branch,
             self.step_get_all_local_branch_names,
             self.step_get_name_and_hash_from_local_branch,
+            self.step_get_branches_to_remove,
             self.step_get_all_commits_from_branch,
             self.step_setup_merge_target_forevery_branch,
             self.step_setup_diff_on_merge_target,
@@ -90,6 +92,9 @@ class GitFetcher(object):
 
     def has_feed_data(self):
         return 'feed_data' in self.feed_data
+
+    def has_branches_to_delete(self):
+        return len(self.branch_names['remove']) > 0
 
     def step_fetch_git_project(self, project_info):
         """ Fetch a git project using project info """
@@ -189,6 +194,22 @@ class GitFetcher(object):
             return False
 
         self.branch_names['names_and_hashes'] = self.extract_branch_names_hashes_from_report(names_and_hashes_report)
+        return True
+
+    def step_get_branches_to_remove(self, project_info):
+        """ Get all the branches we will need to remove because they were deleted """
+        known_names = []
+        for known_branch in project_info['git']['branch']['known']:
+            known_names.append(known_branch['name'])
+
+        local_names = []
+        for local_branch in self.branch_names['names_and_hashes']:
+            local_names.append(local_branch['name'])
+
+        for known in known_names:
+            if known not in local_names:
+                self.branch_names['remove'].append(known)
+
         return True
 
     def step_get_all_commits_from_branch(self, project_info):

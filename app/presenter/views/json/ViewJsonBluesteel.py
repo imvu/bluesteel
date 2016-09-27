@@ -9,9 +9,11 @@ def add_project_feed_url(request, layout):
     """ Returns urls associated with every project on a given layout """
     domain = request.get_host()
     for project in layout['projects']:
-        project['feed_commits_url'] = ViewUrlGenerator.get_gitfeeder_commits_full_url(domain, project['id'])
-        project['feed_reports_url'] = ViewUrlGenerator.get_gitfeeder_reports_full_url(domain, project['id'])
-        project['commits_hashes_url'] = ViewUrlGenerator.get_commits_known_hashes_full_url(domain, project['id'])
+        p_id = project['id']
+        project['feed_commits_url'] = ViewUrlGenerator.get_gitfeeder_commits_full_url(domain, p_id)
+        project['feed_delete_branches_url'] = ViewUrlGenerator.get_gitfeeder_delete_branches_full_url(domain, p_id)
+        project['feed_reports_url'] = ViewUrlGenerator.get_gitfeeder_reports_full_url(domain, p_id)
+        project['commits_hashes_url'] = ViewUrlGenerator.get_commits_known_hashes_full_url(domain, p_id)
     return layout
 
 def get_all_layouts_urls(request):

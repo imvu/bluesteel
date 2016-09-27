@@ -59,6 +59,7 @@ def fragment_layout_in_project_infos(layout, tmp_path):
         obj = {}
         obj['feed'] = {}
         obj['feed']['commits_url'] = project['feed_commits_url']
+        obj['feed']['delete_branches_url'] = project['feed_delete_branches_url']
         obj['feed']['reports_url'] = project['feed_reports_url']
         obj['feed']['commits_hashes_url'] = project['commits_hashes_url']
         obj['feed']['active'] = index == project_to_feed
@@ -291,7 +292,6 @@ def process_git_fetch_and_feed(bootstrap_urls, settings, session, feed):
             log.debug('Fetching git project.')
             fetcher.fetch_and_feed_git_project(project, known_commit_hashes)
 
-
             if fetcher.has_feed_data():
                 commits_json = {}
                 commits_json['feed_data'] = fetcher.feed_data['feed_data']
@@ -304,10 +304,23 @@ def process_git_fetch_and_feed(bootstrap_urls, settings, session, feed):
                     process_info = resp
                     return process_info
 
+            if fetcher.has_branches_to_delete():
+                delete_branches_json = {}
+                delete_branches_json['branch_names'] = fetcher.branch_names['remove']
+
+                log.debug('Feeding branches to delete to url: %s', project['feed']['delete_branches_url'])
+                resp = session.post(project['feed']['delete_branches_url'], {}, json.dumps(delete_branches_json))
+
+                if not resp['succeed']:
+                    log.error('Error while feeding branches to delete!')
+                    process_info = resp
+                    return process_info
+
+
             reports_json = {}
             reports_json['reports'] = fetcher.feed_data['reports']
 
-            log.debug('Feeding git commits to url: %s', project['feed']['reports_url'])
+            log.debug('Feeding reports to url: %s', project['feed']['reports_url'])
             resp = session.post(project['feed']['reports_url'], {}, json.dumps(reports_json))
 
             if not resp['succeed']:

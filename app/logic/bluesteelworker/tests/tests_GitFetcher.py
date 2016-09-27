@@ -1185,6 +1185,26 @@ class GitFetcherTestCase(TestCase):
         name2, args2, side2 = mock_subprocess.mock_calls[1]
         self.assertEqual(['git', 'branch', '-D', 'branch-4'], args2[0])
 
+    def test_step_get_branches_to_remove(self):
+        obj = {}
+        obj['git'] = {}
+        obj['git']['branch'] = {}
+        obj['git']['branch']['known'] = []
+        obj['git']['branch']['known'].append({'name' : 'branch-1'})
+        obj['git']['branch']['known'].append({'name' : 'branch-2'})
+        obj['git']['branch']['known'].append({'name' : 'branch-3'})
+
+        self.fetcher.branch_names['names_and_hashes'].append({'name' : 'branch-2'})
+
+        self.assertEqual(0, len(self.fetcher.branch_names['remove']))
+
+        self.fetcher.step_get_branches_to_remove(obj)
+
+        self.assertEqual(2, len(self.fetcher.branch_names['remove']))
+        self.assertEqual('branch-1', self.fetcher.branch_names['remove'][0])
+        self.assertEqual('branch-3', self.fetcher.branch_names['remove'][1])
+
+
     def test_step_create_unique_list_commits(self):
         commits_extracted_1 = []
         commits_extracted_1.append({'hash' : '0000100001000010000100001000010000100001'})
