@@ -47,7 +47,7 @@ SAVE_BENCHMARK_EXECUTION = {
                                             'id' : {
                                                 'type' : 'string',
                                                 'minLength' : 1,
-                                                'maxLength' : 32,
+                                                'maxLength' : 255,
                                             },
                                             'data' : {
                                                 'type' : 'string',
@@ -66,7 +66,7 @@ SAVE_BENCHMARK_EXECUTION = {
                                             'id' : {
                                                 'type' : 'string',
                                                 'minLength' : 1,
-                                                'maxLength' : 32,
+                                                'maxLength' : 255,
                                             },
                                             'data' : {
                                                 'type' : 'string',
@@ -85,7 +85,7 @@ SAVE_BENCHMARK_EXECUTION = {
                                             'id' : {
                                                 'type' : 'string',
                                                 'minLength' : 1,
-                                                'maxLength' : 32,
+                                                'maxLength' : 255,
                                             },
                                             'data' : {
                                                 'type' : 'array',

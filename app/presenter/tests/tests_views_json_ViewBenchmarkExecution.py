@@ -67,6 +67,40 @@ class BenchmarkExecutionViewJsonTestCase(TestCase):
     def tearDown(self):
         pass
 
+    def test_save_benchmark_execution_id_too_long(self):
+        execution = BenchmarkExecutionController.create_benchmark_execution(
+            self.benchmark_definition1,
+            self.commit1,
+            self.worker1)
+
+        long_id = 'a' * 256
+
+        obj = {
+            'command_set' : [{
+                'command' : 'command-vertical-bars',
+                'result' : {
+                    'status' : 0,
+                    'out' : [
+                        {'visual_type' : 'vertical_bars', 'id' : long_id, 'data' : []}
+                    ],
+                    'error' : '',
+                    'start_time' : str(timezone.now()),
+                    'finish_time' : str(timezone.now())
+                },
+            }]
+        }
+
+        resp = self.client.post(
+            '/main/execution/{0}/save/'.format(execution.id),
+            data = json.dumps(obj),
+            content_type='application/json')
+
+        res.check_cross_origin_headers(self, resp)
+        resp_obj = json.loads(resp.content)
+
+        self.assertEqual(406, resp_obj['status'])
+
+
     def test_save_benchmark_execution_vertical_bars(self):
         execution = BenchmarkExecutionController.create_benchmark_execution(
             self.benchmark_definition1,
