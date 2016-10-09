@@ -1185,6 +1185,54 @@ class GitFetcherTestCase(TestCase):
         name2, args2, side2 = mock_subprocess.mock_calls[1]
         self.assertEqual(['git', 'branch', '-D', 'branch-4'], args2[0])
 
+    def test_step_get_modified_or_new_branches_with_modified_only(self):
+        obj = {}
+        obj['git'] = {}
+        obj['git']['branch'] = {}
+        obj['git']['branch']['known'] = []
+        obj['git']['branch']['known'].append({'name' : 'branch-1', 'commit_hash' : '00005'})
+        obj['git']['branch']['known'].append({'name' : 'branch-2', 'commit_hash' : '00006'})
+        obj['git']['branch']['known'].append({'name' : 'branch-3', 'commit_hash' : '00007'})
+
+        self.fetcher.branch_names['names_and_hashes'].append({'name' : 'branch-1', 'commit_hash' : '00005'})
+        self.fetcher.branch_names['names_and_hashes'].append({'name' : 'branch-2', 'commit_hash' : '00002'})
+        self.fetcher.branch_names['names_and_hashes'].append({'name' : 'branch-3', 'commit_hash' : '00003'})
+
+        self.assertEqual(0, len(self.fetcher.branch_names['to_process']))
+
+        self.fetcher.step_get_modified_or_new_branches(obj)
+
+        self.assertEqual(2, len(self.fetcher.branch_names['to_process']))
+        self.assertEqual('branch-2', self.fetcher.branch_names['to_process'][0]['name'])
+        self.assertEqual('00002', self.fetcher.branch_names['to_process'][0]['commit_hash'])
+        self.assertEqual('branch-3', self.fetcher.branch_names['to_process'][1]['name'])
+        self.assertEqual('00003', self.fetcher.branch_names['to_process'][1]['commit_hash'])
+
+    def test_step_get_modified_or_new_branches_with_new_and_modified(self):
+        obj = {}
+        obj['git'] = {}
+        obj['git']['branch'] = {}
+        obj['git']['branch']['known'] = []
+        obj['git']['branch']['known'].append({'name' : 'branch-1', 'commit_hash' : '00001'})
+        obj['git']['branch']['known'].append({'name' : 'branch-2', 'commit_hash' : '00002'})
+        obj['git']['branch']['known'].append({'name' : 'branch-3', 'commit_hash' : '00003'})
+
+        self.fetcher.branch_names['names_and_hashes'].append({'name' : 'branch-1', 'commit_hash' : '00001'})
+        self.fetcher.branch_names['names_and_hashes'].append({'name' : 'branch-2', 'commit_hash' : '00005'})
+        self.fetcher.branch_names['names_and_hashes'].append({'name' : 'branch-3', 'commit_hash' : '00003'})
+        self.fetcher.branch_names['names_and_hashes'].append({'name' : 'branch-4', 'commit_hash' : '00004'})
+
+        self.assertEqual(0, len(self.fetcher.branch_names['to_process']))
+
+        self.fetcher.step_get_modified_or_new_branches(obj)
+
+        print self.fetcher.branch_names['to_process']
+        self.assertEqual(2, len(self.fetcher.branch_names['to_process']))
+        self.assertEqual('branch-4', self.fetcher.branch_names['to_process'][0]['name'])
+        self.assertEqual('00004', self.fetcher.branch_names['to_process'][0]['commit_hash'])
+        self.assertEqual('branch-2', self.fetcher.branch_names['to_process'][1]['name'])
+        self.assertEqual('00005', self.fetcher.branch_names['to_process'][1]['commit_hash'])
+
     def test_step_get_branches_to_remove(self):
         obj = {}
         obj['git'] = {}

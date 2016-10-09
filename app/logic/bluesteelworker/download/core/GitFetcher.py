@@ -25,6 +25,7 @@ class GitFetcher(object):
         self.branch_names['local'] = []
         self.branch_names['names_and_hashes'] = []
         self.branch_names['names'] = []
+        self.branch_names['to_process'] = []
         self.branches_data = []
         self.known_commit_hashes = []
         self.unique_commmits = []
@@ -211,6 +212,33 @@ class GitFetcher(object):
                 self.branch_names['remove'].append(known)
 
         return True
+
+    def step_get_modified_or_new_branches(self, project_info):
+        """ Select only modified branches to work on them """
+        known_branches = project_info['git']['branch']['known']
+
+        for name_and_hash in self.branch_names['names_and_hashes']:
+            found = False
+            for known in known_branches:
+                if name_and_hash['name'] == known['name']:
+                    found = True
+                    break
+
+            if not found:
+                obj = {}
+                obj['name'] = name_and_hash['name']
+                obj['commit_hash'] = name_and_hash['commit_hash']
+                self.branch_names['to_process'].append(obj)
+
+
+        for name_and_hash in self.branch_names['names_and_hashes']:
+            for known in known_branches:
+                if name_and_hash['name'] == known['name'] and (name_and_hash['commit_hash'] != known['commit_hash']):
+                    obj = {}
+                    obj['name'] = name_and_hash['name']
+                    obj['commit_hash'] = name_and_hash['commit_hash']
+                    self.branch_names['to_process'].append(obj)
+
 
     def step_get_all_commits_from_branch(self, project_info):
         """ For every branch we get all the commits from that branch """
