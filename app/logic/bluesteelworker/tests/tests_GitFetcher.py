@@ -374,17 +374,29 @@ class GitFetcherTestCase(TestCase):
         self.assertEqual(['git', 'checkout', 'master'], args[0])
 
         name, args, side = mock_subprocess.mock_calls[1]
-        self.assertEqual(['git', 'checkout', 'branch-1'], args[0])
+        self.assertEqual(['git', 'pull', '-r', 'origin', 'master'], args[0])
 
         name, args, side = mock_subprocess.mock_calls[2]
-        self.assertEqual(['git', 'checkout', 'branch-2'], args[0])
+        self.assertEqual(['git', 'checkout', 'branch-1'], args[0])
 
         name, args, side = mock_subprocess.mock_calls[3]
+        self.assertEqual(['git', 'pull', '-r', 'origin', 'branch-1'], args[0])
+
+        name, args, side = mock_subprocess.mock_calls[4]
+        self.assertEqual(['git', 'checkout', 'branch-2'], args[0])
+
+        name, args, side = mock_subprocess.mock_calls[5]
+        self.assertEqual(['git', 'pull', '-r', 'origin', 'branch-2'], args[0])
+
+        name, args, side = mock_subprocess.mock_calls[6]
         self.assertEqual(['git', 'checkout', 'branch-test-1'], args[0])
 
-        self.assertEqual(4, mock_subprocess.call_count)
+        name, args, side = mock_subprocess.mock_calls[7]
+        self.assertEqual(['git', 'pull', '-r', 'origin', 'branch-test-1'], args[0])
 
-        self.assertEqual(4, len(reports['commands']))
+        self.assertEqual(8, mock_subprocess.call_count)
+
+        self.assertEqual(8, len(reports['commands']))
 
         self.assertEqual(0, reports['commands'][0]['result']['status'])
         self.assertEqual('git checkout master', reports['commands'][0]['command'])
@@ -392,20 +404,39 @@ class GitFetcherTestCase(TestCase):
         self.assertEqual('', reports['commands'][0]['result']['out'])
 
         self.assertEqual(0, reports['commands'][1]['result']['status'])
-        self.assertEqual('git checkout branch-1', reports['commands'][1]['command'])
+        self.assertEqual('git pull -r origin master', reports['commands'][1]['command'])
         self.assertEqual('', reports['commands'][1]['result']['error'])
         self.assertEqual('', reports['commands'][1]['result']['out'])
 
         self.assertEqual(0, reports['commands'][2]['result']['status'])
-        self.assertEqual('git checkout branch-2', reports['commands'][2]['command'])
+        self.assertEqual('git checkout branch-1', reports['commands'][2]['command'])
         self.assertEqual('', reports['commands'][2]['result']['error'])
         self.assertEqual('', reports['commands'][2]['result']['out'])
 
         self.assertEqual(0, reports['commands'][3]['result']['status'])
-        self.assertEqual('git checkout branch-test-1', reports['commands'][3]['command'])
+        self.assertEqual('git pull -r origin branch-1', reports['commands'][3]['command'])
         self.assertEqual('', reports['commands'][3]['result']['error'])
         self.assertEqual('', reports['commands'][3]['result']['out'])
 
+        self.assertEqual(0, reports['commands'][4]['result']['status'])
+        self.assertEqual('git checkout branch-2', reports['commands'][4]['command'])
+        self.assertEqual('', reports['commands'][4]['result']['error'])
+        self.assertEqual('', reports['commands'][4]['result']['out'])
+
+        self.assertEqual(0, reports['commands'][5]['result']['status'])
+        self.assertEqual('git pull -r origin branch-2', reports['commands'][5]['command'])
+        self.assertEqual('', reports['commands'][5]['result']['error'])
+        self.assertEqual('', reports['commands'][5]['result']['out'])
+
+        self.assertEqual(0, reports['commands'][6]['result']['status'])
+        self.assertEqual('git checkout branch-test-1', reports['commands'][6]['command'])
+        self.assertEqual('', reports['commands'][6]['result']['error'])
+        self.assertEqual('', reports['commands'][6]['result']['out'])
+
+        self.assertEqual(0, reports['commands'][7]['result']['status'])
+        self.assertEqual('git pull -r origin branch-test-1', reports['commands'][7]['command'])
+        self.assertEqual('', reports['commands'][7]['result']['error'])
+        self.assertEqual('', reports['commands'][7]['result']['out'])
 
     @mock.patch('app.logic.bluesteelworker.download.core.CommandExecutioner.subprocess.call')
     def test_commands_get_branch_names_and_hashes(self, mock_subprocess):

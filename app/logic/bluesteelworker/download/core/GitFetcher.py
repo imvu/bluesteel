@@ -579,6 +579,7 @@ class GitFetcher(object):
             else:
                 name = name[0]
             commands.append(['git', 'checkout', name])
+            commands.append(['git', 'pull', '-r', 'origin', name])
 
         reports = CommandExecutioner.execute_command_list(
             commands,
