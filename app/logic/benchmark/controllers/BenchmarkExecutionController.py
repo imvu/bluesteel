@@ -49,7 +49,8 @@ class BenchmarkExecutionController(object):
 
         execution = BenchmarkExecutionEntry.objects.filter(
             worker=worker_entry).filter(
-                q_ready | q_invalidated | q_revision | q_in_progress).order_by('-commit__author_date').first()
+                definition__layout__active=True).filter(
+                    q_ready | q_invalidated | q_revision | q_in_progress).order_by('-commit__author_date').first()
 
         if execution is None:
             return None

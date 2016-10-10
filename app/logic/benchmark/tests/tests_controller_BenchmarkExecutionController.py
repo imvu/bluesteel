@@ -315,6 +315,43 @@ class BenchmarkExecutionControllerTestCase(TestCase):
         self.assertEqual(None, execution2)
         self.assertEqual(None, execution3)
 
+    def test_earliest_available_is_from_layout_active(self):
+        git_project2 = GitProjectEntry.objects.create(url='http://test/2/')
+        git_user2 = GitUserEntry.objects.create(project=git_project2, name='user2', email='user2@test.com')
+
+        commit_2_1 = GitCommitEntry.objects.create(project=git_project2, commit_hash='0000100001000010000100001000010000100001', author=git_user2, author_date=timezone.now(), committer=git_user2, committer_date=timezone.now())
+
+        command_group = CommandGroupEntry.objects.create()
+        command_set = CommandSetEntry.objects.create(group=command_group)
+
+        bluesteel_layout2 = BluesteelLayoutEntry.objects.create(name='Layout', active=True, project_index_path=0)
+        bluesteel_project2 = BluesteelProjectEntry.objects.create(name='Project', order=0, layout=bluesteel_layout2, command_group=command_group, git_project=git_project2)
+
+        benchmark_definition_2_1 = BenchmarkDefinitionEntry.objects.create(name='BenchmarkDefinition21', layout=bluesteel_layout2, project=bluesteel_project2, command_set=command_set, revision=28)
+
+        report_2_1 = CommandSetEntry.objects.create(group=None)
+
+        benchmark_execution_2_1 = BenchmarkExecutionEntry.objects.create(definition=benchmark_definition_2_1,
+            commit=commit_2_1,
+            worker=self.worker1,
+            report=report_2_1,
+            invalidated=False,
+            revision_target=28,
+            status=BenchmarkExecutionEntry.READY,
+        )
+
+        self.bluesteel_layout.active = False
+        self.bluesteel_layout.save()
+
+        execution_2_1 = BenchmarkExecutionController.get_earliest_available_execution(self.user1)
+        execution_2_2 = BenchmarkExecutionController.get_earliest_available_execution(self.user1)
+        execution_2_3 = BenchmarkExecutionController.get_earliest_available_execution(self.user1)
+
+        self.assertEqual(benchmark_execution_2_1, execution_2_1)
+        self.assertEqual(None, execution_2_2)
+        self.assertEqual(None, execution_2_3)
+
+
     def test_create_bench_executions_from_commit_definition_and_worker(self):
         exec_entries = BenchmarkExecutionEntry.objects.all()
         for exec_entry in exec_entries:
