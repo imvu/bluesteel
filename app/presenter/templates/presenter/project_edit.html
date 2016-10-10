@@ -9,7 +9,7 @@
             <form   action="{{project.url.save}}"
                     method="POST"
                     name="projectForm"
-                    id="project_form_{{forloop.counter0}}"
+                    id="project_form_id"
             >
                 <div class="grid grid-pad-20">
                     <div class="grid-col-1-1 grid-cell-pad-2-10">
@@ -70,7 +70,7 @@
                             <div class="container_input">
                                 <input  class="command_input"
                                         type="text"
-                                        name="command_{{forloop.counter0}}"
+                                        name="command_{{command_set.name}}_{{forloop.counter0}}"
                                         value="{{command.command}}"
                                         maxlength="255"
                                 ></input>
@@ -103,11 +103,13 @@
             <div class="grid grid-pad-2">
                 <div class="grid-col-1-2 grid-cell-pad-2-10 grid-cell-centered">
                     <button     class="btn_rect primary"
-                                onclick="saveProject('project_form_{{forloop.counter0}}');"
+                                type='button'
+                                onclick="saveProject('project_form_id');"
                     >Save</button>
                 </div>
                 <div class="grid-col-1-2 grid-cell-pad-2-10 grid-cell-centered">
                     <button     class="btn_rect danger"
+                                type='button'
                                 onclick="executeAndRedirect('{{project.url.delete}}', '');"
                     >Delete</button>
                 </div>

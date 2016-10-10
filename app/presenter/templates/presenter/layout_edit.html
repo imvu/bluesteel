@@ -3,6 +3,7 @@
 {% load staticfiles %}
 
 {% block data_body %}
+
 <div class="container_med">
     <div class="upper_card edit_card card_padding_small card_medium">
         <div class="grid grid-pad-2">
@@ -153,7 +154,7 @@
                             <div class="container_input">
                                 <input  class="command_input"
                                         type="text"
-                                        name="command_{{forloop.counter0}}"
+                                        name="command_{{command_set.name}}_{{forloop.counter0}}"
                                         value="{{command.command}}"
                                         maxlength="255"
                                 ></input>
@@ -183,11 +184,13 @@
                 <div class="grid grid-pad-2">
                     <div class="grid-col-1-2 grid-cell-pad-2-10 grid-cell-centered">
                         <button     class="btn_rect primary"
+                                    type='button'
                                     onclick="saveProject('project_form_{{forloop.counter0}}');"
                         >Save</button>
                     </div>
                     <div class="grid-col-1-2 grid-cell-pad-2-10 grid-cell-centered">
                         <button     class="btn_rect danger"
+                                    type='button'
                                     onclick="executeAndRedirect('{{project.url.delete}}', '');"
                         >Delete</button>
                     </div>
@@ -199,6 +202,7 @@
         <div class="grid grid-pad-2">
             <div class="grid-col-1-1 grid-cell-pad-2-10 grid-cell-centered">
                 <button     class="btn_rect danger"
+                            type='button'
                             onclick="window.location='{{layout.url.confirm_wipe}}';"
                 >Wipe Data</button>
             </div>
@@ -209,6 +213,7 @@
         <div class="grid grid-pad-2">
             <div class="grid-col-1-1 grid-cell-pad-2-10 grid-cell-centered">
                 <button     class="btn_round light"
+                            type='button'
                             onclick="executeAndRedirect('{{layout.url.add_project}}', '');"
                 >Add Project</button>
             </div>
