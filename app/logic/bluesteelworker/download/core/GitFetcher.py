@@ -60,6 +60,7 @@ class GitFetcher(object):
             self.step_get_modified_or_new_branches,
             self.step_get_all_commits_from_branch,
             self.step_setup_merge_target_forevery_branch,
+            self.step_setup_missing_fork_point,
             self.step_setup_diff_on_merge_target,
             self.step_create_branch_trails,
             # self.step_trim_commits,
@@ -281,6 +282,15 @@ class GitFetcher(object):
                         branch
                     )
                     break
+        return True
+
+    def step_setup_missing_fork_point(self, project_info):
+        """ Initialize fork point if not present. The initialized value is from the known branch """
+        for branch in self.branches_data:
+            for known in project_info['git']['branch']['known']:
+                if branch['commit_hash'] == known['commit_hash'] and ('fork_point' not in branch['merge_target']):
+                    branch['merge_target']['fork_point'] = known['merge_target']['fork_point']
+
         return True
 
     def step_setup_diff_on_merge_target(self, project_info):

@@ -1033,6 +1033,26 @@ class GitFetcherTestCase(TestCase):
         self.assertEqual('b-9', res['target_branch']['name'])
         self.assertEqual('0000900009000090000900009000090000900009', res['target_branch']['commit_hash'])
 
+    def test_step_missing_fork_point(self):
+        obj = {}
+        obj['git'] = {}
+        obj['git']['branch'] = {}
+        obj['git']['branch']['known'] = []
+        obj['git']['branch']['known'].append({'name' : 'branch-1', 'commit_hash' : '00001', 'merge_target' : { 'fork_point' : '00028'}})
+        obj['git']['branch']['known'].append({'name' : 'branch-2', 'commit_hash' : '00002', 'merge_target' : { 'fork_point' : '00028'}})
+        obj['git']['branch']['known'].append({'name' : 'branch-3', 'commit_hash' : '00003', 'merge_target' : { 'fork_point' : '00028'}})
+
+        self.fetcher.branches_data.append({'name' : 'branch-1', 'commit_hash' : '00001', 'merge_target' : {}})
+        self.fetcher.branches_data.append({'name' : 'branch-2', 'commit_hash' : '00002', 'merge_target' : {'fork_point' : '00001'}})
+        self.fetcher.branches_data.append({'name' : 'branch-3', 'commit_hash' : '00003', 'merge_target' : {}})
+
+        self.fetcher.step_setup_missing_fork_point(obj)
+
+        self.assertEqual(3, len(self.fetcher.branches_data))
+        self.assertEqual('00028', self.fetcher.branches_data[0]['merge_target']['fork_point'])
+        self.assertEqual('00001', self.fetcher.branches_data[1]['merge_target']['fork_point'])
+        self.assertEqual('00028', self.fetcher.branches_data[2]['merge_target']['fork_point'])
+
     def test_get_fork_point(self):
         commit_1 = {}
         commit_1['hash'] = '0000300003000030000300003000030000300003'
