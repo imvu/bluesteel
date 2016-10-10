@@ -57,6 +57,7 @@ class GitFetcher(object):
             self.step_get_all_local_branch_names,
             self.step_get_name_and_hash_from_local_branch,
             self.step_get_branches_to_remove,
+            self.step_get_modified_or_new_branches,
             self.step_get_all_commits_from_branch,
             self.step_setup_merge_target_forevery_branch,
             self.step_setup_diff_on_merge_target,
@@ -239,10 +240,11 @@ class GitFetcher(object):
                     obj['commit_hash'] = name_and_hash['commit_hash']
                     self.branch_names['to_process'].append(obj)
 
+        return True
 
     def step_get_all_commits_from_branch(self, project_info):
         """ For every branch we get all the commits from that branch """
-        for name_and_hash in self.branch_names['names_and_hashes']:
+        for name_and_hash in self.branch_names['to_process']:
             branch_name = name_and_hash['name']
             branch_hash = name_and_hash['commit_hash']
             log.debug('Commit -- Getting all commits of: %s - %s', branch_hash, branch_name)

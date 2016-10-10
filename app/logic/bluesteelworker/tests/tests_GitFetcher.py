@@ -1226,7 +1226,6 @@ class GitFetcherTestCase(TestCase):
 
         self.fetcher.step_get_modified_or_new_branches(obj)
 
-        print self.fetcher.branch_names['to_process']
         self.assertEqual(2, len(self.fetcher.branch_names['to_process']))
         self.assertEqual('branch-4', self.fetcher.branch_names['to_process'][0]['name'])
         self.assertEqual('00004', self.fetcher.branch_names['to_process'][0]['commit_hash'])
