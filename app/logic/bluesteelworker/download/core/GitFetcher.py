@@ -289,7 +289,7 @@ class GitFetcher(object):
         for branch in self.branches_data:
             for known in project_info['git']['branch']['known']:
                 if branch['name'] == known['name'] and (branch['merge_target']['fork_point'] == ''):
-                    branch['merge_target']['fork_point'] = known['merge_target']['fork_point']
+                    branch['merge_target']['fork_point'] = known['merge_target']['fork_point']['hash']
 
         return True
 
