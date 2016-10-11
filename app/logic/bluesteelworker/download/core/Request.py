@@ -3,6 +3,9 @@
 # Disable warning for relative imports
 # pylint: disable=W0403
 
+# Disable broad exception, I don't know now the exact exception of request.read()
+# pylint: disable=W0703
+
 import httplib
 import urllib2
 import cookielib
@@ -81,17 +84,27 @@ class Session(object):
 
         res['cookie'] = response.headers.get('Set-Cookie')
         res['type'] = info.type
+        res['content'] = ''
+        res['succeed'] = False
 
         if info.maintype == 'text':
-            res['content'] = json.loads(response.read())
+            try:
+                data = json.loads(response.read())
+            except Exception:
+                return res
+
+            res['content'] = data
             res['succeed'] = True
             return res
 
         if info.type == 'application/zip':
-            res['content'] = response.read()
+            try:
+                data = response.read()
+            except Exception:
+                return res
+
+            res['content'] = data
             res['succeed'] = True
             return res
 
-        res['content'] = ''
-        res['succeed'] = False
         return res
