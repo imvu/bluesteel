@@ -288,7 +288,7 @@ class GitFetcher(object):
         """ Initialize fork point if not present. The initialized value is from the known branch """
         for branch in self.branches_data:
             for known in project_info['git']['branch']['known']:
-                if branch['commit_hash'] == known['commit_hash'] and ('fork_point' not in branch['merge_target']):
+                if branch['name'] == known['name'] and (branch['merge_target']['fork_point'] == ''):
                     branch['merge_target']['fork_point'] = known['merge_target']['fork_point']
 
         return True
@@ -735,7 +735,7 @@ class GitFetcher(object):
         merge_target['target_branch'] = {}
         merge_target['target_branch']['name'] = ''
         merge_target['target_branch']['commit_hash'] = ''
-        merge_target['fork_point'] = branch['commit_hash']
+        merge_target['fork_point'] = ''
 
         for known_branch in known_branches:
             if branch['name'] == known_branch['name']:

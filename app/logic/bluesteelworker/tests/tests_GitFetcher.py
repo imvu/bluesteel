@@ -1042,9 +1042,9 @@ class GitFetcherTestCase(TestCase):
         obj['git']['branch']['known'].append({'name' : 'branch-2', 'commit_hash' : '00002', 'merge_target' : { 'fork_point' : '00028'}})
         obj['git']['branch']['known'].append({'name' : 'branch-3', 'commit_hash' : '00003', 'merge_target' : { 'fork_point' : '00028'}})
 
-        self.fetcher.branches_data.append({'name' : 'branch-1', 'commit_hash' : '00001', 'merge_target' : {}})
+        self.fetcher.branches_data.append({'name' : 'branch-1', 'commit_hash' : '00001', 'merge_target' : {'fork_point' : ''}})
         self.fetcher.branches_data.append({'name' : 'branch-2', 'commit_hash' : '00002', 'merge_target' : {'fork_point' : '00001'}})
-        self.fetcher.branches_data.append({'name' : 'branch-3', 'commit_hash' : '00003', 'merge_target' : {}})
+        self.fetcher.branches_data.append({'name' : 'branch-3', 'commit_hash' : '00003', 'merge_target' : {'fork_point' : ''}})
 
         self.fetcher.step_setup_missing_fork_point(obj)
 
