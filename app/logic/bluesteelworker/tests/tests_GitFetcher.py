@@ -1053,6 +1053,24 @@ class GitFetcherTestCase(TestCase):
         self.assertEqual('00001', self.fetcher.branches_data[1]['merge_target']['fork_point'])
         self.assertEqual('00028', self.fetcher.branches_data[2]['merge_target']['fork_point'])
 
+    def test_get_latests_commit_of_branch(self):
+        known_branches = []
+        known_branches.append({'name' : 'branch-1', 'commit_hash' : '00001'})
+        known_branches.append({'name' : 'branch-2', 'commit_hash' : '00002'})
+        known_branches.append({'name' : 'branch-3', 'commit_hash' : '00003'})
+        known_branches.append({'name' : 'branch-5', 'commit_hash' : '00005'})
+
+        branches = []
+        branches.append({'name' : 'branch-1', 'commit_hash' : '00001'})
+        branches.append({'name' : 'branch-2', 'commit_hash' : '00002'})
+        branches.append({'name' : 'branch-3', 'commit_hash' : '00003'})
+
+        self.assertEqual('00001', GitFetcher.get_latests_commit_of_branch('branch-1', branches, known_branches))
+        self.assertEqual('00002', GitFetcher.get_latests_commit_of_branch('branch-2', branches, known_branches))
+        self.assertEqual('00003', GitFetcher.get_latests_commit_of_branch('branch-3', branches, known_branches))
+        self.assertEqual('', GitFetcher.get_latests_commit_of_branch('branch-4', branches, known_branches))
+        self.assertEqual('00005', GitFetcher.get_latests_commit_of_branch('branch-5', branches, known_branches))
+
     def test_get_fork_point(self):
         commit_1 = {}
         commit_1['hash'] = '0000300003000030000300003000030000300003'

@@ -735,15 +735,15 @@ class GitFetcher(object):
         merge_target['target_branch'] = {}
         merge_target['target_branch']['name'] = ''
         merge_target['target_branch']['commit_hash'] = ''
+        merge_target['fork_point'] = branch['commit_hash']
 
         for known_branch in known_branches:
             if branch['name'] == known_branch['name']:
                 merge_target['target_branch']['name'] = known_branch['merge_target']['target_branch']['name']
-                # We get the latest commit hash from the target branch instead of the know branch commit hash, because
-                # it can be old
                 commit_hash = GitFetcher.get_latests_commit_of_branch(
                     merge_target['target_branch']['name'],
-                    branch_list
+                    branch_list,
+                    known_branches
                 )
                 merge_target['target_branch']['commit_hash'] = commit_hash
                 return merge_target
@@ -759,10 +759,20 @@ class GitFetcher(object):
         return merge_target
 
     @staticmethod
-    def get_latests_commit_of_branch(branch_name, branch_list):
+    def get_latests_commit_of_branch(branch_name, branch_list, known_branches):
+        """
+        We get the latest commit hash from the target branch instead of the know branch commit hash, because
+        it can be old. In the case there branch name is not in the branch_list (that branch is not updated)
+        we search in known_branches
+        """
         for branch in branch_list:
             if branch['name'] == branch_name:
                 return branch['commit_hash']
+
+        for branch in known_branches:
+            if branch['name'] == branch_name:
+                return branch['commit_hash']
+
         return ''
 
     @staticmethod
