@@ -1103,8 +1103,8 @@ class BenchmarkExecutionControllerTestCase(TestCase):
         com0_0 = CommandEntry.objects.create(command_set=report_0_0, command='command0-0', order=0)
         com0_1 = CommandEntry.objects.create(command_set=report_0_1, command='command0-1', order=1)
 
-        out_0_0 = json.dumps([{'visual_type' : 'vertical_bars', 'id' : 'id1', 'data' : [1,1,2,3,3]}, {'visual_type' : 'vertical_bars', 'id' : 'id2', 'data' : [1,1,2,3,3]}])
-        out_0_1 = json.dumps([{'visual_type' : 'vertical_bars', 'id' : 'id1', 'data' : [1,1,2,6,6]}, {'visual_type' : 'vertical_bars', 'id' : 'id2', 'data' : [1,1,2,5,5]}])
+        out_0_0 = json.dumps([{'visual_type' : 'vertical_bars', 'id' : 'id1', 'data' : [1,1,2,3,3]}, {'visual_type' : 'vertical_bars', 'id' : 'id2', 'data' : [1,1,3,5,4]}])
+        out_0_1 = json.dumps([{'visual_type' : 'vertical_bars', 'id' : 'id1', 'data' : [1,1,3,6,6]}, {'visual_type' : 'vertical_bars', 'id' : 'id2', 'data' : [1,1,3,5,5]}])
 
         CommandResultEntry.objects.create(command=com0_0, out=out_0_0, error='no error', status=0, start_time=timezone.now(), finish_time=timezone.now())
         CommandResultEntry.objects.create(command=com0_1, out=out_0_1, error='no error', status=0, start_time=timezone.now(), finish_time=timezone.now())
@@ -1119,8 +1119,8 @@ class BenchmarkExecutionControllerTestCase(TestCase):
         com1_0 = CommandEntry.objects.create(command_set=report_1_0, command='command1-0', order=0)
         com1_1 = CommandEntry.objects.create(command_set=report_1_1, command='command1-1', order=1)
 
-        out_1_0 = json.dumps([{'visual_type' : 'vertical_bars', 'id' : 'id1', 'data' : [1,1,2,3,3]}, {'visual_type' : 'vertical_bars', 'id' : 'id2', 'data' : [1,1,2,3,3]}])
-        out_1_1 = json.dumps([{'visual_type' : 'vertical_bars', 'id' : 'id1', 'data' : [1,1,2,7,7]}, {'visual_type' : 'vertical_bars', 'id' : 'id2', 'data' : [1,1,2,8,8]}])
+        out_1_0 = json.dumps([{'visual_type' : 'vertical_bars', 'id' : 'id1', 'data' : [1,1,2,3,3]}, {'visual_type' : 'vertical_bars', 'id' : 'id2', 'data' : [1,1,3,4,4]}])
+        out_1_1 = json.dumps([{'visual_type' : 'vertical_bars', 'id' : 'id1', 'data' : [1,1,3,7,7]}, {'visual_type' : 'vertical_bars', 'id' : 'id2', 'data' : [1,1,4,8,8]}])
 
         CommandResultEntry.objects.create(command=com1_0, out=out_1_0, error='no error', status=0, start_time=timezone.now(), finish_time=timezone.now())
         CommandResultEntry.objects.create(command=com1_1, out=out_1_1, error='no error', status=0, start_time=timezone.now(), finish_time=timezone.now())
@@ -1134,10 +1134,10 @@ class BenchmarkExecutionControllerTestCase(TestCase):
         self.assertEqual(2, len(fluctuation1))
         self.assertEqual('id1', fluctuation1[0]['id'])
         self.assertEqual(2.0, fluctuation1[0]['min'])
-        self.assertEqual(3.2, fluctuation1[0]['max'])
+        self.assertEqual(3.0, fluctuation1[0]['max'])
         self.assertEqual('id2', fluctuation1[1]['id'])
-        self.assertEqual(2.0, fluctuation1[1]['min'])
-        self.assertEqual(2.8, fluctuation1[1]['max'])
+        self.assertEqual(3.0, fluctuation1[1]['min'])
+        self.assertEqual(3.0, fluctuation1[1]['max'])
 
         fluctuation2 = BenchmarkExecutionController.get_benchmark_fluctuation(self.git_project1, self.benchmark_definition2.id, self.worker2.id, commit0.commit_hash, 2)
         fluctuation2.sort(key=lambda x: x['id'])
@@ -1145,9 +1145,9 @@ class BenchmarkExecutionControllerTestCase(TestCase):
         self.assertEqual(2, len(fluctuation2))
         self.assertEqual('id1', fluctuation2[0]['id'])
         self.assertEqual(2.0, fluctuation2[0]['min'])
-        self.assertEqual(3.6, fluctuation2[0]['max'])
+        self.assertEqual(3.0, fluctuation2[0]['max'])
         self.assertEqual('id2', fluctuation2[1]['id'])
-        self.assertEqual(2.0, fluctuation2[1]['min'])
+        self.assertEqual(3.0, fluctuation2[1]['min'])
         self.assertEqual(4.0, fluctuation2[1]['max'])
 
 
@@ -1417,17 +1417,17 @@ class BenchmarkExecutionControllerTestCase(TestCase):
         self.assertEqual('00007', ret['id2'][0]['benchmark_execution_hash'])
         self.assertEqual('00008', ret['id2'][1]['benchmark_execution_hash'])
         self.assertEqual('00009', ret['id2'][2]['benchmark_execution_hash'])
-        self.assertEqual(1.0, ret['id2'][0]['average'])
-        self.assertEqual(1.0, ret['id2'][1]['average'])
-        self.assertEqual(2.0, ret['id2'][2]['average'])
+        self.assertEqual(1.0, ret['id2'][0]['median'])
+        self.assertEqual(1.0, ret['id2'][1]['median'])
+        self.assertEqual(2.0, ret['id2'][2]['median'])
 
         self.assertEqual(3, len(ret['id1']))
         self.assertEqual('00007', ret['id1'][0]['benchmark_execution_hash'])
         self.assertEqual('00008', ret['id1'][1]['benchmark_execution_hash'])
         self.assertEqual('00009', ret['id1'][2]['benchmark_execution_hash'])
-        self.assertEqual(1.0, ret['id1'][0]['average'])
-        self.assertEqual(1.0, ret['id1'][1]['average'])
-        self.assertEqual(1.5, ret['id1'][2]['average'])
+        self.assertEqual(1.0, ret['id1'][0]['median'])
+        self.assertEqual(1.0, ret['id1'][1]['median'])
+        self.assertEqual(1.5, ret['id1'][2]['median'])
 
     def test_get_fluctuation_overrides(self):
         fluc_override_1 = BenchmarkFluctuationOverrideEntry.objects.create(definition=self.benchmark_definition1, result_id='id1', override_value=28)

@@ -233,7 +233,7 @@ class BenchmarkExecutionController(object):
 
                 if exec_item['id'] not in bench_data:
                     bench_data[exec_item['id']] = [{
-                        'average' : 0.0,
+                        'median' : 0.0,
                         'benchmark_execution_id' : 0,
                         'benchmark_execution_hash' : '',
                         'bar_type' : 'invalidated',
@@ -242,7 +242,7 @@ class BenchmarkExecutionController(object):
                     }] * len(stacked_benchmark_data)
 
                 obj = {}
-                obj['average'] = exec_item['average']
+                obj['median'] = exec_item['median']
                 obj['benchmark_execution_id'] = data['benchmark_execution_id']
                 obj['benchmark_execution_hash'] = data['benchmark_execution_hash']
                 obj['invalidated'] = data['invalidated']
@@ -397,22 +397,22 @@ class BenchmarkExecutionController(object):
                 benchmarks[result['id']].append(result)
 
         for key in benchmarks:
-            average_min = sys.float_info.max
-            average_max = sys.float_info.min
+            median_min = sys.float_info.max
+            median_max = sys.float_info.min
 
             need_append = False
 
             for bench in benchmarks[key]:
                 if bench['visual_type'] == 'vertical_bars':
                     need_append = True
-                    average_min = min(average_min, bench['average'])
-                    average_max = max(average_max, bench['average'])
+                    median_min = min(median_min, bench['median'])
+                    median_max = max(median_max, bench['median'])
 
             if need_append:
                 fluctuation = {}
                 fluctuation['id'] = key
-                fluctuation['min'] = average_min
-                fluctuation['max'] = average_max
+                fluctuation['min'] = median_min
+                fluctuation['max'] = median_max
                 fluctuations.append(fluctuation)
 
         return fluctuations

@@ -71,7 +71,7 @@ stackedchartVerticalBars = function(objId, data) {
     var values = [];
     var accum_average = 0.0;
     for (var i = 0; i < data.length; i++) {
-        var float_value = parseFloat(data[i]['average']);
+        var float_value = parseFloat(data[i]['median']);
         accum_average = accum_average + float_value;
         values.push(float_value);
     }

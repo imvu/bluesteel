@@ -145,7 +145,7 @@ class BenchmarkExecutionEntryTestCase(TestCase):
         out1 = {}
         out1['id'] = 'benchmark-res-id-1'
         out1['visual_type'] = 'vertical_bars'
-        out1['data'] = [1, 2, 3, 4, 5.5]
+        out1['data'] = [1, 4, 3, 2, 5.5]
 
         out2 = {}
         out2['id'] = 'benchmark-res-id-2'
@@ -180,8 +180,8 @@ class BenchmarkExecutionEntryTestCase(TestCase):
         self.assertEqual(2, len(results))
         self.assertEqual('benchmark-res-id-1', results[0]['id'])
         self.assertEqual('vertical_bars', results[0]['visual_type'])
-        self.assertEqual([1, 2, 3, 4, 5.5], results[0]['data'])
-        self.assertEqual(3.1, results[0]['average'])
+        self.assertEqual([1, 4, 3, 2, 5.5], results[0]['data'])
+        self.assertEqual(3, results[0]['median'])
 
         self.assertEqual('benchmark-res-id-2', results[1]['id'])
         self.assertEqual('text', results[1]['visual_type'])

@@ -76,7 +76,7 @@ class BenchmarkExecutionEntry(models.Model):
                     bench_res['data'] = exec_item['data']
 
                     if exec_item['visual_type'] == 'vertical_bars':
-                        bench_res['average'] = BenchmarkExecutionEntry.get_average(exec_item['data'])
+                        bench_res['median'] = BenchmarkExecutionEntry.get_median(exec_item['data'])
 
                     results.append(bench_res)
 
@@ -84,12 +84,17 @@ class BenchmarkExecutionEntry(models.Model):
 
 
     @staticmethod
-    def get_average(vector):
-        """ Returns the average of a vector values """
-        average = 0.0
-        for value in vector:
-            average += float(value)
-        return average / float(len(vector))
+    def get_median(vector):
+        """ Returns the median of a vector values """
+        sov = sorted(vector)
+        if len(sov) % 2 == 1:
+            return float(sov[(len(sov)+1)/2-1])
+        else:
+            lower = sov[len(sov)/2-1]
+            upper = sov[len(sov)/2]
+            return (float(lower + upper)) / 2.0
+
+
 
 @receiver(models.signals.post_delete)
 def benchmark_exec_entry_post_delete(sender, instance, **kwargs):
