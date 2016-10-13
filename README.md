@@ -77,3 +77,16 @@
 - Write test for all the code you write.
 - Make a pull request and submit it.
 - For any related question, please contact `llorens.marti@gmail.com`
+
+### Source code layout ###
+
+All the BlueSteel code lives inside the `app/` folder and it is divided into 2 parts:
+
+- Presenter
+- Logic
+
+The **Presneter** folder contains all the code that builds the html front web page, contains the Json public API, deals with urls, and utilizes all the apps located on the `logic/` folder to handle the data properly. All the code that interacts with the user should live in this folder.
+
+The **Logic** folder contains all the internal apps, each of these apps is in charge of handle BlueSteel's internal data. No public API calls / Urls / Views are allowed at this level. The majority of the apps tries to follow the pattern of Controller - Model, where the Controller holds almost all the logic to interact with the models.
+
+ 
