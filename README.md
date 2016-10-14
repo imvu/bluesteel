@@ -100,13 +100,13 @@ The **Logic** folder contains all the internal apps, each of these apps is in ch
     - Each project will represent a project in a git repository.
     - You can add as many projects as needed. Sometimes we need more projects to allow benchmark scripts of a Project B to benchmark old commits of Project A.
 
-**Layout setup**
+**1.- Layout setup**
 
 - Setup a proper name for your layout.
 - Select the project where all its commits will be benchmarked from BlueSteel.
 - Click `Save` to save the layout information.
 
-**Project setup**
+**2.- Project setup**
 
 - Select a proper name for the project.
 - Select a local path where the `.git` folder will be found inside the project.
@@ -118,7 +118,7 @@ The **Logic** folder contains all the internal apps, each of these apps is in ch
     - BlueSteel workers will use this commands to fetch commits, the default commands should be good to go.
 - Click `Save`.
 
-**Layout Activation**
+**3.- Layout Activation**
 
 - Select `ACTIVE` on the layout setup properties.
 - Click `Save`.
