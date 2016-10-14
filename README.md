@@ -91,11 +91,11 @@ The **Logic** folder contains all the internal apps, each of these apps is in ch
 
 ## Working with BlueSteel ##
 
-### How setup a Layout in BlueSteel ###
+### How to setup a Layout in BlueSteel ###
 
 - Go to the main page: `localhost:28028`
 - Click on `Layout` tab.
-- Click on `+ Add Layout`
+- Click on `+ Add Layout` button.
     - After the Layout is created, you will see that a default Project is created as well and associated with this layout.
     - Each project will represent a project in a git repository.
     - You can add as many projects as needed. Sometimes we need more projects to allow benchmark scripts of a Project B to benchmark old commits of Project A.
@@ -122,3 +122,26 @@ The **Logic** folder contains all the internal apps, each of these apps is in ch
 
 - Select `ACTIVE` on the layout setup properties.
 - Click `Save`.
+
+### How to setup a Worker in BlueSteel ###
+
+**1.- Worker Download process**
+
+- Go to the main page: `localhost:28028`
+- Click on `Workers` tab.
+- Click on `Download Worker` button.
+- Uncompress the downloaded file to some convenient location.
+- Execute `python core/Worker.py --auto-update=yes`
+- The worker was designed to take care of everything, so at this point, everything should be working.
+
+**2.- Worker Configuration**
+
+- Click on `Workers` tab.
+- Select the desired worker and click `Edit` button.
+- Edit the description of the worker.
+- Select if this worker will feed commits to BlueSteel.
+    - It is recommended to only have 1 feeder, more than one will not provide any advantage.
+- Select the maximum amount of reports to keep.
+    - If the reports are extensive in size, it is recommended to keep as few as possible.
+- Click `Save` button.
+
