@@ -78,7 +78,7 @@
 - Make a pull request and submit it.
 - For any related question, please contact `llorens.marti@gmail.com`
 
-### Source code layout ###
+### How BlueSteel source code is organized ###
 
 All the BlueSteel code lives inside the `app/` folder and it is divided into 2 parts:
 
@@ -89,4 +89,36 @@ The **Presneter** folder contains all the code that builds the html front web pa
 
 The **Logic** folder contains all the internal apps, each of these apps is in charge of handle BlueSteel's internal data. No public API calls / Urls / Views are allowed at this level. The majority of the apps tries to follow the pattern of Controller - Model, where the Controller holds almost all the logic to interact with the models.
 
- 
+## Working with BlueSteel ##
+
+### How setup a Layout in BlueSteel ###
+
+- Go to the main page: `localhost:28028`
+- Click on `Layout` tab.
+- Click on `+ Add Layout`
+    - After the Layout is created, you will see that a default Project is created as well and associated with this layout.
+    - Each project will represent a project in a git repository.
+    - You can add as many projects as needed. Sometimes we need more projects to allow benchmark scripts of a Project B to benchmark old commits of Project A.
+
+**Layout setup**
+
+- Setup a proper name for your layout.
+- Select the project where all its commits will be benchmarked from BlueSteel.
+- Click `Save` to save the layout information.
+
+**Project setup**
+
+- Select a proper name for the project.
+- Select a local path where the `.git` folder will be found inside the project.
+    - This path indicates the git repository where all the commits will be benchmarked.
+    - The default value is `.`, but you can specify another local path in the case you have many git repositories inside your project.
+- Add/Modify all the commands necessary to clone this project.
+    - BlueSteel workers will use this commands the first time to clone this project.
+- Add/Modify all the commands necessary to fetch commits.
+    - BlueSteel workers will use this commands to fetch commits, the default commands should be good to go.
+- Click `Save`.
+
+**Layout Activation**
+
+- Select `ACTIVE` on the layout setup properties.
+- Click `Save`.
