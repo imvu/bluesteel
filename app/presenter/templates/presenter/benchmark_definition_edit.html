@@ -80,6 +80,26 @@
                     </div>
                 </div>
 
+                <div class="grid grid-pad-20">
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="list_label">STATUS</div>
+                    </div>
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="normal">Current state of the Benchmark Definition.</div>
+                    </div>
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="container_input">
+                            <select     class="selection individual"
+                                        name="active_state"
+                                        id="active_selection"
+                            >
+                                <option value="1" {{definition.active|yesno:"selected,"}}>ACTIVE</option>
+                                <option value="0" {{definition.active|yesno:",selected"}}>INACTIVE</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
 
                 <div class="grid grid-pad-20" id="command_list">
                     <div class="grid-col-1-1 grid-cell-pad-2-10">

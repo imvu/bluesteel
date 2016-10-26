@@ -59,6 +59,20 @@
 
                     <div class="grid grid-pad-20">
                         <div class="grid-col-1-1 grid-cell-pad-2-10">
+                            <div class="list_label">STATUS</div>
+                        </div>
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
+                            <div class="normal">Current state of the definition.</div>
+                        </div>
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
+                            <div class="container_input">
+                                <input  class="command_input" type="text" value="{{definition.active|yesno:"ACTIVE,INACTIVE"}}" readonly></input>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-pad-20">
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
                             <div class="list_label">COMMANDS</div>
                         </div>
                         <div class="grid-col-1-1 grid-cell-pad-2-10">
