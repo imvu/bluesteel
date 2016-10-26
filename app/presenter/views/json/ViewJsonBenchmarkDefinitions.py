@@ -52,6 +52,7 @@ def view_save_benchmark_definition(request, benchmark_definition_id):
             name=val_resp_obj['name'],
             layout_id=val_resp_obj['layout_id'],
             project_id=val_resp_obj['project_id'],
+            active=val_resp_obj['active'],
             command_list=val_resp_obj['command_list'],
             max_fluctuation_percent=val_resp_obj['max_fluctuation_percent'],
             overrides=val_resp_obj['overrides'],

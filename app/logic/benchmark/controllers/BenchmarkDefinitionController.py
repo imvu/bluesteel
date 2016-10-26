@@ -58,6 +58,7 @@ class BenchmarkDefinitionController(object):
             benchmark_definition_id,
             layout_id,
             project_id,
+            active,
             command_list,
             max_fluctuation_percent,
             overrides,
@@ -86,6 +87,7 @@ class BenchmarkDefinitionController(object):
             benchmark_def_entry.name = name
             benchmark_def_entry.max_fluctuation_percent = max_fluctuation_percent
             benchmark_def_entry.max_weeks_old_notify = max_weeks_old_notify
+            benchmark_def_entry.active = active
             benchmark_def_entry.save()
             return benchmark_def_entry
 
@@ -101,6 +103,7 @@ class BenchmarkDefinitionController(object):
             benchmark_def_entry.name = name
             benchmark_def_entry.layout = layout_entry
             benchmark_def_entry.project = project_entry
+            benchmark_def_entry.active = active
             benchmark_def_entry.save()
             return None
 
@@ -110,6 +113,7 @@ class BenchmarkDefinitionController(object):
         benchmark_def_entry.name = name
         benchmark_def_entry.layout = layout_entry
         benchmark_def_entry.project = project_entry
+        benchmark_def_entry.active = active
         benchmark_def_entry.revision = benchmark_def_entry.revision + 1
         benchmark_def_entry.max_fluctuation_percent = max_fluctuation_percent
         benchmark_def_entry.max_weeks_old_notify = max_weeks_old_notify

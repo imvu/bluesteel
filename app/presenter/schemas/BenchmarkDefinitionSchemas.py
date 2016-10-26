@@ -11,6 +11,7 @@ SAVE_BENCHMARK_DEFINITION = {
         'name',
         'layout_id',
         'project_id',
+        'active',
         'command_list',
         'max_fluctuation_percent',
         'overrides',
@@ -29,6 +30,9 @@ SAVE_BENCHMARK_DEFINITION = {
         'project_id' : {
             'type' : 'number',
             'minimum' : 1,
+        },
+        'active' : {
+            'type' : 'boolean',
         },
         'command_list' : {
             'type' : 'array',

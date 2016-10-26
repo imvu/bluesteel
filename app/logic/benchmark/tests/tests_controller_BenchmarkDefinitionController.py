@@ -86,6 +86,7 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
         self.assertNotEqual(None, definition.command_set)
         self.assertEqual(3, CommandEntry.objects.filter(command_set=definition.command_set).count())
         self.assertEqual(0, CommandResultEntry.objects.all().count())
+        self.assertEqual(False, definition.active)
         self.assertEqual(0, definition.revision)
         self.assertEqual(0, definition.max_fluctuation_percent)
         self.assertEqual(1, definition.max_weeks_old_notify)
@@ -101,11 +102,12 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
         overrides.append({'result_id' : 'id1', 'override_value' : 28})
         overrides.append({'result_id' : 'id2', 'override_value' : 29})
 
-        definition = BenchmarkDefinitionController.save_benchmark_definition('new-name', definition.id, new_layout.id, project.id, commands, 28, overrides, 8)
+        definition = BenchmarkDefinitionController.save_benchmark_definition('new-name', definition.id, new_layout.id, project.id, True, commands, 28, overrides, 8)
 
         self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='command-28').count())
         self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='command-29').count())
         self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='command-30').count())
+        self.assertEqual(True, definition.active)
         self.assertEqual(1, definition.revision)
         self.assertEqual(28, definition.max_fluctuation_percent)
         self.assertEqual(8, definition.max_weeks_old_notify)
@@ -129,6 +131,7 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
         self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='command-2').count())
         self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='command-3').count())
         self.assertEqual(0, CommandResultEntry.objects.all().count())
+        self.assertEqual(False, definition.active)
         self.assertEqual(0, definition.revision)
         self.assertEqual(0, definition.max_fluctuation_percent)
         self.assertEqual(1, definition.max_weeks_old_notify)
@@ -144,13 +147,14 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
         overrides.append({'result_id' : 'id1', 'override_value' : 28})
         overrides.append({'result_id' : 'id2', 'override_value' : 29})
 
-        result = BenchmarkDefinitionController.save_benchmark_definition('default-name', definition.id, new_layout.id, project.id, commands, 0, overrides, 8)
+        result = BenchmarkDefinitionController.save_benchmark_definition('default-name', definition.id, new_layout.id, project.id, True, commands, 0, overrides, 8)
         definition = BenchmarkDefinitionEntry.objects.all().first()
 
         self.assertEqual(definition, result)
         self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='command-1').count())
         self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='command-2').count())
         self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='command-3').count())
+        self.assertEqual(True, definition.active)
         self.assertEqual(0, definition.revision)
         self.assertEqual(0, definition.max_fluctuation_percent)
         self.assertEqual(8, definition.max_weeks_old_notify)
@@ -243,7 +247,7 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
         self.assertEqual(0, CommandEntry.objects.filter(command_set=benchmark_definition1.command_set).count())
         self.assertEqual(0, BenchmarkFluctuationOverrideEntry.objects.all().count())
 
-        result = BenchmarkDefinitionController.save_benchmark_definition('BenchmarkDefinition1-1', benchmark_definition1.id, bluesteel_layout.id, bluesteel_project.id, commands, 28, overrides, 0)
+        result = BenchmarkDefinitionController.save_benchmark_definition('BenchmarkDefinition1-1', benchmark_definition1.id, bluesteel_layout.id, bluesteel_project.id, True, commands, 28, overrides, 0)
 
         self.assertEqual('BenchmarkDefinition1-1', result.name)
         self.assertEqual(1, BenchmarkExecutionEntry.objects.all().count())
