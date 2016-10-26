@@ -95,6 +95,7 @@ class BenchmarkExecutionControllerTestCase(TestCase):
             name='BenchmarkDefinition1',
             layout=self.bluesteel_layout,
             project=self.bluesteel_project,
+            active=True,
             command_set=self.command_set,
             revision=28,
         )
@@ -103,6 +104,7 @@ class BenchmarkExecutionControllerTestCase(TestCase):
             name='BenchmarkDefinition2',
             layout=self.bluesteel_layout,
             project=self.bluesteel_project,
+            active=True,
             command_set=self.command_set,
             revision=3,
         )
@@ -173,6 +175,14 @@ class BenchmarkExecutionControllerTestCase(TestCase):
         self.assertEqual('BenchmarkDefinition1', execution.definition.name)
         self.assertEqual('0000200002000020000200002000020000200002', execution.commit.commit_hash)
         self.assertEqual('worker-name-1', execution.worker.name)
+
+    def test_earliest_available_execution_of_user_1_is_none_because_2_inactive(self):
+        self.benchmark_definition1.active = False
+        self.benchmark_definition1.save()
+
+        execution = BenchmarkExecutionController.get_earliest_available_execution(self.user1)
+
+        self.assertEqual(None, execution)
 
     def test_two_executions_available_of_user_1_are_execution_2_and_then_1(self):
         execution = BenchmarkExecutionController.get_earliest_available_execution(self.user1)
@@ -327,7 +337,7 @@ class BenchmarkExecutionControllerTestCase(TestCase):
         bluesteel_layout2 = BluesteelLayoutEntry.objects.create(name='Layout', active=True, project_index_path=0)
         bluesteel_project2 = BluesteelProjectEntry.objects.create(name='Project', order=0, layout=bluesteel_layout2, command_group=command_group, git_project=git_project2)
 
-        benchmark_definition_2_1 = BenchmarkDefinitionEntry.objects.create(name='BenchmarkDefinition21', layout=bluesteel_layout2, project=bluesteel_project2, command_set=command_set, revision=28)
+        benchmark_definition_2_1 = BenchmarkDefinitionEntry.objects.create(name='BenchmarkDefinition21', layout=bluesteel_layout2, project=bluesteel_project2, active=True, command_set=command_set, revision=28)
 
         report_2_1 = CommandSetEntry.objects.create(group=None)
 

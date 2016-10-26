@@ -47,10 +47,13 @@ class BenchmarkExecutionController(object):
         q_revision = ~Q(revision_target=F('definition__revision'))
         q_in_progress = Q(status=BenchmarkExecutionEntry.IN_PROGRESS, updated_at__lt=time_to_live)
 
-        execution = BenchmarkExecutionEntry.objects.filter(
-            worker=worker_entry).filter(
-                definition__layout__active=True).filter(
-                    q_ready | q_invalidated | q_revision | q_in_progress).order_by('-commit__author_date').first()
+        execution = (BenchmarkExecutionEntry.objects
+                     .filter(definition__active=True)
+                     .filter(definition__layout__active=True)
+                     .filter(worker=worker_entry)
+                     .filter(q_ready | q_invalidated | q_revision | q_in_progress)
+                     .order_by('-commit__author_date')
+                     .first())
 
         if execution is None:
             return None

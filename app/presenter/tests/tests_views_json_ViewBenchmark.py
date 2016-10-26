@@ -84,6 +84,7 @@ class BenchmarkViewTestCase(TestCase):
             name='BenchmarkDefinition1',
             layout=self.bluesteel_layout,
             project=self.bluesteel_project,
+            active=True,
             command_set=self.command_set,
             revision=28,
         )
