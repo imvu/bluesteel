@@ -11,6 +11,7 @@ class BenchmarkDefinitionEntry(models.Model):
     layout = models.ForeignKey('bluesteel.BluesteelLayoutEntry', related_name='benchmark_layout')
     project = models.ForeignKey('bluesteel.BluesteelProjectEntry', related_name='benchmark_project')
     command_set = models.ForeignKey('commandrepo.CommandSetEntry', related_name='benchmark_command_set')
+    active = models.BooleanField(default=False)
     revision = models.IntegerField(default=0)
     max_fluctuation_percent = models.IntegerField(default=0)
     max_weeks_old_notify = models.IntegerField(default=1)
@@ -31,6 +32,7 @@ class BenchmarkDefinitionEntry(models.Model):
         obj['layout'] = self.layout.as_object()
         obj['project'] = self.project.as_object()
         obj['command_set'] = self.command_set.as_object()
+        obj['active'] = self.active
         obj['revision'] = self.revision
         obj['max_fluctuation_percent'] = self.max_fluctuation_percent
         obj['max_weeks_old_notify'] = {}
