@@ -290,7 +290,12 @@ def process_git_fetch_and_feed(bootstrap_urls, settings, session, feed):
             known_commit_hashes = resp['content']['data']['hashes']
 
             log.debug('Fetching git project.')
-            fetcher.fetch_and_feed_git_project(project, known_commit_hashes)
+            ret = fetcher.fetch_and_feed_git_project(project, known_commit_hashes)
+            if not ret:
+                log.error('fetch_and_feed_git_project failed!')
+                print fetcher.feed_data['reports']
+                process_info['succeed'] = False
+                return process_info
 
             if fetcher.has_feed_data():
                 commits_json = {}
@@ -329,7 +334,13 @@ def process_git_fetch_and_feed(bootstrap_urls, settings, session, feed):
                 return process_info
         else:
             log.debug('Only fetching git project.')
-            fetcher.fetch_only_git_project(project)
+            ret = fetcher.fetch_only_git_project(project)
+
+            if not ret:
+                log.error('fetch_only_git_project failed!')
+                print fetcher.feed_data['reports']
+                process_info['succeed'] = False
+                return process_info
 
     log.debug('Finshed fetching and feeding.')
     return process_info

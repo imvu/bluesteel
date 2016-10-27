@@ -40,8 +40,7 @@ class GitFetcher(object):
             self.step_fetch_git_project,
         ]
 
-        self.execute_steps(project_info, steps)
-        return True
+        return self.execute_steps(project_info, steps)
 
     def fetch_and_feed_git_project(self, project_info, known_commit_hashes):
         """ Performs fetch and all the remaining steps to feed the data """
@@ -68,8 +67,7 @@ class GitFetcher(object):
             self.step_create_branch_list,
         ]
 
-        self.execute_steps(project_info, steps)
-        return True
+        return self.execute_steps(project_info, steps)
 
 
     def execute_steps(self, project_info, steps):
@@ -92,6 +90,7 @@ class GitFetcher(object):
             self.feed_data['feed_data']['branches'] = self.branch_list
 
         self.feed_data['reports'] = self.report_stack
+        return True
 
     def has_feed_data(self):
         return 'feed_data' in self.feed_data
