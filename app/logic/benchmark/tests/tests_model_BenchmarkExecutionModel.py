@@ -92,11 +92,9 @@ class BenchmarkExecutionEntryTestCase(TestCase):
         obj = entry.as_object()
 
         self.assertEqual('0000100001000010000100001000010000100001', obj['commit'])
-        self.assertEqual('project-1', obj['definition']['project']['uuid'])
+        self.assertEqual('Project', obj['definition']['project']['name'])
         self.assertEqual(1, obj['definition']['project']['id'])
-        self.assertEqual('http://test/', obj['definition']['project']['git_project']['url'])
-        self.assertEqual(0, len(obj['definition']['project']['git_project']['branches']) )
-        self.assertEqual('default-name', obj['definition']['project']['git_project']['name'])
+
         self.assertEqual(0, len(obj['report']['commands']))
         self.assertEqual(True, obj['invalidated'])
         self.assertEqual(1, obj['status']['index'])

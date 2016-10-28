@@ -29,8 +29,12 @@ class BenchmarkDefinitionEntry(models.Model):
         obj = {}
         obj['id'] = self.id
         obj['name'] = self.name
-        obj['layout'] = self.layout.as_object()
-        obj['project'] = self.project.as_object()
+        obj['layout'] = {}
+        obj['layout']['id'] = self.layout.id
+        obj['layout']['name'] = self.layout.name
+        obj['project'] = {}
+        obj['project']['id'] = self.project.id
+        obj['project']['name'] = self.project.name
         obj['command_set'] = self.command_set.as_object()
         obj['active'] = self.active
         obj['revision'] = self.revision
