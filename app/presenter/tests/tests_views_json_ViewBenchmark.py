@@ -154,10 +154,25 @@ class BenchmarkViewTestCase(TestCase):
         self.assertEqual(200, resp_obj['status'])
         self.assertEqual(1, resp_obj['data']['status']['index'])
         self.assertEqual('In_Progress', resp_obj['data']['status']['name'])
-        self.assertEqual('0000200002000020000200002000020000200002', resp_obj['data']['commit'])
+        self.assertEqual('0000300003000030000300003000030000300003', resp_obj['data']['commit'])
         self.assertEqual(False, resp_obj['data']['invalidated'])
 
         # Second
+        resp = self.client.post(
+            '/main/execution/acquire/',
+            data = json.dumps({}),
+            content_type='application/json')
+
+        res.check_cross_origin_headers(self, resp)
+        resp_obj = json.loads(resp.content)
+
+        self.assertEqual(200, resp_obj['status'])
+        self.assertEqual(1, resp_obj['data']['status']['index'])
+        self.assertEqual('In_Progress', resp_obj['data']['status']['name'])
+        self.assertEqual('0000200002000020000200002000020000200002', resp_obj['data']['commit'])
+        self.assertEqual(False, resp_obj['data']['invalidated'])
+
+        # Third
         resp = self.client.post(
             '/main/execution/acquire/',
             data = json.dumps({}),

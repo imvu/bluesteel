@@ -526,3 +526,14 @@ class BenchmarkExecutionController(object):
                         created_count = created_count + 1
 
         return created_count
+
+    @staticmethod
+    def try_populate_executions(count):
+        """ Tries to populate benchmark executions across all the git projects """
+        projects = GitProjectEntry.objects.all()
+
+        created = 0
+        for project in projects:
+            created = created + BenchmarkExecutionController.try_populate_benchmark_executions(project, count)
+
+        return created
