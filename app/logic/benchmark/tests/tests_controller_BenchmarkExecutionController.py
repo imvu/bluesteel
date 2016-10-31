@@ -1497,3 +1497,136 @@ class BenchmarkExecutionControllerTestCase(TestCase):
         self.assertEqual(0.4, fluc_res[1]['max_fluctuation_applied'])
         self.assertEqual(0.28, fluc_res[2]['max_fluctuation_applied'])
         self.assertEqual(0.4, fluc_res[3]['max_fluctuation_applied'])
+
+
+    def test_try_populate_benchmark_executions_one_at_a_time(self):
+
+        self.assertEqual(2, BenchmarkExecutionEntry.objects.filter(commit=self.commit1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit1, worker=self.worker1, definition=self.benchmark_definition1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit1, worker=self.worker2, definition=self.benchmark_definition2).count())
+
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit2).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit2, worker=self.worker1, definition=self.benchmark_definition1).count())
+
+        self.assertEqual(0, BenchmarkExecutionEntry.objects.filter(commit=self.commit3).count())
+
+        count = BenchmarkExecutionController.try_populate_benchmark_executions(self.git_project1, 1)
+
+        self.assertEqual(4, count)
+
+        self.assertEqual(2, BenchmarkExecutionEntry.objects.filter(commit=self.commit1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit1, worker=self.worker1, definition=self.benchmark_definition1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit1, worker=self.worker2, definition=self.benchmark_definition2).count())
+
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit2).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit2, worker=self.worker1, definition=self.benchmark_definition1).count())
+
+        self.assertEqual(4, BenchmarkExecutionEntry.objects.filter(commit=self.commit3).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit3, worker=self.worker1, definition=self.benchmark_definition1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit3, worker=self.worker1, definition=self.benchmark_definition2).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit3, worker=self.worker2, definition=self.benchmark_definition1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit3, worker=self.worker2, definition=self.benchmark_definition2).count())
+
+        count = BenchmarkExecutionController.try_populate_benchmark_executions(self.git_project1, 1)
+
+        self.assertEqual(3, count)
+
+        self.assertEqual(2, BenchmarkExecutionEntry.objects.filter(commit=self.commit1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit1, worker=self.worker1, definition=self.benchmark_definition1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit1, worker=self.worker2, definition=self.benchmark_definition2).count())
+
+        self.assertEqual(4, BenchmarkExecutionEntry.objects.filter(commit=self.commit2).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit2, worker=self.worker1, definition=self.benchmark_definition1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit2, worker=self.worker1, definition=self.benchmark_definition2).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit2, worker=self.worker2, definition=self.benchmark_definition1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit2, worker=self.worker2, definition=self.benchmark_definition2).count())
+
+        self.assertEqual(4, BenchmarkExecutionEntry.objects.filter(commit=self.commit3).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit3, worker=self.worker1, definition=self.benchmark_definition1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit3, worker=self.worker1, definition=self.benchmark_definition2).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit3, worker=self.worker2, definition=self.benchmark_definition1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit3, worker=self.worker2, definition=self.benchmark_definition2).count())
+
+        count = BenchmarkExecutionController.try_populate_benchmark_executions(self.git_project1, 1)
+
+        self.assertEqual(2, count)
+
+        self.assertEqual(4, BenchmarkExecutionEntry.objects.filter(commit=self.commit1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit1, worker=self.worker1, definition=self.benchmark_definition1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit1, worker=self.worker1, definition=self.benchmark_definition2).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit1, worker=self.worker2, definition=self.benchmark_definition1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit1, worker=self.worker2, definition=self.benchmark_definition2).count())
+
+        self.assertEqual(4, BenchmarkExecutionEntry.objects.filter(commit=self.commit2).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit2, worker=self.worker1, definition=self.benchmark_definition1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit2, worker=self.worker1, definition=self.benchmark_definition2).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit2, worker=self.worker2, definition=self.benchmark_definition1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit2, worker=self.worker2, definition=self.benchmark_definition2).count())
+
+        self.assertEqual(4, BenchmarkExecutionEntry.objects.filter(commit=self.commit3).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit3, worker=self.worker1, definition=self.benchmark_definition1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit3, worker=self.worker1, definition=self.benchmark_definition2).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit3, worker=self.worker2, definition=self.benchmark_definition1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit3, worker=self.worker2, definition=self.benchmark_definition2).count())
+
+        count = BenchmarkExecutionController.try_populate_benchmark_executions(self.git_project1, 1)
+
+        self.assertEqual(0, count)
+
+
+    def test_try_populate_benchmark_executions_many_at_a_time(self):
+
+        self.assertEqual(2, BenchmarkExecutionEntry.objects.filter(commit=self.commit1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit1, worker=self.worker1, definition=self.benchmark_definition1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit1, worker=self.worker2, definition=self.benchmark_definition2).count())
+
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit2).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit2, worker=self.worker1, definition=self.benchmark_definition1).count())
+
+        self.assertEqual(0, BenchmarkExecutionEntry.objects.filter(commit=self.commit3).count())
+
+        count = BenchmarkExecutionController.try_populate_benchmark_executions(self.git_project1, 2)
+
+        self.assertEqual(7, count)
+
+        self.assertEqual(2, BenchmarkExecutionEntry.objects.filter(commit=self.commit1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit1, worker=self.worker1, definition=self.benchmark_definition1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit1, worker=self.worker2, definition=self.benchmark_definition2).count())
+
+        self.assertEqual(4, BenchmarkExecutionEntry.objects.filter(commit=self.commit2).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit2, worker=self.worker1, definition=self.benchmark_definition1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit2, worker=self.worker1, definition=self.benchmark_definition2).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit2, worker=self.worker2, definition=self.benchmark_definition1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit2, worker=self.worker2, definition=self.benchmark_definition2).count())
+
+        self.assertEqual(4, BenchmarkExecutionEntry.objects.filter(commit=self.commit3).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit3, worker=self.worker1, definition=self.benchmark_definition1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit3, worker=self.worker1, definition=self.benchmark_definition2).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit3, worker=self.worker2, definition=self.benchmark_definition1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit3, worker=self.worker2, definition=self.benchmark_definition2).count())
+
+        count = BenchmarkExecutionController.try_populate_benchmark_executions(self.git_project1, 2)
+
+        self.assertEqual(2, count)
+
+        self.assertEqual(4, BenchmarkExecutionEntry.objects.filter(commit=self.commit1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit1, worker=self.worker1, definition=self.benchmark_definition1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit1, worker=self.worker1, definition=self.benchmark_definition2).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit1, worker=self.worker2, definition=self.benchmark_definition1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit1, worker=self.worker2, definition=self.benchmark_definition2).count())
+
+        self.assertEqual(4, BenchmarkExecutionEntry.objects.filter(commit=self.commit2).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit2, worker=self.worker1, definition=self.benchmark_definition1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit2, worker=self.worker1, definition=self.benchmark_definition2).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit2, worker=self.worker2, definition=self.benchmark_definition1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit2, worker=self.worker2, definition=self.benchmark_definition2).count())
+
+        self.assertEqual(4, BenchmarkExecutionEntry.objects.filter(commit=self.commit3).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit3, worker=self.worker1, definition=self.benchmark_definition1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit3, worker=self.worker1, definition=self.benchmark_definition2).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit3, worker=self.worker2, definition=self.benchmark_definition1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit3, worker=self.worker2, definition=self.benchmark_definition2).count())
+
+        count = BenchmarkExecutionController.try_populate_benchmark_executions(self.git_project1, 2)
+
+        self.assertEqual(0, count)

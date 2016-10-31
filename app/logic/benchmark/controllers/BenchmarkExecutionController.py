@@ -3,7 +3,7 @@
 import json
 import sys
 from datetime import timedelta
-from django.db.models import Q, F
+from django.db.models import Q, F, Count
 from django.core.paginator import Paginator
 from django.utils import timezone
 from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
@@ -492,3 +492,37 @@ class BenchmarkExecutionController(object):
                 ret_fluctuations.append(fluc)
 
         return (len(ret_fluctuations) > 0, ret_fluctuations)
+
+    @staticmethod
+    def try_populate_benchmark_executions(project, count):
+        """ We try to list all the non-yet-created benchmark executions, select a few of them, and construct them """
+        all_workers = WorkerEntry.objects.all()
+        all_defs = BenchmarkDefinitionEntry.objects.filter(project__git_project=project)
+
+        workers_count = all_workers.count()
+        defs_count = all_defs.count()
+        permut = workers_count * defs_count
+
+        entries = (GitCommitEntry.objects
+                   .filter(project=project)
+                   .annotate(Count('benchmark_exec_commit'))
+                   .filter(benchmark_exec_commit__count__lt=permut)
+                   .order_by('-author_date')[:count])
+
+        created_count = 0
+        for ent in entries:
+            for bench_def in all_defs:
+                for worker in all_workers:
+                    if not BenchmarkExecutionEntry.objects.filter(
+                            commit=ent,
+                            definition=bench_def,
+                            worker=worker).exists():
+                        report = CommandSetEntry.objects.create(group=None)
+                        BenchmarkExecutionEntry.objects.create(
+                            commit=ent,
+                            definition=bench_def,
+                            worker=worker,
+                            report=report)
+                        created_count = created_count + 1
+
+        return created_count
