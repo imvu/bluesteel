@@ -206,7 +206,7 @@ class ViewsBluesteelWorkerTestCase(TestCase):
         self.assertEqual(False, entry2.git_feeder)
 
 
-    def test_create_new_worker_also_creates_benchmark_executions(self):
+    def test_create_new_worker_does_not_creates_benchmark_executions(self):
         command_group = CommandGroupEntry.objects.create()
         command_set = CommandSetEntry.objects.create(
             group=command_group
@@ -293,12 +293,7 @@ class ViewsBluesteelWorkerTestCase(TestCase):
         user_entry = User.objects.all().filter(id=entry.user.id).first()
 
         self.assertEqual('8a88432d-33db-4d24-a0a7-000000', user_entry.username)
-        self.assertEqual(4, BenchmarkExecutionEntry.objects.all().count())
-        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(definition=benchmark_definition1, commit=git_commit1, worker=entry).count())
-        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(definition=benchmark_definition1, commit=git_commit2, worker=entry).count())
-        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(definition=benchmark_definition2, commit=git_commit1, worker=entry).count())
-        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(definition=benchmark_definition2, commit=git_commit2, worker=entry).count())
-
+        self.assertEqual(0, BenchmarkExecutionEntry.objects.all().count())
 
     def test_login_worker_with_correct_password(self):
         post_data = {}
