@@ -107,14 +107,7 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
         definition = BenchmarkDefinitionEntry.objects.all().first()
 
         self.assertEqual(1, BenchmarkDefinitionEntry.objects.all().count())
-        self.assertEqual(6, BenchmarkExecutionEntry.objects.all().count())
-        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=commit1, definition=definition, worker=self.worker1).count())
-        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=commit2, definition=definition, worker=self.worker1).count())
-        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=commit3, definition=definition, worker=self.worker1).count())
-        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=commit1, definition=definition, worker=self.worker2).count())
-        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=commit2, definition=definition, worker=self.worker2).count())
-        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=commit3, definition=definition, worker=self.worker2).count())
-
+        self.assertEqual(0, BenchmarkExecutionEntry.objects.all().count())
 
     def test_save_benchmark_definition(self):
         layout = BluesteelLayoutController.create_new_default_layout()
