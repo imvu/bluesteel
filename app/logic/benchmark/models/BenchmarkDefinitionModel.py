@@ -32,9 +32,12 @@ class BenchmarkDefinitionEntry(models.Model):
         obj['layout'] = {}
         obj['layout']['id'] = self.layout.id
         obj['layout']['name'] = self.layout.name
+        obj['layout']['uuid'] = self.layout.get_uuid()
         obj['project'] = {}
         obj['project']['id'] = self.project.id
         obj['project']['name'] = self.project.name
+        obj['project']['uuid'] = self.project.get_uuid()
+        obj['project']['git_project_folder_search_path'] = self.project.git_project_folder_search_path
         obj['command_set'] = self.command_set.as_object()
         obj['active'] = self.active
         obj['revision'] = self.revision

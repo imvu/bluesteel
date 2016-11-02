@@ -50,6 +50,22 @@ class BenchmarkDefinitionEntryTestCase(TestCase):
     def tearDown(self):
         pass
 
+    def test_benchmark_def_as_object(self):
+        obj = self.benchmark_definition.as_object()
+
+        self.assertEqual(self.benchmark_definition.id, obj['id'])
+        self.assertEqual('BenchmarkDefinition', obj['name'])
+        self.assertEqual(self.bluesteel_layout.id, obj['layout']['id'])
+        self.assertEqual('Layout', obj['layout']['name'])
+        self.assertEqual('archive-1', obj['layout']['uuid'])
+        self.assertEqual(self.bluesteel_project.id, obj['project']['id'])
+        self.assertEqual('Project', obj['project']['name'])
+        self.assertEqual('project-1', obj['project']['uuid'])
+        self.assertEqual('.', obj['project']['git_project_folder_search_path'])
+        self.assertEqual(False, obj['active'])
+        self.assertEqual(0, obj['revision'])
+        self.assertEqual(0, obj['max_fluctuation_percent'])
+
     def test_benchmark_def_delete_also_deletes_command_set(self):
         self.assertEqual(1, BenchmarkDefinitionEntry.objects.filter(id=self.benchmark_definition.id).count())
         self.assertEqual(1, CommandSetEntry.objects.all().count())
