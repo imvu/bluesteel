@@ -1500,7 +1500,6 @@ class BenchmarkExecutionControllerTestCase(TestCase):
 
 
     def test_try_populate_benchmark_executions_one_at_a_time(self):
-
         self.assertEqual(2, BenchmarkExecutionEntry.objects.filter(commit=self.commit1).count())
         self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit1, worker=self.worker1, definition=self.benchmark_definition1).count())
         self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit1, worker=self.worker2, definition=self.benchmark_definition2).count())
@@ -1630,3 +1629,43 @@ class BenchmarkExecutionControllerTestCase(TestCase):
         count = BenchmarkExecutionController.try_populate_benchmark_executions(self.git_project1, 2)
 
         self.assertEqual(0, count)
+
+    def test_try_populate_executions_over_git_projects(self):
+        git_project2 = GitProjectEntry.objects.create(url='http://test/2/')
+        git_user2 = GitUserEntry.objects.create(project=git_project2, name='user2', email='user2@test.com')
+        commit21 = GitCommitEntry.objects.create(project=git_project2, commit_hash='0000100001000010000100001000010000100001', author=git_user2, author_date=timezone.now(), committer=git_user2, committer_date=timezone.now())
+
+        command_group2 = CommandGroupEntry.objects.create()
+        command_set2 = CommandSetEntry.objects.create(group=command_group2)
+
+        bluesteel_layout2 = BluesteelLayoutEntry.objects.create(name='Layout2', active=True, project_index_path=0,)
+        bluesteel_project2 = BluesteelProjectEntry.objects.create(name='Project2', order=0, layout=bluesteel_layout2, command_group=command_group2, git_project=git_project2)
+
+        benchmark_definition1 = BenchmarkDefinitionEntry.objects.create(name='BenchmarkDefinition21', layout=bluesteel_layout2, project=bluesteel_project2, active=True, command_set=command_set2, revision=28)
+        benchmark_definition2 = BenchmarkDefinitionEntry.objects.create(name='BenchmarkDefinition22', layout=bluesteel_layout2, project=bluesteel_project2, active=True, command_set=command_set2, revision=3)
+
+        self.commit2.delete()
+        self.commit3.delete()
+
+        self.assertEqual(2, BenchmarkExecutionEntry.objects.filter(commit=self.commit1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit1, worker=self.worker1, definition=self.benchmark_definition1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit1, worker=self.worker2, definition=self.benchmark_definition2).count())
+
+        count = BenchmarkExecutionController.try_populate_executions(2)
+
+        self.assertEqual(6, count)
+        self.assertEqual(4, BenchmarkExecutionEntry.objects.filter(commit=self.commit1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit1, worker=self.worker1, definition=self.benchmark_definition1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit1, worker=self.worker1, definition=self.benchmark_definition2).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit1, worker=self.worker2, definition=self.benchmark_definition1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=self.commit1, worker=self.worker2, definition=self.benchmark_definition2).count())
+
+        self.assertEqual(4, BenchmarkExecutionEntry.objects.filter(commit=commit21).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=commit21, worker=self.worker1, definition=benchmark_definition1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=commit21, worker=self.worker1, definition=benchmark_definition2).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=commit21, worker=self.worker2, definition=benchmark_definition1).count())
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(commit=commit21, worker=self.worker2, definition=benchmark_definition2).count())
+
+
+
+
