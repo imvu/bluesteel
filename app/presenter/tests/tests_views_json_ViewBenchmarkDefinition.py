@@ -169,6 +169,71 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
         self.assertEqual(1, BenchmarkFluctuationOverrideEntry.objects.filter(result_id='id2', override_value=29).count())
 
 
+    def test_save_benchmark_definition_with_longest_override_id_possible(self):
+        layout = BluesteelLayoutController.create_new_default_layout()
+        definition = BenchmarkDefinitionController.create_default_benchmark_definition()
+
+        project = BluesteelProjectEntry.objects.filter(layout=layout).first()
+
+        long_id = 'a' * 255
+
+        obj = {}
+        obj['name'] = 'new-name-1'
+        obj['layout_id'] = layout.id
+        obj['project_id'] = project.id
+        obj['active'] = True
+        obj['max_fluctuation_percent'] = 28
+        obj['max_weeks_old_notify'] = 8
+        obj['command_list'] = []
+        obj['command_list'].append('command-28')
+        obj['overrides'] = []
+        obj['overrides'].append({'result_id' : long_id, 'override_value' : 28})
+
+        resp = self.client.post(
+            '/main/definition/{0}/save/'.format(definition.id),
+            data = json.dumps(obj),
+            content_type='application/json')
+
+        res.check_cross_origin_headers(self, resp)
+        resp_obj = json.loads(resp.content)
+
+        self.assertEqual(200, resp_obj['status'])
+
+        self.assertEqual(1, BenchmarkFluctuationOverrideEntry.objects.all().count())
+        self.assertEqual(1, BenchmarkFluctuationOverrideEntry.objects.filter(result_id=long_id, override_value=28).count())
+        self.assertEqual(long_id, BenchmarkFluctuationOverrideEntry.objects.all().first().result_id)
+
+    def test_save_benchmark_definition_with_too_long_override_id(self):
+        layout = BluesteelLayoutController.create_new_default_layout()
+        definition = BenchmarkDefinitionController.create_default_benchmark_definition()
+
+        project = BluesteelProjectEntry.objects.filter(layout=layout).first()
+
+        long_id = 'a' * 256
+
+        obj = {}
+        obj['name'] = 'new-name-1'
+        obj['layout_id'] = layout.id
+        obj['project_id'] = project.id
+        obj['active'] = True
+        obj['max_fluctuation_percent'] = 28
+        obj['max_weeks_old_notify'] = 8
+        obj['command_list'] = []
+        obj['command_list'].append('command-28')
+        obj['overrides'] = []
+        obj['overrides'].append({'result_id' : long_id, 'override_value' : 28})
+
+        resp = self.client.post(
+            '/main/definition/{0}/save/'.format(definition.id),
+            data = json.dumps(obj),
+            content_type='application/json')
+
+        res.check_cross_origin_headers(self, resp)
+        resp_obj = json.loads(resp.content)
+
+        self.assertEqual(406, resp_obj['status'])
+
+
     def test_delete_benchmark_definition_also_deletes_benchmark_executions(self):
         layout = BluesteelLayoutController.create_new_default_layout()
         definition = BenchmarkDefinitionController.create_default_benchmark_definition()

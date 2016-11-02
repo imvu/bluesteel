@@ -5,7 +5,7 @@ from django.db import models
 class BenchmarkFluctuationOverrideEntry(models.Model):
     """ Fluctuation Override """
     definition = models.ForeignKey('benchmark.BenchmarkDefinitionEntry', related_name='fluctuation_override_definition')
-    result_id = models.CharField(default='', max_length=32)
+    result_id = models.CharField(default='', max_length=255)
     override_value = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True, editable=False)
