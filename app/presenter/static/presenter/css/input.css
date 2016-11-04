@@ -37,3 +37,34 @@ input.path_input:focus
 {
     outline: none;
 }
+
+
+input.check_item
+{
+    display:none; /* to hide the checkbox itself */
+}
+
+label.check_label
+{
+    font-family: "Courier New", Courier, monospace;
+    color: gray;
+    font-size: 15px;
+    line-height: 15px;
+    -webkit-font-smoothing: antialiased;
+}
+
+input.check_item + label.check_label:before
+{
+  font-family: FontAwesome;
+  display: inline-block;
+  content: "\f10c";
+  color: lightgray;
+  letter-spacing: 10px;
+}
+
+input.check_item:checked + label.check_label:before
+{
+    content: "\f192"; /* checked icon */
+    letter-spacing: 10px; /* allow space for check mark */
+    color: gray;
+}
