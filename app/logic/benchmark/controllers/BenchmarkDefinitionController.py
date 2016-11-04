@@ -6,9 +6,11 @@
 
 from django.core.paginator import Paginator
 from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
+from app.logic.benchmark.models.BenchmarkDefinitionWorkerPassModel import BenchmarkDefinitionWorkerPassEntry
 from app.logic.benchmark.models.BenchmarkFluctuationOverrideModel import BenchmarkFluctuationOverrideEntry
 from app.logic.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
 from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
+from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
 from app.logic.commandrepo.controllers import CommandController
 from app.logic.commandrepo.models.CommandModel import CommandEntry
 from app.logic.commandrepo.models.CommandSetModel import CommandSetEntry
@@ -51,6 +53,18 @@ class BenchmarkDefinitionController(object):
             )
 
         return definition
+
+    @staticmethod
+    def populate_worker_passes_for_definition(bench_def):
+        """ Creates all the missing worker passes for a benchmark definition """
+        all_workers = WorkerEntry.objects.all()
+
+        for worker in all_workers:
+            BenchmarkDefinitionWorkerPassEntry.objects.get_or_create(
+                definition=bench_def,
+                worker=worker)
+
+
 
     @staticmethod
     def save_benchmark_definition(
