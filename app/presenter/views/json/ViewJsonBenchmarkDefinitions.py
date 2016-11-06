@@ -11,7 +11,8 @@ def create_new_benchmark_definition(request):
     """ Creates a new benchmark defintion """
     if request.method == 'POST':
 
-        BenchmarkDefinitionController.create_default_benchmark_definition()
+        definition = BenchmarkDefinitionController.create_default_benchmark_definition()
+        BenchmarkDefinitionController.populate_worker_passes_for_definition(definition)
 
         data = {}
         data['redirect'] = ViewUrlGenerator.get_benchmark_definitions_url(1)

@@ -7,6 +7,7 @@ from django.utils import timezone
 from app.logic.benchmark.controllers.BenchmarkDefinitionController import BenchmarkDefinitionController
 from app.logic.benchmark.controllers.BenchmarkExecutionController import BenchmarkExecutionController
 from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
+from app.logic.benchmark.models.BenchmarkDefinitionWorkerPassModel import BenchmarkDefinitionWorkerPassEntry
 from app.logic.benchmark.models.BenchmarkExecutionModel import BenchmarkExecutionEntry
 from app.logic.benchmark.models.BenchmarkFluctuationOverrideModel import BenchmarkFluctuationOverrideEntry
 from app.logic.bluesteel.controllers.BluesteelLayoutController import BluesteelLayoutController
@@ -108,6 +109,10 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
 
         self.assertEqual(1, BenchmarkDefinitionEntry.objects.all().count())
         self.assertEqual(0, BenchmarkExecutionEntry.objects.all().count())
+        self.assertEqual(2, BenchmarkDefinitionWorkerPassEntry.objects.all().count())
+        self.assertEqual(1, BenchmarkDefinitionWorkerPassEntry.objects.filter(definition=definition, worker=self.worker1).count())
+        self.assertEqual(1, BenchmarkDefinitionWorkerPassEntry.objects.filter(definition=definition, worker=self.worker2).count())
+
 
     def test_save_benchmark_definition(self):
         layout = BluesteelLayoutController.create_new_default_layout()
