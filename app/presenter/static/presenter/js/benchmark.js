@@ -105,8 +105,6 @@ addFluctuationOverride = function(idListToAddElement, startName) {
 saveBenchmarkDefinition = function(idFormBenchmarkDefinition) {
     var form = document.getElementById(idFormBenchmarkDefinition);
 
-    console.log(form.elements);
-
     obj = {};
     obj['name'] = form.elements['name_active'].value;
     obj['layout_id'] = parseInt(form.elements['layout_active'].value);
@@ -116,6 +114,7 @@ saveBenchmarkDefinition = function(idFormBenchmarkDefinition) {
     obj['max_fluctuation_percent'] = '-1';
     obj['max_weeks_old_notify'] = '-1';
     obj['overrides'] = [];
+    obj['work_passes'] = [];
 
     var overrides = {};
 
@@ -139,6 +138,11 @@ saveBenchmarkDefinition = function(idFormBenchmarkDefinition) {
             if (element.value.startsWith('<') && element.value.endsWith('>')) {continue;}
 
             overrides[inpId]['override_value'] = parseInt(element.value);
+        } else if (element.name.startsWith("work_pass_")) {
+            var wp = {};
+            wp['id'] = parseInt(element.id);
+            wp['allowed'] = element.checked;
+            obj['work_passes'].push(wp);
         }
     }
 

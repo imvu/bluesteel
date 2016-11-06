@@ -15,7 +15,8 @@ SAVE_BENCHMARK_DEFINITION = {
         'command_list',
         'max_fluctuation_percent',
         'overrides',
-        'max_weeks_old_notify'
+        'max_weeks_old_notify',
+        'work_passes'
     ],
     'properties' : {
         'name' : {
@@ -89,6 +90,23 @@ SAVE_BENCHMARK_DEFINITION = {
                 {"type" : "number", "minimum" : 260, "maximum" : 260},
                 {"type" : "number", "minimum" : 520, "maximum" : 520},
             ],
+        },
+        'work_passes' : {
+            'type' : 'array',
+            'items' : {
+                'type' : 'object',
+                'additionalProperties' : False,
+                'required' : ['id', 'allowed'],
+                'properties' : {
+                    'id' : {
+                        'type' : 'number',
+                        'minimum' : 1
+                    },
+                    'allowed' : {
+                        'type' : 'boolean'
+                    },
+                },
+            }
         },
     },
 }

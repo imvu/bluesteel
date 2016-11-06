@@ -66,8 +66,8 @@
                         </div>
                         {% for work_pass in definition.work_passes %}
                         <div class="grid-col-1-1 grid-cell-pad-2-10">
-                                <input class="check_item" type="checkbox" id="c{{forloop.counter}}" name="animal" value="Cat" {{work_pass.allowed|yesno:"checked,"}}></input>
-                                <label class="check_label" for="c{{forloop.counter}}">{{work_pass.worker.name}}</label>
+                            <input class="check_item" type="checkbox" value="Cat" {{work_pass.allowed|yesno:"checked,"}}></input>
+                            <label class="check_label">{{work_pass.worker.name}}</label>
                         </div>
                         {% endfor %}
                     </div>

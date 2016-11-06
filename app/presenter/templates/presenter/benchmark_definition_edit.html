@@ -81,6 +81,26 @@
                 </div>
 
                 <div class="grid grid-pad-20">
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
+                            <div class="list_label">WORKERS</div>
+                        </div>
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
+                            <div class="normal">Selectthe workers this Benchmark Definition is going to be executed in.</div>
+                        </div>
+                        {% for work_pass in definition.work_passes %}
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
+                            <input  class="check_item"
+                                    type="checkbox"
+                                    id="{{work_pass.worker.id}}"
+                                    name="work_pass_{{work_pass.worker.id}}"
+                                    {{work_pass.allowed|yesno:"checked,"}}
+                            ></input>
+                            <label class="check_label" for="{{work_pass.worker.id}}">{{work_pass.worker.name}}</label>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                <div class="grid grid-pad-20">
                     <div class="grid-col-1-1 grid-cell-pad-2-10">
                         <div class="list_label">STATUS</div>
                     </div>

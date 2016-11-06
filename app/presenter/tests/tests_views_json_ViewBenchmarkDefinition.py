@@ -142,6 +142,7 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
         obj['overrides'] = []
         obj['overrides'].append({'result_id' : 'id1', 'override_value' : 28})
         obj['overrides'].append({'result_id' : 'id2', 'override_value' : 29})
+        obj['work_passes'] = []
 
         resp = self.client.post(
             '/main/definition/{0}/save/'.format(definition.id),
@@ -193,6 +194,7 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
         obj['command_list'].append('command-28')
         obj['overrides'] = []
         obj['overrides'].append({'result_id' : long_id, 'override_value' : 28})
+        obj['work_passes'] = []
 
         resp = self.client.post(
             '/main/definition/{0}/save/'.format(definition.id),
@@ -227,6 +229,7 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
         obj['command_list'].append('command-28')
         obj['overrides'] = []
         obj['overrides'].append({'result_id' : long_id, 'override_value' : 28})
+        obj['work_passes'] = []
 
         resp = self.client.post(
             '/main/definition/{0}/save/'.format(definition.id),
