@@ -188,6 +188,7 @@ class BenchmarkDefinitionController(object):
 
         def_obj = def_entry.as_object()
         def_obj['fluctuation_overrides'] = []
+        def_obj['work_passes'] = []
 
         flucs = BenchmarkFluctuationOverrideEntry.objects.filter(definition__id=benchmark_definition_id)
         for fluc in flucs:
@@ -195,6 +196,10 @@ class BenchmarkDefinitionController(object):
             obj['result_id'] = fluc.result_id
             obj['override_value'] = fluc.override_value
             def_obj['fluctuation_overrides'].append(obj)
+
+        work_passes = BenchmarkDefinitionWorkerPassEntry.objects.filter(definition__id=def_entry.id)
+        for work_pass in work_passes:
+            def_obj['work_passes'].append(work_pass.as_object())
 
         return def_obj
 
@@ -216,6 +221,7 @@ class BenchmarkDefinitionController(object):
         for def_entry in def_entries:
             def_obj = def_entry.as_object()
             def_obj['fluctuation_overrides'] = []
+            def_obj['work_passes'] = []
 
             flucs = BenchmarkFluctuationOverrideEntry.objects.filter(definition__id=def_entry.id)
             for fluc in flucs:
@@ -223,6 +229,11 @@ class BenchmarkDefinitionController(object):
                 obj['result_id'] = fluc.result_id
                 obj['override_value'] = fluc.override_value
                 def_obj['fluctuation_overrides'].append(obj)
+
+            work_passes = BenchmarkDefinitionWorkerPassEntry.objects.filter(definition__id=def_entry.id)
+            for work_pass in work_passes:
+                def_obj['work_passes'].append(work_pass.as_object())
+
             definitions.append(def_obj)
 
         return (definitions, page_indices)

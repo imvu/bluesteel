@@ -57,22 +57,20 @@
                         </div>
                     </div>
 
-                    <!-- <div class="grid grid-pad-20">
+                    <div class="grid grid-pad-20">
                         <div class="grid-col-1-1 grid-cell-pad-2-10">
                             <div class="list_label">WORKERS</div>
                         </div>
                         <div class="grid-col-1-1 grid-cell-pad-2-10">
                             <div class="normal">Selectthe workers this Benchmark Definition is going to be executed in.</div>
                         </div>
+                        {% for work_pass in definition.work_passes %}
                         <div class="grid-col-1-1 grid-cell-pad-2-10">
-                                <input class="check_item" type="checkbox" id="c1" name="animal" value="Cat" checked></input>
-                                <label class="check_label" for="c1">Cat 1</label>
+                                <input class="check_item" type="checkbox" id="c{{forloop.counter}}" name="animal" value="Cat" {{work_pass.allowed|yesno:"checked,"}}></input>
+                                <label class="check_label" for="c{{forloop.counter}}">{{work_pass.worker.name}}</label>
                         </div>
-                        <div class="grid-col-1-1 grid-cell-pad-2-10">
-                            <input class="check_item" type="checkbox" id="c2" name="animal" value="Cat"></input>
-                            <label class="check_label" for="c2">Cat 1</label>
-                        </div>
-                    </div> -->
+                        {% endfor %}
+                    </div>
 
                     <div class="grid grid-pad-20">
                         <div class="grid-col-1-1 grid-cell-pad-2-10">

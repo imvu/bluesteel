@@ -24,10 +24,10 @@ class BenchmarkDefinitionWorkerPassEntry(models.Model):
         obj['id'] = self.id
         obj['definition'] = {}
         obj['definition']['id'] = self.definition.id
-        obj['definition']['uuid'] = self.definition.get_uuid()
         obj['worker'] = {}
         obj['worker']['id'] = self.worker.id
-        obj['definition']['uuid'] = self.worker.get_uuid()
+        obj['worker']['name'] = self.worker.name
+        obj['worker']['uuid'] = self.worker.uuid
         obj['allowed'] = self.allowed
 
         return obj

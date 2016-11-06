@@ -51,6 +51,7 @@ label.check_label
     font-size: 15px;
     line-height: 15px;
     -webkit-font-smoothing: antialiased;
+    cursor: pointer;
 }
 
 input.check_item + label.check_label:before
@@ -60,6 +61,7 @@ input.check_item + label.check_label:before
   content: "\f10c";
   color: lightgray;
   letter-spacing: 10px;
+  cursor: pointer;
 }
 
 input.check_item:checked + label.check_label:before
@@ -67,4 +69,5 @@ input.check_item:checked + label.check_label:before
     content: "\f192"; /* checked icon */
     letter-spacing: 10px; /* allow space for check mark */
     color: gray;
+    cursor: pointer;
 }
