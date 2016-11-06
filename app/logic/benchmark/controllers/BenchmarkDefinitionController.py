@@ -82,7 +82,8 @@ class BenchmarkDefinitionController(object):
             command_list,
             max_fluctuation_percent,
             overrides,
-            max_weeks_old_notify):
+            max_weeks_old_notify,
+            work_passes):
         """ Save benchmark definition with the new data provided, returns None if error """
         benchmark_def_entry = BenchmarkDefinitionEntry.objects.filter(id=benchmark_definition_id).first()
 
@@ -98,6 +99,7 @@ class BenchmarkDefinitionController(object):
                 override_value=override['override_value'],
             )
 
+        BenchmarkDefinitionController.save_work_passes(work_passes, benchmark_definition_id)
 
         if BenchmarkDefinitionController.is_benchmark_definition_equivalent(
                 benchmark_definition_id,
@@ -140,6 +142,27 @@ class BenchmarkDefinitionController(object):
         benchmark_def_entry.save()
 
         return benchmark_def_entry
+
+    @staticmethod
+    def save_work_passes(work_passes, benchmark_definition_id):
+        """ Contains the logic to read work passes info and save it into the models """
+        for work_pass in work_passes:
+            definition = BenchmarkDefinitionEntry.objects.filter(id=benchmark_definition_id).first()
+            if not definition:
+                continue
+
+
+            worker = WorkerEntry.objects.filter(id=work_pass['id']).first()
+            if not worker:
+                continue
+
+            (entry, created) = BenchmarkDefinitionWorkerPassEntry.objects.get_or_create(
+                definition=definition,
+                worker=worker)
+            del created
+            entry.allowed = work_pass['allowed']
+            entry.save()
+
 
     @staticmethod
     def is_benchmark_definition_equivalent(benchmark_definition_id, layout_id, project_id, command_list):

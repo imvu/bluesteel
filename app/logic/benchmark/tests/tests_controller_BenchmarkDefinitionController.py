@@ -104,7 +104,7 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
         overrides.append({'result_id' : 'id1', 'override_value' : 28})
         overrides.append({'result_id' : 'id2', 'override_value' : 29})
 
-        definition = BenchmarkDefinitionController.save_benchmark_definition('new-name', definition.id, new_layout.id, project.id, True, commands, 28, overrides, 8)
+        definition = BenchmarkDefinitionController.save_benchmark_definition('new-name', definition.id, new_layout.id, project.id, True, commands, 28, overrides, 8, [])
 
         self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='command-28').count())
         self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='command-29').count())
@@ -149,7 +149,7 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
         overrides.append({'result_id' : 'id1', 'override_value' : 28})
         overrides.append({'result_id' : 'id2', 'override_value' : 29})
 
-        result = BenchmarkDefinitionController.save_benchmark_definition('default-name', definition.id, new_layout.id, project.id, True, commands, 0, overrides, 8)
+        result = BenchmarkDefinitionController.save_benchmark_definition('default-name', definition.id, new_layout.id, project.id, True, commands, 0, overrides, 8, [])
         definition = BenchmarkDefinitionEntry.objects.all().first()
 
         self.assertEqual(definition, result)
@@ -249,7 +249,7 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
         self.assertEqual(0, CommandEntry.objects.filter(command_set=benchmark_definition1.command_set).count())
         self.assertEqual(0, BenchmarkFluctuationOverrideEntry.objects.all().count())
 
-        result = BenchmarkDefinitionController.save_benchmark_definition('BenchmarkDefinition1-1', benchmark_definition1.id, bluesteel_layout.id, bluesteel_project.id, True, commands, 28, overrides, 0)
+        result = BenchmarkDefinitionController.save_benchmark_definition('BenchmarkDefinition1-1', benchmark_definition1.id, bluesteel_layout.id, bluesteel_project.id, True, commands, 28, overrides, 0, [])
 
         self.assertEqual('BenchmarkDefinition1-1', result.name)
         self.assertEqual(1, BenchmarkExecutionEntry.objects.all().count())
@@ -464,3 +464,39 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
         self.assertEqual(1, BenchmarkDefinitionWorkerPassEntry.objects.filter(definition__id=benchmark_definition2.id, worker__id=worker2.id).count())
         self.assertEqual(1, BenchmarkDefinitionWorkerPassEntry.objects.filter(definition__id=benchmark_definition3.id, worker__id=worker1.id).count())
         self.assertEqual(1, BenchmarkDefinitionWorkerPassEntry.objects.filter(definition__id=benchmark_definition3.id, worker__id=worker2.id).count())
+
+
+    def test_save_work_passes(self):
+        user1 = User.objects.create_user('user1@test.com', 'user1@test.com', 'pass')
+        user1.save()
+
+        user2 = User.objects.create_user('user2@test.com', 'user2@test.com', 'pass')
+        user2.save()
+
+        git_project1 = GitProjectEntry.objects.create(url='http://test/')
+
+        command_group = CommandGroupEntry.objects.create()
+        command_set = CommandSetEntry.objects.create(group=command_group)
+
+        bluesteel_layout = BluesteelLayoutEntry.objects.create(name='Layout', active=True, project_index_path=0)
+        bluesteel_project = BluesteelProjectEntry.objects.create(name='Project', order=0, layout=bluesteel_layout, command_group=command_group, git_project=git_project1)
+
+        benchmark_definition1 = BenchmarkDefinitionEntry.objects.create(name='BenchmarkDefinition1', layout=bluesteel_layout, project=bluesteel_project, command_set=command_set, revision=28)
+        worker1 = WorkerEntry.objects.create(user=user1)
+        worker2 = WorkerEntry.objects.create(user=user2)
+
+        BenchmarkDefinitionWorkerPassEntry.objects.create(definition=benchmark_definition1, worker=worker1, allowed=False)
+        BenchmarkDefinitionWorkerPassEntry.objects.create(definition=benchmark_definition1, worker=worker2, allowed=True)
+
+        obj = {}
+        obj['work_passes'] = []
+        obj['work_passes'].append({'id' : worker1.id, 'allowed' : True})
+        obj['work_passes'].append({'id' : worker2.id, 'allowed' : False})
+
+        self.assertEqual(False, BenchmarkDefinitionWorkerPassEntry.objects.filter(worker=worker1).first().allowed)
+        self.assertEqual(True, BenchmarkDefinitionWorkerPassEntry.objects.filter(worker=worker2).first().allowed)
+
+        BenchmarkDefinitionController.save_work_passes(obj['work_passes'], benchmark_definition1.id)
+
+        self.assertEqual(True, BenchmarkDefinitionWorkerPassEntry.objects.filter(worker=worker1).first().allowed)
+        self.assertEqual(False, BenchmarkDefinitionWorkerPassEntry.objects.filter(worker=worker2).first().allowed)
