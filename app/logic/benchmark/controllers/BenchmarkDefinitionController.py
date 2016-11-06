@@ -65,6 +65,12 @@ class BenchmarkDefinitionController(object):
                 worker=worker)
 
 
+    @staticmethod
+    def populate_worker_passes_all_definitions():
+        definitions = BenchmarkDefinitionEntry.objects.all()
+        for definition in definitions:
+            BenchmarkDefinitionController.populate_worker_passes_for_definition(definition)
+
 
     @staticmethod
     def save_benchmark_definition(

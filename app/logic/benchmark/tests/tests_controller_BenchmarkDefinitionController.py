@@ -428,3 +428,39 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
         self.assertEqual(1, BenchmarkDefinitionWorkerPassEntry.objects.filter(definition__id=benchmark_definition1.id, worker__id=worker2.id).count())
         self.assertEqual(1, BenchmarkDefinitionWorkerPassEntry.objects.filter(definition__id=benchmark_definition2.id, worker__id=worker1.id).count())
         self.assertEqual(1, BenchmarkDefinitionWorkerPassEntry.objects.filter(definition__id=benchmark_definition2.id, worker__id=worker2.id).count())
+
+
+    def test_populate_worker_passes_for_all_definitions(self):
+        user1 = User.objects.create_user('user1@test.com', 'user1@test.com', 'pass')
+        user1.save()
+
+        user2 = User.objects.create_user('user2@test.com', 'user2@test.com', 'pass')
+        user2.save()
+
+        git_project1 = GitProjectEntry.objects.create(url='http://test/')
+
+        command_group = CommandGroupEntry.objects.create()
+        command_set = CommandSetEntry.objects.create(group=command_group)
+
+        bluesteel_layout = BluesteelLayoutEntry.objects.create(name='Layout', active=True, project_index_path=0)
+
+        bluesteel_project = BluesteelProjectEntry.objects.create(name='Project', order=0, layout=bluesteel_layout, command_group=command_group, git_project=git_project1)
+
+        benchmark_definition1 = BenchmarkDefinitionEntry.objects.create(name='BenchmarkDefinition1', layout=bluesteel_layout, project=bluesteel_project, command_set=command_set, revision=28)
+        benchmark_definition2 = BenchmarkDefinitionEntry.objects.create(name='BenchmarkDefinition1', layout=bluesteel_layout, project=bluesteel_project, command_set=command_set, revision=28)
+        benchmark_definition3 = BenchmarkDefinitionEntry.objects.create(name='BenchmarkDefinition1', layout=bluesteel_layout, project=bluesteel_project, command_set=command_set, revision=28)
+
+        worker1 = WorkerEntry.objects.create(user=user1)
+        worker2 = WorkerEntry.objects.create(user=user2)
+
+        self.assertEqual(0, BenchmarkDefinitionWorkerPassEntry.objects.all().count())
+
+        BenchmarkDefinitionController.populate_worker_passes_all_definitions()
+
+        self.assertEqual(6, BenchmarkDefinitionWorkerPassEntry.objects.all().count())
+        self.assertEqual(1, BenchmarkDefinitionWorkerPassEntry.objects.filter(definition__id=benchmark_definition1.id, worker__id=worker1.id).count())
+        self.assertEqual(1, BenchmarkDefinitionWorkerPassEntry.objects.filter(definition__id=benchmark_definition1.id, worker__id=worker2.id).count())
+        self.assertEqual(1, BenchmarkDefinitionWorkerPassEntry.objects.filter(definition__id=benchmark_definition2.id, worker__id=worker1.id).count())
+        self.assertEqual(1, BenchmarkDefinitionWorkerPassEntry.objects.filter(definition__id=benchmark_definition2.id, worker__id=worker2.id).count())
+        self.assertEqual(1, BenchmarkDefinitionWorkerPassEntry.objects.filter(definition__id=benchmark_definition3.id, worker__id=worker1.id).count())
+        self.assertEqual(1, BenchmarkDefinitionWorkerPassEntry.objects.filter(definition__id=benchmark_definition3.id, worker__id=worker2.id).count())

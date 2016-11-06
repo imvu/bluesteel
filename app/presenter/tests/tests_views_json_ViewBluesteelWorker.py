@@ -10,6 +10,7 @@ from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
 from app.logic.bluesteelworker.models.WorkerFilesHashModel import WorkerFilesHashEntry
 from app.logic.benchmark.models.BenchmarkExecutionModel import BenchmarkExecutionEntry
 from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
+from app.logic.benchmark.models.BenchmarkDefinitionWorkerPassModel import BenchmarkDefinitionWorkerPassEntry
 from app.logic.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
 from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
 from app.logic.gitrepo.models.GitProjectModel import GitProjectEntry
@@ -143,6 +144,41 @@ class ViewsBluesteelWorkerTestCase(TestCase):
 
         self.assertEqual('8a88432d-33db-4d24-a0a7-000000', user_entry.username)
         self.assertEqual(0, BenchmarkExecutionEntry.objects.all().count())
+
+    def test_creation_of_worker_also_create_worker_passes(self):
+        self.worker_1.delete()
+        self.assertEqual(0, WorkerEntry.objects.all().count())
+
+        command_group = CommandGroupEntry.objects.create()
+        command_set = CommandSetEntry.objects.create(group=command_group)
+
+        bluesteel_layout = BluesteelLayoutEntry.objects.create(name='Layout', active=True, project_index_path=0)
+        bluesteel_project = BluesteelProjectEntry.objects.create(name='Project', order=0, layout=bluesteel_layout, command_group=command_group, git_project=self.git_project1)
+
+        benchmark_definition1 = BenchmarkDefinitionEntry.objects.create(name='BenchmarkDefinition1', layout=bluesteel_layout, project=bluesteel_project, command_set=command_set, revision=28)
+
+        post_data = {}
+        post_data['uuid'] = '8a88432d-33db-4d24-a0a7-0000007e8e4a'
+        post_data['operative_system'] = 'osx'
+        post_data['host_name'] = 'host-name'
+
+        post_str = json.dumps(post_data)
+
+        resp = self.client.post(
+            '/main/bluesteelworker/create/',
+            data=post_str,
+            content_type='text/plain'
+        )
+
+        res.check_cross_origin_headers(self, resp)
+        resp_obj = json.loads(resp.content)
+
+        worker = WorkerEntry.objects.all().first()
+
+        self.assertEqual(1, BenchmarkDefinitionEntry.objects.all().count())
+        self.assertEqual(1, WorkerEntry.objects.all().count())
+        self.assertEqual(1, BenchmarkDefinitionWorkerPassEntry.objects.all().count())
+        self.assertEqual(1, BenchmarkDefinitionWorkerPassEntry.objects.filter(definition=benchmark_definition1, worker=worker).count())
 
     def test_firsst_created_worker_is_git_feeder_by_default(self):
         self.worker_1.delete()

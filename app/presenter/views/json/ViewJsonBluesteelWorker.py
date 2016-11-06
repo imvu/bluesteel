@@ -5,6 +5,7 @@ from django.middleware import csrf
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
+from app.logic.benchmark.controllers.BenchmarkDefinitionController import BenchmarkDefinitionController
 from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
 from app.logic.bluesteelworker.models.WorkerFilesHashModel import WorkerFilesHashEntry
 from app.presenter.schemas import BluesteelWorkerSchemas
@@ -116,6 +117,8 @@ def create_worker_info(request):
                 git_feeder=(worker_count == 0)
             )
             new_worker.save()
+
+            BenchmarkDefinitionController.populate_worker_passes_all_definitions()
 
             ret = {}
             ret['worker'] = new_worker.as_object()
