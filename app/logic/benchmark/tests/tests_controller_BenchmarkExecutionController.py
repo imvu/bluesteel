@@ -6,6 +6,7 @@ from django.contrib.auth.models import AnonymousUser
 from django.utils import timezone
 from app.logic.benchmark.controllers.BenchmarkExecutionController import BenchmarkExecutionController
 from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
+from app.logic.benchmark.models.BenchmarkDefinitionWorkerPassModel import BenchmarkDefinitionWorkerPassEntry
 from app.logic.benchmark.models.BenchmarkExecutionModel import BenchmarkExecutionEntry
 from app.logic.benchmark.models.BenchmarkFluctuationOverrideModel import BenchmarkFluctuationOverrideEntry
 from app.logic.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
@@ -160,6 +161,11 @@ class BenchmarkExecutionControllerTestCase(TestCase):
             revision_target=2,
             status=BenchmarkExecutionEntry.READY,
         )
+
+        self.worker_pass11 = BenchmarkDefinitionWorkerPassEntry.objects.create(definition=self.benchmark_definition1, worker=self.worker1)
+        self.worker_pass12 = BenchmarkDefinitionWorkerPassEntry.objects.create(definition=self.benchmark_definition1, worker=self.worker2)
+        self.worker_pass21 = BenchmarkDefinitionWorkerPassEntry.objects.create(definition=self.benchmark_definition2, worker=self.worker1)
+        self.worker_pass22 = BenchmarkDefinitionWorkerPassEntry.objects.create(definition=self.benchmark_definition2, worker=self.worker2)
 
     def tearDown(self):
         pass
@@ -339,6 +345,9 @@ class BenchmarkExecutionControllerTestCase(TestCase):
 
         benchmark_definition_2_1 = BenchmarkDefinitionEntry.objects.create(name='BenchmarkDefinition21', layout=bluesteel_layout2, project=bluesteel_project2, active=True, command_set=command_set, revision=28)
 
+        worker_pass1 = BenchmarkDefinitionWorkerPassEntry.objects.create(definition=benchmark_definition_2_1, worker=self.worker1)
+        worker_pass2 = BenchmarkDefinitionWorkerPassEntry.objects.create(definition=benchmark_definition_2_1, worker=self.worker2)
+
         report_2_1 = CommandSetEntry.objects.create(group=None)
 
         benchmark_execution_2_1 = BenchmarkExecutionEntry.objects.create(definition=benchmark_definition_2_1,
@@ -360,6 +369,39 @@ class BenchmarkExecutionControllerTestCase(TestCase):
         self.assertEqual(benchmark_execution_2_1, execution_2_1)
         self.assertEqual(None, execution_2_2)
         self.assertEqual(None, execution_2_3)
+
+    def test_earliest_available_with_work_pass_not_allowed(self):
+        # benchmark_execution1 = BenchmarkExecutionEntry.objects.create(definition=self.benchmark_definition1, commit=self.commit1, worker=self.worker1, report=self.report1, invalidated=False, revision_target=28, status=BenchmarkExecutionEntry.READY)
+        # benchmark_execution2 = BenchmarkExecutionEntry.objects.create(definition=self.benchmark_definition1, commit=self.commit2, worker=self.worker1, report=self.report2, invalidated=False, revision_target=28, status=BenchmarkExecutionEntry.READY)
+        benchmark_execution3 = BenchmarkExecutionEntry.objects.create(definition=self.benchmark_definition1, commit=self.commit3, worker=self.worker1, report=self.report2, invalidated=False, revision_target=28, status=BenchmarkExecutionEntry.READY)
+
+        benchmark_execution4 = BenchmarkExecutionEntry.objects.create(definition=self.benchmark_definition2, commit=self.commit1, worker=self.worker1, report=self.report1, invalidated=False, revision_target=28, status=BenchmarkExecutionEntry.READY)
+        benchmark_execution5 = BenchmarkExecutionEntry.objects.create(definition=self.benchmark_definition2, commit=self.commit2, worker=self.worker1, report=self.report2, invalidated=False, revision_target=28, status=BenchmarkExecutionEntry.READY)
+        benchmark_execution6 = BenchmarkExecutionEntry.objects.create(definition=self.benchmark_definition2, commit=self.commit3, worker=self.worker1, report=self.report2, invalidated=False, revision_target=28, status=BenchmarkExecutionEntry.READY)
+
+        be1 = BenchmarkDefinitionWorkerPassEntry.objects.filter(definition=self.benchmark_definition1, worker=self.worker1).first()
+        be1.allowed = False
+        be1.save()
+
+        be2 = BenchmarkDefinitionWorkerPassEntry.objects.filter(definition=self.benchmark_definition1, worker=self.worker2).first()
+        be2.allowed = False
+        be2.save()
+
+        be3 = BenchmarkDefinitionWorkerPassEntry.objects.filter(definition=self.benchmark_definition2, worker=self.worker2).first()
+        be3.allowed = False
+        be3.save()
+
+        execution = BenchmarkExecutionController.get_earliest_available_execution(self.user1)
+        self.assertEqual(benchmark_execution6.id, execution.id)
+
+        execution = BenchmarkExecutionController.get_earliest_available_execution(self.user1)
+        self.assertEqual(benchmark_execution5.id, execution.id)
+
+        execution = BenchmarkExecutionController.get_earliest_available_execution(self.user1)
+        self.assertEqual(benchmark_execution4.id, execution.id)
+
+        execution = BenchmarkExecutionController.get_earliest_available_execution(self.user1)
+        self.assertEqual(None, execution)
 
 
     def test_create_bench_executions_from_commit_definition_and_worker(self):

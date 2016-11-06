@@ -5,6 +5,7 @@ from django.test import Client
 from django.utils import timezone
 from django.contrib.auth.models import User
 from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
+from app.logic.benchmark.models.BenchmarkDefinitionWorkerPassModel import BenchmarkDefinitionWorkerPassEntry
 from app.logic.benchmark.models.BenchmarkExecutionModel import BenchmarkExecutionEntry
 from app.logic.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
 from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
@@ -120,6 +121,8 @@ class BenchmarkViewTestCase(TestCase):
             revision_target=28,
             status=BenchmarkExecutionEntry.READY,
         )
+
+        self.worker_pass11 = BenchmarkDefinitionWorkerPassEntry.objects.create(definition=self.benchmark_definition1, worker=self.worker1)
 
     def tearDown(self):
         pass

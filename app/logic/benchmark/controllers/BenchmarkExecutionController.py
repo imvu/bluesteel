@@ -50,6 +50,7 @@ class BenchmarkExecutionController(object):
         execution = (BenchmarkExecutionEntry.objects
                      .filter(definition__active=True)
                      .filter(definition__layout__active=True)
+                     .filter(definition__worker_pass_definition__allowed=True)
                      .filter(worker=worker_entry)
                      .filter(q_ready | q_invalidated | q_revision | q_in_progress)
                      .order_by('-commit__author_date')
