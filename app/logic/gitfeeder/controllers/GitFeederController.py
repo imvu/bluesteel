@@ -407,8 +407,8 @@ class GitFeederController(object):
                 start_time = arrow.get(command['result']['start_time']).naive
                 finish_time = arrow.get(command['result']['finish_time']).naive
 
-                start_time = timezone.make_aware(start_time, pytz.timezone(settings.TIME_ZONE))
-                finish_time = timezone.make_aware(finish_time, pytz.timezone(settings.TIME_ZONE))
+                start_time = timezone.make_aware(start_time, pytz.timezone(settings.TIME_ZONE), is_dst=False)
+                finish_time = timezone.make_aware(finish_time, pytz.timezone(settings.TIME_ZONE), is_dst=False)
 
                 CommandResultEntry.objects.create(
                     command=comm_entry,
