@@ -384,7 +384,7 @@ class BenchmarkExecutionControllerTestCase(TestCase):
         be1.save()
 
         be2 = BenchmarkDefinitionWorkerPassEntry.objects.filter(definition=self.benchmark_definition1, worker=self.worker2).first()
-        be2.allowed = False
+        be2.allowed = True
         be2.save()
 
         be3 = BenchmarkDefinitionWorkerPassEntry.objects.filter(definition=self.benchmark_definition2, worker=self.worker2).first()
