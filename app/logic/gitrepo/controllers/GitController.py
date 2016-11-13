@@ -164,7 +164,10 @@ class GitController(object):
 
     @staticmethod
     def get_commit_hashes_parents_and_children(project, commit_hash, parents_children_count):
-        """ Returns a window of commits hashes arround the commit_hash provided """
+        """
+        Returns a window of commits hashes arround the commit_hash provided
+        i.e: parents_children_count = 2,   <-- 2 commits -- commit_hash -- 2 commits -->
+        """
         parents_children_count = max(1, parents_children_count)
 
         commit_entry = GitCommitEntry.objects.filter(project=project, commit_hash=commit_hash).first()

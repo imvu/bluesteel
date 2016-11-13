@@ -425,7 +425,7 @@ class BenchmarkExecutionController(object):
 
     @staticmethod
     def does_benchmark_fluctuation_exist(benchmark_exec_entry, fluctuation_window):
-        """ Returns true if fluctuation exists """
+        """ Returns true if fluctuation exists and fluctuations info """
         bench_exec = BenchmarkExecutionEntry.objects.filter(id=benchmark_exec_entry.id).first()
         if bench_exec is None:
             return (False, [])

@@ -169,68 +169,22 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
 
         git_project1 = GitProjectEntry.objects.create(url='http://test/')
 
-        git_user1 = GitUserEntry.objects.create(
-            project=git_project1,
-            name='user1',
-            email='user1@test.com'
-        )
+        git_user1 = GitUserEntry.objects.create(project=git_project1, name='user1', email='user1@test.com')
 
-        commit1 = GitCommitEntry.objects.create(
-            project=git_project1,
-            commit_hash='0000100001000010000100001000010000100001',
-            author=git_user1,
-            author_date=timezone.now(),
-            committer=git_user1,
-            committer_date=timezone.now()
-        )
+        commit1 = GitCommitEntry.objects.create(project=git_project1, commit_hash='0000100001000010000100001000010000100001', author=git_user1, author_date=timezone.now(), committer=git_user1, committer_date=timezone.now())
 
         command_group = CommandGroupEntry.objects.create()
-        command_set = CommandSetEntry.objects.create(
-            group=command_group
-        )
+        command_set = CommandSetEntry.objects.create(group=command_group)
 
-        bluesteel_layout = BluesteelLayoutEntry.objects.create(
-            name='Layout',
-            active=True,
-            project_index_path=0,
-        )
+        bluesteel_layout = BluesteelLayoutEntry.objects.create(name='Layout', active=True, project_index_path=0)
+        bluesteel_project = BluesteelProjectEntry.objects.create(name='Project', order=0, layout=bluesteel_layout, command_group=command_group, git_project=git_project1)
 
-        bluesteel_project = BluesteelProjectEntry.objects.create(
-            name='Project',
-            order=0,
-            layout=bluesteel_layout,
-            command_group=command_group,
-            git_project=git_project1,
-        )
+        benchmark_definition1 = BenchmarkDefinitionEntry.objects.create(name='BenchmarkDefinition1', layout=bluesteel_layout, project=bluesteel_project, command_set=command_set, revision=28)
 
-        benchmark_definition1 = BenchmarkDefinitionEntry.objects.create(
-            name='BenchmarkDefinition1',
-            layout=bluesteel_layout,
-            project=bluesteel_project,
-            command_set=command_set,
-            revision=28,
-        )
-
-        worker1 = WorkerEntry.objects.create(
-            name='worker-name-1',
-            uuid='uuid-worker-1',
-            operative_system='osx',
-            description='long-description-1',
-            user=user1,
-            git_feeder=False
-        )
-
+        worker1 = WorkerEntry.objects.create(name='worker-name-1', uuid='uuid-worker-1', operative_system='osx', description='long-description-1', user=user1, git_feeder=False)
         report1 = CommandSetEntry.objects.create(group=None)
 
-        benchmark_execution1 = BenchmarkExecutionEntry.objects.create(
-            definition=benchmark_definition1,
-            commit=commit1,
-            worker=worker1,
-            report=report1,
-            invalidated=False,
-            revision_target=28,
-            status=BenchmarkExecutionEntry.READY,
-        )
+        benchmark_execution1 = BenchmarkExecutionEntry.objects.create(definition=benchmark_definition1, commit=commit1, worker=worker1, report=report1, invalidated=False, revision_target=28, status=BenchmarkExecutionEntry.READY)
 
         commands = []
         commands.append('command-new-1')
@@ -261,6 +215,54 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
         self.assertEqual(1, CommandEntry.objects.filter(command_set=benchmark_definition1.command_set, command='command-new-4').count())
         self.assertEqual(1, CommandEntry.objects.filter(command_set=benchmark_definition1.command_set, command='command-new-5').count())
         self.assertEqual(2, BenchmarkFluctuationOverrideEntry.objects.all().count())
+
+    def test_save_benchmark_definition_delete_benchmarks_executions_if_layout_or_project_different(self):
+        user1 = User.objects.create_user('user1@test.com', 'user1@test.com', 'pass')
+        user1.save()
+
+        git_project1 = GitProjectEntry.objects.create(url='http://test/')
+
+        git_user1 = GitUserEntry.objects.create(project=git_project1, name='user1', email='user1@test.com')
+
+        commit1 = GitCommitEntry.objects.create(project=git_project1, commit_hash='0000100001000010000100001000010000100001', author=git_user1, author_date=timezone.now(), committer=git_user1, committer_date=timezone.now())
+
+        command_group = CommandGroupEntry.objects.create()
+        command_set = CommandSetEntry.objects.create(group=command_group)
+
+        bluesteel_layout1 = BluesteelLayoutEntry.objects.create(name='Layout', active=True, project_index_path=0)
+        bluesteel_project1 = BluesteelProjectEntry.objects.create(name='Project', order=0, layout=bluesteel_layout1, command_group=command_group, git_project=git_project1)
+
+        bluesteel_layout2 = BluesteelLayoutEntry.objects.create(name='Layout', active=True, project_index_path=0)
+        bluesteel_project2 = BluesteelProjectEntry.objects.create(name='Project', order=0, layout=bluesteel_layout2, command_group=command_group, git_project=git_project1)
+
+        benchmark_definition1 = BenchmarkDefinitionEntry.objects.create(name='BenchmarkDefinition1', layout=bluesteel_layout1, project=bluesteel_project1, command_set=command_set, revision=28)
+
+        worker1 = WorkerEntry.objects.create(name='worker-name-1', uuid='uuid-worker-1', operative_system='osx', description='long-description-1', user=user1, git_feeder=False)
+        report1 = CommandSetEntry.objects.create(group=None)
+
+        benchmark_execution1 = BenchmarkExecutionEntry.objects.create(definition=benchmark_definition1, commit=commit1, worker=worker1, report=report1, invalidated=False, revision_target=28, status=BenchmarkExecutionEntry.READY)
+
+        commands = []
+        commands.append('command-new-1')
+        commands.append('command-new-2')
+        commands.append('command-new-3')
+        commands.append('command-new-4')
+        commands.append('command-new-5')
+
+        overrides = []
+        overrides.append({'result_id' : 'id1', 'override_value' : 28})
+        overrides.append({'result_id' : 'id2', 'override_value' : 29})
+
+        self.assertEqual('BenchmarkDefinition1', benchmark_definition1.name)
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.all().count())
+        self.assertEqual(benchmark_execution1, BenchmarkExecutionEntry.objects.all().first())
+        self.assertEqual(0, CommandEntry.objects.filter(command_set=benchmark_definition1.command_set).count())
+        self.assertEqual(0, BenchmarkFluctuationOverrideEntry.objects.all().count())
+
+        result = BenchmarkDefinitionController.save_benchmark_definition('BenchmarkDefinition1-1', benchmark_definition1.id, bluesteel_layout2.id, bluesteel_project2.id, True, commands, 28, overrides, 0, [])
+
+        self.assertEqual('BenchmarkDefinition1-1', result.name)
+        self.assertEqual(0, BenchmarkExecutionEntry.objects.all().count())
 
     def test_is_benchmark_definition_equivalent_layout(self):
         layout = BluesteelLayoutEntry.objects.create(name='default-name')

@@ -8,6 +8,7 @@ from django.core.paginator import Paginator
 from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
 from app.logic.benchmark.models.BenchmarkDefinitionWorkerPassModel import BenchmarkDefinitionWorkerPassEntry
 from app.logic.benchmark.models.BenchmarkFluctuationOverrideModel import BenchmarkFluctuationOverrideEntry
+from app.logic.benchmark.models.BenchmarkExecutionModel import BenchmarkExecutionEntry
 from app.logic.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
 from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
 from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
@@ -131,6 +132,9 @@ class BenchmarkDefinitionController(object):
 
         CommandController.CommandController.delete_commands_of_command_set(benchmark_def_entry.command_set)
         CommandController.CommandController.add_commands_to_command_set(benchmark_def_entry.command_set, command_list)
+
+        if (benchmark_def_entry.layout.id != layout_id) or (benchmark_def_entry.project.id != project_id):
+            BenchmarkExecutionEntry.objects.filter(definition__id=benchmark_definition_id).delete()
 
         benchmark_def_entry.name = name
         benchmark_def_entry.layout = layout_entry
