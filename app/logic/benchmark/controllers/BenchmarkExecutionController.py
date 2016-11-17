@@ -1,14 +1,12 @@
 """ Benchmark Execution Controller file """
 
 import json
-import sys
 from datetime import timedelta
 from django.db.models import Q, F, Count
 from django.core.paginator import Paginator
 from django.utils import timezone
 from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
 from app.logic.benchmark.models.BenchmarkExecutionModel import BenchmarkExecutionEntry
-from app.logic.benchmark.models.BenchmarkFluctuationOverrideModel import BenchmarkFluctuationOverrideEntry
 from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
 from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
 from app.logic.commandrepo.models.CommandSetModel import CommandSetEntry
@@ -381,74 +379,6 @@ class BenchmarkExecutionController(object):
         return branches
 
     @staticmethod
-    def get_benchmark_fluctuation(project, benchmark_def_id, worker_id, commit_hash, fluctuation_window):
-        """ Returns fluctuation information from a commit range """
-        hashes = GitController.get_commit_hashes_parents_and_children(project, commit_hash, fluctuation_window)
-        benchmarks = {}
-        fluctuations = []
-
-        for commit_hash in hashes:
-            bench = BenchmarkExecutionEntry.objects.filter(
-                definition__id=benchmark_def_id,
-                worker__id=worker_id,
-                commit__commit_hash=commit_hash).first()
-            if not bench:
-                continue
-
-            results = bench.get_benchmark_results()
-
-            for result in results:
-                if result['id'] not in benchmarks:
-                    benchmarks[result['id']] = []
-                benchmarks[result['id']].append(result)
-
-        for key in benchmarks:
-            median_min = sys.float_info.max
-            median_max = sys.float_info.min
-
-            need_append = False
-
-            for bench in benchmarks[key]:
-                if bench['visual_type'] == 'vertical_bars':
-                    need_append = True
-                    median_min = min(median_min, bench['median'])
-                    median_max = max(median_max, bench['median'])
-
-            if need_append:
-                fluctuation = {}
-                fluctuation['id'] = key
-                fluctuation['min'] = median_min
-                fluctuation['max'] = median_max
-                fluctuations.append(fluctuation)
-
-        return fluctuations
-
-    @staticmethod
-    def does_benchmark_fluctuation_exist(benchmark_exec_entry, fluctuation_window):
-        """ Returns true if fluctuation exists and fluctuations info """
-        bench_exec = BenchmarkExecutionEntry.objects.filter(id=benchmark_exec_entry.id).first()
-        if bench_exec is None:
-            return (False, [])
-
-        commit_hash = bench_exec.commit.commit_hash
-        project = GitProjectEntry.objects.filter(id=bench_exec.definition.project.id).first()
-        fluctuations = BenchmarkExecutionController.get_benchmark_fluctuation(
-            project=project,
-            benchmark_def_id=bench_exec.definition.id,
-            worker_id=bench_exec.worker.id,
-            commit_hash=commit_hash,
-            fluctuation_window=fluctuation_window
-        )
-
-        max_fluctuation_ratio = float(bench_exec.definition.max_fluctuation_percent) / 100.0
-        fluctuation_overrides = BenchmarkExecutionController.get_fluctuation_overrides(bench_exec.definition.id)
-
-        return BenchmarkExecutionController.get_fluctuations_with_overrides_applied(
-            fluctuations,
-            max_fluctuation_ratio,
-            fluctuation_overrides)
-
-    @staticmethod
     def is_benchmark_young_for_notifications(benchmark_exec_entry):
         """ Returns true if benchmark is younger than max weeks for notify """
         max_weeks_old_notify = benchmark_exec_entry.definition.max_weeks_old_notify
@@ -462,39 +392,6 @@ class BenchmarkExecutionController(object):
         delta = now_date - author_date
 
         return (float(delta.days) / 7.0) < float(max_weeks_old_notify)
-
-
-    @staticmethod
-    def get_fluctuation_overrides(benchmark_definition_id):
-        """ Return a dictionary with all the fluctuation overrides (id + value) """
-        fluctuations_overrides = BenchmarkFluctuationOverrideEntry.objects.filter(
-            definition__id=benchmark_definition_id)
-
-        fluc_dict = {}
-
-        for overrides in fluctuations_overrides:
-            fluc_dict[overrides.result_id] = float(overrides.override_value) / 100.0
-
-        return fluc_dict
-
-
-    @staticmethod
-    def get_fluctuations_with_overrides_applied(fluctuations, default_fluctuation_ratio, fluctuation_overrides):
-        """ Returns a list of fluctuations with the fluctuation overrides already applied """
-        ret_fluctuations = []
-        for fluc in fluctuations:
-
-            ratio_to_apply = default_fluctuation_ratio
-            if fluc['id'] in fluctuation_overrides:
-                ratio_to_apply = fluctuation_overrides[fluc['id']]
-
-            fluc_change = float(fluc['max']) - float(fluc['min'])
-            fluc_ratio = fluc_change / float(fluc['min'])
-            if fluc_ratio >= ratio_to_apply:
-                fluc['max_fluctuation_applied'] = ratio_to_apply
-                ret_fluctuations.append(fluc)
-
-        return (len(ret_fluctuations) > 0, ret_fluctuations)
 
     @staticmethod
     def try_populate_benchmark_executions(project, count):

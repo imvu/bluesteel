@@ -6,6 +6,7 @@ from app.presenter.schemas import BenchmarkExecutionSchemas
 from app.presenter.views.helpers import ViewNotifications
 from app.logic.benchmark.models.BenchmarkExecutionModel import BenchmarkExecutionEntry
 from app.logic.benchmark.controllers.BenchmarkExecutionController import BenchmarkExecutionController
+from app.logic.benchmark.controllers.BenchmarkFluctuationController import BenchmarkFluctuationController
 from app.logic.httpcommon import res, val
 
 FLUCTUATION_WINDOW = 2
@@ -71,7 +72,7 @@ def save_benchmark_execution(request, benchmark_execution_id):
                 request.get_host()
             )
 
-        fluctuation_exist = BenchmarkExecutionController.does_benchmark_fluctuation_exist(
+        fluctuation_exist = BenchmarkFluctuationController.does_benchmark_fluctuation_exist(
             bench_exec_entry,
             FLUCTUATION_WINDOW
         )
