@@ -532,6 +532,9 @@ class BenchmarkFluctuationControllerTestCase(TestCase):
         self.assertEqual(True, fluctuation['id1']['parent']['has_results'])
         self.assertEqual(True, fluctuation['id1']['current']['has_results'])
         self.assertEqual(True, fluctuation['id1']['son']['has_results'])
+        self.assertEqual('0000100001000010000100001000010000100001', fluctuation['id1']['parent']['commit_hash'])
+        self.assertEqual('0000200002000020000200002000020000200002', fluctuation['id1']['current']['commit_hash'])
+        self.assertEqual('0000300003000030000300003000030000300003', fluctuation['id1']['son']['commit_hash'])
 
         self.assertEqual(2.0, fluctuation['id2']['parent']['median'])
         self.assertEqual(2.0, fluctuation['id2']['current']['median'])
@@ -539,6 +542,9 @@ class BenchmarkFluctuationControllerTestCase(TestCase):
         self.assertEqual(True, fluctuation['id2']['parent']['has_results'])
         self.assertEqual(True, fluctuation['id2']['current']['has_results'])
         self.assertEqual(True, fluctuation['id2']['son']['has_results'])
+        self.assertEqual('0000100001000010000100001000010000100001', fluctuation['id2']['parent']['commit_hash'])
+        self.assertEqual('0000200002000020000200002000020000200002', fluctuation['id2']['current']['commit_hash'])
+        self.assertEqual('0000300003000030000300003000030000300003', fluctuation['id2']['son']['commit_hash'])
 
         self.assertTrue('id3' not in fluctuation)
 
@@ -548,6 +554,9 @@ class BenchmarkFluctuationControllerTestCase(TestCase):
         self.assertEqual(True, fluctuation['id4']['parent']['has_results'])
         self.assertEqual(True, fluctuation['id4']['current']['has_results'])
         self.assertEqual(True, fluctuation['id4']['son']['has_results'])
+        self.assertEqual('0000100001000010000100001000010000100001', fluctuation['id4']['parent']['commit_hash'])
+        self.assertEqual('0000200002000020000200002000020000200002', fluctuation['id4']['current']['commit_hash'])
+        self.assertEqual('0000300003000030000300003000030000300003', fluctuation['id4']['son']['commit_hash'])
 
         fluctuation = BenchmarkFluctuationController.get_benchmark_fluctuation_adjacent(self.git_project1, self.benchmark_definition1.id, self.worker1.id, commit3.commit_hash)
 
@@ -557,6 +566,9 @@ class BenchmarkFluctuationControllerTestCase(TestCase):
         self.assertEqual(True, fluctuation['id1']['parent']['has_results'])
         self.assertEqual(True, fluctuation['id1']['current']['has_results'])
         self.assertEqual(True, fluctuation['id1']['son']['has_results'])
+        self.assertEqual('0000200002000020000200002000020000200002', fluctuation['id1']['parent']['commit_hash'])
+        self.assertEqual('0000300003000030000300003000030000300003', fluctuation['id1']['current']['commit_hash'])
+        self.assertEqual('0000400004000040000400004000040000400004', fluctuation['id1']['son']['commit_hash'])
 
         self.assertEqual(2.0, fluctuation['id2']['parent']['median'])
         self.assertEqual(2.0, fluctuation['id2']['current']['median'])
@@ -564,6 +576,9 @@ class BenchmarkFluctuationControllerTestCase(TestCase):
         self.assertEqual(True, fluctuation['id2']['parent']['has_results'])
         self.assertEqual(True, fluctuation['id2']['current']['has_results'])
         self.assertEqual(True, fluctuation['id2']['son']['has_results'])
+        self.assertEqual('0000200002000020000200002000020000200002', fluctuation['id2']['parent']['commit_hash'])
+        self.assertEqual('0000300003000030000300003000030000300003', fluctuation['id2']['current']['commit_hash'])
+        self.assertEqual('0000400004000040000400004000040000400004', fluctuation['id2']['son']['commit_hash'])
 
         self.assertEqual(0,   fluctuation['id3']['parent']['median'])
         self.assertEqual(0,   fluctuation['id3']['current']['median'])
@@ -571,6 +586,9 @@ class BenchmarkFluctuationControllerTestCase(TestCase):
         self.assertEqual(False, fluctuation['id3']['parent']['has_results'])
         self.assertEqual(False, fluctuation['id3']['current']['has_results'])
         self.assertEqual(True, fluctuation['id3']['son']['has_results'])
+        self.assertEqual('', fluctuation['id3']['parent']['commit_hash'])
+        self.assertEqual('', fluctuation['id3']['current']['commit_hash'])
+        self.assertEqual('0000400004000040000400004000040000400004', fluctuation['id3']['son']['commit_hash'])
 
         self.assertEqual(2.0, fluctuation['id4']['parent']['median'])
         self.assertEqual(2.0, fluctuation['id4']['current']['median'])
@@ -578,7 +596,9 @@ class BenchmarkFluctuationControllerTestCase(TestCase):
         self.assertEqual(True, fluctuation['id4']['parent']['has_results'])
         self.assertEqual(True, fluctuation['id4']['current']['has_results'])
         self.assertEqual(True, fluctuation['id4']['son']['has_results'])
-
+        self.assertEqual('0000200002000020000200002000020000200002', fluctuation['id4']['parent']['commit_hash'])
+        self.assertEqual('0000300003000030000300003000030000300003', fluctuation['id4']['current']['commit_hash'])
+        self.assertEqual('0000400004000040000400004000040000400004', fluctuation['id4']['son']['commit_hash'])
 
 
     def test_get_fluctuation_overrides(self):

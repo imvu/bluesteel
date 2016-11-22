@@ -17,31 +17,42 @@ class BenchmarkFluctuationController(object):
         obj['parent'] = {}
         obj['parent']['has_results'] = False
         obj['parent']['median'] = 0
+        obj['parent']['commit_hash'] = ''
         obj['current'] = {}
         obj['current']['has_results'] = False
         obj['current']['median'] = 0
+        obj['current']['commit_hash'] = ''
         obj['son'] = {}
         obj['son']['has_results'] = False
         obj['son']['median'] = 0
+        obj['son']['commit_hash'] = ''
         return obj
 
     @staticmethod
-    def store_result_on_channel(unified_fluctuation, channel_name, result):
+    def store_result_on_channel(unified_fluctuation, channel_name, result, commit_hash):
         """ We will store the result on parent, current or son channels only if vertical_bars appar """
         if result['visual_type'] == 'vertical_bars':
             unified_fluctuation[result['id']][channel_name]['has_results'] = True
             unified_fluctuation[result['id']][channel_name]['median'] = result['median']
+            unified_fluctuation[result['id']][channel_name]['commit_hash'] = commit_hash
+        return unified_fluctuation
 
     @staticmethod
     def store_results_on_unified_fluctuation(unified_fluctuation, channel_name, results):
         """ Store all the results of a given channel: parent, current, son """
+        if results is None:
+            return
+
         for result in results['results']:
             res_id = result['id']
             if res_id not in unified_fluctuation:
                 unified_fluctuation[res_id] = BenchmarkFluctuationController.init_unified_result_structure()
 
-            BenchmarkFluctuationController.store_result_on_channel(unified_fluctuation, channel_name, result)
-
+            BenchmarkFluctuationController.store_result_on_channel(
+                unified_fluctuation,
+                channel_name,
+                result,
+                results['commit_hash'])
 
     @staticmethod
     def from_results_to_unified_fluctuation(results_parent, results_current, results_son):
@@ -54,7 +65,6 @@ class BenchmarkFluctuationController(object):
         BenchmarkFluctuationController.store_results_on_unified_fluctuation(unified, 'son', results_son)
 
         return unified
-
 
     @staticmethod
     def get_benchmark_fluctuation(project, benchmark_def_id, worker_id, commit_hash, fluctuation_window):
@@ -119,7 +129,7 @@ class BenchmarkFluctuationController(object):
 
             if bench:
                 results_current = {}
-                results_current['commit'] = commit_entry.commit_hash
+                results_current['commit_hash'] = commit_entry.commit_hash
                 results_current['results'] = bench.get_benchmark_results()
 
         if commit_son:
@@ -131,7 +141,7 @@ class BenchmarkFluctuationController(object):
 
             if bench:
                 results_son = {}
-                results_son['commit'] = commit_son.commit_hash
+                results_son['commit_hash'] = commit_son.commit_hash
                 results_son['results'] = bench.get_benchmark_results()
 
         if commit_parent:
@@ -143,7 +153,7 @@ class BenchmarkFluctuationController(object):
 
             if bench:
                 results_parent = {}
-                results_parent['commit'] = commit_parent.commit_hash
+                results_parent['commit_hash'] = commit_parent.commit_hash
                 results_parent['results'] = bench.get_benchmark_results()
 
         return BenchmarkFluctuationController.from_results_to_unified_fluctuation(
