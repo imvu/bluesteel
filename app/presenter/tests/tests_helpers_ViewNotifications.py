@@ -114,3 +114,239 @@ class NotificationHelperTestCase(TestCase):
         self.assertEqual(1, StackedMailEntry.objects.filter(sender='bluesteel@bluesteel.com', receiver='user2@test.com').count())
         self.assertTrue('message-1-1-1-1' in StackedMailEntry.objects.filter(sender='bluesteel@bluesteel.com', receiver='a@b.c').first().content)
         self.assertTrue('message-1-1-1-1' in StackedMailEntry.objects.filter(sender='bluesteel@bluesteel.com', receiver='user2@test.com').first().content)
+
+    def test_notifying_on_benchmark_fluctuation_no_result(self):
+        domain = 'test.com'
+        max_fluctuation = 0.1
+
+        fluc_overrides = {}
+        fluc_overrides['id2'] = 0.28
+
+        commit = {}
+        commit['hash'] = '0000100001000010000100001000010000100001'
+        commit['author'] = {}
+        commit['author']['name'] = 'user1'
+        commit['author']['email'] = 'user1@test.com'
+        commit['author_date'] = 'user_date'
+
+        worker = {}
+        worker['name'] = 'worker-name-1'
+        worker['operative_system'] = 'osx'
+
+        uni_fluc = {}
+        uni_fluc['id1'] = {}
+        uni_fluc['id1']['parent'] = {}
+        uni_fluc['id1']['parent']['has_results'] = False
+        uni_fluc['id1']['parent']['fluctuation_ratio'] = 0.0
+        uni_fluc['id1']['current'] = {}
+        uni_fluc['id1']['current']['has_results'] = False
+        uni_fluc['id1']['son'] = {}
+        uni_fluc['id1']['son']['has_results'] = False
+        uni_fluc['id1']['son']['fluctuation_ratio'] = 0.0
+
+        ViewNotifications.notify_benchmark_fluctuation(28, commit, worker, 'def_1', domain, uni_fluc)
+
+        self.assertEqual(0, StackedMailEntry.objects.all().count())
+
+    def test_notifying_on_benchmark_fluctuation_current_result_but_no_fluctuation(self):
+        domain = 'test.com'
+        max_fluctuation = 0.1
+
+        fluc_overrides = {}
+        fluc_overrides['id2'] = 0.28
+
+        commit = {}
+        commit['hash'] = '0000100001000010000100001000010000100001'
+        commit['author'] = {}
+        commit['author']['name'] = 'user1'
+        commit['author']['email'] = 'user1@test.com'
+        commit['author_date'] = 'user_date'
+
+        worker = {}
+        worker['name'] = 'worker-name-1'
+        worker['operative_system'] = 'osx'
+
+        uni_fluc = {}
+        uni_fluc['id1'] = {}
+        uni_fluc['id1']['parent'] = {}
+        uni_fluc['id1']['parent']['has_results'] = False
+        uni_fluc['id1']['parent']['fluctuation_ratio'] = 0.0
+        uni_fluc['id1']['current'] = {}
+        uni_fluc['id1']['current']['has_results'] = True
+        uni_fluc['id1']['current']['median'] = 1.0
+        uni_fluc['id1']['son'] = {}
+        uni_fluc['id1']['son']['has_results'] = False
+        uni_fluc['id1']['son']['fluctuation_ratio'] = 0.0
+
+        ViewNotifications.notify_benchmark_fluctuation(28, commit, worker, 'def_1', domain, uni_fluc)
+
+        self.assertEqual(0, StackedMailEntry.objects.all().count())
+
+    def test_notifying_on_benchmark_fluctuation_current_result_and_parent_fluctuation(self):
+        domain = 'test.com'
+        max_fluctuation = 0.1
+
+        fluc_overrides = {}
+        fluc_overrides['id2'] = 0.28
+
+        commit = {}
+        commit['hash'] = '0000100001000010000100001000010000100001'
+        commit['author'] = {}
+        commit['author']['name'] = 'user1'
+        commit['author']['email'] = 'user1@test.com'
+        commit['author_date'] = 'user_date'
+
+        worker = {}
+        worker['name'] = 'worker-name-1'
+        worker['operative_system'] = 'osx'
+
+        uni_fluc = {}
+        uni_fluc['id1'] = {}
+        uni_fluc['id1']['parent'] = {}
+        uni_fluc['id1']['parent']['has_results'] = True
+        uni_fluc['id1']['parent']['commit_hash'] = '0000000000000000000000000000000000000000'
+        uni_fluc['id1']['parent']['fluctuation_ratio'] = 0.5
+        uni_fluc['id1']['parent']['median'] = 1.5
+        uni_fluc['id1']['current'] = {}
+        uni_fluc['id1']['current']['commit_hash'] = '0000100001000010000100001000010000100001'
+        uni_fluc['id1']['current']['has_results'] = True
+        uni_fluc['id1']['current']['median'] = 1.0
+        uni_fluc['id1']['son'] = {}
+        uni_fluc['id1']['son']['has_results'] = False
+        uni_fluc['id1']['son']['fluctuation_ratio'] = 0.0
+
+        ViewNotifications.notify_benchmark_fluctuation(28, commit, worker, 'def_1', domain, uni_fluc)
+
+        self.assertEqual(1, StackedMailEntry.objects.all().count())
+        email = StackedMailEntry.objects.all().first()
+
+        self.assertTrue('Commit Hash: 0000100001000010000100001000010000100001' in email.content)
+        self.assertTrue('Commit Author: user1' in email.content)
+        self.assertTrue('Commit Author Email: user1@test.com' in email.content)
+        self.assertTrue('Worker Name: worker-name-1' in email.content)
+        self.assertTrue('Worker Operative System: osx' in email.content)
+        self.assertTrue('Benchmark Definition Name: def_1' in email.content)
+        self.assertTrue('Parent commit: 0000000' in email.content)
+        self.assertTrue('Parent median result: 1.5' in email.content)
+        self.assertTrue('Parent fluctuation vs Current commit: 50.0%' in email.content)
+        self.assertTrue('Current commit: 0000100' in email.content)
+        self.assertTrue('Current median result:' in email.content)
+        self.assertFalse('Son commit:' in email.content)
+        self.assertFalse('Son median result:' in email.content)
+        self.assertFalse('Son fluctuation vs Current commit:' in email.content)
+        self.assertTrue('http://test.com/main/execution/28/window/' in email.content)
+
+    def test_notifying_on_benchmark_fluctuation_current_result_and_son_fluctuation(self):
+        domain = 'test.com'
+        max_fluctuation = 0.1
+
+        fluc_overrides = {}
+        fluc_overrides['id2'] = 0.28
+
+        commit = {}
+        commit['hash'] = '0000100001000010000100001000010000100001'
+        commit['author'] = {}
+        commit['author']['name'] = 'user1'
+        commit['author']['email'] = 'user1@test.com'
+        commit['author_date'] = 'user_date'
+
+        worker = {}
+        worker['name'] = 'worker-name-1'
+        worker['operative_system'] = 'osx'
+
+        uni_fluc = {}
+        uni_fluc['id1'] = {}
+        uni_fluc['id1']['parent'] = {}
+        uni_fluc['id1']['parent']['has_results'] = True
+        uni_fluc['id1']['parent']['commit_hash'] = '0000000000000000000000000000000000000000'
+        uni_fluc['id1']['parent']['fluctuation_ratio'] = 0.0
+        uni_fluc['id1']['parent']['median'] = 1.0
+        uni_fluc['id1']['current'] = {}
+        uni_fluc['id1']['current']['commit_hash'] = '0000100001000010000100001000010000100001'
+        uni_fluc['id1']['current']['has_results'] = True
+        uni_fluc['id1']['current']['median'] = 1.0
+        uni_fluc['id1']['son'] = {}
+        uni_fluc['id1']['son']['has_results'] = True
+        uni_fluc['id1']['son']['commit_hash'] = '0000200002000020000200002000020000200002'
+        uni_fluc['id1']['son']['fluctuation_ratio'] = 0.5
+        uni_fluc['id1']['son']['median'] = 1.5
+
+        ViewNotifications.notify_benchmark_fluctuation(28, commit, worker, 'def_1', domain, uni_fluc)
+
+        self.assertEqual(1, StackedMailEntry.objects.all().count())
+        email = StackedMailEntry.objects.all().first()
+
+        self.assertTrue('Commit Hash: 0000100001000010000100001000010000100001' in email.content)
+        self.assertTrue('Commit Author: user1' in email.content)
+        self.assertTrue('Commit Author Email: user1@test.com' in email.content)
+        self.assertTrue('Worker Name: worker-name-1' in email.content)
+        self.assertTrue('Worker Operative System: osx' in email.content)
+        self.assertTrue('Benchmark Definition Name: def_1' in email.content)
+        self.assertFalse('Parent commit:' in email.content)
+        self.assertFalse('Parent median result:' in email.content)
+        self.assertFalse('Parent fluctuation vs Current commit:' in email.content)
+        self.assertTrue('Current commit: 0000100' in email.content)
+        self.assertTrue('Current median result:' in email.content)
+        self.assertTrue('Son commit: 0000200' in email.content)
+        self.assertTrue('Son median result: 1.5' in email.content)
+        self.assertTrue('Son fluctuation vs Current commit: 50.0%' in email.content)
+        self.assertTrue('http://test.com/main/execution/28/window/' in email.content)
+
+    def test_notifying_on_benchmark_fluctuation_current_result_and_parent_and_son_fluctuation(self):
+        domain = 'test.com'
+        max_fluctuation = 0.1
+
+        fluc_overrides = {}
+        fluc_overrides['id2'] = 0.28
+
+        commit = {}
+        commit['hash'] = '0000100001000010000100001000010000100001'
+        commit['author'] = {}
+        commit['author']['name'] = 'user1'
+        commit['author']['email'] = 'user1@test.com'
+        commit['author_date'] = 'user_date'
+
+        worker = {}
+        worker['name'] = 'worker-name-1'
+        worker['operative_system'] = 'osx'
+
+        uni_fluc = {}
+        uni_fluc['id1'] = {}
+        uni_fluc['id1']['parent'] = {}
+        uni_fluc['id1']['parent']['has_results'] = True
+        uni_fluc['id1']['parent']['commit_hash'] = '0000000000000000000000000000000000000000'
+        uni_fluc['id1']['parent']['fluctuation_ratio'] = -0.5
+        uni_fluc['id1']['parent']['median'] = 0.5
+        uni_fluc['id1']['current'] = {}
+        uni_fluc['id1']['current']['commit_hash'] = '0000100001000010000100001000010000100001'
+        uni_fluc['id1']['current']['has_results'] = True
+        uni_fluc['id1']['current']['median'] = 1.0
+        uni_fluc['id1']['son'] = {}
+        uni_fluc['id1']['son']['has_results'] = True
+        uni_fluc['id1']['son']['commit_hash'] = '0000200002000020000200002000020000200002'
+        uni_fluc['id1']['son']['fluctuation_ratio'] = 0.5
+        uni_fluc['id1']['son']['median'] = 1.5
+
+        ViewNotifications.notify_benchmark_fluctuation(28, commit, worker, 'def_1', domain, uni_fluc)
+
+        self.assertEqual(1, StackedMailEntry.objects.all().count())
+        email = StackedMailEntry.objects.all().first()
+
+        print email.content
+
+        self.assertTrue('Commit Hash: 0000100001000010000100001000010000100001' in email.content)
+        self.assertTrue('Commit Author: user1' in email.content)
+        self.assertTrue('Commit Author Email: user1@test.com' in email.content)
+        self.assertTrue('Worker Name: worker-name-1' in email.content)
+        self.assertTrue('Worker Operative System: osx' in email.content)
+        self.assertTrue('Benchmark Definition Name: def_1' in email.content)
+        self.assertTrue('Parent commit: 0000000' in email.content)
+        self.assertTrue('Parent median result: 0.5' in email.content)
+        self.assertTrue('Parent fluctuation vs Current commit: -50.0%' in email.content)
+        self.assertTrue('Current commit: 0000100' in email.content)
+        self.assertTrue('Current median result: 1.0' in email.content)
+        self.assertTrue('Son commit: 0000200' in email.content)
+        self.assertTrue('Son median result: 1.5' in email.content)
+        self.assertTrue('Son fluctuation vs Current commit: 50.0%' in email.content)
+        self.assertTrue('http://test.com/main/execution/28/window/' in email.content)
+

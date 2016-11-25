@@ -72,14 +72,14 @@ def save_benchmark_execution(request, benchmark_execution_id):
                 request.get_host()
             )
 
-        fluctuation_exist = BenchmarkFluctuationController.does_benchmark_fluctuation_exist(
-            bench_exec_entry,
-            FLUCTUATION_WINDOW
-        )
+        fluctuation_exist = BenchmarkFluctuationController.does_benchmark_fluctuation_exist(bench_exec_entry)
 
         if fluctuation_exist[0] and young_to_notify:
             ViewNotifications.notify_benchmark_fluctuation(
-                bench_exec_entry,
+                bench_exec_entry.id,
+                bench_exec_entry.commit.as_object(),
+                bench_exec_entry.worker.as_object(),
+                bench_exec_entry.definition.name,
                 request.get_host(),
                 fluctuation_exist[1]
             )

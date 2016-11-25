@@ -421,24 +421,19 @@ class BenchmarkFluctuationControllerTestCase(TestCase):
         benchmark_execution4 = BenchmarkExecutionEntry.objects.create(definition=self.benchmark_definition1, commit=commit4, worker=self.worker1, report=report_4, invalidated=False, revision_target=28, status=BenchmarkExecutionEntry.READY)
         benchmark_execution5 = BenchmarkExecutionEntry.objects.create(definition=self.benchmark_definition1, commit=commit5, worker=self.worker1, report=report_5, invalidated=False, revision_target=28, status=BenchmarkExecutionEntry.READY)
 
-        self.assertFalse(BenchmarkFluctuationController.does_benchmark_fluctuation_exist(benchmark_execution0, 1)[0])
-        self.assertFalse(BenchmarkFluctuationController.does_benchmark_fluctuation_exist(benchmark_execution1, 1)[0])
-        self.assertFalse(BenchmarkFluctuationController.does_benchmark_fluctuation_exist(benchmark_execution2, 1)[0])
-        self.assertFalse(BenchmarkFluctuationController.does_benchmark_fluctuation_exist(benchmark_execution3, 1)[0])
+        self.assertFalse(BenchmarkFluctuationController.does_benchmark_fluctuation_exist(benchmark_execution0)[0])
+        self.assertFalse(BenchmarkFluctuationController.does_benchmark_fluctuation_exist(benchmark_execution1)[0])
+        self.assertFalse(BenchmarkFluctuationController.does_benchmark_fluctuation_exist(benchmark_execution2)[0])
+        self.assertFalse(BenchmarkFluctuationController.does_benchmark_fluctuation_exist(benchmark_execution3)[0])
 
-        flucs1 = BenchmarkFluctuationController.does_benchmark_fluctuation_exist(benchmark_execution4, 1)
-        self.assertTrue(flucs1[0])
-        self.assertEqual(1, len(flucs1[1]))
-        self.assertEqual('id1', flucs1[1][0]['id'])
-        self.assertEqual(1.0, flucs1[1][0]['min'])
-        self.assertEqual(1.5, flucs1[1][0]['max'])
+        flucs1 = BenchmarkFluctuationController.does_benchmark_fluctuation_exist(benchmark_execution4)
 
-        flucs2 = BenchmarkFluctuationController.does_benchmark_fluctuation_exist(benchmark_execution5, 1)
-        self.assertTrue(flucs2[0])
-        self.assertEqual(1, len(flucs2[1]))
-        self.assertEqual('id1', flucs2[1][0]['id'])
-        self.assertEqual(1.0, flucs2[1][0]['min'])
-        self.assertEqual(1.5, flucs2[1][0]['max'])
+        self.assertTrue('id1' in flucs1[1])
+        self.assertEqual(0.0, flucs1[1]['id1']['parent']['fluctuation_ratio'])
+        self.assertEqual('0000300003000030000300003000030000300003', flucs1[1]['id1']['parent']['commit_hash'])
+        self.assertEqual('0000400004000040000400004000040000400004', flucs1[1]['id1']['current']['commit_hash'])
+        self.assertEqual(0.5, flucs1[1]['id1']['son']['fluctuation_ratio'])
+        self.assertEqual('0000500005000050000500005000050000500005', flucs1[1]['id1']['son']['commit_hash'])
 
     def test_get_benchmark_fluctuation_on_parent_and_son(self):
         self.commit1.delete()
@@ -620,42 +615,109 @@ class BenchmarkFluctuationControllerTestCase(TestCase):
 
 
     def test_get_fluctuation_with_overrides_applied(self):
-        max_fluctuation = 0.4
+        max_fluctuation = 0.1
 
         fluc_overrides = {}
-        fluc_overrides['id2'] = 0.75
-        fluc_overrides['id4'] = 0.28
+        fluc_overrides['id2'] = 0.28
 
-        fluc_1 = {'id' : 'id1', 'min' : 1.0, 'max' : 1.5}
-        fluc_2 = {'id' : 'id2', 'min' : 1.0, 'max' : 1.5}
-        fluc_3 = {'id' : 'id3', 'min' : 1.0, 'max' : 1.5}
-        fluc_4 = {'id' : 'id4', 'min' : 1.0, 'max' : 1.5}
-        fluc_5 = {'id' : 'id5', 'min' : 1.0, 'max' : 3.5}
+        uni_fluc = {}
+        uni_fluc['id1'] = {}
+        uni_fluc['id1']['parent'] = {}
+        uni_fluc['id1']['parent']['has_results'] = True
+        uni_fluc['id1']['parent']['fluctuation_ratio'] = 0.15
+        uni_fluc['id1']['current'] = {}
+        uni_fluc['id1']['current']['has_results'] = True
+        uni_fluc['id1']['son'] = {}
+        uni_fluc['id1']['son']['has_results'] = True
+        uni_fluc['id1']['son']['fluctuation_ratio'] = 0.14
 
-        fluctuations = [fluc_1, fluc_2, fluc_3, fluc_4, fluc_5]
+        uni_fluc['id2'] = {}
+        uni_fluc['id2']['parent'] = {}
+        uni_fluc['id2']['parent']['has_results'] = True
+        uni_fluc['id2']['parent']['fluctuation_ratio'] = 0.27
+        uni_fluc['id2']['current'] = {}
+        uni_fluc['id2']['current']['has_results'] = True
+        uni_fluc['id2']['son'] = {}
+        uni_fluc['id2']['son']['has_results'] = True
+        uni_fluc['id2']['son']['fluctuation_ratio'] = 0.26
 
-        flucs = BenchmarkFluctuationController.get_fluctuations_with_overrides_applied(fluctuations, max_fluctuation, fluc_overrides)
+        flucs = BenchmarkFluctuationController.get_fluctuations_with_overrides_applied(uni_fluc, max_fluctuation, fluc_overrides)
         self.assertTrue(flucs[0])
 
         fluc_res = flucs[1]
-        fluc_res.sort(key=lambda x: x['id'])
 
-        self.assertEqual('id1', fluc_res[0]['id'])
-        self.assertEqual('id3', fluc_res[1]['id'])
-        self.assertEqual('id4', fluc_res[2]['id'])
-        self.assertEqual('id5', fluc_res[3]['id'])
+        self.assertTrue('id1' in fluc_res)
+        self.assertFalse('id2' in fluc_res)
 
-        self.assertEqual(1.0, fluc_res[0]['min'])
-        self.assertEqual(1.0, fluc_res[1]['min'])
-        self.assertEqual(1.0, fluc_res[2]['min'])
-        self.assertEqual(1.0, fluc_res[3]['min'])
+        self.assertEqual(0.15, fluc_res['id1']['parent']['fluctuation_ratio'])
+        self.assertEqual(0.14, fluc_res['id1']['son']['fluctuation_ratio'])
 
-        self.assertEqual(1.5, fluc_res[0]['max'])
-        self.assertEqual(1.5, fluc_res[1]['max'])
-        self.assertEqual(1.5, fluc_res[2]['max'])
-        self.assertEqual(3.5, fluc_res[3]['max'])
 
-        self.assertEqual(0.4, fluc_res[0]['max_fluctuation_applied'])
-        self.assertEqual(0.4, fluc_res[1]['max_fluctuation_applied'])
-        self.assertEqual(0.28, fluc_res[2]['max_fluctuation_applied'])
-        self.assertEqual(0.4, fluc_res[3]['max_fluctuation_applied'])
+    def test_compute_fluctuation_ratio_with_no_results_on_current(self):
+        obj = {}
+        obj['id1'] = {}
+        obj['id1']['parent'] = {}
+        obj['id1']['parent']['has_results'] = False
+        obj['id1']['parent']['median'] = 1
+        obj['id1']['parent']['fluctuation_ratio'] = 0.0
+        obj['id1']['parent']['commit_hash'] = ''
+        obj['id1']['current'] = {}
+        obj['id1']['current']['has_results'] = False
+        obj['id1']['current']['median'] = 1
+        obj['id1']['current']['commit_hash'] = ''
+        obj['id1']['son'] = {}
+        obj['id1']['son']['has_results'] = False
+        obj['id1']['son']['median'] = 1
+        obj['id1']['son']['fluctuation_ratio'] = 0.0
+        obj['id1']['son']['commit_hash'] = ''
+
+        uni_fluc = BenchmarkFluctuationController.compute_fluctuation_ratio(obj)
+
+        self.assertEqual(0.0, uni_fluc['id1']['parent']['fluctuation_ratio'])
+        self.assertEqual(0.0, uni_fluc['id1']['son']['fluctuation_ratio'])
+
+    def test_compute_fluctuation_ratio_with_results(self):
+        obj = {}
+        obj['id1'] = {}
+        obj['id1']['parent'] = {}
+        obj['id1']['parent']['has_results'] = True
+        obj['id1']['parent']['median'] = 3
+        obj['id1']['parent']['fluctuation_ratio'] = 0.0
+        obj['id1']['parent']['commit_hash'] = ''
+        obj['id1']['current'] = {}
+        obj['id1']['current']['has_results'] = True
+        obj['id1']['current']['median'] = 2
+        obj['id1']['current']['commit_hash'] = ''
+        obj['id1']['son'] = {}
+        obj['id1']['son']['has_results'] = True
+        obj['id1']['son']['median'] = 1
+        obj['id1']['son']['fluctuation_ratio'] = 0.0
+        obj['id1']['son']['commit_hash'] = ''
+
+        uni_fluc = BenchmarkFluctuationController.compute_fluctuation_ratio(obj)
+
+        self.assertEqual( 0.5, uni_fluc['id1']['parent']['fluctuation_ratio'])
+        self.assertEqual(-0.5, uni_fluc['id1']['son']['fluctuation_ratio'])
+
+    def test_compute_fluctuation_ratio_with_results_only_in_son(self):
+        obj = {}
+        obj['id1'] = {}
+        obj['id1']['parent'] = {}
+        obj['id1']['parent']['has_results'] = False
+        obj['id1']['parent']['median'] = 0
+        obj['id1']['parent']['fluctuation_ratio'] = 0.0
+        obj['id1']['parent']['commit_hash'] = ''
+        obj['id1']['current'] = {}
+        obj['id1']['current']['has_results'] = True
+        obj['id1']['current']['median'] = 2
+        obj['id1']['current']['commit_hash'] = ''
+        obj['id1']['son'] = {}
+        obj['id1']['son']['has_results'] = True
+        obj['id1']['son']['median'] = 1
+        obj['id1']['son']['fluctuation_ratio'] = 0.0
+        obj['id1']['son']['commit_hash'] = ''
+
+        uni_fluc = BenchmarkFluctuationController.compute_fluctuation_ratio(obj)
+
+        self.assertEqual( 0.0, uni_fluc['id1']['parent']['fluctuation_ratio'])
+        self.assertEqual(-0.5, uni_fluc['id1']['son']['fluctuation_ratio'])

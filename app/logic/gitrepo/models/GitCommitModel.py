@@ -23,5 +23,6 @@ class GitCommitEntry(models.Model):
         obj['hash'] = self.commit_hash
         obj['short_hash'] = str(self.commit_hash)[0:20]
         obj['author'] = self.author.as_object()
+        obj['author_date'] = self.author_date
         obj['committer'] = self.committer.as_object()
         return obj

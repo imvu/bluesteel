@@ -67,45 +67,73 @@ def notify_benchmark_command_failure(bench_exec_id, bench_exec_receiver_email, b
 
     create_notification_email(bench_exec_receiver_email, title, content, ['admin'])
 
-def notify_benchmark_fluctuation(benchmark_execution, domain, fluctuations):
+def notify_benchmark_fluctuation(bench_exec_id, commit_obj, worker_obj, bench_def_name, domain, fluctuations):
     """ Will send notificaiton about benchmark fluctuation """
 
-    title = 'Benchmark execution fluctuation around commit: {0}'.format(benchmark_execution.commit.commit_hash)
+    send_email = False
+
+    title = 'Benchmark execution fluctuation around commit: {0}'.format(commit_obj['hash'])
     content = ''
     content += 'When Benchmark Execution with id: {0} was submitted, ' \
         'the system noticed a fluctuation around it.\n'.format(
-            benchmark_execution.id
+            bench_exec_id
         )
     content += '    - This is the information of the Benchmark Execution:\n'
-    content += '        Commit Hash: {0}.\n'.format(benchmark_execution.commit.commit_hash)
-    content += '        Commit Author: {0}.\n'.format(benchmark_execution.commit.author.name)
-    content += '        Commit Author Email: {0}.\n'.format(benchmark_execution.commit.author.email)
-    content += '        Commit Author Date: {0}.\n'.format(benchmark_execution.commit.author_date)
+    content += '        Commit Hash: {0}.\n'.format(commit_obj['hash'])
+    content += '        Commit Author: {0}.\n'.format(commit_obj['author']['name'])
+    content += '        Commit Author Email: {0}.\n'.format(commit_obj['author']['email'])
+    content += '        Commit Author Date: {0}.\n'.format(commit_obj['author_date'])
     content += '\n'
-    content += '        Worker Name: {0}.\n'.format(benchmark_execution.worker.name)
-    content += '        Worker Operative System: {0}.\n'.format(benchmark_execution.worker.operative_system)
+    content += '        Worker Name: {0}.\n'.format(worker_obj['name'])
+    content += '        Worker Operative System: {0}.\n'.format(worker_obj['operative_system'])
     content += '\n'
-    content += '        Benchmark Definition Name: {0}.\n'.format(benchmark_execution.definition.name)
+    content += '        Benchmark Definition Name: {0}.\n'.format(bench_def_name)
     content += '\n'
     content += '    - Around this commit there were fluctuations with those information:\n'
 
-    for fluc in fluctuations:
-        fluc_change = float(fluc['max']) - float(fluc['min'])
-        fluc_percent = (fluc_change / float(fluc['min'])) * 100.0
+    for fluc_id in fluctuations.keys():
+        fluc = fluctuations[fluc_id]
+
+        if not fluc['current']['has_results']:
+            continue
+
+        fluc_on_parent = (fluc['parent']['has_results']) and (abs(fluc['parent']['fluctuation_ratio']) > 0.0001)
+        fluc_on_son = (fluc['son']['has_results']) and (abs(fluc['son']['fluctuation_ratio']) > 0.0001)
+
+        if not fluc_on_parent and not fluc_on_son:
+            continue
 
         content += '\n'
-        content += '        Result ID with fluctuations: {0}\n'.format(fluc['id'])
-        content += '            Minimum Value: {0}\n'.format(fluc['min'])
-        content += '            Maximum Value: {0}\n'.format(fluc['max'])
-        content += '            Current Fluctuation Value: {0}%\n'.format(fluc_percent)
-        content += '            Max Fluctuation Allowed: {0}%\n'.format(float(fluc['max_fluctuation_applied']) * 100.0)
+        content += '        Result with id \'{0}\' had fluctuations:\n'.format(fluc_id)
         content += '\n'
 
+        if fluc_on_parent:
+            send_email = True
+            fluc_value = float(fluc['parent']['fluctuation_ratio']) * 100.0
+            content += '            Parent commit: {0}\n'.format(fluc['parent']['commit_hash'][:7])
+            content += '            Parent median result: {0}\n'.format(fluc['parent']['median'])
+            content += '            Parent fluctuation vs Current commit: {0}%\n'.format(fluc_value)
+            content += '\n'
+
+        content += '            Current commit: {0}\n'.format(fluc['current']['commit_hash'][:7])
+        content += '            Current median result: {0}\n'.format(fluc['current']['median'])
+        content += '\n'
+
+        if fluc_on_son:
+            send_email = True
+            fluc_value = float(fluc['son']['fluctuation_ratio']) * 100.0
+            content += '            Son commit: {0}\n'.format(fluc['son']['commit_hash'][:7])
+            content += '            Son median result: {0}\n'.format(fluc['son']['median'])
+            content += '            Son fluctuation vs Current commit: {0}%\n'.format(fluc_value)
+            content += '\n'
+
+    content += '\n'
     content += '    - You can visualize the result with:\n'
     content += '        URL: {0}\n'.format(
         ViewUrlGenerator.get_benchmark_execution_window_full_url(
             domain,
-            benchmark_execution.id)
+            bench_exec_id)
         )
 
-    create_notification_email(benchmark_execution.commit.author.email, title, content, [''])
+    if send_email:
+        create_notification_email(commit_obj['author']['email'], title, content, [''])

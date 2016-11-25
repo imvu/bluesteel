@@ -31,8 +31,6 @@ import os
 import hashlib
 import shutil
 
-# Create your tests here.
-
 class GitFeedViewsCommitTestCase(TestCase):
 
     def setUp(self):
@@ -591,18 +589,20 @@ class GitFeedViewsCommitTestCase(TestCase):
         self.assertEqual(200, resp_obj['status'])
         self.assertEqual(1, StackedMailEntry.objects.all().count())
 
+        self.assertEqual(1, StackedMailEntry.objects.all().count())
         email = StackedMailEntry.objects.all().first()
 
-        self.assertTrue('0000100001000010000100001000010000100001' in email.content)
-        self.assertTrue('user1' in email.content)
-        self.assertTrue('user1@test.com' in email.content)
-        self.assertTrue('worker-name-1' in email.content)
-        self.assertTrue('osx' in email.content)
-        self.assertTrue('BenchmarkDefinition1' in email.content)
-        self.assertTrue('Minimum Value: 1.0' in email.content)
-        self.assertTrue('Maximum Value: 2.0' in email.content)
-        self.assertTrue('Max Fluctuation Allowed: 45.0%' in email.content)
-        self.assertTrue('Current Fluctuation Value: 100.0%' in email.content)
+        self.assertTrue('Commit Hash: 0000100001000010000100001000010000100001' in email.content)
+        self.assertTrue('Commit Author: user1' in email.content)
+        self.assertTrue('Commit Author Email: user1@test.com' in email.content)
+        self.assertTrue('Worker Name: worker-name-1' in email.content)
+        self.assertTrue('Worker Operative System: osx' in email.content)
+        self.assertTrue('Benchmark Definition Name: BenchmarkDefinition1' in email.content)
+        self.assertTrue('Parent commit: 0000000' in email.content)
+        self.assertTrue('Parent median result: 1.0' in email.content)
+        self.assertTrue('Parent fluctuation vs Current commit: -50.0%' in email.content)
+        self.assertTrue('Current commit: 0000100' in email.content)
+        self.assertTrue('Current median result: 2.0' in email.content)
         self.assertTrue('http://testserver/main/execution/2/window/' in email.content)
 
 

@@ -17,6 +17,7 @@ class BenchmarkFluctuationController(object):
         obj['parent'] = {}
         obj['parent']['has_results'] = False
         obj['parent']['median'] = 0
+        obj['parent']['fluctuation_ratio'] = 0.0
         obj['parent']['commit_hash'] = ''
         obj['current'] = {}
         obj['current']['has_results'] = False
@@ -25,6 +26,7 @@ class BenchmarkFluctuationController(object):
         obj['son'] = {}
         obj['son']['has_results'] = False
         obj['son']['median'] = 0
+        obj['son']['fluctuation_ratio'] = 0.0
         obj['son']['commit_hash'] = ''
         return obj
 
@@ -65,6 +67,34 @@ class BenchmarkFluctuationController(object):
         BenchmarkFluctuationController.store_results_on_unified_fluctuation(unified, 'son', results_son)
 
         return unified
+
+    @staticmethod
+    def get_ratio(initial_value, later_value):
+        """ Computes the ratio of later value vs the initial one """
+        ratio_change = float(later_value) - float(initial_value)
+        ratio = ratio_change / float(initial_value)
+        return ratio
+
+    @staticmethod
+    def compute_fluctuation_ratio(unified_fluctuation):
+        """ Computes fluctuation ratios on every id, on the parent, and the son """
+        for fluc_id in unified_fluctuation.keys():
+            fluc = unified_fluctuation[fluc_id]
+            if not fluc['current']['has_results']:
+                continue
+
+            med_current = fluc['current']['median']
+
+            if fluc['parent']['has_results']:
+                med_parent = fluc['parent']['median']
+                parent_fluc = BenchmarkFluctuationController.get_ratio(med_current, med_parent)
+                fluc['parent']['fluctuation_ratio'] = parent_fluc
+
+            if fluc['son']['has_results']:
+                med_son = fluc['son']['median']
+                son_fluc = BenchmarkFluctuationController.get_ratio(med_current, med_son)
+                fluc['son']['fluctuation_ratio'] = son_fluc
+        return unified_fluctuation
 
     @staticmethod
     def get_benchmark_fluctuation(project, benchmark_def_id, worker_id, commit_hash, fluctuation_window):
@@ -156,13 +186,16 @@ class BenchmarkFluctuationController(object):
                 results_parent['commit_hash'] = commit_parent.commit_hash
                 results_parent['results'] = bench.get_benchmark_results()
 
-        return BenchmarkFluctuationController.from_results_to_unified_fluctuation(
+        uni_fluc = BenchmarkFluctuationController.from_results_to_unified_fluctuation(
             results_parent,
             results_current,
             results_son)
 
+        uni_fluc = BenchmarkFluctuationController.compute_fluctuation_ratio(uni_fluc)
+        return uni_fluc
+
     @staticmethod
-    def does_benchmark_fluctuation_exist(benchmark_exec_entry, fluctuation_window):
+    def does_benchmark_fluctuation_exist(benchmark_exec_entry):
         """ Returns true if fluctuation exists and fluctuations info """
         bench_exec = BenchmarkExecutionEntry.objects.filter(id=benchmark_exec_entry.id).first()
         if bench_exec is None:
@@ -170,19 +203,19 @@ class BenchmarkFluctuationController(object):
 
         commit_hash = bench_exec.commit.commit_hash
         project = GitProjectEntry.objects.filter(id=bench_exec.definition.project.id).first()
-        fluctuations = BenchmarkFluctuationController.get_benchmark_fluctuation(
+
+        uni_fluctuations = BenchmarkFluctuationController.get_benchmark_fluctuation_adjacent(
             project=project,
             benchmark_def_id=bench_exec.definition.id,
             worker_id=bench_exec.worker.id,
-            commit_hash=commit_hash,
-            fluctuation_window=fluctuation_window
+            commit_hash=commit_hash
         )
 
         max_fluctuation_ratio = float(bench_exec.definition.max_fluctuation_percent) / 100.0
         fluctuation_overrides = BenchmarkFluctuationController.get_fluctuation_overrides(bench_exec.definition.id)
 
         return BenchmarkFluctuationController.get_fluctuations_with_overrides_applied(
-            fluctuations,
+            uni_fluctuations,
             max_fluctuation_ratio,
             fluctuation_overrides)
 
@@ -204,17 +237,20 @@ class BenchmarkFluctuationController(object):
     @staticmethod
     def get_fluctuations_with_overrides_applied(fluctuations, default_fluctuation_ratio, fluctuation_overrides):
         """ Returns a list of fluctuations with the fluctuation overrides already applied """
-        ret_fluctuations = []
-        for fluc in fluctuations:
+        ret_fluctuations = {}
+        for fluc_id in fluctuations.keys():
+            fluc = fluctuations[fluc_id]
 
             ratio_to_apply = default_fluctuation_ratio
-            if fluc['id'] in fluctuation_overrides:
-                ratio_to_apply = fluctuation_overrides[fluc['id']]
+            if fluc_id in fluctuation_overrides:
+                ratio_to_apply = fluctuation_overrides[fluc_id]
 
-            fluc_change = float(fluc['max']) - float(fluc['min'])
-            fluc_ratio = fluc_change / float(fluc['min'])
-            if fluc_ratio >= ratio_to_apply:
-                fluc['max_fluctuation_applied'] = ratio_to_apply
-                ret_fluctuations.append(fluc)
+            if fluc['parent']['has_results'] and abs(fluc['parent']['fluctuation_ratio']) >= ratio_to_apply:
+                ret_fluctuations[fluc_id] = fluc
+                continue
 
-        return (len(ret_fluctuations) > 0, ret_fluctuations)
+            if fluc['son']['has_results'] and abs(fluc['son']['fluctuation_ratio']) >= ratio_to_apply:
+                ret_fluctuations[fluc_id] = fluc
+                continue
+
+        return (len(ret_fluctuations.keys()) > 0, ret_fluctuations)
