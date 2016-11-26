@@ -332,8 +332,6 @@ class NotificationHelperTestCase(TestCase):
         self.assertEqual(1, StackedMailEntry.objects.all().count())
         email = StackedMailEntry.objects.all().first()
 
-        print email.content
-
         self.assertTrue('Commit Hash: 0000100001000010000100001000010000100001' in email.content)
         self.assertTrue('Commit Author: user1' in email.content)
         self.assertTrue('Commit Author Email: user1@test.com' in email.content)
