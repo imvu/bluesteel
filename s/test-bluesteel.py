@@ -33,6 +33,7 @@ def get_test_list():
     packs.append(get_packed_app_info(['app', 'presenter'],          'app/presenter',))
 
     test_list = []
+    test_list.append((['python'], ['python', 's/internal/test-python.py']))
     test_list.append((['hooks'], ['python', 's/internal/install-hooks.py']))
     test_list.append((['pip'], ['python', 's/internal/test-pip-installed.py']))
     test_list.append((['requirements'], ['python', 's/internal/test-pip-requirements.py']))
