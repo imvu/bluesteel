@@ -54,15 +54,16 @@
 
 ### How to run BlueSteel (development) ###
 
-- Execute command: `s/run-server-development.py`
+- Execute command: `s/run-server.py`
 - Open a browser and type the url: `localhost:28028`
 - See next step `How to edit things inside BlueSteel`
 
 ### How to run BlueSteel (production) ###
 
-- Execute command: `s/run-server-production.py`
+- Execute command: `s/run-server.py` with parameter `--mode=production` and `--open=yes`
 - Open a browser and type the url: `localhost:8080`
 - See next step `How to edit things inside BlueSteel`
+- You can also specify `--port` if you want it to run on another port. 
 
 ### How to edit things inside BlueSteel ###
 
