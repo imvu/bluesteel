@@ -142,3 +142,5 @@ EMAIL_PORT = 25
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend' # production backend
 DEFAULT_FROM_EMAIL = 'bluesteel@bluesteel.com'
 
+# 10 MB default now
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760 

@@ -149,3 +149,5 @@ EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend' # development
 EMAIL_FILE_PATH = os.path.abspath(os.path.join(BASE_DIR, '..', 'tmp', 'mail'))
 DEFAULT_FROM_EMAIL = 'bluesteel@bluesteel.com'
 
+# 10 MB default now
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760 
