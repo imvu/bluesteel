@@ -71,6 +71,9 @@ class BenchmarkFluctuationController(object):
     @staticmethod
     def get_ratio(initial_value, later_value):
         """ Computes the ratio of later value vs the initial one """
+        if float(initial_value) < 0.000001:
+            return 1.0
+
         ratio_change = float(later_value) - float(initial_value)
         ratio = ratio_change / float(initial_value)
         return ratio

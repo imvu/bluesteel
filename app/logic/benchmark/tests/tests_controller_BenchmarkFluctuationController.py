@@ -721,3 +721,26 @@ class BenchmarkFluctuationControllerTestCase(TestCase):
 
         self.assertEqual( 0.0, uni_fluc['id1']['parent']['fluctuation_ratio'])
         self.assertEqual(-0.5, uni_fluc['id1']['son']['fluctuation_ratio'])
+
+    def test_compute_fluctuation_ratio_with_current_median_being_zero(self):
+        obj = {}
+        obj['id1'] = {}
+        obj['id1']['parent'] = {}
+        obj['id1']['parent']['has_results'] = True
+        obj['id1']['parent']['median'] = 2
+        obj['id1']['parent']['fluctuation_ratio'] = 0.0
+        obj['id1']['parent']['commit_hash'] = ''
+        obj['id1']['current'] = {}
+        obj['id1']['current']['has_results'] = True
+        obj['id1']['current']['median'] = 0
+        obj['id1']['current']['commit_hash'] = ''
+        obj['id1']['son'] = {}
+        obj['id1']['son']['has_results'] = True
+        obj['id1']['son']['median'] = 1
+        obj['id1']['son']['fluctuation_ratio'] = 0.0
+        obj['id1']['son']['commit_hash'] = ''
+
+        uni_fluc = BenchmarkFluctuationController.compute_fluctuation_ratio(obj)
+
+        self.assertEqual(1.0, uni_fluc['id1']['parent']['fluctuation_ratio'])
+        self.assertEqual(1.0, uni_fluc['id1']['son']['fluctuation_ratio'])
