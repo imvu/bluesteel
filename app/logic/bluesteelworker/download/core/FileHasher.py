@@ -14,6 +14,7 @@ class FileHasher(object):
 
         sha = hashlib.sha1()
 
+        gathered_files = []
         for root, dirs, files in os.walk(folder_path):
             del dirs
             for names in files:
@@ -21,16 +22,20 @@ class FileHasher(object):
                     continue
 
                 filepath = os.path.join(root, names)
-                file_to_hash = open(filepath, 'r')
+                filepath = os.path.abspath(filepath)
+                gathered_files.append(filepath)
+        gathered_files.sort()
 
-                while True:
-                    file_chunk = file_to_hash.read(4096)
-                    if not file_chunk:
-                        break
-                    sha.update(hashlib.sha1(file_chunk).hexdigest())
+        for file_path in gathered_files:
+            file_to_hash = open(file_path, 'r')
 
-                file_to_hash.close()
+            while True:
+                file_chunk = file_to_hash.read(4096)
+                if not file_chunk:
+                    break
+                sha.update(hashlib.sha1(file_chunk).hexdigest())
 
+            file_to_hash.close()
         return sha.hexdigest()
 
     @staticmethod
