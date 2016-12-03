@@ -195,7 +195,7 @@ If the output of a command is a json string with the form below, BlueSteel will 
 
 {
     "id" : <id_here>
-    "type" : "text",
+    "visual_type" : "text",
     "data" : "This is a text that will be shown on the result page."
 }
 ```
@@ -210,7 +210,7 @@ If the output of a command is a json string that follows the form below, BlueSte
 
 {
     "id" : <id_here>
-    "type" : "vertical_bars",
+    "visual_type" : "vertical_bars",
     "data" : [28, 28, 29, 30, 30]
 }
 ```
