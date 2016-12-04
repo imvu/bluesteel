@@ -49,17 +49,21 @@ def notify_benchmark_command_failure(bench_exec_id, bench_exec_receiver_email, b
     title = 'Benchmark execution with failed commands on commit: {0}'.format(bench_exec_commit_hash)
     content = ''
     content += 'There were commands that failed to execute.\n\n'
-    content += 'Executed commands:\n'
+    content += 'Executed commands:\n\n'
 
-    for com in report['command_set']:
-        content += '---------------------------------------\n'
-        content += 'Command:\n{0}\n\n'.format(com['command'])
-        content += 'Command Result Status:\n{0}\n\n'.format(com['result']['status'])
-        content += 'Command Result Out:\n{0}\n\n'.format(com['result']['out'])
-        content += 'Command Result Err:\n{0}\n\n'.format(com['result']['error'])
-        content += '---------------------------------------\n'
+    for index, com in enumerate(report['command_set']):
+        indx = index + 1
+        command = com['command'].strip()
+        if com['result']['status'] is not 0:
+            content += '{0}.- Command: {1}\n'.format(indx, command)
+            content += '             ^ Failed!\n'
+            content += '        Result Status: {0}\n'.format(com['result']['status'])
+            content += '        Result Out:\n{0}\n'.format(com['result']['out'])
+            content += '        Result Err:\n{0}\n'.format(com['result']['error'])
+        else:
+            content += '{0}.- Command: {1}\n'.format(indx, command)
 
-    content += 'Take a look at: {0}'.format(
+    content += '\n\nTake a look at: {0}'.format(
         ViewUrlGenerator.get_benchmark_execution_complete_full_url(
             domain,
             bench_exec_id)
