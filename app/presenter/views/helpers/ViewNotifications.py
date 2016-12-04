@@ -7,22 +7,23 @@ from app.logic.mailing.models.StackedMailModel import StackedMailEntry
 
 def create_notification_email(receiver_email, title, content, group_names):
     """ Send an email notification plus the same email to users of group_names """
-    StackedMailEntry.objects.create(
-        sender=settings.DEFAULT_FROM_EMAIL,
-        receiver=receiver_email,
-        title=title,
-        content=content
-    )
+    emails = []
+    emails.append(receiver_email)
 
     for group in group_names:
         users = User.objects.filter(groups__name=group)
         for user in users:
-            StackedMailEntry.objects.create(
-                sender=settings.DEFAULT_FROM_EMAIL,
-                receiver=user.email,
-                title=title,
-                content=content
-            )
+            emails.append(user.email)
+
+    emails = list(set(emails))
+
+    for email in emails:
+        StackedMailEntry.objects.create(
+            sender=settings.DEFAULT_FROM_EMAIL,
+            receiver=email,
+            title=title,
+            content=content
+        )
 
 
 def notify_json_invalid(receiver_email, msg):
@@ -140,4 +141,4 @@ def notify_benchmark_fluctuation(bench_exec_id, commit_obj, worker_obj, bench_de
         )
 
     if send_email:
-        create_notification_email(commit_obj['author']['email'], title, content, [''])
+        create_notification_email(commit_obj['author']['email'], title, content, ['admin'])

@@ -217,7 +217,7 @@ class NotificationHelperTestCase(TestCase):
 
         ViewNotifications.notify_benchmark_fluctuation(28, commit, worker, 'def_1', domain, uni_fluc)
 
-        self.assertEqual(1, StackedMailEntry.objects.all().count())
+        self.assertEqual(2, StackedMailEntry.objects.all().count())
         email = StackedMailEntry.objects.all().first()
 
         self.assertTrue('Commit Hash: 0000100001000010000100001000010000100001' in email.content)
@@ -273,7 +273,7 @@ class NotificationHelperTestCase(TestCase):
 
         ViewNotifications.notify_benchmark_fluctuation(28, commit, worker, 'def_1', domain, uni_fluc)
 
-        self.assertEqual(1, StackedMailEntry.objects.all().count())
+        self.assertEqual(2, StackedMailEntry.objects.all().count())
         email = StackedMailEntry.objects.all().first()
 
         self.assertTrue('Commit Hash: 0000100001000010000100001000010000100001' in email.content)
@@ -329,7 +329,14 @@ class NotificationHelperTestCase(TestCase):
 
         ViewNotifications.notify_benchmark_fluctuation(28, commit, worker, 'def_1', domain, uni_fluc)
 
-        self.assertEqual(1, StackedMailEntry.objects.all().count())
+        self.assertEqual(2, StackedMailEntry.objects.all().count())
+        self.assertEqual(1, StackedMailEntry.objects.filter(receiver='user1@test.com').count())
+        self.assertEqual(1, StackedMailEntry.objects.filter(receiver='user2@test.com').count())
+
+        content1 = StackedMailEntry.objects.filter(receiver='user1@test.com').first().content
+        content2 = StackedMailEntry.objects.filter(receiver='user2@test.com').first().content
+        self.assertEqual(content1, content2)
+
         email = StackedMailEntry.objects.all().first()
 
         self.assertTrue('Commit Hash: 0000100001000010000100001000010000100001' in email.content)
