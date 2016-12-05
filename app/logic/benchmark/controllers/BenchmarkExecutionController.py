@@ -5,6 +5,7 @@ from datetime import timedelta
 from django.db.models import Q, F, Count
 from django.core.paginator import Paginator
 from django.utils import timezone
+from django.conf import settings
 from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
 from app.logic.benchmark.models.BenchmarkExecutionModel import BenchmarkExecutionEntry
 from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
@@ -21,6 +22,8 @@ from app.logic.gitrepo.models.GitParentModel import GitParentEntry
 from app.logic.gitrepo.models.GitBranchTrailModel import GitBranchTrailEntry
 from app.logic.gitrepo.models.GitBranchMergeTargetModel import GitBranchMergeTargetEntry
 from app.logic.httpcommon import pag
+import arrow
+import pytz
 
 PAGINATION_HALF_RANGE = 2
 TTL_IN_PROGRESS = 3
@@ -332,13 +335,19 @@ class BenchmarkExecutionController(object):
 
             without_errors = without_errors and (int(result['status']) is 0)
 
+            start_time = arrow.get(result['start_time']).naive
+            finish_time = arrow.get(result['finish_time']).naive
+
+            start_time = timezone.make_aware(start_time)
+            finish_time = timezone.make_aware(finish_time, pytz.timezone(settings.TIME_ZONE), is_dst=False)
+
             CommandResultEntry.objects.create(
                 command=command_entry,
                 out=json.dumps(result['out']),
                 error=result['error'],
                 status=result['status'],
-                start_time=result['start_time'],
-                finish_time=result['finish_time'])
+                start_time=start_time,
+                finish_time=finish_time)
 
         if without_errors:
             bench_exec_entry.status = BenchmarkExecutionEntry.FINISHED

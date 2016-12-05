@@ -27,6 +27,8 @@ from app.logic.commandrepo.helper import TestCommandHelper
 from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
 from app.logic.mailing.models.StackedMailModel import StackedMailEntry
 from datetime import timedelta
+import datetime
+import pytz
 import json
 
 class BenchmarkExecutionControllerTestCase(TestCase):
@@ -752,6 +754,42 @@ class BenchmarkExecutionControllerTestCase(TestCase):
         self.assertEqual(0, CommandResultEntry.objects.filter(command=com3).first().status)
         self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(definition=self.benchmark_definition2).count())
         self.assertEqual(BenchmarkExecutionEntry.FINISHED, BenchmarkExecutionEntry.objects.filter(definition=self.benchmark_definition2).first().status)
+
+    def test_save_benchmark_execution_with_timezoned_dates(self):
+        CommandEntry.objects.create(
+            command_set=self.report3,
+            command='command-custom-1',
+            order=0
+        )
+
+        self.assertEqual(1, CommandEntry.objects.filter(command_set=self.report3).count())
+        self.assertEqual(0, CommandResultEntry.objects.filter(command__command_set=self.report3).count())
+        self.assertEqual('command-custom-1', CommandEntry.objects.filter(command_set=self.report3, order=0).first().command)
+        self.assertEqual(1, BenchmarkExecutionEntry.objects.filter(definition=self.benchmark_definition2).count())
+        self.assertEqual(BenchmarkExecutionEntry.READY, BenchmarkExecutionEntry.objects.filter(definition=self.benchmark_definition2).first().status)
+
+        result1 = {}
+        result1['out'] = 'out1'
+        result1['error'] = 'error1'
+        result1['status'] = 0
+        result1['start_time'] = datetime.datetime(year=2016, month=1, day=1)
+        result1['finish_time'] = datetime.datetime(year=2016, month=1, day=2)
+
+        command1 = {}
+        command1['command'] = 'command-new-1'
+        command1['result'] = result1
+
+        report = {}
+        report['command_set'] = [command1]
+
+        BenchmarkExecutionController.save_bench_execution(self.benchmark_execution3, report)
+        com1 = CommandEntry.objects.filter(command_set=self.report3, order=0).first()
+
+        self.assertEqual(1, CommandResultEntry.objects.filter(command__command_set=self.report3).count())
+        # It is really weird that the saved time is +8:00 in the future, instead of -8:00, as LOS ANGELES should be from UTC
+        self.assertEqual('2016-01-01T08:00:00+00:00', CommandResultEntry.objects.filter(command=com1).first().start_time.isoformat())
+        self.assertEqual('2016-01-02T08:00:00+00:00', CommandResultEntry.objects.filter(command=com1).first().finish_time.isoformat())
+
 
     def test_save_benchmark_execution_with_errors(self):
         CommandEntry.objects.create(command_set=self.report3, command='command-custom-1', order=0)
