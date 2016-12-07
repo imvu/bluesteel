@@ -219,11 +219,11 @@ def process_update_worker_files(bootstrap_urls, settings, session):
 
     if not resp['succeed']:
         log.error('Error trying to GET on url: %s', bootstrap_urls['worker_files_hash_url'])
-        return
+        return resp
 
     if resp['content']['status'] == 200 and resp['content']['data']['worker_files_hash'] == files_hash:
         log.info('Worker files hash are equal.')
-        return
+        return resp
 
     log.debug(
         'Worker files hash are not equal, remote: %s, local: %s',
@@ -242,8 +242,13 @@ def process_update_worker_files(bootstrap_urls, settings, session):
             shutil.rmtree(tmp_zip_folder)
             os.makedirs(tmp_zip_folder)
 
-        for name in zip_ext.namelist():
-            zip_ext.extract(name, tmp_zip_folder)
+        try:
+            for name in zip_ext.namelist():
+                zip_ext.extract(name, tmp_zip_folder)
+        except ZipFile.BadZipfile as error:
+            log.error('Error with zip_file!\n %s', error)
+            resp_f['succed'] = False
+            return resp_f
 
         zip_files_hash = FileHasher.get_hash_from_files_in_a_folder(
             os.path.join(tmp_zip_folder, 'core'),
@@ -252,7 +257,7 @@ def process_update_worker_files(bootstrap_urls, settings, session):
 
         if zip_files_hash == files_hash:
             log.info('Downloaded remote Worker files and local ones are equal.')
-            return
+            return resp_f
 
         if os.path.exists(get_cwd()):
             log.info('Executing downloaded Worker.')
@@ -476,7 +481,14 @@ def main():
         while con_info['succeed']:
             if args.auto_update == 'yes':
                 log.info('Auto updating Worker files.')
-                process_update_worker_files(bootstrap_urls, settings, session)
+                res = process_update_worker_files(bootstrap_urls, settings, session)
+
+                if not res['succeed']:
+                    print '+ process_update_worker_files failed.'
+                    print '- out: ', res['message']
+                    print '+ waiting {0} seconds to retry.'.format(RETRY_CONNECTION_TIME)
+                    time.sleep(RETRY_CONNECTION_TIME)
+                    continue
 
             log.info('Connecting Worker.')
             con_info = process_connect_worker(bootstrap_urls, worker_info['worker'], session)
