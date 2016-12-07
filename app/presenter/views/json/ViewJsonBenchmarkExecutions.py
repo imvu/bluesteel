@@ -2,6 +2,7 @@
 
 from collections import defaultdict
 from django.db import transaction
+from django.utils import timezone
 from app.presenter.schemas import BenchmarkExecutionSchemas
 from app.presenter.views.helpers import ViewNotifications
 from app.logic.benchmark.models.BenchmarkExecutionModel import BenchmarkExecutionEntry
@@ -33,6 +34,28 @@ def did_commands_succeed(report):
             return False
     return True
 
+def create_false_report(failure_type_text, extra_info):
+    """ Generates a false report for cases where schema fails or json validation fails """
+    result = {}
+    result['id'] = failure_type_text
+    result['visual_type'] = 'unknown'
+    result['data'] = str(extra_info)
+
+    com = {}
+    com['command'] = 'Problem while saving benchmark execution!'
+    com['result'] = {}
+    com['result']['status'] = -1
+    com['result']['out'] = []
+    com['result']['out'].append(result)
+    com['result']['error'] = ''
+    com['result']['start_time'] = timezone.now()
+    com['result']['finish_time'] = timezone.now()
+
+    obj = {}
+    obj['command_set'] = []
+    obj['command_set'].append(com)
+    return obj
+
 @transaction.atomic
 def save_benchmark_execution(request, benchmark_execution_id):
     """ Check and save a benchmark execution data into the db """
@@ -51,6 +74,8 @@ def save_benchmark_execution(request, benchmark_execution_id):
             BenchmarkExecutionSchemas.SAVE_BENCHMARK_EXECUTION)
         if not obj_validated:
             ViewNotifications.notify_schema_failed(bench_exec_entry.commit.author.email, post_info, val_resp_obj)
+            report = create_false_report('schema_failed', val_resp_obj)
+            BenchmarkExecutionController.save_bench_execution(bench_exec_entry, report)
             return res.get_schema_failed(val_resp_obj)
 
         for command in val_resp_obj['command_set']:

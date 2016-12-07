@@ -519,7 +519,7 @@ class BenchmarkExecutionViewJsonTestCase(TestCase):
 
         execution = BenchmarkExecutionEntry.objects.filter(definition=self.benchmark_definition1).first()
 
-        self.assertEqual(17, CommandEntry.objects.all().count())
+        self.assertEqual(18, CommandEntry.objects.all().count())
         self.assertEqual(1, CommandEntry.objects.filter(command='git clone http://www.test.com').count())
         self.assertEqual(1, CommandEntry.objects.filter(order=0, command='git reset HEAD').count())
         self.assertEqual(1, CommandEntry.objects.filter(order=1, command='git checkout -- .').count())
@@ -537,7 +537,9 @@ class BenchmarkExecutionViewJsonTestCase(TestCase):
         self.assertEqual(1, CommandEntry.objects.filter(command='command-1').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='command-2').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='command-3').count())
-        self.assertEqual(0, CommandResultEntry.objects.all().count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='Problem while saving benchmark execution!').count())
+        self.assertEqual(1, CommandResultEntry.objects.all().count())
+        self.assertEqual(-1, CommandResultEntry.objects.all().first().status)
 
     def test_did_commands_succeed(self):
         com1 = {}
