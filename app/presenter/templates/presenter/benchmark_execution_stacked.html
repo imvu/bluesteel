@@ -8,7 +8,25 @@
         <div class="upper_card white_card card_padding_small card_medium">
             <div class="grid grid-pad-2">
                 <div class="grid-col-1-1 grid-cell-pad-2-10">
-                    <div class="title centered">TODO: Change this title</div>
+                    <div class="title centered">Benchmark window around commit {{commit_info.short_hash}}</div>
+                </div>
+            </div>
+        </div>
+        <div class="middle_card white_card card_padding_small card_medium">
+            <div class="grid grid-pad-2">
+                <div class="grid grid-pad-2">
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="list_label">COMMIT HASH</div>
+                    </div>
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="command">{{commit_info.hash}}</div>
+                    </div>
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="list_label">AUTHOR</div>
+                    </div>
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="command">{{commit_info.author.name}}</div>
+                    </div>
                 </div>
             </div>
         </div>
