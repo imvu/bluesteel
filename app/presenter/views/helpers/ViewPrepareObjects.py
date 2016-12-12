@@ -340,7 +340,26 @@ def prepare_stacked_executions_for_html(domain, executions):
                 domain,
                 bench_data['benchmark_execution_id'])
 
-        item['json'] = json.dumps(item['data'])
         results.append(item)
 
     return results
+
+def prepare_stacked_executions_json_field(executions):
+    """ Prepare stacked execitions of html """
+    for item in executions:
+        item['json'] = json.dumps(item['data'])
+    return executions
+
+def prepare_windowed_executions_colors(executions, center_commit_hash):
+    """
+    This function will mark all the commit executions to be from other branch except for the passed commit.
+    This is because we want to emphatize the centered commit.
+    """
+    for item in executions:
+        for execution in item['data']:
+            if center_commit_hash.startswith(execution['benchmark_execution_hash']):
+                execution['bar_type'] = 'current_branch'
+            else:
+                execution['bar_type'] = 'other_branch'
+
+    return executions
