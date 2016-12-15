@@ -18,8 +18,9 @@ import platform
 import time
 import shutil
 # import pprint
-from StringIO import StringIO
+import zipfile
 from zipfile import ZipFile
+from StringIO import StringIO
 
 import GitFetcher
 import Request
@@ -245,7 +246,7 @@ def process_update_worker_files(bootstrap_urls, settings, session):
         try:
             for name in zip_ext.namelist():
                 zip_ext.extract(name, tmp_zip_folder)
-        except ZipFile.BadZipfile as error:
+        except zipfile.BadZipfile as error:
             log.error('Error with zip_file!\n %s', error)
             resp_f['succed'] = False
             return resp_f
