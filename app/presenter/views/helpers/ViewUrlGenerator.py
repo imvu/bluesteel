@@ -36,6 +36,9 @@ def get_confirm_delete_layout_url(layout_id):
 def get_confirm_wipe_layout_url(layout_id):
     return '/main/layout/{0}/confirm/wipe/'.format(layout_id)
 
+def get_layout_project_list_url(layout_id):
+    return '/main/layout/{0}/project/list/'.format(layout_id)
+
 def get_project_all_url(page_index):
     return '/main/project/all/page/{0}/'.format(page_index)
 

@@ -125,6 +125,9 @@ urlpatterns = [
     url(r'^layout/create/$',
         app.presenter.views.json.ViewJsonLayout.post_create_new_layout),
 
+    url(r'^layout/list/$',
+        app.presenter.views.json.ViewJsonLayout.get_layout_list),
+
     url(r'^layout/all/urls/$',
         app.presenter.views.json.ViewJsonBluesteel.get_all_layouts_urls),
 

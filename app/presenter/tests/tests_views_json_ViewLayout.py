@@ -127,6 +127,21 @@ class BluesteelViewLayoutTestCase(TestCase):
         self.assertEqual(1, BluesteelLayoutEntry.objects.all().first().project_index_path)
 
 
+    def test_get_layout_list(self):
+        layout_2 = BluesteelLayoutEntry.objects.create(name='layout-2')
+        layout_3 = BluesteelLayoutEntry.objects.create(name='layout-3')
+
+        resp = self.client.get('/main/layout/list/')
+
+        res.check_cross_origin_headers(self, resp)
+        resp_obj = json.loads(resp.content)
+
+        self.assertEqual(200, resp_obj['status'])
+        self.assertEqual(3, len(resp_obj['data']['layouts']))
+        self.assertEqual('/main/layout/1/project/list/', resp_obj['data']['layouts'][0]['url']['project_list'])
+        self.assertEqual('/main/layout/2/project/list/', resp_obj['data']['layouts'][1]['url']['project_list'])
+        self.assertEqual('/main/layout/3/project/list/', resp_obj['data']['layouts'][2]['url']['project_list'])
+
     def test_save_bluesteel_layout_clamps_project_index_path_to_zero(self):
         obj = {}
         obj['name'] = 'layout-1'

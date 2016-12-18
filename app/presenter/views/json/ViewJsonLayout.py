@@ -103,3 +103,23 @@ def add_default_project(request, layout_id):
         return res.get_response(200, 'Layout saved!', obj)
     else:
         return res.get_only_post_allowed({})
+
+
+def get_layout_list(request):
+    """ Returns a list of all the available layouts """
+    if request.method == 'GET':
+        layout_entries = BluesteelLayoutEntry.objects.all()
+
+        data = {}
+        data['layouts'] = []
+
+        for layout in layout_entries:
+            obj = {}
+            obj['name'] = layout.name
+            obj['url'] = {}
+            obj['url']['project_list'] = ViewUrlGenerator.get_layout_project_list_url(layout.id)
+            data['layouts'].append(obj)
+
+        return res.get_response(200, 'Layout list', data)
+    else:
+        return res.get_only_get_allowed({})
