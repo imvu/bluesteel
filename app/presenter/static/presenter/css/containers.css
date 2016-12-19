@@ -19,6 +19,13 @@ div.container_large
     margin-right: auto;
 }
 
+div.container_huge
+{
+    width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 div.container_height
 {
     min-height: 900px;
