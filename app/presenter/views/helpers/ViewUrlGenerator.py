@@ -130,6 +130,9 @@ def get_project_branch_single_url(project_id, branch_id):
 def get_project_branch_single_links_url(project_id, branch_id):
     return '/main/project/{0}/branch/{1}/links/'.format(project_id, branch_id)
 
+def get_project_branch_list_url(project_id):
+    return '/main/project/{0}/branch/list/'.format(project_id)
+
 
 def get_benchmark_definitions_url(page_index):
     return '/main/definitions/all/page/{0}/'.format(page_index)

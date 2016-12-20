@@ -339,3 +339,33 @@ class BluesteelViewProjectTestCase(TestCase):
         self.assertEqual(0, GitProjectEntry.objects.all().count())
         self.assertEqual(False, BluesteelLayoutEntry.objects.all().first().active)
 
+
+    def test_get_project_list_from_layout(self):
+        command_group = CommandGroupEntry.objects.create()
+
+        git_project1 = GitProjectEntry.objects.create(url='', name='git-project-1')
+        git_project2 = GitProjectEntry.objects.create(url='', name='git-project-2')
+        git_project3 = GitProjectEntry.objects.create(url='', name='git-project-3')
+
+        bluesteel_proj1 = BluesteelProjectEntry.objects.create(name='project-1', layout=self.layout_1, command_group=command_group, git_project=git_project1)
+        bluesteel_proj2 = BluesteelProjectEntry.objects.create(name='project-2', layout=self.layout_1, command_group=command_group, git_project=git_project2)
+        bluesteel_proj3 = BluesteelProjectEntry.objects.create(name='project-3', layout=self.layout_1, command_group=command_group, git_project=git_project3)
+
+        resp = self.client.get('/main/layout/{0}/projects/list/'.format(self.layout_1.id))
+
+        res.check_cross_origin_headers(self, resp)
+        resp_obj = json.loads(resp.content)
+
+        self.assertEqual(200, resp_obj['status'])
+        self.assertEqual(3, len(resp_obj['data']['projects']))
+        self.assertEqual(bluesteel_proj1.id, resp_obj['data']['projects'][0]['id'])
+        self.assertEqual(bluesteel_proj2.id, resp_obj['data']['projects'][1]['id'])
+        self.assertEqual(bluesteel_proj3.id, resp_obj['data']['projects'][2]['id'])
+        self.assertEqual('project-1', resp_obj['data']['projects'][0]['name'])
+        self.assertEqual('project-2', resp_obj['data']['projects'][1]['name'])
+        self.assertEqual('project-3', resp_obj['data']['projects'][2]['name'])
+        self.assertEqual('/main/project/1/branch/list/', resp_obj['data']['projects'][0]['url']['project_branch_list'])
+        self.assertEqual('/main/project/2/branch/list/', resp_obj['data']['projects'][1]['url']['project_branch_list'])
+        self.assertEqual('/main/project/3/branch/list/', resp_obj['data']['projects'][2]['url']['project_branch_list'])
+
+

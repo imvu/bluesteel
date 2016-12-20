@@ -6,6 +6,7 @@ from app.presenter.schemas import BluesteelSchemas
 from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
 from app.logic.bluesteel.controllers.BluesteelProjectController import BluesteelProjectController
 from app.logic.bluesteel.controllers.BluesteelLayoutController import BluesteelLayoutController
+from app.logic.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
 from app.logic.commandrepo.models.CommandSetModel import CommandSetEntry
 from app.logic.commandrepo.controllers.CommandController import CommandController
 from app.logic.httpcommon import res
@@ -75,3 +76,29 @@ def delete_project(request, project_id):
         return res.get_response(200, 'Project deleted', obj)
     else:
         return res.get_only_post_allowed({})
+
+
+def get_project_list_from_layout(request, layout_id):
+    """ Return project ids, names and get-branch-list url """
+    if request.method == 'GET':
+        layout = BluesteelLayoutEntry.objects.filter(id=layout_id).first()
+        if layout is None:
+            return res.get_response(400, 'Layout not found', {})
+
+        project_entries = BluesteelProjectEntry.objects.filter(layout=layout).order_by('order')
+
+        projects = []
+        for project in project_entries:
+            obj = {}
+            obj['id'] = project.id
+            obj['name'] = project.name
+            obj['url'] = {}
+            obj['url']['project_branch_list'] = ViewUrlGenerator.get_project_branch_list_url(project.git_project.id)
+            projects.append(obj)
+
+        data = {}
+        data['projects'] = projects
+
+        return res.get_response(200, 'Projects info found', data)
+    else:
+        return res.get_only_get_allowed({})
