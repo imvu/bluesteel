@@ -138,9 +138,15 @@ class BluesteelViewLayoutTestCase(TestCase):
 
         self.assertEqual(200, resp_obj['status'])
         self.assertEqual(3, len(resp_obj['data']['layouts']))
-        self.assertEqual('/main/layout/1/project/list/', resp_obj['data']['layouts'][0]['url']['project_list'])
-        self.assertEqual('/main/layout/2/project/list/', resp_obj['data']['layouts'][1]['url']['project_list'])
-        self.assertEqual('/main/layout/3/project/list/', resp_obj['data']['layouts'][2]['url']['project_list'])
+        self.assertEqual('/main/layout/1/projects/list/', resp_obj['data']['layouts'][0]['url']['project_list'])
+        self.assertEqual('/main/layout/2/projects/list/', resp_obj['data']['layouts'][1]['url']['project_list'])
+        self.assertEqual('/main/layout/3/projects/list/', resp_obj['data']['layouts'][2]['url']['project_list'])
+        self.assertEqual('layout-1', resp_obj['data']['layouts'][0]['name'])
+        self.assertEqual('layout-2', resp_obj['data']['layouts'][1]['name'])
+        self.assertEqual('layout-3', resp_obj['data']['layouts'][2]['name'])
+        self.assertEqual(1, resp_obj['data']['layouts'][0]['id'])
+        self.assertEqual(2, resp_obj['data']['layouts'][1]['id'])
+        self.assertEqual(3, resp_obj['data']['layouts'][2]['id'])
 
     def test_save_bluesteel_layout_clamps_project_index_path_to_zero(self):
         obj = {}

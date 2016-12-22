@@ -146,6 +146,9 @@ urlpatterns = [
     url(r'^project/(?P<project_id>\d+)/delete/$',
         app.presenter.views.json.ViewJsonProject.delete_project),
 
+    url(r'^project/(?P<project_id>\d+)/branch/list/$',
+        app.presenter.views.json.ViewJsonProject.get_branch_names_from_project),
+
     url(r'^definitions/create/$',
         app.presenter.views.json.ViewJsonBenchmarkDefinitions.create_new_benchmark_definition),
 

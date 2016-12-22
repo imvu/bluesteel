@@ -21,21 +21,20 @@
                 <div class="container_input">
                     <select     class="selection individual"
                                 id="select_project"
-                                onchange=""
-                                onfocus="this.selectedIndex = 0;"
+                                onchange="populateBranchSelect('select_branch', this.options[this.selectedIndex].value);"
                     >
-                        <option value="-1" selected disabled hidden>select project...</option>
+                        <option value="-1" selected disabled hidden>select Project...</option>
                     </select>
                 </div>
             </div>
             <div class="grid-col-4-8 grid-cell-pad-2-10">
                 <div class="container_input">
                     <select     class="selection individual"
-                                name="select_branch"
+                                id="select_branch"
                                 onchange=""
                                 onfocus="this.selectedIndex = 0;"
                     >
-                        <option value="-1" selected disabled hidden>select branch...</option>
+                        <option value="-1" selected disabled hidden>select Branch...</option>
                     </select>
                 </div>
             </div>

@@ -7,6 +7,7 @@ from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEnt
 from app.logic.bluesteel.controllers.BluesteelProjectController import BluesteelProjectController
 from app.logic.bluesteel.controllers.BluesteelLayoutController import BluesteelLayoutController
 from app.logic.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
+from app.logic.gitrepo.models.GitBranchModel import GitBranchEntry
 from app.logic.commandrepo.models.CommandSetModel import CommandSetEntry
 from app.logic.commandrepo.controllers.CommandController import CommandController
 from app.logic.httpcommon import res
@@ -100,5 +101,30 @@ def get_project_list_from_layout(request, layout_id):
         data['projects'] = projects
 
         return res.get_response(200, 'Projects info found', data)
+    else:
+        return res.get_only_get_allowed({})
+
+
+def get_branch_names_from_project(request, project_id):
+    """ Return branch ids, names """
+    if request.method == 'GET':
+        project = BluesteelProjectEntry.objects.filter(id=project_id).first()
+
+        if project is None:
+            return res.get_response(400, 'Project not found', {})
+
+        branch_entries = GitBranchEntry.objects.filter(project__id=project.git_project.id).order_by('order')
+
+        branches = []
+        for branch in branch_entries:
+            obj = {}
+            obj['id'] = branch.id
+            obj['name'] = branch.name
+            branches.append(obj)
+
+        data = {}
+        data['branches'] = branches
+
+        return res.get_response(200, 'Project branches info found', data)
     else:
         return res.get_only_get_allowed({})

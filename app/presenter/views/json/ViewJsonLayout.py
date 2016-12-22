@@ -115,6 +115,7 @@ def get_layout_list(request):
 
         for layout in layout_entries:
             obj = {}
+            obj['id'] = layout.id
             obj['name'] = layout.name
             obj['url'] = {}
             obj['url']['project_list'] = ViewUrlGenerator.get_layout_project_list_url(layout.id)

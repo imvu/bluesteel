@@ -2,10 +2,14 @@
 
 from django.test import TestCase
 from django.test import Client
+from django.utils import timezone
 from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
 from app.logic.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
 from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
 from app.logic.gitrepo.models.GitProjectModel import GitProjectEntry
+from app.logic.gitrepo.models.GitBranchModel import GitBranchEntry
+from app.logic.gitrepo.models.GitCommitModel import GitCommitEntry
+from app.logic.gitrepo.models.GitUserModel import GitUserEntry
 from app.logic.commandrepo.controllers.CommandController import CommandController
 from app.logic.commandrepo.models.CommandGroupModel import CommandGroupEntry
 from app.logic.commandrepo.models.CommandSetModel import CommandSetEntry
@@ -368,4 +372,37 @@ class BluesteelViewProjectTestCase(TestCase):
         self.assertEqual('/main/project/2/branch/list/', resp_obj['data']['projects'][1]['url']['project_branch_list'])
         self.assertEqual('/main/project/3/branch/list/', resp_obj['data']['projects'][2]['url']['project_branch_list'])
 
+    def test_get_project_branch_names_list(self):
+        command_group = CommandGroupEntry.objects.create()
+
+        git_project1 = GitProjectEntry.objects.create(url='', name='git-project-1')
+        git_user1 = GitUserEntry.objects.create(project=git_project1)
+        git_commit1 = GitCommitEntry.objects.create(
+            project=git_project1,
+            commit_hash='0000100001000010000100001000010000100001',
+            author=git_user1,
+            author_date=timezone.now(),
+            committer=git_user1,
+            committer_date=timezone.now()
+        )
+
+        git_branch1 = GitBranchEntry.objects.create(project=git_project1, name='branch-1', commit=git_commit1, order=0)
+        git_branch2 = GitBranchEntry.objects.create(project=git_project1, name='branch-2', commit=git_commit1, order=1)
+        git_branch3 = GitBranchEntry.objects.create(project=git_project1, name='branch-3', commit=git_commit1, order=2)
+
+        bluesteel_proj1 = BluesteelProjectEntry.objects.create(name='project-1', layout=self.layout_1, command_group=command_group, git_project=git_project1)
+
+        resp = self.client.get('/main/project/{0}/branch/list/'.format(bluesteel_proj1.id))
+
+        res.check_cross_origin_headers(self, resp)
+        resp_obj = json.loads(resp.content)
+
+        self.assertEqual(200, resp_obj['status'])
+        self.assertEqual(3, len(resp_obj['data']['branches']))
+        self.assertEqual(git_branch1.id, resp_obj['data']['branches'][0]['id'])
+        self.assertEqual(git_branch2.id, resp_obj['data']['branches'][1]['id'])
+        self.assertEqual(git_branch3.id, resp_obj['data']['branches'][2]['id'])
+        self.assertEqual('branch-1', resp_obj['data']['branches'][0]['name'])
+        self.assertEqual('branch-2', resp_obj['data']['branches'][1]['name'])
+        self.assertEqual('branch-3', resp_obj['data']['branches'][2]['name'])
 
