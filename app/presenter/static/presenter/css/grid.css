@@ -88,6 +88,27 @@ div.grid-col-1-16 {
     width: 6.25%;
 }
 
+div.grid-col-2-16 {
+    width: 12.5%;
+}
+
+div.grid-col-3-16 {
+    width: 18.75%;
+}
+
+div.grid-col-10-16 {
+    width: 62.5%;
+}
+
+div.grid-col-12-16 {
+    width: 75.0%;
+}
+
+
+div.grid-col-13-16 {
+    width: 81.25%;
+}
+
 div.grid-col-15-16 {
     width: 93.75%;
 }

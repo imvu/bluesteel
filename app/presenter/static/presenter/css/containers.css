@@ -26,6 +26,13 @@ div.container_huge
     margin-right: auto;
 }
 
+div.container_ext
+{
+    max-width: 1500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 div.container_height
 {
     min-height: 900px;

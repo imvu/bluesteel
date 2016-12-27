@@ -1,3 +1,21 @@
+resetSelect = function(selectId, text) {
+    var select = document.getElementById(selectId);
+
+    while(select.hasChildNodes()) {
+        select.removeChild(select.firstChild);
+    }
+
+    var ele = document.createElement('option');
+    ele.id = '-1';
+    ele.value = '-1';
+    ele.text = text;
+    ele.selected = true;
+    ele.disabled = true;
+    ele.hidden = true;
+
+    select.appendChild(ele);
+}
+
 populateLayoutSelect = function(selectId, url) {
     var xhr = new XMLHttpRequest();
     xhr.open("GET", url, true);
@@ -7,19 +25,7 @@ populateLayoutSelect = function(selectId, url) {
         if (res_obj['status'] === 200) {
             var select = document.getElementById(selectId);
 
-            while(select.hasChildNodes()) {
-                select.removeChild(select.firstChild);
-            }
-
-            var ele = document.createElement('option');
-            ele.id = '-1';
-            ele.value = '-1';
-            ele.text = 'select Layout...';
-            ele.selected = true;
-            ele.disabled = true;
-            ele.hidden = true;
-
-            select.appendChild(ele);
+            resetSelect(selectId, 'select Layout...');
 
             for (var i = 0; i < res_obj['data']['layouts'].length; i++) {
                 var ele = document.createElement('option');
@@ -45,19 +51,7 @@ populateProjectSelect = function(selectProjectId, url) {
         if (res_obj['status'] === 200) {
             var select = document.getElementById(selectProjectId);
 
-            while(select.hasChildNodes()) {
-                select.removeChild(select.firstChild);
-            }
-
-            var ele = document.createElement('option');
-            ele.id = '-1';
-            ele.value = '-1';
-            ele.text = 'select Project...';
-            ele.selected = true;
-            ele.disabled = true;
-            ele.hidden = true;
-
-            select.appendChild(ele);
+            resetSelect(selectProjectId, 'select Project...');
 
             for (var i = 0; i < res_obj['data']['projects'].length; i++) {
                 var ele = document.createElement('option');
@@ -83,18 +77,7 @@ populateBranchSelect = function(selectBranchId, url) {
         if (res_obj['status'] === 200) {
             var select = document.getElementById(selectBranchId);
 
-            while(select.hasChildNodes()) {
-                select.removeChild(select.firstChild);
-            }
-
-            var ele = document.createElement('option');
-            ele.value = '-1';
-            ele.text = 'select Branch...';
-            ele.selected = true;
-            ele.disabled = true;
-            ele.hidden = true;
-
-            select.appendChild(ele);
+            resetSelect(selectBranchId, 'select Project...');
 
             for (var i = 0; i < res_obj['data']['branches'].length; i++) {
                 var ele = document.createElement('option');

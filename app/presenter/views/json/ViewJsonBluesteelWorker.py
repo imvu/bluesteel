@@ -77,6 +77,25 @@ def get_worker_files_hash(request):
         return res.get_only_get_allowed({})
 
 
+def get_worker_names_and_ids(request):
+    """ Returns the list of all workers plus its urls """
+    if request.method == 'GET':
+        worker_entries = WorkerEntry.objects.all()
+
+        data = {}
+        data['workers'] = []
+
+        for worker in worker_entries:
+            obj = {}
+            obj['name'] = worker.name
+            obj['id'] = worker.id
+            obj['operative_system'] = worker.operative_system
+            data['workers'].append(obj)
+
+        return res.get_response(200, 'Worker list', data)
+    else:
+        return res.get_only_get_allowed({})
+
 @csrf_exempt
 def create_worker_info(request):
     if request.method == 'POST':

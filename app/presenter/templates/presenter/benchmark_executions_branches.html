@@ -4,39 +4,103 @@
 
 {% block data_body %}
 
-<div class="container_huge">
-    <div class="card white_card card_padding_small">
-        <div class="grid grid-pad-2">
-            <div class="grid-col-2-8 grid-cell-pad-2-10">
-                <div class="container_input">
-                    <select     class="selection individual"
-                                id="select_layout"
-                                onchange="populateProjectSelect('select_project', this.options[this.selectedIndex].value);"
-                    >
-                    </select>
-                    <script>populateLayoutSelect('select_layout', '/main/layout/list/');</script>
+<div class="container_ext">
+    <div class="grid grid-pad-2">
+        <div class="grid-col-3-16 grid-cell-pad-2-10">
+            <div class="upper_card card_fill white_card">
+                <div class="grid grid-pad-2">
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="title centered">OPTIONS</div>
+                    </div>
                 </div>
             </div>
-            <div class="grid-col-2-8 grid-cell-pad-2-10">
-                <div class="container_input">
-                    <select     class="selection individual"
-                                id="select_project"
-                                onchange="populateBranchSelect('select_branch', this.options[this.selectedIndex].value);"
-                    >
-                        <option value="-1" selected disabled hidden>select Project...</option>
-                    </select>
+
+            <div class="middle_card card_fill white_card">
+                <div class="grid grid-pad-2">
+                    <div class="grid-col-1-1 grid-cell-pad-5-10">
+                        <div class="container_input">
+                            <select     class="selection individual"
+                                        id="select_layout"
+                                        onchange="populateProjectSelect('select_project', this.options[this.selectedIndex].value);"
+                            >
+                            </select>
+                            <script>populateLayoutSelect('select_layout', '/main/layout/list/');</script>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="grid-col-4-8 grid-cell-pad-2-10">
-                <div class="container_input">
-                    <select     class="selection individual"
-                                id="select_branch"
-                                onchange=""
-                                onfocus="this.selectedIndex = 0;"
-                    >
-                        <option value="-1" selected disabled hidden>select Branch...</option>
-                    </select>
+
+            <div class="middle_card card_fill white_card">
+                <div class="grid grid-pad-2">
+                    <div class="grid-col-1-1 grid-cell-pad-5-10">
+                        <div class="container_input">
+                            <select     class="selection individual"
+                                        id="select_project"
+                                        onchange="populateBranchSelect('select_branch', this.options[this.selectedIndex].value);"
+                            >
+                                <option value="-1" selected disabled hidden>select Project...</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
+            </div>
+
+            <div class="middle_card card_fill white_card">
+                <div class="grid grid-pad-2">
+                    <div class="grid-col-1-1 grid-cell-pad-5-10">
+                        <div class="container_input">
+                            <select     class="selection individual"
+                                        id="select_branch"
+                                        onchange=""
+                                        onfocus="this.selectedIndex = 0;"
+                            >
+                                <option value="-1" selected disabled hidden>select Branch...</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="middle_card card_fill white_card">
+                <div class="grid grid-pad-2">
+                    <div class="grid-col-1-1 grid-cell-pad-5-10">
+                        <div class="container_input">
+                            <select     class="selection individual"
+                                        id="select_bench_definition"
+                                        onchange=""
+                                        onfocus="this.selectedIndex = 0;"
+                            >
+                                <option value="-1" selected disabled hidden>select Benchmark Definition...</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lower_card card_fill white_card">
+                <div class="grid grid-pad-2">
+                    <div class="grid-col-1-1 grid-cell-pad-5-10">
+                        <div class="container_input">
+                            <select     class="selection individual"
+                                        id="select_worker"
+                                        onchange=""
+                                        onfocus="this.selectedIndex = 0;"
+                            >
+                                <option value="-1" selected disabled hidden>select Worker...</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- <div class="lower_card card_fill white_card ">
+                <div class="grid", id="workers_list">
+                    <script>populateWorkers('workers_list', '/main/bluesteelworker/list/');</script>
+                </div>
+            </div> -->
+        </div>
+        <div class="grid-col-13-16 grid-cell-pad-2-10">
+            <div class="card card_fill white_card container_height">
             </div>
         </div>
     </div>

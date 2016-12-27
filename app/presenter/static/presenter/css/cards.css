@@ -46,6 +46,11 @@ div.card_thin
     width: 250px;
 }
 
+div.card_fill
+{
+    width: 100%;
+}
+
 div.card_small
 {
     width: 294px;
