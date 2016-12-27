@@ -3,6 +3,7 @@
 from django.db import transaction
 from app.presenter.views.helpers import ViewUrlGenerator
 from app.presenter.schemas import BluesteelSchemas
+from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
 from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
 from app.logic.bluesteel.controllers.BluesteelProjectController import BluesteelProjectController
 from app.logic.bluesteel.controllers.BluesteelLayoutController import BluesteelLayoutController
@@ -126,5 +127,27 @@ def get_branch_names_from_project(request, project_id):
         data['branches'] = branches
 
         return res.get_response(200, 'Project branches info found', data)
+    else:
+        return res.get_only_get_allowed({})
+
+
+def get_definitions_from_project(request, project_id):
+    """ Return Benchmark Definition ids, names """
+    if request.method == 'GET':
+        def_entries = BenchmarkDefinitionEntry.objects.filter(project__id=project_id, active=True).order_by('name')
+
+        definitions = []
+        for definition in def_entries:
+            obj = {}
+            obj['id'] = definition.id
+            obj['name'] = definition.name
+            obj['url'] = {}
+            obj['url']['worker_list'] = ViewUrlGenerator.get_benchmark_definition_workers_url(definition.id)
+            definitions.append(obj)
+
+        data = {}
+        data['definitions'] = definitions
+
+        return res.get_response(200, 'Project definitions info found', data)
     else:
         return res.get_only_get_allowed({})

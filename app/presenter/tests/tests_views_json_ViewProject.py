@@ -406,3 +406,28 @@ class BluesteelViewProjectTestCase(TestCase):
         self.assertEqual('branch-2', resp_obj['data']['branches'][1]['name'])
         self.assertEqual('branch-3', resp_obj['data']['branches'][2]['name'])
 
+
+    def test_get_definitions_list_associated_with_a_bluesteel_project(self):
+        command_group = CommandGroupEntry.objects.create()
+
+        git_project = GitProjectEntry.objects.create(url='', name='git-project')
+        bluesteel_proj = BluesteelProjectEntry.objects.create(name='project-1', layout=self.layout_1, command_group=command_group, git_project=git_project)
+
+        benchmark_def1 = BenchmarkDefinitionEntry.objects.create(name='def-1', layout=self.layout_1, project=bluesteel_proj, command_set=CommandSetEntry.objects.create(), active=True)
+        benchmark_def2 = BenchmarkDefinitionEntry.objects.create(name='def-2', layout=self.layout_1, project=bluesteel_proj, command_set=CommandSetEntry.objects.create(), active=True)
+        benchmark_def3 = BenchmarkDefinitionEntry.objects.create(name='def-3', layout=self.layout_1, project=bluesteel_proj, command_set=CommandSetEntry.objects.create(), active=True)
+        benchmark_def4 = BenchmarkDefinitionEntry.objects.create(name='def-4', layout=self.layout_1, project=bluesteel_proj, command_set=CommandSetEntry.objects.create(), active=False)
+
+        resp = self.client.get('/main/project/{0}/definition/list/'.format(bluesteel_proj.id))
+
+        res.check_cross_origin_headers(self, resp)
+        resp_obj = json.loads(resp.content)
+
+        self.assertEqual(200, resp_obj['status'])
+        self.assertEqual(3, len(resp_obj['data']['definitions']))
+        self.assertEqual(benchmark_def1.id, resp_obj['data']['definitions'][0]['id'])
+        self.assertEqual(benchmark_def2.id, resp_obj['data']['definitions'][1]['id'])
+        self.assertEqual(benchmark_def3.id, resp_obj['data']['definitions'][2]['id'])
+        self.assertEqual('def-1', resp_obj['data']['definitions'][0]['name'])
+        self.assertEqual('def-2', resp_obj['data']['definitions'][1]['name'])
+        self.assertEqual('def-3', resp_obj['data']['definitions'][2]['name'])
