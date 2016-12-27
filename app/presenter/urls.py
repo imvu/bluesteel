@@ -158,6 +158,9 @@ urlpatterns = [
     url(r'^definition/(?P<benchmark_definition_id>\d+)/delete/$',
         app.presenter.views.json.ViewJsonBenchmarkDefinitions.view_delete_benchmark_definition),
 
+    url(r'^definition/(?P<benchmark_definition_id>\d+)/workers/list/$',
+        app.presenter.views.json.ViewJsonBenchmarkDefinitions.get_worker_names_and_ids_of_definition),
+
     url(r'^execution/(?P<benchmark_execution_id>\d+)/save/$',
         app.presenter.views.json.ViewJsonBenchmarkExecutions.save_benchmark_execution),
 

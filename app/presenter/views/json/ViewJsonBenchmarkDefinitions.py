@@ -4,6 +4,7 @@ from django.db import transaction
 from app.presenter.views.helpers import ViewUrlGenerator
 from app.presenter.schemas import BenchmarkDefinitionSchemas
 from app.logic.benchmark.controllers.BenchmarkDefinitionController import BenchmarkDefinitionController
+from app.logic.benchmark.models.BenchmarkDefinitionWorkerPassModel import BenchmarkDefinitionWorkerPassEntry
 from app.logic.httpcommon import res, val
 
 @transaction.atomic
@@ -75,3 +76,25 @@ def view_delete_benchmark_definition(request, benchmark_definition_id):
             return res.get_response(404, 'Benchmark Definition not found', data)
     else:
         return res.get_only_post_allowed({})
+
+
+def get_worker_names_and_ids_of_definition(request, benchmark_definition_id):
+    """ Returns the list of all workers plus ids associated with a benchmark definition """
+    if request.method == 'GET':
+        bench_passes = BenchmarkDefinitionWorkerPassEntry.objects.filter(
+            definition__id=benchmark_definition_id,
+            allowed=True)
+
+        data = {}
+        data['workers'] = []
+
+        for bench_pass in bench_passes:
+            obj = {}
+            obj['name'] = bench_pass.worker.name
+            obj['id'] = bench_pass.worker.id
+            obj['operative_system'] = bench_pass.worker.operative_system
+            data['workers'].append(obj)
+
+        return res.get_response(200, 'Worker list', data)
+    else:
+        return res.get_only_get_allowed({})

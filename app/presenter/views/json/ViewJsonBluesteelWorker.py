@@ -78,7 +78,7 @@ def get_worker_files_hash(request):
 
 
 def get_worker_names_and_ids(request):
-    """ Returns the list of all workers plus its urls """
+    """ Returns the list of all workers plus its ids """
     if request.method == 'GET':
         worker_entries = WorkerEntry.objects.all()
 

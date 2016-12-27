@@ -6,8 +6,7 @@ resetSelect = function(selectId, text) {
     }
 
     var ele = document.createElement('option');
-    ele.id = '-1';
-    ele.value = '-1';
+    ele.value = '{}';
     ele.text = text;
     ele.selected = true;
     ele.disabled = true;
@@ -29,9 +28,8 @@ populateLayoutSelect = function(selectId, url) {
 
             for (var i = 0; i < res_obj['data']['layouts'].length; i++) {
                 var ele = document.createElement('option');
-                ele.value = res_obj['data']['layouts'][i]['url']['project_list'];
+                ele.value = JSON.stringify(res_obj['data']['layouts'][i]);
                 ele.text = res_obj['data']['layouts'][i]['name'];
-                ele.id = res_obj['data']['layouts'][i]['id'];
 
                 select.appendChild(ele);
             }
@@ -42,7 +40,12 @@ populateLayoutSelect = function(selectId, url) {
     xhr.send("");
 }
 
-populateProjectSelect = function(selectProjectId, url) {
+populateProjectSelect = function(selectProjectId, value, propertyName) {
+    var jsonValue = JSON.parse(value);
+    if (!('url' in jsonValue)) {console.log('url key not found on jsonValue', jsonValue); return;}
+    if (!(propertyName in jsonValue['url'])) {console.log('propertyName key not found on jsonValue[url]', jsonValue); return;}
+    var url = jsonValue['url'][propertyName];
+
     var xhr = new XMLHttpRequest();
     xhr.open("GET", url, true);
     xhr.onloadend = function(response) {
@@ -55,9 +58,8 @@ populateProjectSelect = function(selectProjectId, url) {
 
             for (var i = 0; i < res_obj['data']['projects'].length; i++) {
                 var ele = document.createElement('option');
-                ele.value = res_obj['data']['projects'][i]['url']['project_branch_list'];
+                ele.value = JSON.stringify(res_obj['data']['projects'][i]);
                 ele.text = res_obj['data']['projects'][i]['name'];
-                ele.id = res_obj['data']['projects'][i]['id'];
 
                 select.appendChild(ele);
             }
@@ -68,7 +70,12 @@ populateProjectSelect = function(selectProjectId, url) {
     xhr.send("");
 }
 
-populateBranchSelect = function(selectBranchId, url) {
+populateBranchSelect = function(selectBranchId, value, propertyName) {
+    var jsonValue = JSON.parse(value);
+    if (!('url' in jsonValue)) {console.log('url key not found on jsonValue', jsonValue); return;}
+    if (!(propertyName in jsonValue['url'])) {console.log('propertyName key not found on jsonValue[url]', jsonValue); return;}
+    var url = jsonValue['url'][propertyName];
+
     var xhr = new XMLHttpRequest();
     xhr.open("GET", url, true);
     xhr.onloadend = function(response) {
@@ -77,7 +84,7 @@ populateBranchSelect = function(selectBranchId, url) {
         if (res_obj['status'] === 200) {
             var select = document.getElementById(selectBranchId);
 
-            resetSelect(selectBranchId, 'select Project...');
+            resetSelect(selectBranchId, 'select Branch...');
 
             for (var i = 0; i < res_obj['data']['branches'].length; i++) {
                 var ele = document.createElement('option');
@@ -86,6 +93,36 @@ populateBranchSelect = function(selectBranchId, url) {
 
                 select.appendChild(ele);
             }
+        } else {
+            console.log('failed', res_obj);
+        }
+    }
+    xhr.send("");
+}
+
+populateBenchmarkDefinitionSelect = function(selectDefId, value, propertyName) {
+    var jsonValue = JSON.parse(value);
+    if (!('url' in jsonValue)) {console.log('url key not found on jsonValue', jsonValue); return;}
+    if (!(propertyName in jsonValue['url'])) {console.log('propertyName key not found on jsonValue[url]', jsonValue); return;}
+    var url = jsonValue['url'][propertyName];
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", url, true);
+    xhr.onloadend = function(response) {
+        var res_obj = JSON.parse(xhr.response);
+
+        if (res_obj['status'] === 200) {
+            var select = document.getElementById(selectDefId);
+
+            resetSelect(selectDefId, 'select Benchmark Definition...');
+
+            // for (var i = 0; i < res_obj['data']['branches'].length; i++) {
+            //     var ele = document.createElement('option');
+            //     ele.text = res_obj['data']['branches'][i]['name'];
+            //     ele.id = res_obj['data']['branches'][i]['id'];
+
+            //     select.appendChild(ele);
+            // }
         } else {
             console.log('failed', res_obj);
         }

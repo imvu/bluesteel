@@ -262,3 +262,20 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
 
         self.assertEqual(0, BenchmarkDefinitionEntry.objects.all().count())
         self.assertEqual(0, BenchmarkExecutionEntry.objects.all().count())
+
+    def test_get_workes_only_associated_with_a_benchmark_definition(self):
+        layout = BluesteelLayoutController.create_new_default_layout()
+        definition = BenchmarkDefinitionController.create_default_benchmark_definition()
+
+        BenchmarkDefinitionWorkerPassEntry.objects.create(definition=definition, worker=self.worker1, allowed=True)
+        BenchmarkDefinitionWorkerPassEntry.objects.create(definition=definition, worker=self.worker2, allowed=False)
+
+        resp = self.client.get('/main/definition/{0}/workers/list/'.format(definition.id))
+
+        res.check_cross_origin_headers(self, resp)
+        resp_obj = json.loads(resp.content)
+
+        self.assertEqual(1, len(resp_obj['data']['workers']))
+        self.assertEqual(self.worker1.id, resp_obj['data']['workers'][0]['id'])
+        self.assertEqual('worker-name-1', resp_obj['data']['workers'][0]['name'])
+        self.assertEqual('osx', resp_obj['data']['workers'][0]['operative_system'])

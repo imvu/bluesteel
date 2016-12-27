@@ -21,7 +21,7 @@
                         <div class="container_input">
                             <select     class="selection individual"
                                         id="select_layout"
-                                        onchange="populateProjectSelect('select_project', this.options[this.selectedIndex].value);"
+                                        onchange="populateProjectSelect('select_project', this.options[this.selectedIndex].value, 'project_list');"
                             >
                             </select>
                             <script>populateLayoutSelect('select_layout', '/main/layout/list/');</script>
@@ -36,7 +36,10 @@
                         <div class="container_input">
                             <select     class="selection individual"
                                         id="select_project"
-                                        onchange="populateBranchSelect('select_branch', this.options[this.selectedIndex].value);"
+                                        onchange="
+                                            populateBranchSelect('select_branch', this.options[this.selectedIndex].value, 'project_branch_list');
+                                            populateBenchmarkDefinitionSelect('select_bench_definition', this.options[this.selectedIndex].value, 'definition_list');
+                                        "
                             >
                                 <option value="-1" selected disabled hidden>select Project...</option>
                             </select>
@@ -51,7 +54,6 @@
                         <div class="container_input">
                             <select     class="selection individual"
                                         id="select_branch"
-                                        onchange=""
                                         onfocus="this.selectedIndex = 0;"
                             >
                                 <option value="-1" selected disabled hidden>select Branch...</option>
@@ -68,7 +70,6 @@
                             <select     class="selection individual"
                                         id="select_bench_definition"
                                         onchange=""
-                                        onfocus="this.selectedIndex = 0;"
                             >
                                 <option value="-1" selected disabled hidden>select Benchmark Definition...</option>
                             </select>
@@ -84,7 +85,6 @@
                             <select     class="selection individual"
                                         id="select_worker"
                                         onchange=""
-                                        onfocus="this.selectedIndex = 0;"
                             >
                                 <option value="-1" selected disabled hidden>select Worker...</option>
                             </select>
@@ -106,7 +106,7 @@
     </div>
 </div>
 
-<ul class="no_dots no_indent horizontal_list">
+<!-- <ul class="no_dots no_indent horizontal_list">
         <li class="horizontal">
             <div class="container_med container_height">
                 <ul class="no_dots no_indent">
@@ -169,5 +169,5 @@
                 </ul>
             </div>
         </li>
-</ul>
+</ul> -->
 {% endblock %}
