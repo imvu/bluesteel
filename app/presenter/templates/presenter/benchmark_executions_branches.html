@@ -21,7 +21,10 @@
                         <div class="container_input">
                             <select     class="selection individual"
                                         id="select_layout"
-                                        onchange="populateProjectSelect('select_project', this.options[this.selectedIndex].value, 'project_list');"
+                                        onchange="
+                                            populateProjectSelect('select_project', this.options[this.selectedIndex].value, 'project_list');
+                                            tryPopulateCharts('select_layout', 'select_project', 'select_branch', 'select_bench_definition', 'select_worker');
+                                        "
                             >
                             </select>
                             <script>populateLayoutSelect('select_layout', '/main/layout/list/');</script>
@@ -38,10 +41,11 @@
                                         id="select_project"
                                         onchange="
                                             populateBranchSelect('select_branch', this.options[this.selectedIndex].value, 'project_branch_list');
-                                            populateBenchmarkDefinitionSelect('select_bench_definition', this.options[this.selectedIndex].value, 'definition_list');
+                                            populateBenchmarkDefinitionSelect('select_bench_definition', this.options[this.selectedIndex].value, 'project_definition_list');
+                                            tryPopulateCharts('select_layout', 'select_project', 'select_branch', 'select_bench_definition', 'select_worker');
                                         "
                             >
-                                <option value="-1" selected disabled hidden>select Project...</option>
+                                <option value="{}" selected disabled hidden>select Project...</option>
                             </select>
                         </div>
                     </div>
@@ -54,9 +58,9 @@
                         <div class="container_input">
                             <select     class="selection individual"
                                         id="select_branch"
-                                        onfocus="this.selectedIndex = 0;"
+                                        onchange="tryPopulateCharts('select_layout', 'select_project', 'select_branch', 'select_bench_definition', 'select_worker');"
                             >
-                                <option value="-1" selected disabled hidden>select Branch...</option>
+                                <option value="{}" selected disabled hidden>select Branch...</option>
                             </select>
                         </div>
                     </div>
@@ -69,9 +73,12 @@
                         <div class="container_input">
                             <select     class="selection individual"
                                         id="select_bench_definition"
-                                        onchange=""
+                                        onchange="
+                                            populateBenchmarkWorkerSelect('select_worker', this.options[this.selectedIndex].value, 'worker_list');
+                                            tryPopulateCharts('select_layout', 'select_project', 'select_branch', 'select_bench_definition', 'select_worker');
+                                        "
                             >
-                                <option value="-1" selected disabled hidden>select Benchmark Definition...</option>
+                                <option value="{}" selected disabled hidden>select Benchmark Definition...</option>
                             </select>
                         </div>
                     </div>
@@ -84,20 +91,14 @@
                         <div class="container_input">
                             <select     class="selection individual"
                                         id="select_worker"
-                                        onchange=""
+                                        onchange="tryPopulateCharts('select_layout', 'select_project', 'select_branch', 'select_bench_definition', 'select_worker');"
                             >
-                                <option value="-1" selected disabled hidden>select Worker...</option>
+                                <option value="{}" selected disabled hidden>select Worker...</option>
                             </select>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <!-- <div class="lower_card card_fill white_card ">
-                <div class="grid", id="workers_list">
-                    <script>populateWorkers('workers_list', '/main/bluesteelworker/list/');</script>
-                </div>
-            </div> -->
         </div>
         <div class="grid-col-13-16 grid-cell-pad-2-10">
             <div class="card card_fill white_card container_height">
