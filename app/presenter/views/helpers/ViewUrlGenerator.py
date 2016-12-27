@@ -137,6 +137,9 @@ def get_project_branch_list_url(project_id):
 def get_benchmark_definitions_url(page_index):
     return '/main/definitions/all/page/{0}/'.format(page_index)
 
+def get_benchmark_definition_workers_url(benchmark_definition_id):
+    return '/main/definition/{0}/workers/list/'.format(benchmark_definition_id)
+
 def get_benchmark_executions_url():
     return '/main/executions/'
 
