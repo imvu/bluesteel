@@ -19,10 +19,11 @@
                 <div class="grid grid-pad-2">
                     <div class="grid-col-1-1 grid-cell-pad-5-10">
                         <div class="container_input">
-                            <select     class="selection individual"
+                            <select     class="selection individual selection_empty"
                                         id="select_layout"
                                         onchange="
                                             populateProjectSelect('select_project', this.options[this.selectedIndex].value, 'project_list');
+                                            visualSelect('select_layout');
                                             tryPopulateCharts('select_layout', 'select_project', 'select_branch', 'select_bench_definition', 'select_worker');
                                         "
                             >
@@ -37,11 +38,12 @@
                 <div class="grid grid-pad-2">
                     <div class="grid-col-1-1 grid-cell-pad-5-10">
                         <div class="container_input">
-                            <select     class="selection individual"
+                            <select     class="selection individual selection_empty"
                                         id="select_project"
                                         onchange="
                                             populateBranchSelect('select_branch', this.options[this.selectedIndex].value, 'project_branch_list');
                                             populateBenchmarkDefinitionSelect('select_bench_definition', this.options[this.selectedIndex].value, 'project_definition_list');
+                                            visualSelect('select_project');
                                             tryPopulateCharts('select_layout', 'select_project', 'select_branch', 'select_bench_definition', 'select_worker');
                                         "
                             >
@@ -56,9 +58,12 @@
                 <div class="grid grid-pad-2">
                     <div class="grid-col-1-1 grid-cell-pad-5-10">
                         <div class="container_input">
-                            <select     class="selection individual"
+                            <select     class="selection individual selection_empty"
                                         id="select_branch"
-                                        onchange="tryPopulateCharts('select_layout', 'select_project', 'select_branch', 'select_bench_definition', 'select_worker');"
+                                        onchange="
+                                            visualSelect('select_branch');
+                                            tryPopulateCharts('select_layout', 'select_project', 'select_branch', 'select_bench_definition', 'select_worker');
+                                        "
                             >
                                 <option value="{}" selected disabled hidden>select Branch...</option>
                             </select>
@@ -71,10 +76,11 @@
                 <div class="grid grid-pad-2">
                     <div class="grid-col-1-1 grid-cell-pad-5-10">
                         <div class="container_input">
-                            <select     class="selection individual"
+                            <select     class="selection individual selection_empty"
                                         id="select_bench_definition"
                                         onchange="
                                             populateBenchmarkWorkerSelect('select_worker', this.options[this.selectedIndex].value, 'worker_list');
+                                            visualSelect('select_bench_definition');
                                             tryPopulateCharts('select_layout', 'select_project', 'select_branch', 'select_bench_definition', 'select_worker');
                                         "
                             >
@@ -89,9 +95,12 @@
                 <div class="grid grid-pad-2">
                     <div class="grid-col-1-1 grid-cell-pad-5-10">
                         <div class="container_input">
-                            <select     class="selection individual"
+                            <select     class="selection individual selection_empty"
                                         id="select_worker"
-                                        onchange="tryPopulateCharts('select_layout', 'select_project', 'select_branch', 'select_bench_definition', 'select_worker');"
+                                        onchange="
+                                            visualSelect('select_worker');
+                                            tryPopulateCharts('select_layout', 'select_project', 'select_branch', 'select_bench_definition', 'select_worker');
+                                        "
                             >
                                 <option value="{}" selected disabled hidden>select Worker...</option>
                             </select>

@@ -15,6 +15,12 @@ resetSelect = function(selectId, text) {
     select.appendChild(ele);
 }
 
+visualSelect = function(selectId) {
+    var select = document.getElementById(selectId);
+    if (!select.classList.contains('selection_empty')) {return;}
+    select.classList.remove('selection_empty');
+}
+
 populateLayoutSelect = function(selectId, url) {
     var xhr = new XMLHttpRequest();
     xhr.open("GET", url, true);

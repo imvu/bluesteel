@@ -21,3 +21,9 @@ select.individual
 select.selection:focus {
     outline: none;
 }
+
+
+select.selection_empty {
+    background: lightgray;
+    color: gray;
+}
