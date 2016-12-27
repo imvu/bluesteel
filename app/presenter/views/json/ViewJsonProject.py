@@ -96,6 +96,7 @@ def get_project_list_from_layout(request, layout_id):
             obj['name'] = project.name
             obj['url'] = {}
             obj['url']['project_branch_list'] = ViewUrlGenerator.get_project_branch_list_url(project.git_project.id)
+            obj['url']['project_definition_list'] = ViewUrlGenerator.get_project_definition_list_url(project.id)
             projects.append(obj)
 
         data = {}
