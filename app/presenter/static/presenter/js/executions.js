@@ -94,8 +94,9 @@ populateBranchSelect = function(selectBranchId, value, propertyName) {
 
             for (var i = 0; i < res_obj['data']['branches'].length; i++) {
                 var ele = document.createElement('option');
+                ele.value = JSON.stringify(res_obj['data']['branches'][i]);
                 ele.text = res_obj['data']['branches'][i]['name'];
-                ele.id = res_obj['data']['branches'][i]['id'];
+
 
                 select.appendChild(ele);
             }
@@ -152,12 +153,10 @@ populateBenchmarkWorkerSelect = function(selectWorkerId, value, propertyName) {
 
             resetSelect(selectWorkerId, 'select Worker...');
 
-            console.log(res_obj);
-
             for (var i = 0; i < res_obj['data']['workers'].length; i++) {
                 var ele = document.createElement('option');
+                ele.value = JSON.stringify(res_obj['data']['workers'][i]);
                 ele.text = res_obj['data']['workers'][i]['name'];
-                ele.id = res_obj['data']['workers'][i]['id'];
 
                 select.appendChild(ele);
             }
@@ -194,5 +193,7 @@ tryPopulateCharts = function(selLayoutId, selProjectId, selBranchId, selDefiniti
     var jsonWorker = JSON.parse(selWorker.options[selWorker.selectedIndex].value);
     if (!('id' in jsonWorker)) {console.log('id key not found on jsonWorker', jsonWorker); return;}
 
+
+    // Change here
 
 }
