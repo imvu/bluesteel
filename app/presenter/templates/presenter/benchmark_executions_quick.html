@@ -1,0 +1,120 @@
+{% extends "presenter/base.html" %}
+
+{% load staticfiles %}
+
+{% block data_body %}
+
+<div class="container_ext">
+    <div class="grid grid-pad-2">
+        <div class="grid-col-3-16 grid-cell-pad-2-10">
+            <div class="upper_card card_fill white_card">
+                <div class="grid grid-pad-2">
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="title centered">OPTIONS</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="middle_card card_fill white_card">
+                <div class="grid grid-pad-2">
+                    <div class="grid-col-1-1 grid-cell-pad-5-10">
+                        <div class="container_input">
+                            <select     class="selection individual selection_empty"
+                                        id="select_layout"
+                                        onchange="
+                                            populateProjectSelect('select_project', this.options[this.selectedIndex].value, 'project_list');
+                                            visualSelect('select_layout');
+                                            tryPopulateCharts('select_layout', 'select_project', 'select_branch', 'select_bench_definition', 'select_worker');
+                                        "
+                            >
+                            </select>
+                            <script>populateLayoutSelect('select_layout', '/main/layout/list/');</script>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="middle_card card_fill white_card">
+                <div class="grid grid-pad-2">
+                    <div class="grid-col-1-1 grid-cell-pad-5-10">
+                        <div class="container_input">
+                            <select     class="selection individual selection_empty"
+                                        id="select_project"
+                                        onchange="
+                                            populateBranchSelect('select_branch', this.options[this.selectedIndex].value, 'project_branch_list');
+                                            populateBenchmarkDefinitionSelect('select_bench_definition', this.options[this.selectedIndex].value, 'project_definition_list');
+                                            visualSelect('select_project');
+                                            tryPopulateCharts('select_layout', 'select_project', 'select_branch', 'select_bench_definition', 'select_worker');
+                                        "
+                            >
+                                <option value="{}" selected disabled hidden></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="middle_card card_fill white_card">
+                <div class="grid grid-pad-2">
+                    <div class="grid-col-1-1 grid-cell-pad-5-10">
+                        <div class="container_input">
+                            <select     class="selection individual selection_empty"
+                                        id="select_branch"
+                                        onchange="
+                                            visualSelect('select_branch');
+                                            tryPopulateCharts('select_layout', 'select_project', 'select_branch', 'select_bench_definition', 'select_worker');
+                                        "
+                            >
+                                <option value="{}" selected disabled hidden></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="middle_card card_fill white_card">
+                <div class="grid grid-pad-2">
+                    <div class="grid-col-1-1 grid-cell-pad-5-10">
+                        <div class="container_input">
+                            <select     class="selection individual selection_empty"
+                                        id="select_bench_definition"
+                                        onchange="
+                                            populateBenchmarkWorkerSelect('select_worker', this.options[this.selectedIndex].value, 'worker_list');
+                                            visualSelect('select_bench_definition');
+                                            tryPopulateCharts('select_layout', 'select_project', 'select_branch', 'select_bench_definition', 'select_worker');
+                                        "
+                            >
+                                <option value="{}" selected disabled hidden></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lower_card card_fill white_card">
+                <div class="grid grid-pad-2">
+                    <div class="grid-col-1-1 grid-cell-pad-5-10">
+                        <div class="container_input">
+                            <select     class="selection individual selection_empty"
+                                        id="select_worker"
+                                        onchange="
+                                            visualSelect('select_worker');
+                                            tryPopulateCharts('select_layout', 'select_project', 'select_branch', 'select_bench_definition', 'select_worker');
+                                        "
+                            >
+                                <option value="{}" selected disabled hidden></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="grid-col-13-16 grid-cell-pad-2-10" id="data_container">
+            <div class="card white_card card_fill card_padding_small">
+                <div class="normal centered">There are no results on this combination of options.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

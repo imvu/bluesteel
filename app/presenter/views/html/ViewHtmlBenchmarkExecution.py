@@ -57,13 +57,53 @@ def get_benchmark_executions_of_branch(request):
             layouts_obj.append(layout_obj)
 
 
+        control1 = {}
+        control1['name'] = ' Quick View'
+        control1['link'] = ViewUrlGenerator.get_benchmark_executions_quick_url()
+        control1['icon'] = 'fa fa-bar-chart'
+        control1['onclick'] = 'window.location="{0}"'.format(control1['link'])
+
+        control2 = {}
+        control2['name'] = ' Per Branch'
+        control2['link'] = ViewUrlGenerator.get_benchmark_executions_branches_url()
+        control2['icon'] = 'fa fa-code-fork'
+        control2['onclick'] = 'window.location="{0}"'.format(control2['link'])
+
         data = {}
         data['menu'] = ViewPrepareObjects.prepare_menu_for_html([])
         data['layouts'] = layouts_obj
+        data['controls'] = []
+        data['controls'].append(control1)
+        data['controls'].append(control2)
 
         return res.get_template_data(request, 'presenter/benchmark_executions_branches.html', data)
     else:
         return res.get_template_data(request, 'presenter/not_found.html', {})
+
+def get_benchmark_executions_quick_page(request):
+    if request.method == 'GET':
+        control1 = {}
+        control1['name'] = ' Quick View'
+        control1['link'] = ViewUrlGenerator.get_benchmark_executions_quick_url()
+        control1['icon'] = 'fa fa-bar-chart'
+        control1['onclick'] = 'window.location="{0}"'.format(control1['link'])
+
+        control2 = {}
+        control2['name'] = ' Per Branch'
+        control2['link'] = ViewUrlGenerator.get_benchmark_executions_branches_url()
+        control2['icon'] = 'fa fa-code-fork'
+        control2['onclick'] = 'window.location="{0}"'.format(control2['link'])
+
+        data = {}
+        data['menu'] = ViewPrepareObjects.prepare_menu_for_html([])
+        data['controls'] = []
+        data['controls'].append(control1)
+        data['controls'].append(control2)
+
+        return res.get_template_data(request, 'presenter/benchmark_executions_quick.html', data)
+    else:
+        return res.get_template_data(request, 'presenter/not_found.html', {})
+
 
 def get_benchmark_execution_relevant(request, bench_exec_id):
     """ Returns a benchmark execution """

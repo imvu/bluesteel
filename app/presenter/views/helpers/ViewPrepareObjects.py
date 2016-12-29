@@ -218,7 +218,7 @@ def prepare_menu_for_html(menu):
     item_6 = {}
     item_6['name'] = 'Executions'
     item_6['icon'] = ''
-    item_6['link'] = ViewUrlGenerator.get_benchmark_executions_url()
+    item_6['link'] = ViewUrlGenerator.get_benchmark_executions_quick_url()
 
     menu_items.append(item_1)
     menu_items.append(item_2)

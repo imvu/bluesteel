@@ -142,8 +142,11 @@ def get_benchmark_definitions_url(page_index):
 def get_benchmark_definition_workers_url(benchmark_definition_id):
     return '/main/definition/{0}/workers/list/'.format(benchmark_definition_id)
 
-def get_benchmark_executions_url():
-    return '/main/executions/'
+def get_benchmark_executions_branches_url():
+    return '/main/executions/branches/'
+
+def get_benchmark_executions_quick_url():
+    return '/main/executions/quick/'
 
 def get_benchmark_execution_complete_full_url(domain, bench_id):
     return 'http://{0}/main/execution/{1}/complete/'.format(domain, bench_id)

@@ -217,47 +217,21 @@ populateData = function(elementID, data) {
         data[i]['data']
         );
     }
+}
 
-    // {% if entry.obj.visual_type != 'unknown' %}
-    //     {% if forloop.first %}
-    //     <div class="middle_card white_card card_padding_large card_medium">
-    //         <div class="grid grid-pad-2">
-    //             <div class="grid-col-1-1 grid-cell-pad-2-10">
-    //                 <div class="list_label">COMMAND</div>
-    //             </div>
-    //             <div class="grid-col-1-1 grid-cell-pad-2-10">
-    //                 <div class="command">{{res.command}}</div>
-    //             </div>
-    //         </div>
-    //         <br/>
-    //     {% endif %}
+populateDataEmpty = function(elementID) {
+    var element = document.getElementById(elementID);
+    if (element === undefined) {console.log('Element to populate data not found!'); return;}
 
-    //     {% if entry.obj.visual_type == 'vertical_bars' %}
-    //         <div class="grid grid-pad-2">
-    //             <div class="grid-col-1-1 grid-cell-pad-2-10">
-    //                 <div class="command">{{entry.obj.id}}</div>
-    //             </div>
-    //             <div class="grid-col-1-1 grid-cell-pad-2-10">
-    //                 <canvas id="chart-{{forloop.counter0}}" width="540" height="220"></canvas>
-    //                 <script>chartVerticalBars('chart-{{forloop.counter0}}', {{entry.json|safe}});</script>
-    //             </div>
-    //         </div>
-    //     {% elif entry.obj.visual_type == 'text' %}
-    //         <div class="grid grid-pad-2">
-    //             <div class="grid-col-1-1 grid-cell-pad-2-10">
-    //                 <div class="command break_line">{{entry.obj.data}}</div>
-    //             </div>
-    //         </div>
-    //     {% endif %}
-    //     {% if res.out.count > 0 %}
-    //     <br/>
-    //     <br/>
-    //     {% endif %}
+    var normalCard = document.createElement('div');
+    normalCard.className = 'card white_card card_fill card_padding_small';
 
-    //     {% if forloop.last %}
-    //     </div>
-    //     {% endif %}
-    // {% endif %}
+    var title = document.createElement('div');
+    title.className = 'normal centered';
+    title.innerText = 'There are no results on this combination of options.';
+
+    normalCard.appendChild(title);
+    element.appendChild(normalCard);
 
 }
 
@@ -302,7 +276,12 @@ tryPopulateCharts = function(selLayoutId, selProjectId, selBranchId, selDefiniti
             console.log(res_obj['data']);
 
             removeElements('data_container');
-            populateData('data_container', res_obj['data']['stacked_executions']);
+
+            if (res_obj['data']['stacked_executions'].length > 0) {
+                populateData('data_container', res_obj['data']['stacked_executions']);
+            } else {
+                populateDataEmpty('data_container');
+            }
 
         } else {
             console.log('failed', res_obj);
