@@ -170,6 +170,9 @@ urlpatterns = [
     url(r'^execution/(?P<benchmark_execution_id>\d+)/invalidate/$',
         app.presenter.views.json.ViewJsonBenchmarkExecutions.invalidate_benchmark_execution),
 
+    url(r'^execution/stacked/project/(?P<project_id>\d+)/branch/(?P<branch_id>\d+)/definition/(?P<definition_id>\d+)/worker/(?P<worker_id>\d+)/quick/$',
+        app.presenter.views.json.ViewJsonBenchmarkExecutions.get_benchmark_executions_stacked_quick),
+
     url(r'^bluesteelworker/bootstrap/$',
         app.presenter.views.json.ViewJsonBluesteelWorker.get_bootstrap_urls),
 

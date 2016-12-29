@@ -5,12 +5,21 @@ from django.db import transaction
 from django.utils import timezone
 from app.presenter.schemas import BenchmarkExecutionSchemas
 from app.presenter.views.helpers import ViewNotifications
+from app.presenter.views.helpers import ViewPrepareObjects
 from app.logic.benchmark.models.BenchmarkExecutionModel import BenchmarkExecutionEntry
 from app.logic.benchmark.controllers.BenchmarkExecutionController import BenchmarkExecutionController
 from app.logic.benchmark.controllers.BenchmarkFluctuationController import BenchmarkFluctuationController
+from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
+from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
+from app.logic.gitrepo.models.GitProjectModel import GitProjectEntry
+from app.logic.gitrepo.models.GitBranchModel import GitBranchEntry
+from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
 from app.logic.httpcommon import res, val
+from app.logic.httpcommon.Page import Page
 
 FLUCTUATION_WINDOW = 2
+BENCH_QUICK_DEFAULT_PAGE = 1
+BENCH_QUICK_ITEMS = 30
 
 def check_benchmark_json_ids(report_out):
     """ Checks if the ids inside the report out fields are unique """
@@ -127,3 +136,55 @@ def invalidate_benchmark_execution(request, benchmark_execution_id):
         return res.get_response(200, 'Benchmark Execution invalidated', {})
     else:
         return res.get_response(400, 'Only post allowed', {})
+
+
+def get_benchmark_executions_stacked_quick(request, project_id, branch_id, definition_id, worker_id):
+    """ Returns benchmark executions stacked and paginated """
+    if request.method == 'GET':
+        project = BluesteelProjectEntry.objects.filter(id=project_id).first()
+        if project is None:
+            return res.get_response(404, 'BluesteelProject not found', {})
+
+        git_project = GitProjectEntry.objects.filter(id=project.git_project.id).first()
+        if git_project is None:
+            return res.get_response(404, 'GitProject not found', {})
+
+        branch = GitBranchEntry.objects.filter(id=branch_id, project=git_project).first()
+        if branch is None:
+            return res.get_response(404, 'GitBranchEntry not found', {})
+
+        definition = BenchmarkDefinitionEntry.objects.filter(id=definition_id, project=project).first()
+        if definition is None:
+            return res.get_response(404, 'BenchmarkDefinitionEntry not found', {})
+
+        worker = WorkerEntry.objects.filter(id=worker_id).first()
+        if worker is None:
+            return res.get_response(404, 'WorkerEntry not found', {})
+
+        page = Page(BENCH_QUICK_ITEMS, BENCH_QUICK_DEFAULT_PAGE)
+        commit_hashes_list, pagination = BenchmarkExecutionController.get_bench_exec_commits_paginated(
+            git_project,
+            branch,
+            page
+        )
+        del pagination
+
+        data_exec = BenchmarkExecutionController.get_stacked_executions_from_branch(
+            git_project,
+            branch,
+            commit_hashes_list,
+            definition,
+            worker
+        )
+
+        exec_stacked = BenchmarkExecutionController.get_stacked_data_separated_by_id(data_exec)
+
+        execs = ViewPrepareObjects.prepare_stacked_executions_url_field(request.get_host(), exec_stacked)
+        execs = ViewPrepareObjects.prepare_stacked_executions_json_field(execs)
+
+        data = {}
+        data['stacked_executions'] = execs
+
+        return res.get_response(200, 'Benchmark Execution Stacked', data)
+    else:
+        return res.get_only_get_allowed({})

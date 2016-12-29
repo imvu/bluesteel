@@ -111,7 +111,7 @@ def get_benchmark_execution_window(request, bench_exec_id):
         commit_info = bench_exec.commit.as_object()
 
         exec_stacked = BenchmarkExecutionController.get_benchmark_execution_window(bench_exec, BENCH_EXEC_WINDOW_HALF)
-        executions = ViewPrepareObjects.prepare_stacked_executions_for_html(request.get_host(), exec_stacked)
+        executions = ViewPrepareObjects.prepare_stacked_executions_url_field(request.get_host(), exec_stacked)
         executions = ViewPrepareObjects.prepare_windowed_executions_colors(executions, commit_info['hash'])
         executions = ViewPrepareObjects.prepare_stacked_executions_json_field(executions)
 
@@ -171,7 +171,7 @@ def get_benchmark_executions_stacked(request, project_id, branch_id, definition_
 
         exec_stacked = BenchmarkExecutionController.get_stacked_data_separated_by_id(data_exec)
 
-        executions = ViewPrepareObjects.prepare_stacked_executions_for_html(request.get_host(), exec_stacked)
+        executions = ViewPrepareObjects.prepare_stacked_executions_url_field(request.get_host(), exec_stacked)
         executions = ViewPrepareObjects.prepare_stacked_executions_json_field(executions)
 
         data = {}

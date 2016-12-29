@@ -327,7 +327,7 @@ def prepare_results_from_bench_exec_to_html(execution):
 
     return results
 
-def prepare_stacked_executions_for_html(domain, executions):
+def prepare_stacked_executions_url_field(domain, executions):
     """ Prepare stacked execitions of html """
     results = []
     for key in executions:
