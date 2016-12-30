@@ -11,6 +11,10 @@ resetSelect = function(selectId, text) {
 
     var select = document.getElementById(selectId);
 
+    if (!select.classList.contains('selection_empty')) {
+        select.classList.add('selection_empty');
+    }
+
     var ele = document.createElement('option');
     ele.value = '{}';
     ele.text = text;
@@ -18,6 +22,7 @@ resetSelect = function(selectId, text) {
     ele.disabled = true;
     ele.hidden = true;
 
+    select.selectedIndex = 0;
     select.appendChild(ele);
 }
 
@@ -28,6 +33,8 @@ visualSelect = function(selectId) {
 }
 
 populateLayoutSelect = function(selectId, url) {
+    resetSelect(selectId, 'select Layout...');
+
     var xhr = new XMLHttpRequest();
     xhr.open("GET", url, true);
     xhr.onloadend = function(response) {
@@ -35,8 +42,6 @@ populateLayoutSelect = function(selectId, url) {
 
         if (res_obj['status'] === 200) {
             var select = document.getElementById(selectId);
-
-            resetSelect(selectId, 'select Layout...');
 
             for (var i = 0; i < res_obj['data']['layouts'].length; i++) {
                 var ele = document.createElement('option');
@@ -58,6 +63,8 @@ populateProjectSelect = function(selectProjectId, value, propertyName) {
     if (!(propertyName in jsonValue['url'])) {console.log('propertyName key not found on jsonValue[url]', jsonValue); return;}
     var url = jsonValue['url'][propertyName];
 
+    resetSelect(selectProjectId, 'select Project...');
+
     var xhr = new XMLHttpRequest();
     xhr.open("GET", url, true);
     xhr.onloadend = function(response) {
@@ -65,8 +72,6 @@ populateProjectSelect = function(selectProjectId, value, propertyName) {
 
         if (res_obj['status'] === 200) {
             var select = document.getElementById(selectProjectId);
-
-            resetSelect(selectProjectId, 'select Project...');
 
             for (var i = 0; i < res_obj['data']['projects'].length; i++) {
                 var ele = document.createElement('option');
@@ -88,6 +93,8 @@ populateBranchSelect = function(selectBranchId, value, propertyName) {
     if (!(propertyName in jsonValue['url'])) {console.log('propertyName key not found on jsonValue[url]', jsonValue); return;}
     var url = jsonValue['url'][propertyName];
 
+    resetSelect(selectBranchId, 'select Branch...');
+
     var xhr = new XMLHttpRequest();
     xhr.open("GET", url, true);
     xhr.onloadend = function(response) {
@@ -95,8 +102,6 @@ populateBranchSelect = function(selectBranchId, value, propertyName) {
 
         if (res_obj['status'] === 200) {
             var select = document.getElementById(selectBranchId);
-
-            resetSelect(selectBranchId, 'select Branch...');
 
             for (var i = 0; i < res_obj['data']['branches'].length; i++) {
                 var ele = document.createElement('option');
@@ -119,6 +124,8 @@ populateBenchmarkDefinitionSelect = function(selectDefId, value, propertyName) {
     if (!(propertyName in jsonValue['url'])) {console.log('propertyName key not found on jsonValue[url]', jsonValue); return;}
     var url = jsonValue['url'][propertyName];
 
+    resetSelect(selectDefId, 'select Benchmark Definition...');
+
     var xhr = new XMLHttpRequest();
     xhr.open("GET", url, true);
     xhr.onloadend = function(response) {
@@ -126,8 +133,6 @@ populateBenchmarkDefinitionSelect = function(selectDefId, value, propertyName) {
 
         if (res_obj['status'] === 200) {
             var select = document.getElementById(selectDefId);
-
-            resetSelect(selectDefId, 'select Benchmark Definition...');
 
             for (var i = 0; i < res_obj['data']['definitions'].length; i++) {
                 var ele = document.createElement('option');
@@ -149,6 +154,8 @@ populateBenchmarkWorkerSelect = function(selectWorkerId, value, propertyName) {
     if (!(propertyName in jsonValue['url'])) {console.log('propertyName key not found on jsonValue[url]', jsonValue); return;}
     var url = jsonValue['url'][propertyName];
 
+    resetSelect(selectWorkerId, 'select Worker...');
+
     var xhr = new XMLHttpRequest();
     xhr.open("GET", url, true);
     xhr.onloadend = function(response) {
@@ -156,8 +163,6 @@ populateBenchmarkWorkerSelect = function(selectWorkerId, value, propertyName) {
 
         if (res_obj['status'] === 200) {
             var select = document.getElementById(selectWorkerId);
-
-            resetSelect(selectWorkerId, 'select Worker...');
 
             for (var i = 0; i < res_obj['data']['workers'].length; i++) {
                 var ele = document.createElement('option');
@@ -236,6 +241,8 @@ populateDataEmpty = function(elementID) {
 }
 
 tryPopulateCharts = function(selLayoutId, selProjectId, selBranchId, selDefinitionId, selWorkerId) {
+    removeElements('data_container');
+
     var selLayout = document.getElementById(selLayoutId);
     if (selLayout === undefined) {console.log('No select Layout found!'); return;}
     var jsonLayout = JSON.parse(selLayout.options[selLayout.selectedIndex].value);
@@ -273,9 +280,6 @@ tryPopulateCharts = function(selLayoutId, selProjectId, selBranchId, selDefiniti
         var res_obj = JSON.parse(xhr.response);
 
         if (res_obj['status'] === 200) {
-            console.log(res_obj['data']);
-
-            removeElements('data_container');
 
             if (res_obj['data']['stacked_executions'].length > 0) {
                 populateData('data_container', res_obj['data']['stacked_executions']);
