@@ -210,6 +210,6 @@ stackedchartVerticalBars = function(objId, data) {
     document.getElementById(objId).onclick = function(evt){
         var activeBars = myBarChart.getBarsAtEvent(evt);
         console.log("activeBars", activeBars);
-        window.location = activeBars[0].benchmarkExecutionUrl
+        window.open(activeBars[0].benchmarkExecutionUrl);
     }.bind(myBarChart);
 }
