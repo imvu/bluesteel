@@ -486,7 +486,7 @@ def main():
 
                 if not res['succeed']:
                     print '+ process_update_worker_files failed.'
-                    print '- out: ', res['message']
+                    print '- out: ', res['content']
                     print '+ waiting {0} seconds to retry.'.format(RETRY_CONNECTION_TIME)
                     time.sleep(RETRY_CONNECTION_TIME)
                     continue
