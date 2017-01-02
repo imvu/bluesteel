@@ -205,38 +205,38 @@ For every Benchmark Definition and every commit of that Benchmark Definition's P
 
 BlueSteel can understand 3 types of outputs now:
 
-**Text**
+- **Text**
 
-If the output of a command is a json string with the form below, BlueSteel will show a text on the benchmark execution page. In this case, "data" field should be a string.
-
-
-```
-#!python
-
-{
-    "id" : <id_here>
-    "visual_type" : "text",
-    "data" : "This is a text that will be shown on the result page."
-}
-```
-
-**Vertical Bars**
-
-If the output of a command is a json string that follows the form below, BlueSteel will show a chart with vertical bars representing the "data" property. In this case, the "data" field should be a vector of numbers.
+    If the output of a command is a json string with the form below, BlueSteel will show a text on the benchmark execution page. In this case, "data" field should be a string.
 
 
 ```
 #!python
 
-{
-    "id" : <id_here>
-    "visual_type" : "vertical_bars",
-    "data" : [28, 28, 29, 30, 30]
-}
+    {
+        "id" : <id_here>
+        "visual_type" : "text",
+        "data" : "This is a text that will be shown on the result page."
+    }
 ```
 
-- In the case of vertical bars, BlueSteel knows how to stack them to visualize in a single chart many commits. This is helpful to see which is the performance across several commits.
+- **Vertical Bars**
 
-**Unknown output**
+    If the output of a command is a json string that follows the form below, BlueSteel will show a chart with vertical bars representing the "data" property. In this case, the "data" field should be a vector of numbers.
 
-If the command output is something different than the previous two types (text, vertical_bars), BlueSteel will mark the output as an unknown type and will show the output as it is in the result page.
+    In the case of vertical bars, BlueSteel knows how to stack them to visualize in a single chart many commits. This is helpful to see which is the performance across several commits.
+
+
+```
+#!python
+
+    {
+        "id" : <id_here>
+        "visual_type" : "vertical_bars",
+        "data" : [28, 28, 29, 30, 30]
+    }
+```
+
+- **Unknown output**
+
+    If the command output is something different than the previous two types (text, vertical_bars), BlueSteel will mark the output as an unknown type and will show the output as it is in the result page.
