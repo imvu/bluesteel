@@ -180,7 +180,7 @@ The **Logic** folder contains all the internal apps, each of these apps is in ch
 - Add/Modify the commands that will be executed for this Definition.
 - Select the required maximum amount of fluctuation percent (%) between Benchmark Executions to send a notification (email) to the commit author.
 - Add fluctuation overrides if necessary.
-- Select the maximum weeks old a commit can be to rise a notification if a fluctuation happens.
+- Select the maximum weeks that an old commit can be to rise a notification if a fluctuation happens.
 - Click `Save` button.
 
 While adding commands, you can use `{command_hash}` string. This string will be replaced by the current git commit hash.
@@ -201,7 +201,7 @@ These commands will be executed for every commit replacing the `{commit_hash}` b
 
 **2.- Benchmark Executions**
 
-For every benchmark definition and every commit of that benchmark definition's project, BlueSteel will create a Benchmark Execution. A Benchmark Execution will hold the results of the commands specified on the Benchmark Definition.
+For every Benchmark Definition and every commit of that Benchmark Definition's Project, BlueSteel will create a Benchmark Execution. A Benchmark Execution will hold the results of the executed commands specified on the Benchmark Definition.
 
 BlueSteel can understand 3 types of outputs now:
 
