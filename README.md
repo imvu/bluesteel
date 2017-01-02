@@ -207,7 +207,7 @@ BlueSteel can understand 3 types of outputs now:
 
 - **Text**
 
-    If the output of a command is a json string with the form below, BlueSteel will show a text on the benchmark execution page. In this case, "data" field should be a string.
+    If the output of a command is a JSON string with the form below, BlueSteel will show a text on the Benchmark Execution page. In this case, "data" field should be a string.
 
 
 ```
@@ -222,7 +222,7 @@ BlueSteel can understand 3 types of outputs now:
 
 - **Vertical Bars**
 
-    If the output of a command is a json string that follows the form below, BlueSteel will show a chart with vertical bars representing the "data" property. In this case, the "data" field should be a vector of numbers.
+    If the output of a command is a JSON string that follows the form below, BlueSteel will show a chart with vertical bars representing the "data" property. In this case, the "data" field should be a vector of numbers.
 
     In the case of vertical bars, BlueSteel knows how to stack them to visualize in a single chart many commits. This is helpful to see which is the performance across several commits.
 
@@ -239,4 +239,4 @@ BlueSteel can understand 3 types of outputs now:
 
 - **Unknown output**
 
-    If the command output is something different than the previous two types (text, vertical_bars), BlueSteel will mark the output as an unknown type and will show the output as it is in the result page.
+    If the command output is something different than the previous two types (text and vertical_bars), BlueSteel will mark the output as an unknown type and will show the output as it is in the result page.
