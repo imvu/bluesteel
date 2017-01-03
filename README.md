@@ -100,24 +100,6 @@
 - Make login with your super user.
 - Now you have privileges to create Layouts, Projects, Benchmark Definitions, etc.
 
-### Do you want to contribute? ###
-
-- Make commits as atomic and small as possible.
-- Write tests for all the code you write.
-- Make a pull request and submit it.
-- For any related questions, please contact `llorens.marti@gmail.com`
-
-### How BlueSteel source code is organized ###
-
-All the BlueSteel code lives inside the `app/` folder and it is divided into 2 parts:
-
-- Presenter
-- Logic
-
-The **Presenter** folder contains all the code that builds the HTML front web page, contains the JSON public API, deals with URLs, and utilizes all the apps located in the `logic/` folder to handle the data properly. All the code that interacts with the user/customer should live in this folder.
-
-The **Logic** folder contains all the internal apps, each of these apps is in charge of handle BlueSteel's internal data. Neither public API calls, URLs, nor Views are allowed at this level. The majority of the apps try to follow the pattern of Controller - Model, where the Controller holds almost all the logic to interact with the models.
-
 
 ## Working with BlueSteel ##
 
@@ -249,3 +231,26 @@ BlueSteel can understand 3 types of outputs now:
 - **Unknown output**
 
     If the command output is something different than the previous two types (text and vertical_bars), BlueSteel will mark the output as an unknown type and will show the output as it is in the result page.
+
+
+## Contributing ##
+
+### Commit convention ###
+
+- Make commits as atomic and small as possible.
+- Write tests for all the code you write.
+- Make a pull request and submit it.
+
+### How BlueSteel source code is organized ###
+
+All the BlueSteel code lives inside the `app/` folder and it is divided into 2 parts:
+
+- Presenter
+- Logic
+
+The **Presenter** folder contains all the code that builds the HTML front web page, contains the JSON public API, deals with URLs, and utilizes all the apps located in the `logic/` folder to handle the data properly. All the code that interacts with the user/customer should live in this folder.
+
+The **Logic** folder contains all the internal apps, each of these apps is in charge of handle BlueSteel's internal data. Neither public API calls, URLs, nor Views are allowed at this level. The majority of the apps try to follow the pattern of Controller - Model, where the Controller holds almost all the logic to interact with the models.
+
+### Contact ###
+- For any related questions, please contact `llorens.marti@gmail.com`
