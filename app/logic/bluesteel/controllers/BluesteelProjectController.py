@@ -69,16 +69,20 @@ class BluesteelProjectController(object):
             command_set_fetch,
             4,
             'git submodule update --init --recursive --force')
-        BluesteelProjectController.create_command(command_set_fetch, 5, 'git checkout master')
-        BluesteelProjectController.create_command(command_set_fetch, 6, 'git reset --hard origin/master')
-        BluesteelProjectController.create_command(command_set_fetch, 7, 'git clean -d -f -q')
-        BluesteelProjectController.create_command(command_set_fetch, 8, 'git fetch --all -p')
-        BluesteelProjectController.create_command(command_set_fetch, 9, 'git pull -r origin master')
-        BluesteelProjectController.create_command(command_set_fetch, 10, 'git checkout master')
-        BluesteelProjectController.create_command(command_set_fetch, 11, 'git submodule sync --recursive')
         BluesteelProjectController.create_command(
             command_set_fetch,
-            12,
+            5,
+            'git submodule foreach --recursive git clean -x -d -f -q')
+        BluesteelProjectController.create_command(command_set_fetch, 6, 'git checkout master')
+        BluesteelProjectController.create_command(command_set_fetch, 7, 'git reset --hard origin/master')
+        BluesteelProjectController.create_command(command_set_fetch, 8, 'git clean -d -f -q')
+        BluesteelProjectController.create_command(command_set_fetch, 9, 'git fetch --all -p')
+        BluesteelProjectController.create_command(command_set_fetch, 10, 'git pull -r origin master')
+        BluesteelProjectController.create_command(command_set_fetch, 11, 'git checkout master')
+        BluesteelProjectController.create_command(command_set_fetch, 12, 'git submodule sync --recursive')
+        BluesteelProjectController.create_command(
+            command_set_fetch,
+            13,
             'git submodule update --init --recursive --force')
         return command_set_fetch
 

@@ -22,6 +22,23 @@ class BluesteelViewLayoutTestCase(TestCase):
     def tearDown(self):
         pass
 
+    def check_default_fetch_commands(self):
+        self.assertEqual(1, CommandEntry.objects.filter(order=0, command='git reset HEAD').count())
+        self.assertEqual(1, CommandEntry.objects.filter(order=1, command='git checkout -- .').count())
+        self.assertEqual(1, CommandEntry.objects.filter(order=2, command='git clean -d -f -q').count())
+        self.assertEqual(1, CommandEntry.objects.filter(order=3, command='git submodule sync --recursive').count())
+        self.assertEqual(1, CommandEntry.objects.filter(order=4, command='git submodule update --init --recursive --force').count())
+        self.assertEqual(1, CommandEntry.objects.filter(order=5, command='git submodule foreach --recursive git clean -x -d -f -q').count())
+        self.assertEqual(1, CommandEntry.objects.filter(order=6, command='git checkout master').count())
+        self.assertEqual(1, CommandEntry.objects.filter(order=7, command='git reset --hard origin/master').count())
+        self.assertEqual(1, CommandEntry.objects.filter(order=8, command='git clean -d -f -q').count())
+        self.assertEqual(1, CommandEntry.objects.filter(order=9, command='git fetch --all -p').count())
+        self.assertEqual(1, CommandEntry.objects.filter(order=10, command='git pull -r origin master').count())
+        self.assertEqual(1, CommandEntry.objects.filter(order=11, command='git checkout master').count())
+        self.assertEqual(1, CommandEntry.objects.filter(order=12, command='git submodule sync --recursive').count())
+        self.assertEqual(1, CommandEntry.objects.filter(order=13, command='git submodule update --init --recursive --force').count())
+        return True
+
     def test_save_bluesteel_layout(self):
         obj = {}
         obj['name'] = 'layout-2'
@@ -195,25 +212,14 @@ class BluesteelViewLayoutTestCase(TestCase):
         self.assertEqual(1, BluesteelProjectEntry.objects.filter(order=0).count())
         self.assertEqual(1, BluesteelProjectEntry.objects.filter(order=1).count())
 
-    def test_add_bluesteel_project_to_layout(self):
+    def test_delete_bluesteel_project_to_layout(self):
         layout_entry = BluesteelLayoutController.create_new_default_layout()
 
         self.assertEqual(1, BluesteelLayoutEntry.objects.filter(id=layout_entry.id).count())
         self.assertEqual(1, BluesteelProjectEntry.objects.all().count())
 
-        self.assertEqual(1, CommandEntry.objects.filter(order=0, command='git reset HEAD').count())
-        self.assertEqual(1, CommandEntry.objects.filter(order=1, command='git checkout -- .').count())
-        self.assertEqual(1, CommandEntry.objects.filter(order=2, command='git clean -d -f -q').count())
-        self.assertEqual(1, CommandEntry.objects.filter(order=3, command='git submodule sync --recursive').count())
-        self.assertEqual(1, CommandEntry.objects.filter(order=4, command='git submodule update --init --recursive --force').count())
-        self.assertEqual(1, CommandEntry.objects.filter(order=5, command='git checkout master').count())
-        self.assertEqual(1, CommandEntry.objects.filter(order=6, command='git reset --hard origin/master').count())
-        self.assertEqual(1, CommandEntry.objects.filter(order=7, command='git clean -d -f -q').count())
-        self.assertEqual(1, CommandEntry.objects.filter(order=8, command='git fetch --all -p').count())
-        self.assertEqual(1, CommandEntry.objects.filter(order=9, command='git pull -r origin master').count())
-        self.assertEqual(1, CommandEntry.objects.filter(order=10, command='git checkout master').count())
-        self.assertEqual(1, CommandEntry.objects.filter(order=11, command='git submodule sync --recursive').count())
-        self.assertEqual(1, CommandEntry.objects.filter(order=12, command='git submodule update --init --recursive --force').count())
+        self.assertEqual(15, CommandEntry.objects.all().count())
+        self.assertTrue(self.check_default_fetch_commands())
 
         resp = self.client.post(
             '/main/layout/{0}/delete/'.format(layout_entry.id),
