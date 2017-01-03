@@ -1,12 +1,36 @@
 # BlueSteel (Beta) #
 
-## Description ##
+## What is BlueSteel ##
 
-- BlueSteel is a tool to help track your project performance per commit and per branch.
+- BlueSteel is a tool to help track your project performance per commit, per branch and per machine.
+
+## How BlueSteel works ##
+
+- BlueSteel will benchmark every commit of your project. To achieve that goal, BlueSteel uses 4 concepts: `Layouts + Projects`, `Workers`, `Definitions` and `Executions`.
+
+- `Layouts + Projects`: A *Layout* is a group of projects, and a *Project* is the information that BlueSteel will use to *clone*, *pull*, *identify* where the source code lives, and check the *state* of the project (Active or Inactive). We will need to setup a Layout and a Project if we want to use BlueSteel.
+
+- `Workers`: A *Worker* is a software downloaded from BlueSteel and capable of communicating back and forth with it. This worker will accomplish several tasks like: 
+
+    - Clone and/or pull an existing project into the worker´s host machine.
+    - Setup the project´s source code state at the correct commit.
+    - Execute the right benchmark for that commit.
+    - Report back the results of that benchmark to BlueSteel.
+
+- `Definitions`: A *Benchmark Definition* is a list of commands that a worker will execute sequentially and will report back to BlueSteel. Normally a Benchmark Definition will be executed per every combination of commit and worker present in BlueSteel. This can be controlled on the Benchmark Definition's setup page.
+
+- `Executions`: A *Benchmark Execution* is the result of all the executed commands present on a Benchmark Definition. Those results will provide enough information to BlueSteel to represent visual charts and to generate notifications in the case of fluctuations.
+
+## Why use BlueSteel ##
+
+- It reduces the time required to fix a performance regression by quickly informing which is the problematic commit.
+- The Commit Author (supposedly who has the most context on the affected code) will get a notification with benchmark reports to help him fix the issue.
+- Improves confidence with branch experiments by comparing its performance with stable ones.
+
 
 ## License ##
 
-- This project is released under the terms of the license specified in the project's repository or if not specified, under the MIT License.
+- This project is released under the terms of the license specified in the project's repository or if not specified, under the [MIT License](https://opensource.org/licenses/MIT).
 
 ## Installing BlueSteel ##
 
@@ -27,6 +51,8 @@
 - Test everything is ok: `s/test-bluesteel.py`
 
 ### Install PostgreSQL database (optional)###
+
+*Using PostgreSQL will help BlueSteel handle better multiple requests at the same time. SQLite will perform worst in that scenario*
 
 - Go to [http://postgresapp.com](http://postgresapp.com) and download the app.
 - Install it! (in OS X means to move it to the Applications folder)
@@ -91,23 +117,6 @@ All the BlueSteel code lives inside the `app/` folder and it is divided into 2 p
 The **Presenter** folder contains all the code that builds the HTML front web page, contains the JSON public API, deals with URLs, and utilizes all the apps located in the `logic/` folder to handle the data properly. All the code that interacts with the user/customer should live in this folder.
 
 The **Logic** folder contains all the internal apps, each of these apps is in charge of handle BlueSteel's internal data. Neither public API calls, URLs, nor Views are allowed at this level. The majority of the apps try to follow the pattern of Controller - Model, where the Controller holds almost all the logic to interact with the models.
-
-## What is BlueSteel ##
-
-- BlueSteel is a tool that helps us to track the performance of a given project. To achieve that goal, BlueSteel uses 4 concepts: `Layouts + Projects`, `Workers`, `Definitions` and `Executions`.
-
-- `Layouts + Projects`: A *Layout* is a group of projects, and a *Project* is the information that BlueSteel will use to *clone*, *pull*, *identify* where the source code lives, and check the *state* of the project (Active or Inactive). We will need to setup a Layout and a Project if we want to use BlueSteel.
-
-- `Workers`: A *Worker* is a software downloaded from BlueSteel and capable of communicating back and forth with it. This worker will accomplish several tasks like: 
-
-    - Clone and/or pull an existing project into the worker´s host machine.
-    - Setup the project´s source code state at the correct commit.
-    - Execute the right benchmark for that commit.
-    - Report back the results of that benchmark to BlueSteel.
-
-- `Definitions`: A *Benchmark Definition* is a list of commands that a worker will execute sequentially and will report back to BlueSteel. Normally a Benchmark Definition will be executed per every combination of commit and worker present in BlueSteel. This can be controlled on the Benchmark Definition's setup page.
-
-- `Executions`: A *Benchmark Execution* is the result of all the executed commands present on a Benchmark Definition. Those results will provide enough information to BlueSteel to represent visual charts and to generate notifications in the case of fluctuations.
 
 
 ## Working with BlueSteel ##
