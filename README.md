@@ -1,12 +1,12 @@
 # BlueSteel (Beta) #
 
-## What is BlueSteel ##
+## What is BlueSteel ?##
 
 - BlueSteel is a tool to help track your project performance per commit, per branch and per machine.
 
-## How BlueSteel works ##
+## How BlueSteel works ?##
 
-- BlueSteel will benchmark every commit of your project. To achieve that goal, BlueSteel uses 4 concepts: `Layouts + Projects`, `Workers`, `Definitions` and `Executions`.
+- BlueSteel will benchmark every commit of your project, and will notify you if there is a fluctuation. To achieve that goal, BlueSteel uses 4 concepts: `Layouts + Projects`, `Workers`, `Definitions` and `Executions`.
 
 - `Layouts + Projects`: A *Layout* is a group of projects, and a *Project* is the information that BlueSteel will use to *clone*, *pull*, *identify* where the source code lives, and check the *state* of the project (Active or Inactive). We will need to setup a Layout and a Project if we want to use BlueSteel.
 
@@ -21,7 +21,7 @@
 
 - `Executions`: A *Benchmark Execution* is the result of all the executed commands present on a Benchmark Definition. Those results will provide enough information to BlueSteel to represent visual charts and to generate notifications in the case of fluctuations.
 
-## Why use BlueSteel ##
+## Why use BlueSteel ?##
 
 - It reduces the time required to fix a performance regression by quickly informing which is the problematic commit.
 - The Commit Author (supposedly who has the most context on the affected code) will get a notification with benchmark reports to help him fix the issue.
@@ -36,7 +36,7 @@
 
 ### Preparation ###
 
-- Install Python 2.7.10
+- Install [Python 2.7.10](https://www.python.org/)
 - Install pip: `sudo easy_install pip`
 - Install virtualenv: `sudo pip install virtualenv`
 - Create a Bluesteel folder: `mkdir bluesteel-project`, `cd bluesteel-project`
@@ -177,17 +177,17 @@
 While adding commands, you can use `{command_hash}` string. This string will be replaced by the current git commit hash.
 For example, we can define the list of commands of one Benchmark Definition as:
 
-    git checkout {commit_hash}
-    git submodule update --init --recursive
-    s/build_project
-    s/benchmark_project
+        git checkout {commit_hash}
+        git submodule update --init --recursive
+        s/build_project
+        s/benchmark_project
 
 These commands will be executed for every commit replacing the `{commit_hash}` by the proper value, for example:
 
-    git checkout 0000100001000010000100001000010000100001
-    git submodule update --init --recursive
-    s/build_project
-    s/benchmark_project
+        git checkout 0000100001000010000100001000010000100001
+        git submodule update --init --recursive
+        s/build_project
+        s/benchmark_project
 
 
 **2.- Benchmark Executions**
