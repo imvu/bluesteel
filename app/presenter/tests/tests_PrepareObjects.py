@@ -175,9 +175,9 @@ class PrepareObjectsTestCase(TestCase):
         exec_obj = exec_entry.as_object()
         bench_exe = ViewPrepareObjects.prepare_benchmark_execution_for_html(exec_obj, 'http://my.domain.com')
 
-        self.assertEqual('command-1 0000100001000010000100001000010000100001', bench_exe['definition']['command_set']['commands'][0]['command'])
-        self.assertEqual('command-2 0000100001000010000100001000010000100001', bench_exe['definition']['command_set']['commands'][1]['command'])
-        self.assertEqual('command-3 0000100001000010000100001000010000100001', bench_exe['definition']['command_set']['commands'][2]['command'])
+        self.assertEqual('git checkout 0000100001000010000100001000010000100001 0000100001000010000100001000010000100001', bench_exe['definition']['command_set']['commands'][0]['command'])
+        self.assertEqual('git submodule update --init --recursive 0000100001000010000100001000010000100001', bench_exe['definition']['command_set']['commands'][1]['command'])
+        self.assertEqual('<add_more_commands_here> 0000100001000010000100001000010000100001', bench_exe['definition']['command_set']['commands'][2]['command'])
 
 
     def test_prepare_objects_from_benchmark_execution_with_command_substitution(self):

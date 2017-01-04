@@ -30,6 +30,13 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
     def tearDown(self):
         pass
 
+    def get_default_commands(self):
+        commands = []
+        commands.append('git checkout {commit_hash}')
+        commands.append('git submodule update --init --recursive')
+        commands.append('<add_more_commands_here>')
+        return commands
+
     def test_create_default_definition_commands(self):
         self.assertEqual(0, CommandGroupEntry.objects.all().count())
         self.assertEqual(0, CommandSetEntry.objects.all().count())
@@ -129,9 +136,9 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
         self.assertEqual(1, BluesteelLayoutEntry.objects.all().count())
         self.assertEqual(1, BluesteelProjectEntry.objects.all().count())
         self.assertNotEqual(None, definition.command_set)
-        self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='command-1').count())
-        self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='command-2').count())
-        self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='command-3').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='git checkout {commit_hash}').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='git submodule update --init --recursive').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='<add_more_commands_here>').count())
         self.assertEqual(0, CommandResultEntry.objects.all().count())
         self.assertEqual(False, definition.active)
         self.assertEqual(0, definition.revision)
@@ -140,10 +147,7 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
         self.assertEqual('default-name', definition.name)
         self.assertEqual(0, BenchmarkFluctuationOverrideEntry.objects.all().count())
 
-        commands = []
-        commands.append('command-1')
-        commands.append('command-2')
-        commands.append('command-3')
+        commands = self.get_default_commands()
 
         overrides = []
         overrides.append({'result_id' : 'id1', 'override_value' : 28})
@@ -153,9 +157,9 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
         definition = BenchmarkDefinitionEntry.objects.all().first()
 
         self.assertEqual(definition, result)
-        self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='command-1').count())
-        self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='command-2').count())
-        self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='command-3').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='git checkout {commit_hash}').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='git submodule update --init --recursive').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='<add_more_commands_here>').count())
         self.assertEqual(True, definition.active)
         self.assertEqual(0, definition.revision)
         self.assertEqual(0, definition.max_fluctuation_percent)
@@ -269,10 +273,7 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
         project = BluesteelProjectController.create_default_project(layout, 'project', 0)
         definition = BenchmarkDefinitionController.create_default_benchmark_definition()
 
-        commands = []
-        commands.append('command-1')
-        commands.append('command-2')
-        commands.append('command-3')
+        commands = self.get_default_commands()
 
         self.assertEqual(False, BenchmarkDefinitionController.is_benchmark_definition_equivalent(definition.id, 2028, project.id, commands))
 
@@ -281,10 +282,7 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
         project = BluesteelProjectController.create_default_project(layout, 'project', 0)
         definition = BenchmarkDefinitionController.create_default_benchmark_definition()
 
-        commands = []
-        commands.append('command-1')
-        commands.append('command-2')
-        commands.append('command-3')
+        commands = self.get_default_commands()
 
         self.assertEqual(False, BenchmarkDefinitionController.is_benchmark_definition_equivalent(definition.id, layout.id, 2028, commands))
 
@@ -305,10 +303,7 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
         project = BluesteelProjectController.create_default_project(layout, 'project', 0)
         definition = BenchmarkDefinitionController.create_default_benchmark_definition()
 
-        commands = []
-        commands.append('command-1')
-        commands.append('command-2')
-        commands.append('command-3')
+        commands = self.get_default_commands()
 
         self.assertEqual(True, BenchmarkDefinitionController.is_benchmark_definition_equivalent(definition.id, layout.id, project.id, commands))
 

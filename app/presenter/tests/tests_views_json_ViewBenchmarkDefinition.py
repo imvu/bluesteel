@@ -120,9 +120,9 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
 
         self.assertEqual('default-name', definition.name)
         self.assertEqual(False, definition.active)
-        self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='command-1').count())
-        self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='command-2').count())
-        self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='command-3').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='git checkout {commit_hash}').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='git submodule update --init --recursive').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='<add_more_commands_here>').count())
         self.assertEqual(0, BenchmarkFluctuationOverrideEntry.objects.all().count())
 
         project = BluesteelProjectEntry.objects.filter(layout=layout).first()
@@ -161,9 +161,9 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
         self.assertEqual(28, definition.max_fluctuation_percent)
         self.assertEqual(8, definition.max_weeks_old_notify)
 
-        self.assertEqual(0, CommandEntry.objects.filter(command_set=definition.command_set, command='command-1').count())
-        self.assertEqual(0, CommandEntry.objects.filter(command_set=definition.command_set, command='command-2').count())
-        self.assertEqual(0, CommandEntry.objects.filter(command_set=definition.command_set, command='command-3').count())
+        self.assertEqual(0, CommandEntry.objects.filter(command_set=definition.command_set, command='git checkout {commit_hash}').count())
+        self.assertEqual(0, CommandEntry.objects.filter(command_set=definition.command_set, command='git submodule update --init --recursive').count())
+        self.assertEqual(0, CommandEntry.objects.filter(command_set=definition.command_set, command='<add_more_commands_here>').count())
 
         self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='command-28').count())
         self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='command-29').count())

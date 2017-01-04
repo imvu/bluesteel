@@ -142,9 +142,10 @@ class BenchmarkExecutionViewJsonTestCase(TestCase):
         self.assertEqual(18, CommandEntry.objects.all().count())
         self.assertEqual(1, CommandEntry.objects.filter(command='git clone http://www.test.com').count())
         self.assertTrue(self.check_default_fetch_commands())
-        self.assertEqual(1, CommandEntry.objects.filter(command='command-1').count())
-        self.assertEqual(1, CommandEntry.objects.filter(command='command-2').count())
-        self.assertEqual(1, CommandEntry.objects.filter(command='command-3').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='git checkout {commit_hash}').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='git submodule update --init --recursive').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='<add_more_commands_here>').count())
+
         self.assertEqual(0, CommandResultEntry.objects.all().count())
 
         resp = self.client.post(
@@ -163,9 +164,9 @@ class BenchmarkExecutionViewJsonTestCase(TestCase):
         self.assertEqual(19, CommandEntry.objects.all().count())
         self.assertEqual(1, CommandEntry.objects.filter(command='git clone http://www.test.com').count())
         self.assertTrue(self.check_default_fetch_commands())
-        self.assertEqual(1, CommandEntry.objects.filter(command='command-1').count())
-        self.assertEqual(1, CommandEntry.objects.filter(command='command-2').count())
-        self.assertEqual(1, CommandEntry.objects.filter(command='command-3').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='git checkout {commit_hash}').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='git submodule update --init --recursive').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='<add_more_commands_here>').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='command-vertical-bars').count())
         self.assertEqual(1, CommandResultEntry.objects.all().count())
 
@@ -200,9 +201,9 @@ class BenchmarkExecutionViewJsonTestCase(TestCase):
         self.assertEqual(18, CommandEntry.objects.all().count())
         self.assertEqual(1, CommandEntry.objects.filter(command='git clone http://www.test.com').count())
         self.assertTrue(self.check_default_fetch_commands())
-        self.assertEqual(1, CommandEntry.objects.filter(command='command-1').count())
-        self.assertEqual(1, CommandEntry.objects.filter(command='command-2').count())
-        self.assertEqual(1, CommandEntry.objects.filter(command='command-3').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='git checkout {commit_hash}').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='git submodule update --init --recursive').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='<add_more_commands_here>').count())
         self.assertEqual(0, CommandResultEntry.objects.all().count())
 
         resp = self.client.post(
@@ -221,9 +222,9 @@ class BenchmarkExecutionViewJsonTestCase(TestCase):
         self.assertEqual(19, CommandEntry.objects.all().count())
         self.assertEqual(1, CommandEntry.objects.filter(command='git clone http://www.test.com').count())
         self.assertTrue(self.check_default_fetch_commands())
-        self.assertEqual(1, CommandEntry.objects.filter(command='command-1').count())
-        self.assertEqual(1, CommandEntry.objects.filter(command='command-2').count())
-        self.assertEqual(1, CommandEntry.objects.filter(command='command-3').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='git checkout {commit_hash}').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='git submodule update --init --recursive').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='<add_more_commands_here>').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='command-text').count())
         self.assertEqual(1, CommandResultEntry.objects.all().count())
 
@@ -258,9 +259,9 @@ class BenchmarkExecutionViewJsonTestCase(TestCase):
         self.assertEqual(18, CommandEntry.objects.all().count())
         self.assertEqual(1, CommandEntry.objects.filter(command='git clone http://www.test.com').count())
         self.assertTrue(self.check_default_fetch_commands())
-        self.assertEqual(1, CommandEntry.objects.filter(command='command-1').count())
-        self.assertEqual(1, CommandEntry.objects.filter(command='command-2').count())
-        self.assertEqual(1, CommandEntry.objects.filter(command='command-3').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='git checkout {commit_hash}').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='git submodule update --init --recursive').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='<add_more_commands_here>').count())
         self.assertEqual(0, CommandResultEntry.objects.all().count())
 
         resp = self.client.post(
@@ -279,9 +280,9 @@ class BenchmarkExecutionViewJsonTestCase(TestCase):
         self.assertEqual(19, CommandEntry.objects.all().count())
         self.assertEqual(1, CommandEntry.objects.filter(command='git clone http://www.test.com').count())
         self.assertTrue(self.check_default_fetch_commands())
-        self.assertEqual(1, CommandEntry.objects.filter(command='command-1').count())
-        self.assertEqual(1, CommandEntry.objects.filter(command='command-2').count())
-        self.assertEqual(1, CommandEntry.objects.filter(command='command-3').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='git checkout {commit_hash}').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='git submodule update --init --recursive').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='<add_more_commands_here>').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='command-unknown').count())
         self.assertEqual(1, CommandResultEntry.objects.all().count())
 
@@ -362,9 +363,9 @@ class BenchmarkExecutionViewJsonTestCase(TestCase):
         self.assertEqual(18, CommandEntry.objects.all().count())
         self.assertEqual(1, CommandEntry.objects.filter(command='git clone http://www.test.com').count())
         self.assertTrue(self.check_default_fetch_commands())
-        self.assertEqual(1, CommandEntry.objects.filter(command='command-1').count())
-        self.assertEqual(1, CommandEntry.objects.filter(command='command-2').count())
-        self.assertEqual(1, CommandEntry.objects.filter(command='command-3').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='git checkout {commit_hash}').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='git submodule update --init --recursive').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='<add_more_commands_here>').count())
         self.assertEqual(0, CommandResultEntry.objects.all().count())
 
         resp = self.client.post(
@@ -380,9 +381,9 @@ class BenchmarkExecutionViewJsonTestCase(TestCase):
         self.assertEqual(18, CommandEntry.objects.all().count())
         self.assertEqual(1, CommandEntry.objects.filter(command='git clone http://www.test.com').count())
         self.assertTrue(self.check_default_fetch_commands())
-        self.assertEqual(1, CommandEntry.objects.filter(command='command-1').count())
-        self.assertEqual(1, CommandEntry.objects.filter(command='command-2').count())
-        self.assertEqual(1, CommandEntry.objects.filter(command='command-3').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='git checkout {commit_hash}').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='git submodule update --init --recursive').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='<add_more_commands_here>').count())
         self.assertEqual(0, CommandResultEntry.objects.all().count())
 
 
@@ -410,9 +411,9 @@ class BenchmarkExecutionViewJsonTestCase(TestCase):
         self.assertEqual(18, CommandEntry.objects.all().count())
         self.assertEqual(1, CommandEntry.objects.filter(command='git clone http://www.test.com').count())
         self.assertTrue(self.check_default_fetch_commands())
-        self.assertEqual(1, CommandEntry.objects.filter(command='command-1').count())
-        self.assertEqual(1, CommandEntry.objects.filter(command='command-2').count())
-        self.assertEqual(1, CommandEntry.objects.filter(command='command-3').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='git checkout {commit_hash}').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='git submodule update --init --recursive').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='<add_more_commands_here>').count())
         self.assertEqual(0, CommandResultEntry.objects.all().count())
 
         resp = self.client.post(
@@ -431,9 +432,9 @@ class BenchmarkExecutionViewJsonTestCase(TestCase):
         self.assertEqual(19, CommandEntry.objects.all().count())
         self.assertEqual(1, CommandEntry.objects.filter(command='git clone http://www.test.com').count())
         self.assertTrue(self.check_default_fetch_commands())
-        self.assertEqual(1, CommandEntry.objects.filter(command='command-1').count())
-        self.assertEqual(1, CommandEntry.objects.filter(command='command-2').count())
-        self.assertEqual(1, CommandEntry.objects.filter(command='command-3').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='git checkout {commit_hash}').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='git submodule update --init --recursive').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='<add_more_commands_here>').count())
         self.assertEqual(1, CommandEntry.objects.filter(command='Problem while saving benchmark execution!').count())
         self.assertEqual(1, CommandResultEntry.objects.all().count())
         self.assertEqual(-1, CommandResultEntry.objects.all().first().status)

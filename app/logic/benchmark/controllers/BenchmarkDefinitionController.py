@@ -25,9 +25,9 @@ class BenchmarkDefinitionController(object):
     def create_default_definition_commands():
         """ Creates some default commands """
         com_set = CommandSetEntry.objects.create(name='bencharm-definition', order=0)
-        CommandEntry.objects.create(command_set=com_set, command='command-1', order=0)
-        CommandEntry.objects.create(command_set=com_set, command='command-2', order=1)
-        CommandEntry.objects.create(command_set=com_set, command='command-3', order=2)
+        CommandEntry.objects.create(command_set=com_set, command='git checkout {commit_hash}', order=0)
+        CommandEntry.objects.create(command_set=com_set, command='git submodule update --init --recursive', order=1)
+        CommandEntry.objects.create(command_set=com_set, command='<add_more_commands_here>', order=2)
         return com_set
 
     @staticmethod
