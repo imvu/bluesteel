@@ -18,6 +18,7 @@ body.wall
 {
     margin: 0px;
     background-image: linear-gradient(60deg, rgba(155, 155, 155, 0.5) 5%, rgba(228, 228, 228, 0.35));
+    padding-bottom: 60px;
 }
 
 div.separator_line

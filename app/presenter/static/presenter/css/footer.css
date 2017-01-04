@@ -1,6 +1,12 @@
 div.footer_container
 {
-    background: transparent;
+    background: lightgray;
+    height: 45px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    box-shadow: 0 -4px 8px 0 rgba(0, 0, 0, 0.05);
 }
 
 div.footer_item_container
