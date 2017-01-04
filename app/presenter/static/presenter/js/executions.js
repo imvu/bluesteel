@@ -183,7 +183,7 @@ populateData = function(elementID, data) {
     if (element === undefined) {console.log('Element to populate data not found!'); return;}
 
     var upCard = document.createElement('div');
-    upCard.className = 'upper_card white_card card_fill card_padding_small';
+    upCard.className = 'upper_card white_card card_padding_small';
 
     var title = document.createElement('div');
     title.className = 'title centered';
@@ -195,9 +195,9 @@ populateData = function(elementID, data) {
     for (var i = 0; i < data.length; i++) {
         var stackCard = document.createElement('div');
         if (i >= (data.length - 1)) {
-            stackCard.className = 'lower_card white_card card_fill card_padding_small';
+            stackCard.className = 'lower_card white_card card_padding_small';
         } else {
-            stackCard.className = 'middle_card white_card card_fill card_padding_small';
+            stackCard.className = 'middle_card white_card card_padding_small';
         }
 
         var chartTitle = document.createElement('div');
@@ -207,7 +207,7 @@ populateData = function(elementID, data) {
         var chartCanvas = document.createElement('canvas');
         var chartId = 'chart-' + i;
         chartCanvas.id = chartId;
-        chartCanvas.width = 1150;
+        chartCanvas.width = 1050;
         chartCanvas.height = 220;
 
         stackCard.appendChild(chartTitle);
@@ -229,7 +229,7 @@ populateDataEmpty = function(elementID) {
     if (element === undefined) {console.log('Element to populate data not found!'); return;}
 
     var normalCard = document.createElement('div');
-    normalCard.className = 'card white_card card_fill card_padding_small';
+    normalCard.className = 'card white_card card_padding_small';
 
     var title = document.createElement('div');
     title.className = 'normal centered';

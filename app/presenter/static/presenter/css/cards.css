@@ -17,7 +17,7 @@ div.upper_card
     margin-bottom: 1px;
     margin-left: auto;
     margin-right: auto;
-    display: table;
+    display: block;
 }
 
 div.lower_card
@@ -29,7 +29,7 @@ div.lower_card
     margin-bottom: 10px;
     margin-left: auto;
     margin-right: auto;
-    display: table;
+    display: block;
 }
 
 div.middle_card
@@ -39,16 +39,12 @@ div.middle_card
     margin-bottom: 1px;
     margin-left: auto;
     margin-right: auto;
+    display: block;
 }
 
 div.card_thin
 {
     width: 250px;
-}
-
-div.card_fill
-{
-    width: 100%;
 }
 
 div.card_small
