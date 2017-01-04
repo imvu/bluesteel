@@ -224,7 +224,7 @@ populateData = function(elementID, data) {
     }
 }
 
-populateDataEmpty = function(elementID) {
+populateDataEmpty = function(elementID, message) {
     var element = document.getElementById(elementID);
     if (element === undefined) {console.log('Element to populate data not found!'); return;}
 
@@ -233,7 +233,7 @@ populateDataEmpty = function(elementID) {
 
     var title = document.createElement('div');
     title.className = 'normal centered';
-    title.innerText = 'There are no results on this combination of options.';
+    title.innerText = message;
 
     normalCard.appendChild(title);
     element.appendChild(normalCard);
@@ -282,9 +282,11 @@ tryPopulateCharts = function(selLayoutId, selProjectId, selBranchId, selDefiniti
         if (res_obj['status'] === 200) {
 
             if (res_obj['data']['stacked_executions'].length > 0) {
+                removeElements('data_container');
                 populateData('data_container', res_obj['data']['stacked_executions']);
             } else {
-                populateDataEmpty('data_container');
+                removeElements('data_container');
+                populateDataEmpty('data_container', 'There are no results on this combination of options.');
             }
 
         } else {
@@ -293,4 +295,5 @@ tryPopulateCharts = function(selLayoutId, selProjectId, selBranchId, selDefiniti
     }
     xhr.send("");
 
+    populateDataEmpty('data_container', 'Retreiving data...');
 }
