@@ -46,7 +46,7 @@
 ### Installation ###
  
 - Create bluesteel project folder: `mkdir bluesteel`
-- Get the code: `git clone https://<user>@bitbucket.org/llorensmarti/stronghold.git bluesteel`
+- Get the code: `git clone git://github.com:imvu/bluesteel.git bluesteel`
 - Install requisits: `cd bluesteel`, `s/install-bluesteel.py`
 - Test everything is ok: `s/test-bluesteel.py`
 
