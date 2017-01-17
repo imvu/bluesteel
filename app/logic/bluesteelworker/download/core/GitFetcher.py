@@ -689,8 +689,8 @@ class GitFetcher(object):
                     commit['author']['email'] = CommandExecutioner.remove_non_ascii(commit['author']['email'])
                     commit['committer']['name'] = CommandExecutioner.remove_non_ascii(commit['committer']['name'])
                     commit['committer']['email'] = CommandExecutioner.remove_non_ascii(commit['committer']['email'])
+                    commits.append(commit)
 
-                commits = commits_obj
         return commits
 
     @staticmethod
