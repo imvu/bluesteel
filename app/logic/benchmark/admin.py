@@ -8,5 +8,10 @@ from app.logic.benchmark.models.BenchmarkFluctuationOverrideModel import Benchma
 
 admin.site.register(BenchmarkDefinitionEntry)
 admin.site.register(BenchmarkDefinitionWorkerPassEntry)
-admin.site.register(BenchmarkExecutionEntry)
 admin.site.register(BenchmarkFluctuationOverrideEntry)
+
+
+class BenchmarkExecutionAdmin(admin.ModelAdmin):
+    list_filter = ['commit__author__name', 'commit__commit_hash']
+
+admin.site.register(BenchmarkExecutionEntry, BenchmarkExecutionAdmin)
