@@ -1,0 +1,174 @@
+{% extends "presenter/base.html" %}
+
+{% load staticfiles %}
+
+{% block data_body %}
+<div class="container_med container_height">
+    <ul class="no_dots no_indent">
+        <li>
+            <div class="upper_card white_card card_padding_small card_medium">
+                <div class="grid grid-pad-2">
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="title centered">Benchmark Definition - {{definition.name}}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="middle_card white_card card_padding_large card_medium">
+                <div class="grid grid-pad-20">
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="list_label">NAME</div>
+                    </div>
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="normal">Name of the Benchmark Definition.</div>
+                    </div>
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="container_input">
+                            <input  class="command_input" type="text" value="{{definition.name}}" readonly></input>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-pad-20">
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="list_label">LAYOUT</div>
+                    </div>
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="normal">Layout name where this Benchmark Definition is associated with.</div>
+                    </div>
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="container_input">
+                            <input  class="command_input" type="text" value="{{definition.layout.name}}" readonly></input>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-pad-20">
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="list_label">PROJECT</div>
+                    </div>
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="normal">Name of the project used by this Benchmark Definition to execute the commands.</div>
+                    </div>
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="container_input">
+                            <input  class="command_input" type="text" value="{{definition.project.name}}" readonly></input>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-pad-20">
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="list_label">WORKERS</div>
+                    </div>
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="normal">List of workers this Benchmark Definition is going to be executed in.</div>
+                    </div>
+                    {% for work_pass in definition.work_passes %}
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <input class="check_item" type="checkbox" value="Cat" {{work_pass.allowed|yesno:"checked,"}}></input>
+                        <label class="check_label">{{work_pass.worker.name}}</label>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="grid grid-pad-20">
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="list_label">STATUS</div>
+                    </div>
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="normal">Current state of the definition.</div>
+                    </div>
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="container_input">
+                            <input  class="command_input" type="text" value="{{definition.active|yesno:"ACTIVE,INACTIVE"}}" readonly></input>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-pad-20">
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="list_label">COMMANDS</div>
+                    </div>
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="normal">Sequence of commands that will be executed for every Benchmark Execution.</div>
+                    </div>
+
+                    {% for command in definition.command_set.commands %}
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="container_input">
+                            <input  class="command_input"
+                                    type="text"
+                                    name="project_name"
+                                    value="{{command.command}}"
+                                    maxlength="50"
+                                    readonly
+                            ></input>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="middle_card white_card card_padding_large card_medium">
+                <div class="grid grid-pad-20">
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="list_label">MAXIMUM DEFAULT FLUCTUATION</div>
+                    </div>
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="normal">Maximum amount of fluctuation allowed on every benchmark execution before sending a notification.</div>
+                    </div>
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="container_input">
+                            <input  class="command_input" type="text" value="{{definition.max_fluctuation_percent}}% Fluctuation" readonly></input>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-pad-20">
+                    <div class="grid-col-1-1 grid-cell-pad-5-10">
+                        <div class="list_label">MAXIMUM FLUCTUATION OVERRIDES</div>
+                    </div>
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="normal">Fluctuation override values for selected result ids.</div>
+                    </div>
+                    {% for override in definition.fluctuation_overrides %}
+                        <div class="grid-col-4-8 grid-cell-pad-5-10">
+                            <div class="container_input">
+                                <input  class="command_input" type="text" value="{{override.result_id}}" readonly></input>
+                            </div>
+                        </div>
+                        <div class="grid-col-4-8 grid-cell-pad-5-10">
+                            <div class="container_input">
+                                <input  class="command_input" type="text" value="{{override.override_value}}% Fluctuation" readonly></input>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="grid grid-pad-20">
+                    <div class="grid-col-1-1 grid-cell-pad-5-10">
+                        <div class="list_label">MAXIMUM WEEKS OLD</div>
+                    </div>
+                    <div class="grid-col-1-1 grid-cell-pad-5-10">
+                        <div class="normal">Maximum amount of weeks since the commit was created to send notifications about this benchmark execution.</div>
+                    </div>
+                    <div class="grid-col-1-1 grid-cell-pad-5-10">
+                        <div class="container_input">
+                            <input  class="command_input" type="text" value="{{definition.max_weeks_old_notify.current_name}}" readonly></input>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="lower_card white_card card_padding_small card_medium">
+                <div class="grid grid-pad-2">
+                    <div class="grid-col-1-1 grid-cell-pad-5-10 grid-cell-centered">
+                        <button     class="btn_round light"
+                                    type='button'
+                                    onclick="window.location='{{definition.url.edit}}'"
+                        >Edit</button>
+                    </div>
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>
+{% endblock %}

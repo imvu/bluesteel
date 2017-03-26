@@ -71,6 +71,28 @@ def get_benchmark_definitions(request, page_index):
     data['controls'] = get_definition_controls()
     return res.get_template_data(request, 'presenter/benchmark_definitions.html', data)
 
+def get_benchmark_definition(request, definition_id):
+    """ Returns html for the benchmark definition page """
+    data = {}
+    data['menu'] = ViewPrepareObjects.prepare_menu_for_html([])
+    data['controls'] = get_definition_controls()
+
+    def_entry = BenchmarkDefinitionController.get_benchmark_definition(definition_id)
+
+    if def_entry is None:
+        return res.get_template_data(request, 'presenter/not_found.html', data)
+
+    obj = def_entry
+    obj['url'] = {}
+    obj['url']['edit'] = ViewUrlGenerator.get_edit_benchmark_definition_url(definition_id)
+    obj['url']['project_info'] = ViewUrlGenerator.get_editable_projects_info_url()
+    obj['layout_selection'] = get_layout_selection(def_entry['layout']['id'])
+    obj['project_selection'] = get_project_selection(def_entry['layout']['id'], def_entry['project']['id'])
+
+    data['definition'] = obj
+
+    return res.get_template_data(request, 'presenter/benchmark_definition.html', data)
+
 def get_benchmark_definition_edit(request, definition_id):
     """ Returns html for the benchmark definition edit page """
     data = {}

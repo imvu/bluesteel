@@ -78,6 +78,9 @@ urlpatterns = [
     url(r'^definitions/all/page/(?P<page_index>\d+)/$',
         app.presenter.views.html.ViewHtmlBenchmarkDefinitions.get_benchmark_definitions),
 
+    url(r'^definition/(?P<definition_id>\d+)/$',
+        app.presenter.views.html.ViewHtmlBenchmarkDefinitions.get_benchmark_definition),
+
     url(r'^definition/(?P<definition_id>\d+)/edit/$',
         app.presenter.views.html.ViewHtmlBenchmarkDefinitions.get_benchmark_definition_edit),
 
