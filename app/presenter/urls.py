@@ -76,7 +76,7 @@ urlpatterns = [
         app.presenter.views.html.ViewHtmlBluesteelWorker.get_worker),
 
     url(r'^definitions/all/page/(?P<page_index>\d+)/$',
-        app.presenter.views.html.ViewHtmlBenchmarkDefinitions.get_benchmark_definitions),
+        app.presenter.views.html.ViewHtmlBenchmarkDefinitions.get_benchmark_definition_all),
 
     url(r'^definition/(?P<definition_id>\d+)/$',
         app.presenter.views.html.ViewHtmlBenchmarkDefinitions.get_benchmark_definition),

@@ -4,8 +4,6 @@ div.card
     border-radius: 10px;
     margin-top: 10px;
     margin-bottom: 10px;
-    margin-left: auto;
-    margin-right: auto;
 }
 
 div.upper_card
@@ -68,9 +66,31 @@ div.card_big
     margin-right: 2px;
 }
 
+div.card_margin_small
+{
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+div.card_margin_auto
+{
+    margin-left: auto;
+    margin-right: auto;
+}
+
+div.card_item
+{
+    display: inline-block;
+}
+
 div.white_card
 {
     background: white;
+}
+
+div.gray_card
+{
+    background: lightgray;
 }
 
 div.edit_card
@@ -92,6 +112,17 @@ div.white_card_hoverable
 div.white_card_hoverable:hover
 {
     background: #F8F8F8;
+    cursor: pointer;
+}
+
+div.gray_card_hoverable
+{
+    background: lightgray;
+}
+
+div.gray_card_hoverable:hover
+{
+    background: #C3C3C3;
     cursor: pointer;
 }
 

@@ -42,6 +42,30 @@ div.normal
     -webkit-font-smoothing: antialiased;
 }
 
+div.property_name
+{
+    font-family: arial, sans-serif;
+    font-weight: bold;
+    color: gray;
+    font-size: 15px;
+    line-height: 20px;
+    text-align: right;
+    padding: 0px;
+    -webkit-font-smoothing: antialiased;
+}
+
+div.property
+{
+    font-family: arial, sans-serif;
+    font-weight: normal;
+    color: gray;
+    font-size: 15px;
+    line-height: 20px;
+    text-align: left;
+    padding: 0px;
+    -webkit-font-smoothing: antialiased;
+}
+
 div.big_text
 {
     font-size: 20px;
@@ -87,6 +111,11 @@ div.indent_3
 div.inline
 {
     display: inline-block;
+}
+
+div.color_white
+{
+    color: white;
 }
 
 div.color_correct

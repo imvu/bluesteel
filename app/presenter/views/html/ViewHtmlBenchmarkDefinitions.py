@@ -50,7 +50,7 @@ def get_project_selection(layout_id, project_id):
         projects.append(obj)
     return projects
 
-def get_benchmark_definitions(request, page_index):
+def get_benchmark_definition_all(request, page_index):
     """ Returns html for the benchmark definition page """
 
     (definitions, page_indices) = BenchmarkDefinitionController.get_benchmark_definitions_with_pagination(
@@ -61,15 +61,14 @@ def get_benchmark_definitions(request, page_index):
 
     for definition in definitions:
         definition['url'] = {}
-        definition['url']['edit'] = ViewUrlGenerator.get_edit_benchmark_definition_url(definition['id'])
-        definition['url']['save'] = ViewUrlGenerator.get_save_benchmark_definition_url(definition['id'])
+        definition['url']['single'] = ViewUrlGenerator.get_benchmark_definition_url(definition['id'])
 
     data = {}
     data['definitions'] = definitions
     data['menu'] = ViewPrepareObjects.prepare_menu_for_html([])
     data['pagination'] = ViewPrepareObjects.prepare_pagination_bench_definitions(page_indices)
     data['controls'] = get_definition_controls()
-    return res.get_template_data(request, 'presenter/benchmark_definitions.html', data)
+    return res.get_template_data(request, 'presenter/benchmark_definition_all.html', data)
 
 def get_benchmark_definition(request, definition_id):
     """ Returns html for the benchmark definition page """

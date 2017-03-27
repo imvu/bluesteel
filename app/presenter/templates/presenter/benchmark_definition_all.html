@@ -1,0 +1,54 @@
+{% extends "presenter/base.html" %}
+
+{% load staticfiles %}
+
+{% block data_body %}
+<div class="container_huge container_height container_items">
+        {% for definition in definitions %}
+                {% if definition.active %}
+                <div    class="card white_card_hoverable card_padding_small card_thin card_item card_margin_small"
+                        onclick="window.location='{{definition.url.single}}'"
+                >
+                {% else %}
+                <div    class="card gray_card_hoverable card_padding_small card_thin card_item card_margin_small"
+                        onclick="window.location='{{definition.url.single}}'"
+                >
+                {% endif %}
+                    <div class="grid grid-pad-2">
+                        <div class="grid-col-1-1 grid-cell-pad-2-10">
+                            <div class="title">{{definition.name}}</div>
+                        </div>
+                    </div>
+                    <div class="grid grid-pad-2">
+                        <div class="grid-col-1-1 grid-cell-pad-5-0">
+                            {% if definition.active %}
+                            <div class="grid_horizontal_line"></div>
+                            {% else %}
+                            <div class="grid_disabled_horizontal_line"></div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="grid grid-pad-2">
+                        <div class="grid-col-1-3 grid-cell-pad-2-0">
+                            <div class="property_name">Layout</div>
+                        </div>
+                        <div class="grid-col-2-3 grid-cell-pad-2-10">
+                            <div class="property">{{definition.layout.name}}</div>
+                        </div>
+                        <div class="grid-col-1-3 grid-cell-pad-2-0">
+                            <div class="property_name">Project</div>
+                        </div>
+                        <div class="grid-col-2-3 grid-cell-pad-2-10">
+                            <div class="property">{{definition.project.name}}</div>
+                        </div>
+                        <div class="grid-col-1-3 grid-cell-pad-2-0">
+                            <div class="property_name">Status</div>
+                        </div>
+                        <div class="grid-col-2-3 grid-cell-pad-2-10">
+                            <div class="property">{{definition.active|yesno:'ACTIVE, INACTIVE'}}</div>
+                        </div>
+                    </div>
+                </div>
+        {% endfor %}
+</div>
+{% endblock %}
