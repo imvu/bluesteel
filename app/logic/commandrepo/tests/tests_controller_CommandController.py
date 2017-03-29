@@ -107,3 +107,29 @@ class CommandControllerTestCase(TestCase):
         self.assertEqual(1, CommandSetEntry.objects.all().count())
         self.assertEqual(0, CommandEntry.objects.all().count())
         self.assertEqual(0, CommandResultEntry.objects.all().count())
+
+    def test_duplicate_command_set(self):
+        comm_set = CommandSetEntry.objects.create(name='name_set', order=0)
+
+        CommandEntry.objects.create(command_set=comm_set, command='command1', order=0)
+        CommandEntry.objects.create(command_set=comm_set, command='command2', order=1)
+        CommandEntry.objects.create(command_set=comm_set, command='command3', order=2)
+
+        self.assertEqual(0, CommandGroupEntry.objects.all().count())
+        self.assertEqual(1, CommandSetEntry.objects.all().count())
+        self.assertEqual(1, CommandEntry.objects.filter(command_set=comm_set, command='command1').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command_set=comm_set, command='command2').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command_set=comm_set, command='command3').count())
+        self.assertEqual(0, CommandResultEntry.objects.all().count())
+
+        new_comm_set = CommandController.duplicate_command_set(comm_set.id)
+
+        self.assertEqual(0, CommandGroupEntry.objects.all().count())
+        self.assertEqual(2, CommandSetEntry.objects.all().count())
+        self.assertEqual(1, CommandEntry.objects.filter(command_set=comm_set, command='command1').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command_set=comm_set, command='command2').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command_set=comm_set, command='command3').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command_set=new_comm_set, command='command1').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command_set=new_comm_set, command='command2').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command_set=new_comm_set, command='command3').count())
+        self.assertEqual(0, CommandResultEntry.objects.all().count())

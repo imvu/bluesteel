@@ -85,3 +85,27 @@ class CommandController(object):
                 command_set=command_set_entry,
                 command=command,
                 order=index)
+
+    @staticmethod
+    def duplicate_command_set(command_set_id):
+        """ Duplicates a command set and returns the duplicated one """
+        com_set = CommandSetEntry.objects.filter(id=command_set_id).first()
+
+        if com_set is None:
+            return None
+
+        new_com_set = CommandSetEntry.objects.create(
+            name=com_set.name,
+            order=com_set.order
+        )
+
+        coms = CommandEntry.objects.filter(command_set=com_set)
+
+        for com in coms:
+            CommandEntry.objects.create(
+                command_set=new_com_set,
+                command=com.command,
+                order=com.order
+            )
+
+        return new_com_set
