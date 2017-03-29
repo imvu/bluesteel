@@ -80,6 +80,55 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
         self.assertEqual(0, CommandResultEntry.objects.all().count())
 
 
+    def test_duplicate_benchmark_definition(self):
+        self.assertEqual(0, CommandGroupEntry.objects.all().count())
+        self.assertEqual(0, CommandSetEntry.objects.all().count())
+        self.assertEqual(0, CommandEntry.objects.all().count())
+        self.assertEqual(0, CommandResultEntry.objects.all().count())
+
+        new_layout = BluesteelLayoutEntry.objects.create(name='default-name')
+        project = BluesteelProjectController.create_default_project(new_layout, 'project', 0)
+        definition = BenchmarkDefinitionController.create_default_benchmark_definition()
+        definition.active = True
+        definition.max_fluctuation_percent = 28
+        definition.revision = 3
+        definition.max_weeks_old_notify = 2
+        definition.save()
+
+        BenchmarkFluctuationOverrideEntry.objects.create(definition=definition, result_id='id1', override_value=28)
+        BenchmarkFluctuationOverrideEntry.objects.create(definition=definition, result_id='id2', override_value=29)
+        BenchmarkFluctuationOverrideEntry.objects.create(definition=definition, result_id='id3', override_value=30)
+
+        self.assertEqual(1, BluesteelLayoutEntry.objects.all().count())
+        self.assertEqual(1, BluesteelProjectEntry.objects.all().count())
+        self.assertNotEqual(None, definition.command_set)
+        self.assertEqual(3, CommandEntry.objects.filter(command_set=definition.command_set).count())
+        self.assertEqual(0, CommandResultEntry.objects.all().count())
+        self.assertEqual(True, definition.active)
+        self.assertEqual(3, definition.revision)
+        self.assertEqual(28, definition.max_fluctuation_percent)
+        self.assertEqual(2, definition.max_weeks_old_notify)
+        self.assertEqual('default-name', definition.name)
+        self.assertEqual(3, BenchmarkFluctuationOverrideEntry.objects.all().count())
+
+        new_definition = BenchmarkDefinitionController.duplicate_benchmark_definition(definition.id)
+
+        self.assertNotEqual(None, new_definition)
+        self.assertEqual(2, BenchmarkDefinitionEntry.objects.all().count())
+        self.assertEqual(3, CommandEntry.objects.filter(command_set=definition.command_set).count())
+        self.assertEqual(3, CommandEntry.objects.filter(command_set=new_definition.command_set).count())
+        self.assertEqual(True, definition.active)
+        self.assertEqual(False, new_definition.active)
+        self.assertEqual(3, definition.revision)
+        self.assertEqual(0, new_definition.revision)
+        self.assertEqual(28, definition.max_fluctuation_percent)
+        self.assertEqual(28, new_definition.max_fluctuation_percent)
+        self.assertEqual(2, definition.max_weeks_old_notify)
+        self.assertEqual(2, new_definition.max_weeks_old_notify)
+        self.assertEqual('default-name', definition.name)
+        self.assertEqual('default-name (duplicate)', new_definition.name)
+        self.assertEqual(3, BenchmarkFluctuationOverrideEntry.objects.all().count())
+
     def test_save_benchmark_definition(self):
         self.assertEqual(0, CommandGroupEntry.objects.all().count())
         self.assertEqual(0, CommandSetEntry.objects.all().count())

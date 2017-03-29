@@ -56,6 +56,33 @@ class BenchmarkDefinitionController(object):
         return definition
 
     @staticmethod
+    def duplicate_benchmark_definition(bench_definition_id):
+        """ Duplicates a Benchmark Definition except for the Overrides """
+        bench_def = BenchmarkDefinitionEntry.objects.filter(id=bench_definition_id).first()
+
+        if bench_def is None:
+            return None
+
+        new_comm_set = CommandController.CommandController.duplicate_command_set(bench_def.command_set.id)
+
+        if new_comm_set is None:
+            return None
+
+        new_bench_def = BenchmarkDefinitionEntry.objects.create(
+            name=bench_def.name + ' (duplicate)',
+            layout=bench_def.layout,
+            project=bench_def.project,
+            command_set=new_comm_set,
+            active=False,
+            revision=0,
+            max_fluctuation_percent=bench_def.max_fluctuation_percent,
+            max_weeks_old_notify=bench_def.max_weeks_old_notify,
+        )
+
+        return new_bench_def
+
+
+    @staticmethod
     def populate_worker_passes_for_definition(bench_def):
         """ Creates all the missing worker passes for a benchmark definition """
         all_workers = WorkerEntry.objects.all()
