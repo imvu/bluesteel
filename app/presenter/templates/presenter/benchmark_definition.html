@@ -160,11 +160,17 @@
             </div>
             <div class="lower_card white_card card_padding_small card_medium">
                 <div class="grid grid-pad-2">
-                    <div class="grid-col-1-1 grid-cell-pad-5-10 grid-cell-centered">
+                    <div class="grid-col-1-2 grid-cell-pad-5-10 grid-cell-centered">
                         <button     class="btn_round light"
                                     type='button'
                                     onclick="window.location='{{definition.url.edit}}'"
                         >Edit</button>
+                    </div>
+                    <div class="grid-col-1-2 grid-cell-pad-5-10 grid-cell-centered">
+                        <button     class="btn_round light"
+                                    type='button'
+                                    onclick="executeAndRedirect('{{definition.url.duplicate}}', '');"
+                        >Duplicate</button>
                     </div>
                 </div>
             </div>

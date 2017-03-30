@@ -23,6 +23,23 @@ def create_new_benchmark_definition(request):
         return res.get_response(400, 'Only post allowed', {})
 
 @transaction.atomic
+def view_duplicate_benchmark_definition(request, benchmark_definition_id):
+    """ Duplicate benchmark definition properties """
+    if request.method == 'POST':
+        dup_bench_entry = BenchmarkDefinitionController.duplicate_benchmark_definition(benchmark_definition_id)
+
+        if dup_bench_entry is None:
+            return res.get_response(404, 'Benchmark Defintion save error', {})
+        else:
+            data = {}
+            data['redirect'] = ViewUrlGenerator.get_benchmark_definition_url(dup_bench_entry.id)
+
+            return res.get_response(200, 'Benchmark Definition saved', data)
+    else:
+        return res.get_only_post_allowed({})
+
+
+@transaction.atomic
 def view_save_benchmark_definition(request, benchmark_definition_id):
     """ Save benchmark definition properties """
     if request.method == 'POST':

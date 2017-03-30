@@ -84,6 +84,7 @@ def get_benchmark_definition(request, definition_id):
     obj = def_entry
     obj['url'] = {}
     obj['url']['edit'] = ViewUrlGenerator.get_edit_benchmark_definition_url(definition_id)
+    obj['url']['duplicate'] = ViewUrlGenerator.get_duplicate_benchmark_definition_url(definition_id)
     obj['url']['project_info'] = ViewUrlGenerator.get_editable_projects_info_url()
     obj['layout_selection'] = get_layout_selection(def_entry['layout']['id'])
     obj['project_selection'] = get_project_selection(def_entry['layout']['id'], def_entry['project']['id'])

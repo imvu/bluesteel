@@ -190,6 +190,9 @@ def get_create_benchmark_definitions_url():
 def get_edit_benchmark_definition_url(benchmark_definition_id):
     return '/main/definition/{0}/edit/'.format(benchmark_definition_id)
 
+def get_duplicate_benchmark_definition_url(benchmark_definition_id):
+    return '/main/definition/{0}/duplicate/'.format(benchmark_definition_id)
+
 def get_save_benchmark_definition_url(benchmark_definition_id):
     return '/main/definition/{0}/save/'.format(benchmark_definition_id)
 

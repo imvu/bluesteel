@@ -161,6 +161,9 @@ urlpatterns = [
     url(r'^definitions/create/$',
         app.presenter.views.json.ViewJsonBenchmarkDefinitions.create_new_benchmark_definition),
 
+    url(r'^definition/(?P<benchmark_definition_id>\d+)/duplicate/$',
+        app.presenter.views.json.ViewJsonBenchmarkDefinitions.view_duplicate_benchmark_definition),
+
     url(r'^definition/(?P<benchmark_definition_id>\d+)/save/$',
         app.presenter.views.json.ViewJsonBenchmarkDefinitions.view_save_benchmark_definition),
 
