@@ -50,31 +50,6 @@
 - Install requisits: `cd bluesteel`, `s/install-bluesteel.py`
 - Test everything is ok: `s/test-bluesteel.py`
 
-### Install PostgreSQL database (optional)###
-
-*Using PostgreSQL will help BlueSteel handle better multiple requests at the same time. SQLite will perform worst in that scenario*
-
-- Go to [http://postgresapp.com](http://postgresapp.com) and download the app.
-- Install it! (in OS X means to move it to the Applications folder)
-- Locate `pg_config` binary. It should live inside: `/Applications/Postgres.app/Contents/Versions/9.5/bin/`
-- add that path to $PATH environment variable with: `PATH=$PATH:/Applications/Postgres.app/Contents/Versions/9.5/bin/`
-- (Linux only) install postgres development package: `sudo apt-get install libpq-dev python-dev`
-- Install psycopg2 with: `sudo pip install psycopg2==2.6.2`
-- Open a PostgreSQL shell. 
-    * in macOS you can open the Postgres App shell through the icon.
-    * in Linux you can execute:
-        * `sudo su - postgres`
-        * `psql -d postgres`
-- Execute command: `CREATE DATABASE bluesteeldb;`
-- Execute command: `CREATE USER bluesteeluser;`
-- Execute command: `GRANT ALL PRIVILEGES ON DATABASE bluesteeldb TO bluesteeluser;`
-- Execute command: `ALTER USER bluesteeluser CREATEDB;`
-- Execute command: `ALTER USER bluesteeluser WITH PASSWORD 'pass';`
-- Execute command: `SET effective_cache_size TO '1000 MB';`
-- Modify the values of the previous commands as you need.
-- Modify Django settings files to use this DB instead of SQLite.
-- Execute command: `./manage.py migrate`
-
 ### How to run tests? ###
 
 - For running tests you simply need to execute: `s/test-bluesteel.py`
@@ -232,6 +207,31 @@ BlueSteel can understand 3 types of outputs now:
 
     If the command output is something different than the previous two types (text and vertical_bars), BlueSteel will mark the output as an unknown type and will show the output as it is in the result page.
 
+
+### How to use PostgreSQL database in BlueSteel (optional)###
+
+*Using PostgreSQL will help BlueSteel handle better multiple requests at the same time. SQLite will perform worst in that scenario*
+
+- Go to [http://postgresapp.com](http://postgresapp.com) and download the app.
+- Install it! (in OS X means to move it to the Applications folder)
+- Locate `pg_config` binary. It should live inside: `/Applications/Postgres.app/Contents/Versions/9.5/bin/`
+- add that path to $PATH environment variable with: `PATH=$PATH:/Applications/Postgres.app/Contents/Versions/9.5/bin/`
+- (Linux only) install postgres development package: `sudo apt-get install libpq-dev python-dev`
+- Install psycopg2 with: `sudo pip install psycopg2==2.6.2`
+- Open a PostgreSQL shell. 
+    * in macOS you can open the Postgres App shell through the icon.
+    * in Linux you can execute:
+        * `sudo su - postgres`
+        * `psql -d postgres`
+- Execute command: `CREATE DATABASE bluesteeldb;`
+- Execute command: `CREATE USER bluesteeluser;`
+- Execute command: `GRANT ALL PRIVILEGES ON DATABASE bluesteeldb TO bluesteeluser;`
+- Execute command: `ALTER USER bluesteeluser CREATEDB;`
+- Execute command: `ALTER USER bluesteeluser WITH PASSWORD 'pass';`
+- Execute command: `SET effective_cache_size TO '1000 MB';`
+- Modify the values of the previous commands as you need.
+- Modify Django settings files to use this DB instead of SQLite.
+- Execute command: `./manage.py migrate`
 
 ## Contributing ##
 
