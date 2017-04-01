@@ -27,7 +27,10 @@ class BluesteelProjectController(object):
 
         projects = []
         for project in project_entries:
-            projects.append(project.as_object())
+            obj = {}
+            obj['id'] = project.id
+            obj['name'] = project.name
+            projects.append(obj)
         return (projects, page_indices)
 
     @staticmethod
