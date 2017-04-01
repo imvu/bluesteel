@@ -40,15 +40,65 @@ class CommandControllerTestCase(TestCase):
         self.assertEqual(0, CommandResultEntry.objects.all().count())
 
         commands = []
-        commands.append(['command 1'])
-        commands.append(['command 2'])
-        commands.append(['command 3'])
+        commands.append('command 1')
+        commands.append('command 2')
+        commands.append('command 3')
 
         CommandController.add_full_command_set(command_group, 'CLONE', 28, commands)
 
         self.assertEqual(1, CommandGroupEntry.objects.all().count())
         self.assertEqual(1, CommandSetEntry.objects.all().count())
-        self.assertEqual(3, CommandEntry.objects.all().count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='command 1').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='command 2').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='command 3').count())
+        self.assertEqual(0, CommandResultEntry.objects.all().count())
+
+    def test_add_full_command_set_with_no_white_space(self):
+        command_group = CommandGroupEntry.objects.create()
+
+        self.assertEqual(1, CommandGroupEntry.objects.all().count())
+        self.assertEqual(0, CommandSetEntry.objects.all().count())
+        self.assertEqual(0, CommandEntry.objects.all().count())
+        self.assertEqual(0, CommandResultEntry.objects.all().count())
+
+        commands = []
+        commands.append('command 1')
+        commands.append('   command 2')
+        commands.append('command 3   ')
+
+        CommandController.add_full_command_set(command_group, 'CLONE', 28, commands)
+
+        self.assertEqual(1, CommandGroupEntry.objects.all().count())
+        self.assertEqual(1, CommandSetEntry.objects.all().count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='command 1').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='command 2').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='command 3').count())
+        self.assertEqual(0, CommandResultEntry.objects.all().count())
+
+    def test_add_command_with_no_white_space_to_other_commands(self):
+        command_group = CommandGroupEntry.objects.create()
+
+        comm_set = CommandSetEntry.objects.create(group=command_group, name='name_set', order=0)
+        CommandEntry.objects.create(command_set=comm_set, command='command 1', order=0)
+        CommandEntry.objects.create(command_set=comm_set, command='command 2', order=1)
+        CommandEntry.objects.create(command_set=comm_set, command='command 3', order=2)
+
+        self.assertEqual(1, CommandGroupEntry.objects.all().count())
+        self.assertEqual(1, CommandSetEntry.objects.all().count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='command 1').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='command 2').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='command 3').count())
+        self.assertEqual(0, CommandResultEntry.objects.all().count())
+
+        CommandController.add_commands_to_command_set(comm_set, ['  comm_3', 'comm_5  '])
+
+        self.assertEqual(1, CommandGroupEntry.objects.all().count())
+        self.assertEqual(1, CommandSetEntry.objects.all().count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='command 1').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='command 2').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='command 3').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='comm_3').count())
+        self.assertEqual(1, CommandEntry.objects.filter(command='comm_5').count())
         self.assertEqual(0, CommandResultEntry.objects.all().count())
 
     def test_add_full_command_set_with_group_to_none(self):
@@ -58,9 +108,9 @@ class CommandControllerTestCase(TestCase):
         self.assertEqual(0, CommandResultEntry.objects.all().count())
 
         commands = []
-        commands.append(['command 1'])
-        commands.append(['command 2'])
-        commands.append(['command 3'])
+        commands.append('command 1')
+        commands.append('command 2')
+        commands.append('command 3')
 
         CommandController.add_full_command_set(None, 'CLONE', 28, commands)
 
@@ -72,29 +122,10 @@ class CommandControllerTestCase(TestCase):
     def test_delete_commands_from_command_set(self):
         group = TestCommandHelper.create_default_group()
 
-        comm_set = CommandSetEntry.objects.create(
-            group=group,
-            name='name_set',
-            order=0
-        )
-
-        CommandEntry.objects.create(
-            command_set=comm_set,
-            command='command1',
-            order=0
-        )
-
-        CommandEntry.objects.create(
-            command_set=comm_set,
-            command='command2',
-            order=1
-        )
-
-        CommandEntry.objects.create(
-            command_set=comm_set,
-            command='command3',
-            order=2
-        )
+        comm_set = CommandSetEntry.objects.create(group=group, name='name_set', order=0)
+        CommandEntry.objects.create(command_set=comm_set, command='command1', order=0)
+        CommandEntry.objects.create(command_set=comm_set, command='command2', order=1)
+        CommandEntry.objects.create(command_set=comm_set, command='command3', order=2)
 
         self.assertEqual(1, CommandGroupEntry.objects.all().count())
         self.assertEqual(1, CommandSetEntry.objects.all().count())

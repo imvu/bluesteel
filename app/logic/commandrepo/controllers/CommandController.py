@@ -71,7 +71,7 @@ class CommandController(object):
         for index, command in enumerate(list_commands):
             CommandEntry.objects.create(
                 command_set=set_entry,
-                command=command,
+                command=command.strip(),
                 order=index)
 
         return set_entry
@@ -83,7 +83,7 @@ class CommandController(object):
         for index, command in enumerate(list_commands):
             CommandEntry.objects.create(
                 command_set=command_set_entry,
-                command=command,
+                command=command.strip(),
                 order=index)
 
     @staticmethod
