@@ -38,7 +38,21 @@ class BluesteelLayoutController(object):
 
         layouts = []
         for layout in layout_entries:
-            layouts.append(layout.as_object())
+            obj = {}
+            obj['id'] = layout.id
+            obj['name'] = layout.name
+            obj['active'] = layout.active
+            obj['project_index_path'] = layout.project_index_path
+            obj['projects'] = []
+
+            project_entries = BluesteelProjectEntry.objects.filter(layout__id=layout.id)
+
+            for prj_entry in project_entries:
+                prj = {}
+                prj['name'] = prj_entry.name
+                obj['projects'].append(prj)
+
+            layouts.append(obj)
         return (layouts, page_indices)
 
     @staticmethod
