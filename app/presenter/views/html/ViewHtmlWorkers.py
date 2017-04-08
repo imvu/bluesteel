@@ -67,6 +67,38 @@ def get_workers(request, page_index):
     else:
         return res.get_only_get_allowed({})
 
+def get_worker_all(request, page_index):
+    """ Returns html for the workers page """
+    if request.method == 'GET':
+        worker_entries = WorkerEntry.objects.all()
+
+        page = Page(WORKER_ITEMS_PER_PAGE, page_index)
+        pager = Paginator(worker_entries, page.items_per_page)
+        current_page = pager.page(page.page_index)
+        worker_entries = current_page.object_list
+        page_indices = pag.get_pagination_indices(page, PAGINATION_HALF_RANGE, pager.num_pages)
+
+        workers = get_workers_with_benchmark_info(worker_entries)
+
+        control = {}
+        control['name'] = '  Download Worker'
+        control['link'] = ViewUrlGenerator.get_download_worker_url()
+        control['icon'] = 'fa fa-arrow-down'
+        control['onclick'] = 'window.location="{0}"'.format(control['link'])
+
+        pagination = ViewPrepareObjects.prepare_pagination_workers(page_indices)
+
+        data = {}
+        data['menu'] = ViewPrepareObjects.prepare_menu_for_html([])
+        data['pagination'] = pagination
+        data['workers'] = ViewPrepareObjects.prepare_workers_for_html(workers)
+        data['controls'] = []
+        data['controls'].append(control)
+
+        return res.get_template_data(request, 'presenter/worker_all.html', data)
+    else:
+        return res.get_only_get_allowed({})
+
 def get_worker_edit(request, worker_id):
     """ Returns worker edit page to modify some workers properties """
     if request.method == 'GET':

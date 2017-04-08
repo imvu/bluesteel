@@ -241,8 +241,18 @@ def prepare_workers_for_html(workers):
         worker['url'] = {}
         worker['url']['feed_report'] = ViewUrlGenerator.get_feed_report_form_worker_url(worker['id'], 1)
         worker['url']['edit'] = ViewUrlGenerator.get_worker_edit_url(worker['id'])
-        worker_items.append(worker)
+        worker['icon'] = 'fa-question-circle'
 
+        if any(x in worker['operative_system'].lower() for x in ['win', 'windows']):
+            worker['icon'] = 'fa-windows'
+
+        if any(x in worker['operative_system'].lower() for x in ['darwin', 'osx']):
+            worker['icon'] = 'fa-apple'
+
+        if any(x in worker['operative_system'].lower() for x in ['linux']):
+            worker['icon'] = 'fa-linux'
+
+        worker_items.append(worker)
     return worker_items
 
 def prepare_reports_for_html(reports):

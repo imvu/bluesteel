@@ -1,0 +1,51 @@
+{% extends "presenter/base.html" %}
+
+{% load staticfiles %}
+
+{% block data_body %}
+<div class="container_huge container_height container_items">
+    {% for worker in workers %}
+        {% if worker.activity %}
+        <div    class="card white_card_hoverable card_padding_small card_thin card_item card_margin_small"
+                onclick="window.location='{{worker.url.single}}'"
+        >
+        {% else %}
+        <div    class="card gray_card_hoverable card_padding_small card_thin card_item card_margin_small"
+                onclick="window.location='{{worker.url.single}}'"
+        >
+        {% endif %}
+            <div class="grid grid-pad-2">
+                <div class="grid-col-1-3  grid-cell-pad-2-10">
+                    <div class="normal inline {{worker.activity|yesno:'color_correct, color_error'}}"><i class="fa {{worker.icon}} fa-5x"></i></i></div>
+                </div>
+                <div class="grid-col-2-3  grid-cell-pad-2-10">
+                    <div class="title centered">{{worker.name}}</div>
+                </div>
+            </div>
+            <div class="grid grid-pad-2">
+                <div class="grid-col-1-1 grid-cell-pad-5-0">
+                    {% if worker.activity %}
+                    <div class="grid_horizontal_line"></div>
+                    {% else %}
+                    <div class="grid_disabled_horizontal_line"></div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="grid grid-pad-2">
+                <div class="grid-col-1-3 grid-cell-pad-2-0">
+                    <div class="property_name">Activity</div>
+                </div>
+                <div class="grid-col-2-3 grid-cell-pad-2-10">
+                    <div class="property">{{worker.last_update.year}}-{{worker.last_update.month}}-{{worker.last_update.day}}, {{worker.last_update.hour}}:{{worker.last_update.minute}}:{{worker.last_update.second}}</div>
+                </div>
+                <div class="grid-col-1-3 grid-cell-pad-2-0">
+                    <div class="property_name">Feeder</div>
+                </div>
+                <div class="grid-col-2-3 grid-cell-pad-2-10">
+                    <div class="property">{{worker.git_feeder|yesno:'Yes, No'}}</div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -64,7 +64,7 @@ urlpatterns = [
         app.presenter.views.html.ViewHtmlProject.get_project_single_branch_links),
 
     url(r'^worker/all/page/(?P<page_index>\d+)/$',
-        app.presenter.views.html.ViewHtmlWorkers.get_workers),
+        app.presenter.views.html.ViewHtmlWorkers.get_worker_all),
 
     url(r'^worker/(?P<worker_id>\d+)/edit/$',
         app.presenter.views.html.ViewHtmlWorkers.get_worker_edit),
