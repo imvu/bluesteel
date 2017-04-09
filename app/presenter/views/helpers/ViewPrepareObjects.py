@@ -239,6 +239,7 @@ def prepare_workers_for_html(workers):
 
     for worker in workers:
         worker['url'] = {}
+        worker['url']['single'] = ViewUrlGenerator.get_worker_url(worker['id'])
         worker['url']['feed_report'] = ViewUrlGenerator.get_feed_report_form_worker_url(worker['id'], 1)
         worker['url']['edit'] = ViewUrlGenerator.get_worker_edit_url(worker['id'])
         worker['icon'] = 'fa-question-circle'
