@@ -1,6 +1,6 @@
 arrow==0.6.0
 astroid==1.4.7
-Django==1.10.4
+Django==1.11.2
 pylint==1.6.4
 pytz==2016.10
 jsonschema==2.5.1

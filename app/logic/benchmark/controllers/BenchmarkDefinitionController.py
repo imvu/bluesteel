@@ -262,7 +262,7 @@ class BenchmarkDefinitionController(object):
     @staticmethod
     def get_benchmark_definitions_with_pagination(items_per_page, page_index, pagination_half_range):
         """ Returns Benchmark Definitions given a page index """
-        def_entries = BenchmarkDefinitionEntry.objects.all()
+        def_entries = BenchmarkDefinitionEntry.objects.all().order_by('-active', 'name')
 
         page = Page(items_per_page, page_index)
         pager = Paginator(def_entries, page.items_per_page)

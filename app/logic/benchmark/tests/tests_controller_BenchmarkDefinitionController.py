@@ -402,6 +402,44 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
         self.assertEqual([1, 2, 3], paginations1['page_indices'])
 
 
+    def test_get_benchmark_definitions_paginated_fist_by_active_then_by_name(self):
+        user1 = User.objects.create_user('user1@test.com', 'user1@test.com', 'pass')
+        user1.save()
+
+        git_project1 = GitProjectEntry.objects.create(url='http://test/')
+
+        command_group = CommandGroupEntry.objects.create()
+        command_set = CommandSetEntry.objects.create(group=command_group)
+
+        bluesteel_layout = BluesteelLayoutEntry.objects.create(name='Layout', active=True, project_index_path=0)
+
+        bluesteel_project = BluesteelProjectEntry.objects.create(name='Project', order=0, layout=bluesteel_layout, command_group=command_group, git_project=git_project1)
+
+        benchmark_definition1 = BenchmarkDefinitionEntry.objects.create(name='BenchmarkDefinition1', layout=bluesteel_layout, project=bluesteel_project, active=True, command_set=command_set, revision=28)
+        benchmark_definition2 = BenchmarkDefinitionEntry.objects.create(name='BenchmarkDefinition9', layout=bluesteel_layout, project=bluesteel_project, active=False, command_set=command_set, revision=28)
+        benchmark_definition3 = BenchmarkDefinitionEntry.objects.create(name='BenchmarkDefinition2', layout=bluesteel_layout, project=bluesteel_project, active=True, command_set=command_set, revision=28)
+        benchmark_definition4 = BenchmarkDefinitionEntry.objects.create(name='BenchmarkDefinition8', layout=bluesteel_layout, project=bluesteel_project, active=False, command_set=command_set, revision=28)
+        benchmark_definition5 = BenchmarkDefinitionEntry.objects.create(name='BenchmarkDefinition3', layout=bluesteel_layout, project=bluesteel_project, active=True, command_set=command_set, revision=28)
+        benchmark_definition6 = BenchmarkDefinitionEntry.objects.create(name='BenchmarkDefinition7', layout=bluesteel_layout, project=bluesteel_project, active=False, command_set=command_set, revision=28)
+
+        (definitions1, paginations1) = BenchmarkDefinitionController.get_benchmark_definitions_with_pagination(6, 1, 1)
+
+        self.assertEqual(6, len(definitions1))
+        self.assertEqual('BenchmarkDefinition1', definitions1[0]['name'])
+        self.assertEqual('BenchmarkDefinition2', definitions1[1]['name'])
+        self.assertEqual('BenchmarkDefinition3', definitions1[2]['name'])
+        self.assertEqual('BenchmarkDefinition7', definitions1[3]['name'])
+        self.assertEqual('BenchmarkDefinition8', definitions1[4]['name'])
+        self.assertEqual('BenchmarkDefinition9', definitions1[5]['name'])
+
+        self.assertEqual(True,  definitions1[0]['active'])
+        self.assertEqual(True,  definitions1[1]['active'])
+        self.assertEqual(True,  definitions1[2]['active'])
+        self.assertEqual(False, definitions1[3]['active'])
+        self.assertEqual(False, definitions1[4]['active'])
+        self.assertEqual(False, definitions1[5]['active'])
+
+
     def test_populate_worker_passes(self):
         user1 = User.objects.create_user('user1@test.com', 'user1@test.com', 'pass')
         user1.save()
