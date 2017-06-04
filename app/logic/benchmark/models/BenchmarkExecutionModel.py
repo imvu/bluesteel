@@ -89,10 +89,10 @@ class BenchmarkExecutionEntry(models.Model):
         sov = sorted(vector)
         if len(sov) % 2 == 1:
             return float(sov[(len(sov)+1)/2-1])
-        else:
-            lower = sov[len(sov)/2-1]
-            upper = sov[len(sov)/2]
-            return (float(lower + upper)) / 2.0
+
+        lower = sov[len(sov)/2-1]
+        upper = sov[len(sov)/2]
+        return (float(lower + upper)) / 2.0
 
 
 

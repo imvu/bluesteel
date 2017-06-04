@@ -5,9 +5,9 @@ from app.logic.httpcommon import res
 
 def send_notifications(request):
     """ Sends all the stacked emails to notify users """
-    if request.method == 'POST':
-        MailingController.MailingController.send_stacked_emails()
-
-        return res.get_response(200, 'Stacked emails sent', {})
-    else:
+    if request.method != 'POST':
         return res.get_only_post_allowed({})
+
+    MailingController.MailingController.send_stacked_emails()
+
+    return res.get_response(200, 'Stacked emails sent', {})

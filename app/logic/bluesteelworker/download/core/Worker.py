@@ -123,15 +123,15 @@ def get_bootstrap_urls(entry_point_url, session):
 
     if resp['succeed'] and resp['content']['status'] == 200:
         return resp['content']['data']
-    else:
-        bootstrap_urls = {}
-        bootstrap_urls['layouts_url'] = 'http://url/not/available/'
-        bootstrap_urls['worker_info_url'] = 'http://url/not/available/'
-        bootstrap_urls['create_worker_url'] = 'http://url/not/available/'
-        bootstrap_urls['login_worker_url'] = 'http://url/not/available/'
-        bootstrap_urls['acquire_benchmark_execution_url'] = 'http://url/not/available/'
-        bootstrap_urls['notifications_url'] = 'http://url/not/available/'
-        return bootstrap_urls
+
+    bootstrap_urls = {}
+    bootstrap_urls['layouts_url'] = 'http://url/not/available/'
+    bootstrap_urls['worker_info_url'] = 'http://url/not/available/'
+    bootstrap_urls['create_worker_url'] = 'http://url/not/available/'
+    bootstrap_urls['login_worker_url'] = 'http://url/not/available/'
+    bootstrap_urls['acquire_benchmark_execution_url'] = 'http://url/not/available/'
+    bootstrap_urls['notifications_url'] = 'http://url/not/available/'
+    return bootstrap_urls
 
 def process_get_or_create_worker(bootstrap_urls, host_info, session):
     """ Gets or create a Worker, returns worker info """

@@ -106,11 +106,11 @@ class BenchmarkFluctuationController(object):
         benchmarks = {}
         fluctuations = []
 
-        for commit_hash in hashes:
+        for comm_hash in hashes:
             bench = BenchmarkExecutionEntry.objects.filter(
                 definition__id=benchmark_def_id,
                 worker__id=worker_id,
-                commit__commit_hash=commit_hash).first()
+                commit__commit_hash=comm_hash).first()
             if not bench:
                 continue
 

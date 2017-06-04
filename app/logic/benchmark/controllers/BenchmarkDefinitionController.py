@@ -229,8 +229,8 @@ class BenchmarkDefinitionController(object):
         if bench_def_entry:
             bench_def_entry.delete()
             return True
-        else:
-            return False
+
+        return False
 
     @staticmethod
     def get_benchmark_definition(benchmark_definition_id):

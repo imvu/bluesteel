@@ -59,7 +59,7 @@ class GitFeederController(object):
         """ Returns true if all parents are correct """
         messages = []
         for commit in commit_list:
-            if len(commit['parent_hashes']) > 0:
+            if commit['parent_hashes']:
                 parent_hash = commit['parent_hashes'][0]
                 correct = GitFeederController.check_commit(parent_hash, commit_hash_set, project)
                 if not correct:
@@ -92,7 +92,7 @@ class GitFeederController(object):
             if not trail_hash in commit_hash_set:
                 trail_not_in_set.append(trail_hash)
 
-        if len(trail_not_in_set) == 0:
+        if not trail_not_in_set:
             return (True, [])
 
         trail_exist_count = GitCommitEntry.objects.filter(project=project, commit_hash__in=trail_not_in_set).count()
@@ -397,11 +397,11 @@ class GitFeederController(object):
                 order=index
             )
 
-            for index, command in enumerate(command_set['commands']):
+            for com_index, command in enumerate(command_set['commands']):
                 comm_entry = CommandEntry.objects.create(
                     command_set=set_entry,
                     command=command['command'],
-                    order=index
+                    order=com_index
                 )
 
                 start_time = arrow.get(command['result']['start_time']).naive

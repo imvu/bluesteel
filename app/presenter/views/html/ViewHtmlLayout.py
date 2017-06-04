@@ -36,57 +36,57 @@ def get_layouts(request, page_index):
 
 def get_layout_editable(request, layout_id):
     """ Returns html for the layout editable page """
-    if request.method == 'GET':
-        layout = BluesteelLayoutEntry.objects.filter(id=layout_id).first()
-
-        data = {}
-        data['layout'] = layout.as_object()
-        data['layout'] = ViewPrepareObjects.prepare_layout_for_html(data['layout'])
-        data['menu'] = ViewPrepareObjects.prepare_menu_for_html([])
-
-        for project in data['layout']['projects']:
-            project = ViewPrepareObjects.prepare_project_for_html(project)
-
-        return res.get_template_data(request, 'presenter/layout_edit.html', data)
-    else:
+    if request.method != 'GET':
         return res.get_template_data(request, 'presenter/not_found.html', {})
+
+    layout = BluesteelLayoutEntry.objects.filter(id=layout_id).first()
+
+    data = {}
+    data['layout'] = layout.as_object()
+    data['layout'] = ViewPrepareObjects.prepare_layout_for_html(data['layout'])
+    data['menu'] = ViewPrepareObjects.prepare_menu_for_html([])
+
+    for project in data['layout']['projects']:
+        project = ViewPrepareObjects.prepare_project_for_html(project)
+
+    return res.get_template_data(request, 'presenter/layout_edit.html', data)
 
 def confirm_delete(request, layout_id):
     """ Confirm layout deletion """
-    if request.method == 'GET':
-        layout_entry = BluesteelLayoutEntry.objects.filter(id=layout_id).first()
-        if layout_entry is None:
-            return res.get_response(404, 'Bluesteel layout not found', {})
-
-        data = {}
-        data['confirm'] = {}
-        data['confirm']['title'] = 'Delete layout'
-        data['confirm']['text'] = 'Are you sure you want to delete this Layout ?'
-        data['confirm']['url'] = {}
-        data['confirm']['url']['accept'] = ViewUrlGenerator.get_delete_layout_url(layout_entry.id)
-        data['confirm']['url']['cancel'] = ViewUrlGenerator.get_layout_edit_url(layout_entry.id)
-        data['menu'] = ViewPrepareObjects.prepare_menu_for_html([])
-
-        return res.get_template_data(request, 'presenter/confirm.html', data)
-    else:
+    if request.method != 'GET':
         return res.get_only_get_allowed({})
+
+    layout_entry = BluesteelLayoutEntry.objects.filter(id=layout_id).first()
+    if layout_entry is None:
+        return res.get_response(404, 'Bluesteel layout not found', {})
+
+    data = {}
+    data['confirm'] = {}
+    data['confirm']['title'] = 'Delete layout'
+    data['confirm']['text'] = 'Are you sure you want to delete this Layout ?'
+    data['confirm']['url'] = {}
+    data['confirm']['url']['accept'] = ViewUrlGenerator.get_delete_layout_url(layout_entry.id)
+    data['confirm']['url']['cancel'] = ViewUrlGenerator.get_layout_edit_url(layout_entry.id)
+    data['menu'] = ViewPrepareObjects.prepare_menu_for_html([])
+
+    return res.get_template_data(request, 'presenter/confirm.html', data)
 
 def confirm_wipe(request, layout_id):
     """ Confirm layout deletion """
-    if request.method == 'GET':
-        layout_entry = BluesteelLayoutEntry.objects.filter(id=layout_id).first()
-        if layout_entry is None:
-            return res.get_response(404, 'Bluesteel layout not found', {})
-
-        data = {}
-        data['confirm'] = {}
-        data['confirm']['title'] = 'Wipe layout'
-        data['confirm']['text'] = 'Are you sure you want to wipe this Layout\'s data ?'
-        data['confirm']['url'] = {}
-        data['confirm']['url']['accept'] = ViewUrlGenerator.get_wipe_layout_url(layout_entry.id)
-        data['confirm']['url']['cancel'] = ViewUrlGenerator.get_layout_edit_url(layout_entry.id)
-        data['menu'] = ViewPrepareObjects.prepare_menu_for_html([])
-
-        return res.get_template_data(request, 'presenter/confirm.html', data)
-    else:
+    if request.method != 'GET':
         return res.get_only_get_allowed({})
+
+    layout_entry = BluesteelLayoutEntry.objects.filter(id=layout_id).first()
+    if layout_entry is None:
+        return res.get_response(404, 'Bluesteel layout not found', {})
+
+    data = {}
+    data['confirm'] = {}
+    data['confirm']['title'] = 'Wipe layout'
+    data['confirm']['text'] = 'Are you sure you want to wipe this Layout\'s data ?'
+    data['confirm']['url'] = {}
+    data['confirm']['url']['accept'] = ViewUrlGenerator.get_wipe_layout_url(layout_entry.id)
+    data['confirm']['url']['cancel'] = ViewUrlGenerator.get_layout_edit_url(layout_entry.id)
+    data['menu'] = ViewPrepareObjects.prepare_menu_for_html([])
+
+    return res.get_template_data(request, 'presenter/confirm.html', data)

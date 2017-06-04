@@ -32,23 +32,23 @@ def zip_folder_and_return_path(path_to_compress, path_destination, name_destinat
 
 def get_worker(request):
     """ Returns the worker scripts compressed in a zip file """
-    if request.method == 'GET':
-        settings_obj = {}
-        settings_obj['entry_point'] = ViewUrlGenerator.get_worker_entry_point_full_url(request.get_host())
-        settings_obj['tmp_path'] = ['..', 'tmp', 'worker_tmp']
-
-        path_final = zip_folder_and_return_path(
-            os.path.join(settings.BASE_DIR, '..', 'app', 'logic', 'bluesteelworker', 'download'),
-            os.path.join(settings.TMP_ROOT, 'zip'),
-            'BluesteelWorker.zip',
-            settings_obj
-        )
-
-        myfile = open(path_final)
-
-        response = HttpResponse(myfile.read(), content_type='application/zip')
-        response['Content-Disposition'] = 'attachment; filename=BluesteelWorker.zip'
-        myfile.close()
-        return response
-    else:
+    if request.method != 'GET':
         return res.get_template_data(request, 'presenter/not_found.html', {})
+
+    settings_obj = {}
+    settings_obj['entry_point'] = ViewUrlGenerator.get_worker_entry_point_full_url(request.get_host())
+    settings_obj['tmp_path'] = ['..', 'tmp', 'worker_tmp']
+
+    path_final = zip_folder_and_return_path(
+        os.path.join(settings.BASE_DIR, '..', 'app', 'logic', 'bluesteelworker', 'download'),
+        os.path.join(settings.TMP_ROOT, 'zip'),
+        'BluesteelWorker.zip',
+        settings_obj
+    )
+
+    myfile = open(path_final)
+
+    response = HttpResponse(myfile.read(), content_type='application/zip')
+    response['Content-Disposition'] = 'attachment; filename=BluesteelWorker.zip'
+    myfile.close()
+    return response

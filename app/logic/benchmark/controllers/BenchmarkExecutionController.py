@@ -61,12 +61,12 @@ class BenchmarkExecutionController(object):
 
         if execution is None:
             return None
-        else:
-            execution.invalidated = False
-            execution.status = BenchmarkExecutionEntry.IN_PROGRESS
-            execution.revision_target = execution.definition.revision
-            execution.save()
-            return execution
+
+        execution.invalidated = False
+        execution.status = BenchmarkExecutionEntry.IN_PROGRESS
+        execution.revision_target = execution.definition.revision
+        execution.save()
+        return execution
 
     @staticmethod
     def get_benchmark_execution_window(bench_exec_entry, window_half_apperture):

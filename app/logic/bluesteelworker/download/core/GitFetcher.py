@@ -125,7 +125,7 @@ class GitFetcher(object):
 
         self.branch_names['remote'] = self.extract_remote_branch_names_from_reports(remote_branches_report)
 
-        if len(self.branch_names['remote']) == 0:
+        if not self.branch_names['remote']:
             msg = 'No remote branches found, looks strange'
             no_branches_report = GitFetcher.create_report('No command executed', 0, msg, '')
             self.save_report('step_fetch_remote_branches', no_branches_report)
@@ -142,7 +142,7 @@ class GitFetcher(object):
 
         self.branch_names['local'] = self.extract_local_branch_names_from_reports(local_branches_report)
 
-        if len(self.branch_names['local']) == 0:
+        if not self.branch_names['local']:
             msg = 'No local branches found, looks strange'
             no_branches_report = GitFetcher.create_report('No command executed', 0, msg, '')
             self.save_report('step_fetch_local_branches', no_branches_report)
@@ -383,7 +383,7 @@ class GitFetcher(object):
     def save_report(self, name, report):
         """ Save the given report or if empty save a meaningful report with some info """
 
-        if len(report['commands']) > 0:
+        if report['commands']:
             self.report_stack.append(report)
         else:
             msg = 'No commands has been found. So we populate one command to let you know :D'
@@ -544,17 +544,17 @@ class GitFetcher(object):
                 for name in names:
                     name = name.strip()
 
-                    if len(name) == 0:
+                    if not name:
                         continue
 
                     if '*' in name:
                         name = name.split(' ')[1].strip()
-                        if len(name) > 0:
+                        if name:
                             branch_names.append(name)
                         continue
 
                     name = name.split(' ')[0].strip()
-                    if len(name) > 0 and not 'HEAD' in name:
+                    if name and not 'HEAD' in name:
                         branch_names.append(name)
 
         return branch_names
@@ -570,7 +570,7 @@ class GitFetcher(object):
                 for name in names:
                     name = name.replace('*', '')
                     name = name.strip()
-                    if len(name) > 0:
+                    if name:
                         branch_names.append(name)
         return branch_names
 
@@ -682,7 +682,7 @@ class GitFetcher(object):
                     original_parents_list = commit['parent_hashes'].split(' ')
                     filtered_parents_list = []
                     for parent in original_parents_list:
-                        if len(parent) > 0:
+                        if parent:
                             filtered_parents_list.append(str(parent))
                     commit['parent_hashes'] = filtered_parents_list
                     commit['author']['name'] = CommandExecutioner.remove_non_ascii(commit['author']['name'])
