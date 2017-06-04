@@ -35,7 +35,6 @@ def save_project(request, project_id):
     if request.method != 'POST':
         return res.get_only_post_allowed({})
 
-
     project_entry = BluesteelProjectEntry.objects.filter(id=project_id).first()
     if project_entry is None:
         return res.get_response(404, 'Bluesteel project not found', {})
