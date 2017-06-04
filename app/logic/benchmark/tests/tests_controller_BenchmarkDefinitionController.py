@@ -99,6 +99,18 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
         BenchmarkFluctuationOverrideEntry.objects.create(definition=definition, result_id='id2', override_value=29)
         BenchmarkFluctuationOverrideEntry.objects.create(definition=definition, result_id='id3', override_value=30)
 
+        user1 = User.objects.create_user('user1@test.com', 'user1@test.com', 'pass')
+        user1.save()
+
+        user2 = User.objects.create_user('user2@test.com', 'user2@test.com', 'pass')
+        user2.save()
+
+        worker1 = WorkerEntry.objects.create(user=user1)
+        worker2 = WorkerEntry.objects.create(user=user2)
+
+        BenchmarkDefinitionWorkerPassEntry.objects.create(definition=definition, worker=worker2)
+        BenchmarkDefinitionWorkerPassEntry.objects.create(definition=definition, worker=worker1)
+
         self.assertEqual(1, BluesteelLayoutEntry.objects.all().count())
         self.assertEqual(1, BluesteelProjectEntry.objects.all().count())
         self.assertNotEqual(None, definition.command_set)
@@ -110,6 +122,7 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
         self.assertEqual(2, definition.max_weeks_old_notify)
         self.assertEqual('default-name', definition.name)
         self.assertEqual(3, BenchmarkFluctuationOverrideEntry.objects.all().count())
+        self.assertEqual(2, BenchmarkDefinitionWorkerPassEntry.objects.filter(definition=definition).count())
 
         new_definition = BenchmarkDefinitionController.duplicate_benchmark_definition(definition.id)
 
@@ -128,6 +141,8 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
         self.assertEqual('default-name', definition.name)
         self.assertEqual('default-name (duplicate)', new_definition.name)
         self.assertEqual(3, BenchmarkFluctuationOverrideEntry.objects.all().count())
+        self.assertEqual(2, BenchmarkDefinitionWorkerPassEntry.objects.filter(definition=definition).count())
+        self.assertEqual(2, BenchmarkDefinitionWorkerPassEntry.objects.filter(definition=new_definition).count())
 
     def test_save_benchmark_definition(self):
         self.assertEqual(0, CommandGroupEntry.objects.all().count())

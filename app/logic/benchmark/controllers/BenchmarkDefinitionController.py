@@ -79,6 +79,14 @@ class BenchmarkDefinitionController(object):
             max_weeks_old_notify=bench_def.max_weeks_old_notify,
         )
 
+        passes = BenchmarkDefinitionWorkerPassEntry.objects.filter(definition=bench_def)
+
+        for work_pass in passes:
+            BenchmarkDefinitionWorkerPassEntry.objects.create(
+                definition=new_bench_def,
+                worker=work_pass.worker,
+                allowed=work_pass.allowed)
+
         return new_bench_def
 
 
