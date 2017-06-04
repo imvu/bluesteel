@@ -736,6 +736,8 @@ class GitFetcher(object):
         merge_target['target_branch']['commit_hash'] = ''
         merge_target['fork_point'] = ''
 
+        # If we find the branch A inside the list of known branches, then we
+        # return its own previous merge target already registered on the past.
         for known_branch in known_branches:
             if branch['name'] == known_branch['name']:
                 merge_target['target_branch']['name'] = known_branch['merge_target']['target_branch']['name']
@@ -747,12 +749,30 @@ class GitFetcher(object):
                 merge_target['target_branch']['commit_hash'] = commit_hash
                 return merge_target
 
+
+        # if we did not find the branch on the known_branch list, then we
+        # try to find master branch and return its merge target info.
         for ext_branch in branch_list:
             if ext_branch['name'] == 'master':
                 merge_target['target_branch']['name'] = ext_branch['name']
                 merge_target['target_branch']['commit_hash'] = ext_branch['commit_hash']
                 return merge_target
 
+        # if we did not find the branch on the known list or we did not find
+        # 'master' on the extracted list. We try to find 'master' on the known_branches now.
+        for known_branch in known_branches:
+            if known_branch['name'] == 'master':
+                merge_target['target_branch']['name'] = 'master'
+                commit_hash = GitFetcher.get_latests_commit_of_branch(
+                    'master',
+                    branch_list,
+                    known_branches
+                )
+                merge_target['target_branch']['commit_hash'] = commit_hash
+                return merge_target
+
+        # At this point, we return the branch info so the merge target will
+        # become itself.
         merge_target['target_branch']['name'] = branch['name']
         merge_target['target_branch']['commit_hash'] = branch['commit_hash']
         return merge_target
