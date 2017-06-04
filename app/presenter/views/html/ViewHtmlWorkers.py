@@ -62,7 +62,7 @@ def get_worker_all(request, page_index):
     if request.method != 'GET':
         return res.get_only_get_allowed({})
 
-    worker_entries = WorkerEntry.objects.all()
+    worker_entries = WorkerEntry.objects.all().order_by('name')
 
     page = Page(WORKER_ITEMS_PER_PAGE, page_index)
     pager = Paginator(worker_entries, page.items_per_page)
