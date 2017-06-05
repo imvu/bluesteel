@@ -2,7 +2,7 @@
 
 import json
 from django.http import HttpResponse
-from django.template import RequestContext, loader
+from django.template import loader
 
 def add_cross_origin_properties(http_request):
     """ Setup the required headers to allow cross origin requests """
@@ -45,6 +45,5 @@ def get_schema_failed(data):
 
 def get_template_data(request, template, data):
     template = loader.get_template(template)
-    context = RequestContext(request, data)
-    response = HttpResponse(template.render(context))
+    response = HttpResponse(template.render(request=request, context=data))
     return response
