@@ -371,7 +371,10 @@ class BenchmarkExecutionController(object):
 
         for branch in branches:
             for commit in branch['commits']:
-                count = BenchmarkExecutionEntry.objects.filter(commit__commit_hash=commit['hash']).count()
+                count = BenchmarkExecutionEntry.objects.filter(
+                    commit__commit_hash=commit['hash'],
+                    definition__worker_pass_definition__allowed=True
+                ).distinct().count()
 
                 finished = BenchmarkExecutionEntry.objects.filter(
                     commit__commit_hash=commit['hash'],
@@ -383,7 +386,7 @@ class BenchmarkExecutionController(object):
                 if count == 0:
                     commit['benchmark_completed'] = 0
                 else:
-                    commit['benchmark_completed'] = int((float(finished) / float(count)) * 100.0)
+                    commit['benchmark_completed'] = min(100, int((float(finished) / float(count)) * 100.0))
 
         return branches
 
