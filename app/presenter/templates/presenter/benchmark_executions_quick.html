@@ -91,7 +91,7 @@
                 </div>
             </div>
 
-            <div class="lower_card white_card">
+            <div class="middle_card white_card">
                 <div class="grid grid-pad-2">
                     <div class="grid-col-1-1 grid-cell-pad-5-10">
                         <div class="container_input">
@@ -108,10 +108,29 @@
                     </div>
                 </div>
             </div>
+
+            <div class="lower_card white_card">
+                <div class="grid grid-pad-2">
+                    <div class="grid-col-1-1 grid-cell-pad-5-10">
+                        <div class="container_centered_items">
+                        <button     class="btn_rect primary"
+                                    type='button'
+                                    onclick="tryPopulateCharts('select_layout', 'select_project', 'select_branch', 'select_bench_definition', 'select_worker');"
+                        >Refresh</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="grid-col-13-16 grid-cell-pad-2-10" id="data_container">
         </div>
     </div>
 </div>
+
+<script>
+    window.onbeforeunload = function() {
+        return "Options state will be lost if you leave the page, are you sure?";
+    };
+</script>
 
 {% endblock %}

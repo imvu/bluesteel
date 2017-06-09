@@ -297,3 +297,4 @@ tryPopulateCharts = function(selLayoutId, selProjectId, selBranchId, selDefiniti
 
     populateDataEmpty('data_container', 'Retreiving data...');
 }
+

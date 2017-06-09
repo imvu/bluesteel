@@ -56,7 +56,8 @@ div.container_input:hover
     border: solid 1px #969696;
 }
 
-div.container_items
+div.container_centered_items
 {
     text-align: center;
 }
+
