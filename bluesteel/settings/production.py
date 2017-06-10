@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 import sys
+import FactorySettings
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
@@ -20,7 +21,7 @@ TESTING = False
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'rgs$vr920yd6i&+p2f!-xx+=+pios(bqn&j&59b%&213%7q1co'
+SECRET_KEY = FactorySettings.get_secret_key(os.path.dirname(__file__))
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False

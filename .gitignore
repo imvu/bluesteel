@@ -3,3 +3,5 @@ db.sqlite3
 .DS_Store
 *.swp
 *~
+
+bluesteel/settings/Secret-Key-File.josn
