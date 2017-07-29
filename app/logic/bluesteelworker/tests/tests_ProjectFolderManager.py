@@ -125,6 +125,7 @@ class ProjectFolderManagerTestCase(TestCase):
         self.assertEqual(os.path.join(self.tmp_folder, 'tmp/folder/list/archive-name/project-name/project'), paths['git_project_search_path'])
 
     def test_if_local_search_path_is_dot_folder_then_path_equal_first_git_project(self):
+        print '--------------------'
         os.makedirs(os.path.join(self.tmp_folder, 'tmp/folder/list/archive-name/project-name/project/test-repo-1/.git'))
         os.makedirs(os.path.join(self.tmp_folder, 'tmp/folder/list/archive-name/project-name/project/test-repo-2/.git'))
         os.makedirs(os.path.join(self.tmp_folder, 'tmp/folder/list/archive-name/project-name/project/test-repo-3/.git'))

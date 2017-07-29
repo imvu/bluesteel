@@ -11,14 +11,47 @@ class ProjectFolderManager(object):
         return os.sep.join(folders_list)
 
     @staticmethod
+    def sorted_walk(top, topdown=True, onerror=None):
+        """ The same as os.walk but in a sorted fashon """
+
+        try:
+            names = os.listdir(top)
+        except OSError:
+            return
+
+        names.sort()
+        dirs, nondirs = [], []
+
+        for name in names:
+            if os.path.isdir(os.path.join(top, name)):
+                dirs.append(name)
+            else:
+                nondirs.append(name)
+
+        if topdown:
+            yield top, dirs, nondirs
+
+        for name in dirs:
+            path = os.path.join(top, name)
+            if not os.path.islink(path):
+                for step in ProjectFolderManager.sorted_walk(path, topdown, onerror):
+                    yield step
+
+        if not topdown:
+            yield top, dirs, nondirs
+
+
+    @staticmethod
     def get_cwd_of_first_git_project_found_in(directory):
         """ Searches for the first .git folder on the project path and returns its location """
-        for root, dirs, files in os.walk(directory):
+        for root, dirs, files in ProjectFolderManager.sorted_walk(directory):
             del files
+
             for dir_to_check in dirs:
                 if dir_to_check == '.git':
                     return root
         return None
+
 
     @staticmethod
     def get_folder_paths(cwd, tmp_folders_list, archive_name, project_name, local_search_path):
