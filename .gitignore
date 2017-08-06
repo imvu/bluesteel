@@ -5,3 +5,4 @@ db.sqlite3
 *~
 
 bluesteel/settings/Secret-Key-File.josn
+bluesteel/settings/Database-Settings-File.json
