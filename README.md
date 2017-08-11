@@ -12,8 +12,8 @@
 
 - `Workers`: A *Worker* is a software downloaded from BlueSteel and capable of communicating back and forth with it. This worker will accomplish several tasks like: 
 
-    - Clone and/or pull an existing project into the workerÂ´s host machine.
-    - Setup the projectÂ´s source code state at the correct commit.
+    - Clone and/or pull an existing project into the worker´s host machine.
+    - Setup the project´s source code state at the correct commit.
     - Execute the right benchmark for that commit.
     - Report back the results of that benchmark to BlueSteel.
 
@@ -232,6 +232,27 @@ BlueSteel can understand 3 types of outputs now:
 - Modify the values of the previous commands as you need.
 - Modify Django settings files to use this DB instead of SQLite.
 - Execute command: `./manage.py migrate`
+
+### How to dump PostgreSQL database data (optional)
+
+- This is only necessary in the case you want to migrate data from one database to another.
+- Stop the BlueSteel webpage (kill the process started with s/run-server.py)
+- Login with the postgres user: `sudo su - postgres`
+- Use pg_dump to dump all the data: `pg_dump bluesteeldb > data_dump.sql`
+
+### How to restore PostgreSQL database data (optional)
+
+- This is only necessary in the case you want to import data from a previous database.
+- Stop the BlueSteel webpage (kill the process started with s/run-server.py)
+- Login with the postgres user: `sudo su - postgres`
+- Open the Postgreswl shell: `psql -d -postgres`
+- Execute command: `DROP DATABASE IF EXISTS bluesteeldb;`
+- Execute command: `CREATE DATABASE bluesteeldb;`
+- Execute command: `GRANT ALL PRIVILEGES ON DATABASE bluesteeldb TO bluesteeluser;`
+- Execute command: `SET effective_cache_size TO '1000 MB';`
+- Quit the shell with: `\q`
+- Import data with: `psql bluesteeldb < data_dump.sql`
+
 
 ## Contributing ##
 
