@@ -8,18 +8,18 @@
 
 - BlueSteel will benchmark every commit of your project, and will notify you if there is a fluctuation. To achieve that goal, BlueSteel uses 4 concepts: `Layouts + Projects`, `Workers`, `Definitions` and `Executions`.
 
-`Layouts + Projects`: A *Layout* is a group of projects, and a *Project* is the information that BlueSteel will use to *clone*, *pull*, *identify* where the source code lives, and check the *state* of the project (Active or Inactive). We will need to setup a Layout and a Project if we want to use BlueSteel.
+- `Layouts + Projects`: A *Layout* is a group of projects, and a *Project* is the information that BlueSteel will use to *clone*, *pull*, *identify* where the source code lives, and check the *state* of the project (Active or Inactive). We will need to setup a Layout and a Project if we want to use BlueSteel.
 
-`Workers`: A *Worker* is a software downloaded from BlueSteel and capable of communicating back and forth with it. This worker will accomplish several tasks like: 
+- `Workers`: A *Worker* is a software downloaded from BlueSteel and capable of communicating back and forth with it. This worker will accomplish several tasks like: 
 
-    - Clone and/or pull an existing project into the worker큦 host machine.
-    - Setup the project큦 source code state at the correct commit.
-    - Execute the right benchmark for that commit.
-    - Report back the results of that benchmark to BlueSteel.
+    * Clone and/or pull an existing project into the worker큦 host machine.
+    * Setup the project큦 source code state at the correct commit.
+    * Execute the right benchmark for that commit.
+    * Report back the results of that benchmark to BlueSteel.
 
-`Definitions`: A *Benchmark Definition* is a list of commands that a worker will execute sequentially and will report back to BlueSteel. Normally a Benchmark Definition will be executed per every combination of commit and worker present in BlueSteel. This can be controlled on the Benchmark Definition's setup page.
+- `Definitions`: A *Benchmark Definition* is a list of commands that a worker will execute sequentially and will report back to BlueSteel. Normally a Benchmark Definition will be executed per every combination of commit and worker present in BlueSteel. This can be controlled on the Benchmark Definition's setup page.
 
-`Executions`: A *Benchmark Execution* is the result of all the executed commands present on a Benchmark Definition. Those results will provide enough information to BlueSteel to represent visual charts and to generate notifications in the case of fluctuations.
+- `Executions`: A *Benchmark Execution* is the result of all the executed commands present on a Benchmark Definition. Those results will provide enough information to BlueSteel to represent visual charts and to generate notifications in the case of fluctuations.
 
 ## Why use BlueSteel ?##
 
