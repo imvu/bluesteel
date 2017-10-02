@@ -109,7 +109,8 @@ saveBenchmarkDefinition = function(idFormBenchmarkDefinition) {
     obj['name'] = form.elements['name_active'].value;
     obj['layout_id'] = parseInt(form.elements['layout_active'].value);
     obj['project_id'] = parseInt(form.elements['project_active'].value);
-    obj['active'] = (1 === parseInt(form.elements['active_state'].value))
+    obj['priority'] = 2;
+    obj['active'] = (1 === parseInt(form.elements['active_state'].value));
     obj['command_list'] = [];
     obj['max_fluctuation_percent'] = '-1';
     obj['max_weeks_old_notify'] = '-1';

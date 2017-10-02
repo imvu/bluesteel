@@ -32,6 +32,11 @@ SAVE_BENCHMARK_DEFINITION = {
             'type' : 'number',
             'minimum' : 1,
         },
+        'priority' : {
+            'type' : 'integer',
+            'minimum' : 0,
+            'maximum' : 4,
+        },
         'active' : {
             'type' : 'boolean',
         },

@@ -73,6 +73,7 @@ class BenchmarkDefinitionController(object):
             layout=bench_def.layout,
             project=bench_def.project,
             command_set=new_comm_set,
+            priority=bench_def.priority,
             active=False,
             revision=0,
             max_fluctuation_percent=bench_def.max_fluctuation_percent,
@@ -114,6 +115,7 @@ class BenchmarkDefinitionController(object):
             benchmark_definition_id,
             layout_id,
             project_id,
+            priority,
             active,
             command_list,
             max_fluctuation_percent,
@@ -145,6 +147,7 @@ class BenchmarkDefinitionController(object):
             benchmark_def_entry.name = name
             benchmark_def_entry.max_fluctuation_percent = max_fluctuation_percent
             benchmark_def_entry.max_weeks_old_notify = max_weeks_old_notify
+            benchmark_def_entry.priority = priority
             benchmark_def_entry.active = active
             benchmark_def_entry.save()
             return benchmark_def_entry
@@ -174,6 +177,7 @@ class BenchmarkDefinitionController(object):
         benchmark_def_entry.name = name
         benchmark_def_entry.layout = layout_entry
         benchmark_def_entry.project = project_entry
+        benchmark_def_entry.priority = priority
         benchmark_def_entry.active = active
         benchmark_def_entry.revision = benchmark_def_entry.revision + 1
         benchmark_def_entry.max_fluctuation_percent = max_fluctuation_percent

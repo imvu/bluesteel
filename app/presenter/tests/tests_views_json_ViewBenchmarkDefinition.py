@@ -131,6 +131,7 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
         obj['name'] = 'new-name-1'
         obj['layout_id'] = layout.id
         obj['project_id'] = project.id
+        obj['priority'] = 3
         obj['active'] = True
         obj['max_fluctuation_percent'] = 28
         obj['max_weeks_old_notify'] = 8
@@ -187,6 +188,7 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
         obj['name'] = 'new-name-1'
         obj['layout_id'] = layout.id
         obj['project_id'] = project.id
+        obj['priority'] = 3
         obj['active'] = True
         obj['max_fluctuation_percent'] = 28
         obj['max_weeks_old_notify'] = 8
@@ -222,6 +224,7 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
         obj['name'] = 'new-name-1'
         obj['layout_id'] = layout.id
         obj['project_id'] = project.id
+        obj['priority'] = 3
         obj['active'] = True
         obj['max_fluctuation_percent'] = 28
         obj['max_weeks_old_notify'] = 8
