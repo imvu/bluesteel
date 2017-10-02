@@ -7,10 +7,26 @@ from app.logic.commandrepo.models.CommandSetModel import CommandSetEntry
 
 class BenchmarkDefinitionEntry(models.Model):
     """ Benchmark Definition """
+
+    VERY_LOW = 0
+    LOW = 1
+    NORMAL = 2
+    HIGH = 3
+    VERY_HIGH = 4
+    PROPRITY_TYPE = (
+        (VERY_LOW, 'VeryLow'),
+        (LOW, 'Low'),
+        (NORMAL, 'Normal'),
+        (HIGH, 'High'),
+        (VERY_HIGH, 'VeryHigh'),
+    )
+
+
     name = models.CharField(default='Default benchmark name', max_length=128)
     layout = models.ForeignKey('bluesteel.BluesteelLayoutEntry', related_name='benchmark_layout')
     project = models.ForeignKey('bluesteel.BluesteelProjectEntry', related_name='benchmark_project')
     command_set = models.ForeignKey('commandrepo.CommandSetEntry', related_name='benchmark_command_set')
+    priority = models.IntegerField(choices=PROPRITY_TYPE, default=NORMAL)
     active = models.BooleanField(default=False)
     revision = models.IntegerField(default=0)
     max_fluctuation_percent = models.IntegerField(default=0)
@@ -39,6 +55,7 @@ class BenchmarkDefinitionEntry(models.Model):
         obj['project']['uuid'] = self.project.get_uuid()
         obj['project']['git_project_folder_search_path'] = self.project.git_project_folder_search_path
         obj['command_set'] = self.command_set.as_object()
+        obj['priority'] = self.priority
         obj['active'] = self.active
         obj['revision'] = self.revision
         obj['max_fluctuation_percent'] = self.max_fluctuation_percent
