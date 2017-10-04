@@ -89,6 +89,9 @@ def get_benchmark_definition(request, definition_id):
     obj['layout_selection'] = get_layout_selection(def_entry['layout']['id'])
     obj['project_selection'] = get_project_selection(def_entry['layout']['id'], def_entry['project']['id'])
 
+    # Translate priority number to name.
+    obj['priority']['name'] = obj['priority']['names'][obj['priority']['current']]
+
     data['definition'] = obj
 
     return res.get_template_data(request, 'presenter/benchmark_definition.html', data)
@@ -111,6 +114,17 @@ def get_benchmark_definition_edit(request, definition_id):
     obj['url']['project_info'] = ViewUrlGenerator.get_editable_projects_info_url()
     obj['layout_selection'] = get_layout_selection(def_entry['layout']['id'])
     obj['project_selection'] = get_project_selection(def_entry['layout']['id'], def_entry['project']['id'])
+
+    names_and_sel = []
+    count = 0
+    for name in obj['priority']['names']:
+        nas = {}
+        nas['name'] = name
+        nas['selected'] = obj['priority']['current'] == count
+        count = count +1
+        names_and_sel.append(nas)
+    obj['priority']['names'] = names_and_sel
+
 
     data['definition'] = obj
 

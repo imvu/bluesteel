@@ -102,6 +102,27 @@
 
                 <div class="grid grid-pad-20">
                     <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="list_label">PRIORITY</div>
+                    </div>
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="normal">Execution priority.</div>
+                    </div>
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="container_input">
+                            <select     class="selection individual"
+                                        name="priority_state"
+                                        id="priority_selection"
+                            >
+                                {% for nas in definition.priority.names %}
+                                    <option value="{{forloop.counter0}}" {{nas.selected|yesno:"selected,"}}>{{nas.name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-pad-20">
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
                         <div class="list_label">STATUS</div>
                     </div>
                     <div class="grid-col-1-1 grid-cell-pad-2-10">

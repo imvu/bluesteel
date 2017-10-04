@@ -55,7 +55,9 @@ class BenchmarkDefinitionEntry(models.Model):
         obj['project']['uuid'] = self.project.get_uuid()
         obj['project']['git_project_folder_search_path'] = self.project.git_project_folder_search_path
         obj['command_set'] = self.command_set.as_object()
-        obj['priority'] = self.priority
+        obj['priority'] = {}
+        obj['priority']['current'] = self.priority
+        obj['priority']['names'] = ['VERY LOW', 'LOW', 'NORMAL', 'HIGH', 'VERY HIGH']
         obj['active'] = self.active
         obj['revision'] = self.revision
         obj['max_fluctuation_percent'] = self.max_fluctuation_percent
