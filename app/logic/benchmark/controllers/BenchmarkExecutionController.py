@@ -56,7 +56,7 @@ class BenchmarkExecutionController(object):
                          definition__worker_pass_definition__worker=worker_entry)
                      .filter(worker=worker_entry)
                      .filter(q_ready | q_invalidated | q_revision | q_in_progress)
-                     .order_by('-commit__author_date')
+                     .order_by('-commit__author_date', '-definition__priority')
                      .first())
 
         if execution is None:
