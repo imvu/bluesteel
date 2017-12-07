@@ -896,6 +896,7 @@ class GitFetcherTestCase(TestCase):
         self.assertEqual('0000300003000030000300003000030000300003', res['current_branch']['commit_hash'])
         self.assertEqual('b-k-2-5', res['target_branch']['name'])
         self.assertEqual('0000700007000070000700007000070000700007', res['target_branch']['commit_hash'])
+        self.assertEqual('0000700007000070000700007000070000700007', res['fork_point'])
 
     def test_get_merge_target_from_branch_list_found_in_known_but_keep_latest_commit(self):
         branch_merge_target = {}
@@ -941,6 +942,7 @@ class GitFetcherTestCase(TestCase):
         self.assertEqual('0000300003000030000300003000030000300003', res['current_branch']['commit_hash'])
         self.assertEqual('master', res['target_branch']['name'])
         self.assertEqual('0000900009000090000900009000090000900009', res['target_branch']['commit_hash'])
+        self.assertEqual('0000900009000090000900009000090000900009', res['fork_point'])
 
     def test_get_merge_target_from_branch_list_found_in_extracted(self):
         branch_merge_target = {}
@@ -987,6 +989,7 @@ class GitFetcherTestCase(TestCase):
         self.assertEqual('0000400004000040000400004000040000400004', res['current_branch']['commit_hash'])
         self.assertEqual('master', res['target_branch']['name'])
         self.assertEqual('0000900009000090000900009000090000900009', res['target_branch']['commit_hash'])
+        self.assertEqual('0000900009000090000900009000090000900009', res['fork_point'])
 
     def test_get_merge_target_from_branch_list_found_master_in_known(self):
         branch_merge_target = {}
@@ -1029,6 +1032,7 @@ class GitFetcherTestCase(TestCase):
         self.assertEqual('0000400004000040000400004000040000400004', res['current_branch']['commit_hash'])
         self.assertEqual('master', res['target_branch']['name'])
         self.assertEqual('0000300003000030000300003000030000300003', res['target_branch']['commit_hash'])
+        self.assertEqual('0000300003000030000300003000030000300003', res['fork_point'])
 
 
     def test_get_merge_target_from_branch_list_found_in_itself(self):
@@ -1075,6 +1079,7 @@ class GitFetcherTestCase(TestCase):
         self.assertEqual('0000900009000090000900009000090000900009', res['current_branch']['commit_hash'])
         self.assertEqual('b-9', res['target_branch']['name'])
         self.assertEqual('0000900009000090000900009000090000900009', res['target_branch']['commit_hash'])
+        self.assertEqual('0000900009000090000900009000090000900009', res['fork_point'])
 
     def test_step_missing_fork_point(self):
         obj = {}

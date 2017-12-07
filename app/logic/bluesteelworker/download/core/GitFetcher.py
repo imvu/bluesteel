@@ -747,6 +747,7 @@ class GitFetcher(object):
                     known_branches
                 )
                 merge_target['target_branch']['commit_hash'] = commit_hash
+                merge_target['fork_point'] = commit_hash
                 return merge_target
 
 
@@ -756,6 +757,7 @@ class GitFetcher(object):
             if ext_branch['name'] == 'master':
                 merge_target['target_branch']['name'] = ext_branch['name']
                 merge_target['target_branch']['commit_hash'] = ext_branch['commit_hash']
+                merge_target['fork_point'] = ext_branch['commit_hash']
                 return merge_target
 
         # if we did not find the branch on the known list or we did not find
@@ -769,12 +771,14 @@ class GitFetcher(object):
                     known_branches
                 )
                 merge_target['target_branch']['commit_hash'] = commit_hash
+                merge_target['fork_point'] = commit_hash
                 return merge_target
 
         # At this point, we return the branch info so the merge target will
         # become itself.
         merge_target['target_branch']['name'] = branch['name']
         merge_target['target_branch']['commit_hash'] = branch['commit_hash']
+        merge_target['fork_point'] = branch['commit_hash']
         return merge_target
 
     @staticmethod
