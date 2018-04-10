@@ -363,7 +363,7 @@ class GitFetcherTestCase(TestCase):
 
     @mock.patch('app.logic.bluesteelworker.download.core.CommandExecutioner.subprocess.call')
     def test_checkout_remote_branches_to_local(self, mock_subprocess):
-        branch_names = ['origin/master', 'origin/branch-1', 'origin/branch-2', 'origin/branch-test-1']
+        branch_names = ['origin/master', 'origin/branch-1', 'origin/branch-2', 'origin/branch/test/1']
         mock_subprocess.return_value = 0
         self.create_paths(self.obj1)
         self.create_git_hidden_folder(settings.TMP_ROOT, 'tmp-gitfetcher-folder', 'archive-28-0123ABC', 'test-repo-1')
@@ -389,10 +389,10 @@ class GitFetcherTestCase(TestCase):
         self.assertEqual(['git', 'pull', '-r', 'origin', 'branch-2'], args[0])
 
         name, args, side = mock_subprocess.mock_calls[6]
-        self.assertEqual(['git', 'checkout', 'branch-test-1'], args[0])
+        self.assertEqual(['git', 'checkout', 'branch/test/1'], args[0])
 
         name, args, side = mock_subprocess.mock_calls[7]
-        self.assertEqual(['git', 'pull', '-r', 'origin', 'branch-test-1'], args[0])
+        self.assertEqual(['git', 'pull', '-r', 'origin', 'branch/test/1'], args[0])
 
         self.assertEqual(8, mock_subprocess.call_count)
 
@@ -429,12 +429,12 @@ class GitFetcherTestCase(TestCase):
         self.assertEqual('', reports['commands'][5]['result']['out'])
 
         self.assertEqual(0, reports['commands'][6]['result']['status'])
-        self.assertEqual('git checkout branch-test-1', reports['commands'][6]['command'])
+        self.assertEqual('git checkout branch/test/1', reports['commands'][6]['command'])
         self.assertEqual('', reports['commands'][6]['result']['error'])
         self.assertEqual('', reports['commands'][6]['result']['out'])
 
         self.assertEqual(0, reports['commands'][7]['result']['status'])
-        self.assertEqual('git pull -r origin branch-test-1', reports['commands'][7]['command'])
+        self.assertEqual('git pull -r origin branch/test/1', reports['commands'][7]['command'])
         self.assertEqual('', reports['commands'][7]['result']['error'])
         self.assertEqual('', reports['commands'][7]['result']['out'])
 

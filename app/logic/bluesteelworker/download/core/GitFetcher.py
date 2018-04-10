@@ -584,7 +584,7 @@ class GitFetcher(object):
         for name in remote_branch_names:
             name = name.split('/')
             if len(name) > 1:
-                name = name[1]
+                name = '/'.join(name[1:])
             else:
                 name = name[0]
             commands.append(['git', 'checkout', name])
