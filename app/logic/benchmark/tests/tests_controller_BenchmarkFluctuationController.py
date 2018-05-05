@@ -9,6 +9,7 @@ from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinit
 from app.logic.benchmark.models.BenchmarkDefinitionWorkerPassModel import BenchmarkDefinitionWorkerPassEntry
 from app.logic.benchmark.models.BenchmarkExecutionModel import BenchmarkExecutionEntry
 from app.logic.benchmark.models.BenchmarkFluctuationOverrideModel import BenchmarkFluctuationOverrideEntry
+from app.logic.benchmark.models.BenchmarkFluctuationWaiverModel import BenchmarkFluctuationWaiverEntry
 from app.logic.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
 from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
 from app.logic.bluesteel.controllers.BluesteelProjectController import BluesteelProjectController
@@ -744,3 +745,44 @@ class BenchmarkFluctuationControllerTestCase(TestCase):
 
         self.assertEqual(1.0, uni_fluc['id1']['parent']['fluctuation_ratio'])
         self.assertEqual(1.0, uni_fluc['id1']['son']['fluctuation_ratio'])
+
+    def test_populate_fluctuation_waivers(self):
+        self.git_project2 = GitProjectEntry.objects.create(url='http://test2/')
+
+        self.git_user1_2 = GitUserEntry.objects.create(project=self.git_project1, name='user1_2', email='user1_2@test.com')
+        self.git_user1_3 = GitUserEntry.objects.create(project=self.git_project1, name='user1_3', email='user1_3@test.com')
+
+        self.git_user2_1 = GitUserEntry.objects.create(project=self.git_project2, name='user2_1', email='user2_1@test.com')
+        self.git_user2_2 = GitUserEntry.objects.create(project=self.git_project2, name='user2_2', email='user2_2@test.com')
+        self.git_user2_3 = GitUserEntry.objects.create(project=self.git_project2, name='user2_3', email='user2_3@test.com')
+
+        self.assertEqual(2, GitProjectEntry.objects.all().count())
+        self.assertEqual(3, GitUserEntry.objects.filter(project__id=self.git_project1.id).count())
+        self.assertEqual(3, GitUserEntry.objects.filter(project__id=self.git_project2.id).count())
+        self.assertEqual(0, BenchmarkFluctuationWaiverEntry.objects.all().count())
+
+        BenchmarkFluctuationController.populate_fluctuation_waivers()
+
+        self.assertEqual(6, BenchmarkFluctuationWaiverEntry.objects.all().count())
+
+    def test_populate_fluctuation_waivers_with_some_already_created(self):
+        self.git_project2 = GitProjectEntry.objects.create(url='http://test2/')
+
+        self.git_user1_2 = GitUserEntry.objects.create(project=self.git_project1, name='user1_2', email='user1_2@test.com')
+        self.git_user1_3 = GitUserEntry.objects.create(project=self.git_project1, name='user1_3', email='user1_3@test.com')
+
+        self.git_user2_1 = GitUserEntry.objects.create(project=self.git_project2, name='user2_1', email='user2_1@test.com')
+        self.git_user2_2 = GitUserEntry.objects.create(project=self.git_project2, name='user2_2', email='user2_2@test.com')
+        self.git_user2_3 = GitUserEntry.objects.create(project=self.git_project2, name='user2_3', email='user2_3@test.com')
+
+        self.waiver1_1 = BenchmarkFluctuationWaiverEntry.objects.create(git_project=self.git_project1, git_user=self.git_user1_2)
+        self.waiver2_3 = BenchmarkFluctuationWaiverEntry.objects.create(git_project=self.git_project2, git_user=self.git_user2_3)
+
+        self.assertEqual(2, GitProjectEntry.objects.all().count())
+        self.assertEqual(3, GitUserEntry.objects.filter(project__id=self.git_project1.id).count())
+        self.assertEqual(3, GitUserEntry.objects.filter(project__id=self.git_project2.id).count())
+        self.assertEqual(2, BenchmarkFluctuationWaiverEntry.objects.all().count())
+
+        BenchmarkFluctuationController.populate_fluctuation_waivers()
+
+        self.assertEqual(6, BenchmarkFluctuationWaiverEntry.objects.all().count())

@@ -3,8 +3,10 @@
 import sys
 from app.logic.benchmark.models.BenchmarkExecutionModel import BenchmarkExecutionEntry
 from app.logic.benchmark.models.BenchmarkFluctuationOverrideModel import BenchmarkFluctuationOverrideEntry
+from app.logic.benchmark.models.BenchmarkFluctuationWaiverModel import BenchmarkFluctuationWaiverEntry
 from app.logic.gitrepo.controllers.GitController import GitController
 from app.logic.gitrepo.models.GitProjectModel import GitProjectEntry
+from app.logic.gitrepo.models.GitUserModel import GitUserEntry
 from app.logic.gitrepo.models.GitCommitModel import GitCommitEntry
 
 class BenchmarkFluctuationController(object):
@@ -257,3 +259,15 @@ class BenchmarkFluctuationController(object):
                 continue
 
         return (len(ret_fluctuations.keys()) > 0, ret_fluctuations)
+
+
+    @staticmethod
+    def populate_fluctuation_waivers():
+        users = GitUserEntry.objects.all()
+
+        for user in users:
+            if not BenchmarkFluctuationWaiverEntry.objects.filter(git_user__id=user.id).exists():
+                BenchmarkFluctuationWaiverEntry.objects.create(
+                    git_project=user.project,
+                    git_user=user
+                )

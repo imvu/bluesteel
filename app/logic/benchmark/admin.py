@@ -1,15 +1,20 @@
 """ Benchmark Admin """
 
+# Duplicate code
+# pylint: disable=R0801
+
 from django.contrib import admin
 from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
 from app.logic.benchmark.models.BenchmarkDefinitionWorkerPassModel import BenchmarkDefinitionWorkerPassEntry
 from app.logic.benchmark.models.BenchmarkExecutionModel import BenchmarkExecutionEntry
 from app.logic.benchmark.models.BenchmarkFluctuationOverrideModel import BenchmarkFluctuationOverrideEntry
+from app.logic.benchmark.models.BenchmarkFluctuationWaiverModel import BenchmarkFluctuationWaiverEntry
 from app.logic.benchmark.controllers.BenchmarkExecutionController import BenchmarkExecutionController
 
 admin.site.register(BenchmarkDefinitionEntry)
 admin.site.register(BenchmarkDefinitionWorkerPassEntry)
 admin.site.register(BenchmarkFluctuationOverrideEntry)
+admin.site.register(BenchmarkFluctuationWaiverEntry)
 
 def delete_all_benchmark_executions(self, request, queryset):
     """ Deletes all the Benchmark Executions with all its associated commands """
