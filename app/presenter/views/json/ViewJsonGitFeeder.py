@@ -5,6 +5,7 @@ from django.db import transaction
 from app.logic.httpcommon import res
 from app.logic.httpcommon import val
 from app.logic.benchmark.controllers.BenchmarkExecutionController import BenchmarkExecutionController
+from app.logic.benchmark.controllers.BenchmarkFluctuationController import BenchmarkFluctuationController
 from app.logic.gitrepo.models.GitProjectModel import GitProjectEntry
 from app.logic.gitfeeder.controllers.GitFeederController import GitFeederController
 from app.logic.logger.models.LogModel import LogEntry
@@ -62,6 +63,7 @@ def post_feed_commits(request, project_id):
 
     commit_hashes = list(commit_hash_set)
     BenchmarkExecutionController.create_bench_executions_from_commits(project_entry, commit_hashes)
+    BenchmarkFluctuationController.populate_fluctuation_waivers()
 
     return res.get_response(200, 'Commits added correctly', {})
 

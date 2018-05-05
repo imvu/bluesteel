@@ -20,6 +20,7 @@ from app.logic.commandrepo.models.CommandModel import CommandEntry
 from app.logic.commandrepo.models.CommandResultModel import CommandResultEntry
 from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
 from app.logic.benchmark.models.BenchmarkExecutionModel import BenchmarkExecutionEntry
+from app.logic.benchmark.models.BenchmarkFluctuationWaiverModel import BenchmarkFluctuationWaiverEntry
 from app.logic.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
 from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
 from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
@@ -345,6 +346,70 @@ class GitFeedViewsCommitTestCase(TestCase):
         self.assertIsNotNone(GitBranchTrailEntry.objects.filter(commit__commit_hash='0000100001000010000100001000010000100001', branch__name='branch-1').first())
         self.assertIsNotNone(GitBranchTrailEntry.objects.filter(commit__commit_hash='0000300003000030000300003000030000300003', branch__name='branch-1').first())
         self.assertIsNotNone(GitBranchTrailEntry.objects.filter(commit__commit_hash='0000500005000050000500005000050000500005', branch__name='branch-1').first())
+
+    def test_feed_two_times_populate_fluctuation_waivers(self):
+        commit_time = str(timezone.now().isoformat())
+        commit1 = FeederTestHelper.create_commit(1, [], 'user1', 'user1@test.com', commit_time, commit_time)
+        commit2 = FeederTestHelper.create_commit(2, [1], 'user1', 'user1@test.com', commit_time, commit_time)
+        commit3 = FeederTestHelper.create_commit(3, [1], 'user2', 'user2@test.com', commit_time, commit_time)
+
+        branch1 = FeederTestHelper.create_branch('master', 2, 'master', 2, 1, [2, 1], 'merge-target-content')
+        branch2 = FeederTestHelper.create_branch('branch-1', 3, 'master', 2, 1, [3, 1], 'merge-target-content-2')
+
+        feed_data = {}
+        feed_data['commits'] = []
+        feed_data['commits'].append(commit1)
+        feed_data['commits'].append(commit2)
+        feed_data['commits'].append(commit3)
+        feed_data['branches'] = []
+        feed_data['branches'].append(branch1)
+        feed_data['branches'].append(branch2)
+
+        post_data = FeederTestHelper.create_feed_data(feed_data)
+
+        resp = self.client.post(
+            '/main/feed/commit/project/{0}/'.format(self.git_project1.id),
+            data = json.dumps(post_data),
+            content_type='application/json')
+
+        res.check_cross_origin_headers(self, resp)
+        resp_obj = json.loads(resp.content)
+
+        self.assertEqual(200, resp_obj['status'])
+        self.assertEqual(2, BenchmarkFluctuationWaiverEntry.objects.all().count())
+        self.assertEqual(1, BenchmarkFluctuationWaiverEntry.objects.filter(git_user__name='user1').count())
+        self.assertEqual(1, BenchmarkFluctuationWaiverEntry.objects.filter(git_user__name='user2').count())
+
+        commit4 = FeederTestHelper.create_commit(4, [2], 'user1', 'user1@test.com', commit_time, commit_time)
+        commit5 = FeederTestHelper.create_commit(5, [3], 'user3', 'user3@test.com', commit_time, commit_time)
+
+        branch1 = FeederTestHelper.create_branch('master', 4, 'master', 4, 1, [4, 2, 1], 'merge-target-content-3')
+        branch2 = FeederTestHelper.create_branch('branch-1', 5, 'master', 4, 1, [5, 3, 1], 'merge-target-content-4')
+
+        feed_data = {}
+        feed_data['commits'] = []
+        feed_data['commits'].append(commit4)
+        feed_data['commits'].append(commit5)
+        feed_data['branches'] = []
+        feed_data['branches'].append(branch1)
+        feed_data['branches'].append(branch2)
+
+        post_data = FeederTestHelper.create_feed_data(feed_data)
+
+        resp = self.client.post(
+            '/main/feed/commit/project/{0}/'.format(self.git_project1.id),
+            data = json.dumps(post_data),
+            content_type='application/json')
+
+        res.check_cross_origin_headers(self, resp)
+        resp_obj = json.loads(resp.content)
+
+        self.assertEqual(200, resp_obj['status'])
+        self.assertEqual(3, BenchmarkFluctuationWaiverEntry.objects.all().count())
+        self.assertEqual(1, BenchmarkFluctuationWaiverEntry.objects.filter(git_user__name='user1').count())
+        self.assertEqual(1, BenchmarkFluctuationWaiverEntry.objects.filter(git_user__name='user2').count())
+        self.assertEqual(1, BenchmarkFluctuationWaiverEntry.objects.filter(git_user__name='user3').count())
+
 
     def test_feed_commit_create_benchmark_execution_because_benchmark_definition(self):
         command_group = CommandGroupEntry.objects.create()
