@@ -11,9 +11,10 @@ class BenchmarkFluctuationWaiverEntry(models.Model):
     updated_at = models.DateTimeField(auto_now=True, editable=False)
 
     def __unicode__(self):
-        return u'Fluctuation Waiver id:{0}, git_project:{1}, git_user:{2}, notification_allowed:{3}'.format(
+        return u'Fluctuation Waiver id:{0}, git_project:{1}, git_user:{2},{3}, notification_allowed:{4}'.format(
             self.id,
-            self.git_project.id,
-            self.git_user.id,
+            self.git_project.name,
+            self.git_user.name,
+            self.git_user.email,
             self.notification_allowed,
         )
