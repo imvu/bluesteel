@@ -12,6 +12,7 @@ from app.logic.bluesteel.models.BluesteelLayoutModel import BluesteelLayoutEntry
 from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
 from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
 from app.logic.benchmark.models.BenchmarkExecutionModel import BenchmarkExecutionEntry
+from app.logic.benchmark.models.BenchmarkFluctuationWaiverModel import BenchmarkFluctuationWaiverEntry
 from app.logic.gitrepo.models.GitProjectModel import GitProjectEntry
 from app.logic.gitrepo.models.GitUserModel import GitUserEntry
 from app.logic.gitrepo.models.GitCommitModel import GitCommitEntry
@@ -493,3 +494,49 @@ class BenchmarkExecutionViewJsonTestCase(TestCase):
         self.assertEqual('Schema failed notification', StackedMailEntry.objects.all().first().title)
         self.assertEqual('user1@test.com', StackedMailEntry.objects.all().first().receiver)
 
+    def test_fluctuation_waiver_modified_successfully_to_true(self):
+        waiver = BenchmarkFluctuationWaiverEntry.objects.create(git_project=self.git_project1, git_user=self.git_user1, notification_allowed=False)
+
+        self.assertEqual(1, BenchmarkFluctuationWaiverEntry.objects.all().count())
+        self.assertEqual(1, BenchmarkFluctuationWaiverEntry.objects.filter(git_project__id=self.git_project1.id, git_user__id=self.git_user1.id, notification_allowed=False).count())
+
+        resp = self.client.post(
+            '/main/notification/waiver/{0}/allow/'.format(waiver.id),
+            data = json.dumps({}),
+            content_type='application/json')
+
+        res.check_cross_origin_headers(self, resp)
+        resp_obj = json.loads(resp.content)
+
+        self.assertEqual(200, resp_obj['status'])
+        self.assertEqual(1, BenchmarkFluctuationWaiverEntry.objects.all().count())
+        self.assertEqual(1, BenchmarkFluctuationWaiverEntry.objects.filter(git_project__id=self.git_project1.id, git_user__id=self.git_user1.id, notification_allowed=True).count())
+
+    def test_fluctuation_waiver_modified_successfully_to_false(self):
+        waiver = BenchmarkFluctuationWaiverEntry.objects.create(git_project=self.git_project1, git_user=self.git_user1, notification_allowed=True)
+
+        self.assertEqual(1, BenchmarkFluctuationWaiverEntry.objects.all().count())
+        self.assertEqual(1, BenchmarkFluctuationWaiverEntry.objects.filter(git_project__id=self.git_project1.id, git_user__id=self.git_user1.id, notification_allowed=True).count())
+
+        resp = self.client.post(
+            '/main/notification/waiver/{0}/deny/'.format(waiver.id),
+            data = json.dumps({}),
+            content_type='application/json')
+
+        res.check_cross_origin_headers(self, resp)
+        resp_obj = json.loads(resp.content)
+
+        self.assertEqual(200, resp_obj['status'])
+        self.assertEqual(1, BenchmarkFluctuationWaiverEntry.objects.all().count())
+        self.assertEqual(1, BenchmarkFluctuationWaiverEntry.objects.filter(git_project__id=self.git_project1.id, git_user__id=self.git_user1.id, notification_allowed=False).count())
+
+    def test_fluctuation_waiver_modified_not_successful(self):
+        resp = self.client.post(
+            '/main/notification/waiver/28/deny/',
+            data = json.dumps({}),
+            content_type='application/json')
+
+        res.check_cross_origin_headers(self, resp)
+        resp_obj = json.loads(resp.content)
+
+        self.assertEqual(404, resp_obj['status'])

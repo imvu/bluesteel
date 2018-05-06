@@ -249,4 +249,10 @@ urlpatterns = [
 
     url(r'^notification/send/all/$',
         app.presenter.views.json.ViewJsonNotifications.send_notifications),
+
+    url(r'^notification/waiver/(?P<waiver_id>\d+)/allow/$',
+        app.presenter.views.json.ViewJsonNotifications.modify_fluctuation_waiver, {'value': True}),
+
+    url(r'^notification/waiver/(?P<waiver_id>\d+)/deny/$',
+        app.presenter.views.json.ViewJsonNotifications.modify_fluctuation_waiver, {'value': False}),
 ]
