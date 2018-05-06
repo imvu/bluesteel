@@ -7,6 +7,7 @@ from app.presenter.schemas import BenchmarkExecutionSchemas
 from app.presenter.views.helpers import ViewNotifications
 from app.presenter.views.helpers import ViewPrepareObjects
 from app.logic.benchmark.models.BenchmarkExecutionModel import BenchmarkExecutionEntry
+from app.logic.benchmark.models.BenchmarkFluctuationWaiverModel import BenchmarkFluctuationWaiverEntry
 from app.logic.benchmark.controllers.BenchmarkExecutionController import BenchmarkExecutionController
 from app.logic.benchmark.controllers.BenchmarkFluctuationController import BenchmarkFluctuationController
 from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
@@ -106,9 +107,15 @@ def save_benchmark_execution(request, benchmark_execution_id):
                 request.get_host()
             )
 
+        allow_notifications = BenchmarkFluctuationWaiverEntry.objects.filter(
+            git_project__id=bench_exec_entry.commit.project.id,
+            git_user__id=bench_exec_entry.commit.author.id,
+            notification_allowed=True
+        ).exists()
+
         fluctuation_exist = BenchmarkFluctuationController.does_benchmark_fluctuation_exist(bench_exec_entry)
 
-        if fluctuation_exist[0] and young_to_notify:
+        if fluctuation_exist[0] and young_to_notify and allow_notifications:
             ViewNotifications.notify_benchmark_fluctuation(
                 bench_exec_entry.id,
                 bench_exec_entry.commit.as_object(),

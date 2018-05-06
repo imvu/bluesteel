@@ -597,6 +597,7 @@ class GitFeedViewsCommitTestCase(TestCase):
 
 
     def test_view_send_notifications_on_fluctuation_greater_than_45_percent(self):
+        BenchmarkFluctuationWaiverEntry.objects.create(git_project=self.git_project1, git_user=self.git_user1, notification_allowed=True);
         worker1 = WorkerEntry.objects.create(name='worker-name-1', uuid='uuid-worker-1', operative_system='osx', description='long-description-1', user=self.user1, git_feeder=False)
 
         command_group = CommandGroupEntry.objects.create()
@@ -672,6 +673,7 @@ class GitFeedViewsCommitTestCase(TestCase):
 
 
     def test_view_not_sending_notifications_because_fluctuation_not_enough(self):
+        BenchmarkFluctuationWaiverEntry.objects.create(git_project=self.git_project1, git_user=self.git_user1, notification_allowed=True);
         worker1 = WorkerEntry.objects.create(name='worker-name-1', uuid='uuid-worker-1', operative_system='osx', description='long-description-1', user=self.user1, git_feeder=False)
 
         command_group = CommandGroupEntry.objects.create()
