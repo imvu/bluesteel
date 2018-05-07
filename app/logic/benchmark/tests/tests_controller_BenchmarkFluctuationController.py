@@ -775,8 +775,8 @@ class BenchmarkFluctuationControllerTestCase(TestCase):
         self.git_user2_2 = GitUserEntry.objects.create(project=self.git_project2, name='user2_2', email='user2_2@test.com')
         self.git_user2_3 = GitUserEntry.objects.create(project=self.git_project2, name='user2_3', email='user2_3@test.com')
 
-        self.waiver1_1 = BenchmarkFluctuationWaiverEntry.objects.create(git_project=self.git_project1, git_user=self.git_user1_2)
-        self.waiver2_3 = BenchmarkFluctuationWaiverEntry.objects.create(git_project=self.git_project2, git_user=self.git_user2_3)
+        self.waiver1_1 = BenchmarkFluctuationWaiverEntry.objects.create(git_user=self.git_user1_2)
+        self.waiver2_3 = BenchmarkFluctuationWaiverEntry.objects.create(git_user=self.git_user2_3)
 
         self.assertEqual(2, GitProjectEntry.objects.all().count())
         self.assertEqual(3, GitUserEntry.objects.filter(project__id=self.git_project1.id).count())

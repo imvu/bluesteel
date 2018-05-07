@@ -267,7 +267,4 @@ class BenchmarkFluctuationController(object):
 
         for user in users:
             if not BenchmarkFluctuationWaiverEntry.objects.filter(git_user__id=user.id).exists():
-                BenchmarkFluctuationWaiverEntry.objects.create(
-                    git_project=user.project,
-                    git_user=user
-                )
+                BenchmarkFluctuationWaiverEntry.objects.create(git_user=user)

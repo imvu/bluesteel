@@ -495,10 +495,10 @@ class BenchmarkExecutionViewJsonTestCase(TestCase):
         self.assertEqual('user1@test.com', StackedMailEntry.objects.all().first().receiver)
 
     def test_fluctuation_waiver_modified_successfully_to_true(self):
-        waiver = BenchmarkFluctuationWaiverEntry.objects.create(git_project=self.git_project1, git_user=self.git_user1, notification_allowed=False)
+        waiver = BenchmarkFluctuationWaiverEntry.objects.create(git_user=self.git_user1, notification_allowed=False)
 
         self.assertEqual(1, BenchmarkFluctuationWaiverEntry.objects.all().count())
-        self.assertEqual(1, BenchmarkFluctuationWaiverEntry.objects.filter(git_project__id=self.git_project1.id, git_user__id=self.git_user1.id, notification_allowed=False).count())
+        self.assertEqual(1, BenchmarkFluctuationWaiverEntry.objects.filter(git_user__id=self.git_user1.id, notification_allowed=False).count())
 
         resp = self.client.post(
             '/main/notification/waiver/{0}/allow/'.format(waiver.id),
@@ -510,13 +510,13 @@ class BenchmarkExecutionViewJsonTestCase(TestCase):
 
         self.assertEqual(200, resp_obj['status'])
         self.assertEqual(1, BenchmarkFluctuationWaiverEntry.objects.all().count())
-        self.assertEqual(1, BenchmarkFluctuationWaiverEntry.objects.filter(git_project__id=self.git_project1.id, git_user__id=self.git_user1.id, notification_allowed=True).count())
+        self.assertEqual(1, BenchmarkFluctuationWaiverEntry.objects.filter(git_user__id=self.git_user1.id, notification_allowed=True).count())
 
     def test_fluctuation_waiver_modified_successfully_to_false(self):
-        waiver = BenchmarkFluctuationWaiverEntry.objects.create(git_project=self.git_project1, git_user=self.git_user1, notification_allowed=True)
+        waiver = BenchmarkFluctuationWaiverEntry.objects.create(git_user=self.git_user1, notification_allowed=True)
 
         self.assertEqual(1, BenchmarkFluctuationWaiverEntry.objects.all().count())
-        self.assertEqual(1, BenchmarkFluctuationWaiverEntry.objects.filter(git_project__id=self.git_project1.id, git_user__id=self.git_user1.id, notification_allowed=True).count())
+        self.assertEqual(1, BenchmarkFluctuationWaiverEntry.objects.filter(git_user__id=self.git_user1.id, notification_allowed=True).count())
 
         resp = self.client.post(
             '/main/notification/waiver/{0}/deny/'.format(waiver.id),
@@ -528,7 +528,7 @@ class BenchmarkExecutionViewJsonTestCase(TestCase):
 
         self.assertEqual(200, resp_obj['status'])
         self.assertEqual(1, BenchmarkFluctuationWaiverEntry.objects.all().count())
-        self.assertEqual(1, BenchmarkFluctuationWaiverEntry.objects.filter(git_project__id=self.git_project1.id, git_user__id=self.git_user1.id, notification_allowed=False).count())
+        self.assertEqual(1, BenchmarkFluctuationWaiverEntry.objects.filter(git_user__id=self.git_user1.id, notification_allowed=False).count())
 
     def test_fluctuation_waiver_modified_not_successful(self):
         resp = self.client.post(

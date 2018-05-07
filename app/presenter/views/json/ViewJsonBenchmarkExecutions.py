@@ -108,7 +108,6 @@ def save_benchmark_execution(request, benchmark_execution_id):
             )
 
         allow_notifications = BenchmarkFluctuationWaiverEntry.objects.filter(
-            git_project__id=bench_exec_entry.commit.project.id,
             git_user__id=bench_exec_entry.commit.author.id,
             notification_allowed=True
         ).exists()
