@@ -9,6 +9,7 @@ import app.presenter.views.html.ViewHtmlWorkers
 import app.presenter.views.html.ViewHtmlBluesteelWorker
 import app.presenter.views.html.ViewHtmlBenchmarkDefinitions
 import app.presenter.views.html.ViewHtmlBenchmarkExecution
+import app.presenter.views.html.ViewHtmlBenchmarkNotifications
 import app.presenter.views.html.ViewHtmlFeed
 import app.presenter.views.html.ViewHtmlCommit
 import app.presenter.views.json.ViewJsonLayout
@@ -107,6 +108,12 @@ urlpatterns = [
 
     url(r'^execution/stacked/project/(?P<project_id>\d+)/branch/(?P<branch_id>\d+)/definition/(?P<definition_id>\d+)/worker/(?P<worker_id>\d+)/page/(?P<page_index>\d+)/$',
         app.presenter.views.html.ViewHtmlBenchmarkExecution.get_benchmark_executions_stacked),
+
+    url(r'^notification/$',
+        app.presenter.views.html.ViewHtmlBenchmarkNotifications.get_benchmark_notifications),
+
+    url(r'^notification/gitproject/(?P<git_project_id>\d+)/$',
+        app.presenter.views.html.ViewHtmlBenchmarkNotifications.get_notifications_of_git_project),
 
     url(r'^feed/report/(?P<feed_report_id>\d+)/$',
         app.presenter.views.html.ViewHtmlFeed.get_feed_report),

@@ -1,0 +1,67 @@
+{% extends "presenter/base.html" %}
+
+{% load staticfiles %}
+
+{% block data_body %}
+<div class="container_med container_height">
+        <div class="card white_card card_padding_large card_medium card_item card_margin_small">
+
+            <div class="grid grid-pad-2">
+                <div class="grid-col-1-1 grid-cell-pad-2-10">
+                    <div class="title centered">Allow Notifications</div>
+                </div>
+            </div>
+
+            <br/>
+            <br/>
+
+            <div class="grid grid-pad-2">
+                <div class="grid-col-1-1 grid-cell-pad-2-10">
+                    <div class="list_label">GIT PROJECT</div>
+                </div>
+                <div class="grid-col-1-1 grid-cell-pad-2-10">
+                    <div class="normal">Selected git project to see notification waivers for users.</div>
+                </div>
+                <div class="grid-col-1-1 grid-cell-pad-2-10">
+                    <div class="container_input">
+                        <select     class="selection individual"
+                                    name="project_notification"
+                                    onchange="window.location=this.options[this.selectedIndex].value;"
+                        >
+                            {% for project in projects %}
+                                <option value="{{project.url}}" {{project.selected|yesno:"selected,"}}>{{project.name}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <br/>
+
+            <div class="grid grid-pad-10">
+                <div class="grid-col-1-1 grid-cell-pad-2-10">
+                    <div class="list_label">GIT USERS</div>
+                </div>
+                <div class="grid-col-1-1 grid-cell-pad-2-10">
+                    <div class="normal">Select which users you want to receive notifications on fluctuations.</div>
+                </div>
+            </div>
+
+            {% for entry in entries %}
+            <div class="grid grid-pad-5">
+                <div class="grid-col-1-1 grid-cell-pad-2-10">
+                    <input  class="check_item"
+                            type="checkbox"
+                            id="{{forloop.counter0}}"
+                            name="notification_allowed_{{forloop.counter0}}"
+                            onclick="executeAndUpdateCheckbox('{{entry.url.allow}}', '{{entry.url.deny}}', this);"
+                            {{entry.notification_allowed|yesno:"checked,"}}
+                    ></input>
+                    <label class="check_label" for="{{forloop.counter0}}">{{entry.name}} ({{entry.email}})</label>
+                </div>
+
+            </div>
+            {% endfor %}
+        </div>
+</div>
+{% endblock %}

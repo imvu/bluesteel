@@ -225,3 +225,15 @@ def get_commit_ordered_by_worker_url(commit_id):
 
 def get_notification_send_all_full_url(domain):
     return 'http://{0}/main/notification/send/all/'.format(domain)
+
+def get_notifications_url():
+    return '/main/notification/'
+
+def get_notification_url(git_project_id):
+    return '/main/notification/gitproject/{0}/'.format(git_project_id)
+
+def get_notification_allow_url(waiver_id):
+    return '/main/notification/waiver/{0}/allow/'.format(waiver_id)
+
+def get_notification_deny_url(waiver_id):
+    return '/main/notification/waiver/{0}/deny/'.format(waiver_id)

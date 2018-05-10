@@ -55,3 +55,27 @@ executeAndDisableButton = function(url, buttonId, textButton) {
     }
     xhr.send();
 }
+
+executeAndUpdateCheckbox = function(urlChecked, urlNotChecked, inputCheck) {
+    var cookie = getValueFromCookie('csrftoken');
+
+    var currentCheckValue = inputCheck.checked;
+    var url = (currentCheckValue) ? urlChecked : urlNotChecked;
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader('X-CSRFToken', cookie);
+    xhr.onloadend = function(response) {
+        if (xhr.status !== 200) {
+            inputCheck.checked = currentCheckValue;
+            return;
+        }
+
+        var res_obj = JSON.parse(xhr.response);
+
+        if (res_obj['status'] !== 200) {
+            inputCheck.checked = currentCheckValue;
+        }
+    }
+    xhr.send();
+}
