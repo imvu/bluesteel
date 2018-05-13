@@ -234,7 +234,10 @@ class BenchmarkFluctuationController(object):
         fluc_dict = {}
 
         for overrides in fluctuations_overrides:
-            fluc_dict[overrides.result_id] = float(overrides.override_value) / 100.0
+            fluc = {}
+            fluc['value'] = float(overrides.override_value) / 100.0
+            fluc['ignore'] = overrides.ignore_fluctuation
+            fluc_dict[overrides.result_id] = fluc
 
         return fluc_dict
 
@@ -246,9 +249,17 @@ class BenchmarkFluctuationController(object):
         for fluc_id in fluctuations.keys():
             fluc = fluctuations[fluc_id]
 
+            ignore = False
             ratio_to_apply = default_fluctuation_ratio
+
             if fluc_id in fluctuation_overrides:
-                ratio_to_apply = fluctuation_overrides[fluc_id]
+                fluc_info = fluctuation_overrides[fluc_id]
+
+                ratio_to_apply = fluc_info['value']
+                ignore = fluc_info['ignore']
+
+            if ignore:
+                continue
 
             if fluc['parent']['has_results'] and abs(fluc['parent']['fluctuation_ratio']) >= ratio_to_apply:
                 ret_fluctuations[fluc_id] = fluc

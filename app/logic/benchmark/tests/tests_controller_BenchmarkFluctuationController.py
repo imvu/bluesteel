@@ -598,9 +598,9 @@ class BenchmarkFluctuationControllerTestCase(TestCase):
 
 
     def test_get_fluctuation_overrides(self):
-        fluc_override_1 = BenchmarkFluctuationOverrideEntry.objects.create(definition=self.benchmark_definition1, result_id='id1', override_value=28)
-        fluc_override_2 = BenchmarkFluctuationOverrideEntry.objects.create(definition=self.benchmark_definition1, result_id='id2', override_value=29)
-        fluc_override_3 = BenchmarkFluctuationOverrideEntry.objects.create(definition=self.benchmark_definition1, result_id='id3', override_value=30)
+        fluc_override_1 = BenchmarkFluctuationOverrideEntry.objects.create(definition=self.benchmark_definition1, result_id='id1', override_value=28, ignore_fluctuation=False)
+        fluc_override_2 = BenchmarkFluctuationOverrideEntry.objects.create(definition=self.benchmark_definition1, result_id='id2', override_value=29, ignore_fluctuation=True)
+        fluc_override_3 = BenchmarkFluctuationOverrideEntry.objects.create(definition=self.benchmark_definition1, result_id='id3', override_value=30, ignore_fluctuation=False)
 
         ret = BenchmarkFluctuationController.get_fluctuation_overrides(self.benchmark_definition1.id)
 
@@ -610,16 +610,22 @@ class BenchmarkFluctuationControllerTestCase(TestCase):
         self.assertTrue('id2' in ret)
         self.assertTrue('id3' in ret)
 
-        self.assertEqual(0.28, ret['id1'])
-        self.assertEqual(0.29, ret['id2'])
-        self.assertEqual(0.30, ret['id3'])
+        self.assertEqual(0.28, ret['id1']['value'])
+        self.assertEqual(0.29, ret['id2']['value'])
+        self.assertEqual(0.30, ret['id3']['value'])
+
+        self.assertEqual(False, ret['id1']['ignore'])
+        self.assertEqual(True,  ret['id2']['ignore'])
+        self.assertEqual(False, ret['id3']['ignore'])
 
 
     def test_get_fluctuation_with_overrides_applied(self):
         max_fluctuation = 0.1
 
         fluc_overrides = {}
-        fluc_overrides['id2'] = 0.28
+        fluc_overrides['id2'] = {}
+        fluc_overrides['id2']['value'] = 0.28
+        fluc_overrides['id2']['ignore'] = False
 
         uni_fluc = {}
         uni_fluc['id1'] = {}
@@ -653,6 +659,45 @@ class BenchmarkFluctuationControllerTestCase(TestCase):
         self.assertEqual(0.15, fluc_res['id1']['parent']['fluctuation_ratio'])
         self.assertEqual(0.14, fluc_res['id1']['son']['fluctuation_ratio'])
 
+    def test_get_fluctuation_with_overrides_applied_and_ignored(self):
+        max_fluctuation = 0.1
+
+        fluc_overrides = {}
+        fluc_overrides['id2'] = {}
+        fluc_overrides['id2']['value'] = 0.1
+        fluc_overrides['id2']['ignore'] = True
+
+        uni_fluc = {}
+        uni_fluc['id1'] = {}
+        uni_fluc['id1']['parent'] = {}
+        uni_fluc['id1']['parent']['has_results'] = True
+        uni_fluc['id1']['parent']['fluctuation_ratio'] = 0.15
+        uni_fluc['id1']['current'] = {}
+        uni_fluc['id1']['current']['has_results'] = True
+        uni_fluc['id1']['son'] = {}
+        uni_fluc['id1']['son']['has_results'] = True
+        uni_fluc['id1']['son']['fluctuation_ratio'] = 0.14
+
+        uni_fluc['id2'] = {}
+        uni_fluc['id2']['parent'] = {}
+        uni_fluc['id2']['parent']['has_results'] = True
+        uni_fluc['id2']['parent']['fluctuation_ratio'] = 0.27
+        uni_fluc['id2']['current'] = {}
+        uni_fluc['id2']['current']['has_results'] = True
+        uni_fluc['id2']['son'] = {}
+        uni_fluc['id2']['son']['has_results'] = True
+        uni_fluc['id2']['son']['fluctuation_ratio'] = 0.26
+
+        flucs = BenchmarkFluctuationController.get_fluctuations_with_overrides_applied(uni_fluc, max_fluctuation, fluc_overrides)
+        self.assertTrue(flucs[0])
+
+        fluc_res = flucs[1]
+
+        self.assertTrue('id1' in fluc_res)
+        self.assertFalse('id2' in fluc_res)
+
+        self.assertEqual(0.15, fluc_res['id1']['parent']['fluctuation_ratio'])
+        self.assertEqual(0.14, fluc_res['id1']['son']['fluctuation_ratio'])
 
     def test_compute_fluctuation_ratio_with_no_results_on_current(self):
         obj = {}
