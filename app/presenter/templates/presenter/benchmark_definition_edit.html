@@ -229,8 +229,14 @@
                                     <select     class="selection individual"
                                                 name="max_override_fluctuation_percent_{{forloop.counter0}}"
                                     >
+                                        {% if override.ignore_fluctuation %}
+                                            <option value="-1" selected>Ignore Fluctuation (current)</option>
+                                        {% else %}
+                                            <option value="-1">Ignore Fluctuation</option>
+                                        {% endif %}
+
                                         {% for i in "x"|rjust:"101" %}
-                                            {% if forloop.counter0 == override.override_value%}
+                                            {% if forloop.counter0 == override.override_value and not override.ignore_fluctuation %}
                                                 <option value="{{forloop.counter0}}" selected>{{forloop.counter0}}% - Maximum Fluctuation (current)</option>
                                             {% else %}
                                                 <option value="{{forloop.counter0}}">{{forloop.counter0}}% - Maximum fluctuation</option>

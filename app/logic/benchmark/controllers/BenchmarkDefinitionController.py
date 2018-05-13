@@ -262,6 +262,7 @@ class BenchmarkDefinitionController(object):
             obj = {}
             obj['result_id'] = fluc.result_id
             obj['override_value'] = fluc.override_value
+            obj['ignore_fluctuation'] = fluc.ignore_fluctuation
             def_obj['fluctuation_overrides'].append(obj)
 
         work_passes = BenchmarkDefinitionWorkerPassEntry.objects.filter(definition__id=def_entry.id)

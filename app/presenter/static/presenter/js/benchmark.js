@@ -138,8 +138,11 @@ saveBenchmarkDefinition = function(idFormBenchmarkDefinition) {
 
             if (element.value.startsWith('<') && element.value.endsWith('>')) {continue;}
 
-            overrides[inpId]['override_value'] = parseInt(element.value);
-            overrides[inpId]['ignore_fluctuation'] = false;
+            var value = parseInt(element.value);
+            var ignore = value < 0;
+
+            overrides[inpId]['override_value'] = Math.max(value, 0);
+            overrides[inpId]['ignore_fluctuation'] = ignore;
         } else if (element.name.startsWith("work_pass_")) {
             var wp = {};
             wp['id'] = parseInt(element.id);
