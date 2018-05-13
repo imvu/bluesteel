@@ -141,8 +141,8 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
         obj['command_list'].append('command-30')
         obj['command_list'].append('command-31')
         obj['overrides'] = []
-        obj['overrides'].append({'result_id' : 'id1', 'override_value' : 28})
-        obj['overrides'].append({'result_id' : 'id2', 'override_value' : 29})
+        obj['overrides'].append({'result_id' : 'id1', 'override_value' : 28, 'ignore_fluctuation' : False})
+        obj['overrides'].append({'result_id' : 'id2', 'override_value' : 29, 'ignore_fluctuation' : False})
         obj['work_passes'] = []
 
         resp = self.client.post(
@@ -195,7 +195,7 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
         obj['command_list'] = []
         obj['command_list'].append('command-28')
         obj['overrides'] = []
-        obj['overrides'].append({'result_id' : long_id, 'override_value' : 28})
+        obj['overrides'].append({'result_id' : long_id, 'override_value' : 28, 'ignore_fluctuation' : False})
         obj['work_passes'] = []
 
         resp = self.client.post(
@@ -231,7 +231,7 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
         obj['command_list'] = []
         obj['command_list'].append('command-28')
         obj['overrides'] = []
-        obj['overrides'].append({'result_id' : long_id, 'override_value' : 28})
+        obj['overrides'].append({'result_id' : long_id, 'override_value' : 28, 'ignore_fluctuation' : False})
         obj['work_passes'] = []
 
         resp = self.client.post(

@@ -96,9 +96,9 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
         definition.max_weeks_old_notify = 2
         definition.save()
 
-        BenchmarkFluctuationOverrideEntry.objects.create(definition=definition, result_id='id1', override_value=28)
-        BenchmarkFluctuationOverrideEntry.objects.create(definition=definition, result_id='id2', override_value=29)
-        BenchmarkFluctuationOverrideEntry.objects.create(definition=definition, result_id='id3', override_value=30)
+        BenchmarkFluctuationOverrideEntry.objects.create(definition=definition, result_id='id1', override_value=28, ignore_fluctuation=False)
+        BenchmarkFluctuationOverrideEntry.objects.create(definition=definition, result_id='id2', override_value=29, ignore_fluctuation=False)
+        BenchmarkFluctuationOverrideEntry.objects.create(definition=definition, result_id='id3', override_value=30, ignore_fluctuation=False)
 
         user1 = User.objects.create_user('user1@test.com', 'user1@test.com', 'pass')
         user1.save()
@@ -177,8 +177,8 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
         commands.append('command-30')
 
         overrides = []
-        overrides.append({'result_id' : 'id1', 'override_value' : 28})
-        overrides.append({'result_id' : 'id2', 'override_value' : 29})
+        overrides.append({'result_id' : 'id1', 'override_value' : 28, 'ignore_fluctuation' : False})
+        overrides.append({'result_id' : 'id2', 'override_value' : 29, 'ignore_fluctuation' : False})
 
         definition = BenchmarkDefinitionController.save_benchmark_definition('new-name', definition.id, new_layout.id, project.id, BenchmarkDefinitionEntry.VERY_HIGH, True, commands, 28, overrides, 8, [])
 
@@ -223,8 +223,8 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
         commands = self.get_default_commands()
 
         overrides = []
-        overrides.append({'result_id' : 'id1', 'override_value' : 28})
-        overrides.append({'result_id' : 'id2', 'override_value' : 29})
+        overrides.append({'result_id' : 'id1', 'override_value' : 28, 'ignore_fluctuation' : False})
+        overrides.append({'result_id' : 'id2', 'override_value' : 29, 'ignore_fluctuation' : False})
 
         result = BenchmarkDefinitionController.save_benchmark_definition('default-name', definition.id, new_layout.id, project.id, BenchmarkDefinitionEntry.VERY_HIGH, True, commands, 0, overrides, 8, [])
         definition = BenchmarkDefinitionEntry.objects.all().first()
@@ -272,8 +272,8 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
         commands.append('command-new-5')
 
         overrides = []
-        overrides.append({'result_id' : 'id1', 'override_value' : 28})
-        overrides.append({'result_id' : 'id2', 'override_value' : 29})
+        overrides.append({'result_id' : 'id1', 'override_value' : 28, 'ignore_fluctuation' : False})
+        overrides.append({'result_id' : 'id2', 'override_value' : 29, 'ignore_fluctuation' : False})
 
         self.assertEqual('BenchmarkDefinition1', benchmark_definition1.name)
         self.assertEqual(1, BenchmarkExecutionEntry.objects.all().count())
@@ -328,8 +328,8 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
         commands.append('command-new-5')
 
         overrides = []
-        overrides.append({'result_id' : 'id1', 'override_value' : 28})
-        overrides.append({'result_id' : 'id2', 'override_value' : 29})
+        overrides.append({'result_id' : 'id1', 'override_value' : 28, 'ignore_fluctuation' : False})
+        overrides.append({'result_id' : 'id2', 'override_value' : 29, 'ignore_fluctuation' : False})
 
         self.assertEqual('BenchmarkDefinition1', benchmark_definition1.name)
         self.assertEqual(1, BenchmarkExecutionEntry.objects.all().count())

@@ -59,7 +59,7 @@ SAVE_BENCHMARK_DEFINITION = {
             'items' : {
                 'type' : 'object',
                 'additionalProperties' : False,
-                'required': ['result_id', 'override_value'],
+                'required': ['result_id', 'override_value', 'ignore_fluctuation'],
                 'properties' : {
                     'result_id' : {
                         'type' : 'string',
@@ -70,6 +70,9 @@ SAVE_BENCHMARK_DEFINITION = {
                         'type' : 'number',
                         'minimum' : 0,
                         'maximum' : 100,
+                    },
+                    'ignore_fluctuation' : {
+                        'type' : 'boolean',
                     },
                 }
             }

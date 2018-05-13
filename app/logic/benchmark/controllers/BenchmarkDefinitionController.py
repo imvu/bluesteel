@@ -135,6 +135,7 @@ class BenchmarkDefinitionController(object):
                 definition=benchmark_def_entry,
                 result_id=override['result_id'],
                 override_value=override['override_value'],
+                ignore_fluctuation=override['ignore_fluctuation']
             )
 
         BenchmarkDefinitionController.save_work_passes(work_passes, benchmark_definition_id)
