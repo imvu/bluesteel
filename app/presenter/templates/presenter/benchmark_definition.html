@@ -152,7 +152,11 @@
                         </div>
                         <div class="grid-col-4-8 grid-cell-pad-5-10">
                             <div class="container_input">
-                                <input  class="command_input" type="text" value="{{override.override_value}}% Fluctuation" readonly></input>
+                                {% if override.ignore_fluctuation %}
+                                    <input  class="command_input" type="text" value="Ignore Fluctuation" readonly></input>
+                                {% else %}
+                                    <input  class="command_input" type="text" value="{{override.override_value}}% Fluctuation" readonly></input>
+                                {% endif %}
                             </div>
                         </div>
                     {% endfor %}
