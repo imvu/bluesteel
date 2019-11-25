@@ -65,10 +65,12 @@ def get_feed_report(request, feed_report_id):
 
 def get_feed_reports_from_worker(request, worker_id, page_index):
     """ Returns a single item list of all the feeds produced by a worker """
+    w_id = int(worker_id)
+
     if request.method != 'GET':
         return res.get_only_get_allowed({})
 
-    feed_entries = FeedEntry.objects.filter(worker__id=worker_id).order_by('-created_at')
+    feed_entries = FeedEntry.objects.filter(worker__id=w_id).order_by('-created_at')
 
     page = Page(FEED_REPORT_ITEMS_PER_PAGE, page_index)
     pager = Paginator(feed_entries, page.items_per_page)
@@ -85,8 +87,8 @@ def get_feed_reports_from_worker(request, worker_id, page_index):
 
     data = {}
     data['menu'] = ViewPrepareObjects.prepare_menu_for_html([])
-    data['controls'] = get_feed_controls(worker_id, KEEP_YOUNG_COUNT)
-    data['pagination'] = ViewPrepareObjects.prepare_pagination_feed_reports(worker_id, page_indices)
+    data['controls'] = get_feed_controls(w_id, KEEP_YOUNG_COUNT)
+    data['pagination'] = ViewPrepareObjects.prepare_pagination_feed_reports(w_id, page_indices)
     data['items'] = items
 
     return res.get_template_data(request, 'presenter/single_item_list.html', data)

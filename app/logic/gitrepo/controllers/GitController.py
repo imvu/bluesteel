@@ -1,6 +1,5 @@
 """ Git Controller file """
 
-import sys
 from django.core.paginator import Paginator
 from app.logic.httpcommon import pag
 from app.logic.gitrepo.models.GitParentModel import GitParentEntry
@@ -209,7 +208,7 @@ class GitController(object):
 
         default_obj = {}
         default_obj['name'] = ''
-        default_obj['order'] = int(sys.maxint)
+        default_obj['order'] = 2147483647 # Max signed Int value.
         candidate_branches.append(default_obj)
 
         for trail in trails:

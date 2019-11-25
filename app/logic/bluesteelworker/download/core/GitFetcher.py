@@ -6,8 +6,8 @@
 import json
 import datetime
 import logging as log
-from CommandExecutioner import CommandExecutioner
-from ProjectFolderManager import ProjectFolderManager
+from app.logic.bluesteelworker.download.core.CommandExecutioner import CommandExecutioner
+from app.logic.bluesteelworker.download.core.ProjectFolderManager import ProjectFolderManager
 
 
 class GitFetcher(object):
@@ -830,6 +830,6 @@ class GitFetcher(object):
 
         for command in reports['commands']:
             if command['command'].startswith('git diff') and command['result']['status'] == 0:
-                return command['result']['out'].decode('utf-8', 'ignore').encode('utf-8')
+                return command['result']['out'].encode("ascii", errors="ignore").decode('utf-8')
 
         return ''

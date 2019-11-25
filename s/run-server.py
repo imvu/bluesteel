@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import subprocess
 import os
@@ -18,7 +18,7 @@ def parse_arguments():
         choices=['development', 'production'],
         required=False,
     )
-    
+
     parser.add_argument(
         '--open',
         help='Indicates if the server will accept incoming connections, by using 0.0.0.0:X',
@@ -78,12 +78,12 @@ def main():
     port_str = get_port_string(args)
     open_str = get_open_string(args)
 
-    subprocess.call(['python', 's/internal/install-pip-requirements.py'])
-    subprocess.call(['python', 'manage.py', 'makemigrations', settings_str])
-    subprocess.call(['python', 'manage.py', 'migrate', settings_str])
-    subprocess.call(['python', 'manage.py', 'collectstatic', settings_str, '--noinput'])
-    subprocess.call(['python', 'manage.py', 'hash_worker_files', settings_str])
-    subprocess.call(['python', 'manage.py', 'runserver', '{0}{1}'.format(open_str, port_str), settings_str])
+    subprocess.call(['python3', 's/internal/install-pip-requirements.py'])
+    subprocess.call(['python3', 'manage.py', 'makemigrations', settings_str])
+    subprocess.call(['python3', 'manage.py', 'migrate', settings_str])
+    subprocess.call(['python3', 'manage.py', 'collectstatic', settings_str, '--noinput'])
+    subprocess.call(['python3', 'manage.py', 'hash_worker_files', settings_str])
+    subprocess.call(['python3', 'manage.py', 'runserver', '{0}{1}'.format(open_str, port_str), settings_str])
 
 if __name__ == '__main__':
     main()

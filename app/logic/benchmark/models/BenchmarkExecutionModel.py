@@ -88,10 +88,14 @@ class BenchmarkExecutionEntry(models.Model):
         """ Returns the median of a vector values """
         sov = sorted(vector)
         if len(sov) % 2 == 1:
-            return float(sov[(len(sov)+1)/2-1])
+            index = int(((len(sov) + 1) / 2) - 1)
+            return float(sov[index])
 
-        lower = sov[len(sov)/2-1]
-        upper = sov[len(sov)/2]
+        index_lower = (len(sov) / 2) - 1
+        index_up = len(sov) / 2
+
+        lower = sov[index_lower]
+        upper = sov[index_up]
         return (float(lower + upper)) / 2.0
 
 

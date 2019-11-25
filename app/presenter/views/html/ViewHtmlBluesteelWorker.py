@@ -46,7 +46,9 @@ def get_worker(request):
         settings_obj
     )
 
-    myfile = open(path_final)
+    myfile = open(path_final, "rb")
+
+    # print('----> type:',type(myfile.read()))
 
     response = HttpResponse(myfile.read(), content_type='application/zip')
     response['Content-Disposition'] = 'attachment; filename=BluesteelWorker.zip'

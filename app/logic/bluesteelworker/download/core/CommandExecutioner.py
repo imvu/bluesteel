@@ -4,7 +4,6 @@ import os
 import subprocess
 import shutil
 import datetime
-import types
 
 class CommandExecutioner(object):
     """ This code helps us with executing a list of commands and return its outputs. """
@@ -46,7 +45,7 @@ class CommandExecutioner(object):
             normalized_cwd = os.path.normpath(project_cwd)
             exception_msg = ''
 
-            if isinstance(command, types.StringTypes):
+            if isinstance(command, str):
                 command = command.split(' ')
 
             try:

@@ -6,10 +6,10 @@ import sys
 
 def main():
 
-    proc = subprocess.Popen(['pip', 'freeze'], stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+    proc = subprocess.Popen(['pip3', 'freeze'], stdout = subprocess.PIPE, stderr = subprocess.PIPE)
     (out, error) = proc.communicate()
-    list_pack = out.split('\n')
-    list_pack = [x for x in list_pack if len(list_pack) > 0]
+    list_pack = out.split(b'\n')
+    list_pack = [x.decode("utf-8") for x in list_pack if len(list_pack) > 0]
 
 
     req_file = open('third-party/requirements/pip-requirements.txt','r')
@@ -20,8 +20,8 @@ def main():
 
     for req in list_req:
         if not req in list_pack:
-            print 'Requirement not found: ' + req
-            print '    - Try: pip install ' + req
+            print('Requirement not found: ' + req)
+            print('    - Try: pip3 install ' + req)
             sys.exit(1)
 
 

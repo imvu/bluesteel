@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 import sys
-import FactorySettings
+from bluesteel.settings import FactorySettings
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
@@ -146,4 +146,4 @@ EMAIL_FILE_PATH = os.path.abspath(os.path.join(BASE_DIR, '..', 'tmp', 'mail'))
 DEFAULT_FROM_EMAIL = 'bluesteel@bluesteel.com'
 
 # 10 MB default now
-DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760 
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760

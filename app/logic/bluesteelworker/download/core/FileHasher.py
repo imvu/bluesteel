@@ -10,7 +10,7 @@ class FileHasher(object):
     def get_hash_from_files_in_a_folder(folder_path, extensions):
         """ Returns a resulting hash from all the files in the folder """
         if not os.path.exists(folder_path):
-            print 'FileHasher can not compute SHA from not found folder: ', folder_path
+            print('FileHasher can not compute SHA from not found folder: ', folder_path)
 
         sha = hashlib.sha1()
 
@@ -33,7 +33,10 @@ class FileHasher(object):
                 file_chunk = file_to_hash.read(4096)
                 if not file_chunk:
                     break
-                sha.update(hashlib.sha1(file_chunk).hexdigest())
+
+                ret_s = hashlib.sha1(file_chunk.encode("ascii", errors="ignore"))
+                hex_d = ret_s.hexdigest()
+                sha.update(hex_d.encode("ascii", errors="ignore"))
 
             file_to_hash.close()
         return sha.hexdigest()

@@ -20,7 +20,7 @@ from app.logic.commandrepo.models.CommandGroupModel import CommandGroupEntry
 from app.logic.commandrepo.models.CommandSetModel import CommandSetEntry
 from datetime import timedelta
 import json
-import StringIO
+import io
 import zipfile
 
 class ViewsBluesteelWorkerTestCase(TestCase):
@@ -53,7 +53,7 @@ class ViewsBluesteelWorkerTestCase(TestCase):
 
         self.assertEquals('attachment; filename=BluesteelWorker.zip', resp.get('Content-Disposition'))
 
-        f = StringIO.StringIO(resp.content)
+        f = io.BytesIO(resp.content)
         zipped_file = zipfile.ZipFile(f, 'r')
 
         self.assertIsNone(zipped_file.testzip())

@@ -1,7 +1,9 @@
 """ Benchmark Execution Controller file """
 
-import json
+from __future__ import print_function
 from datetime import timedelta
+import json
+
 from django.db.models import Q, F, Count
 from django.core.paginator import Paginator
 from django.utils import timezone
@@ -90,7 +92,7 @@ class BenchmarkExecutionController(object):
         branch = GitBranchEntry.objects.filter(project=project, name=branch_name).first()
 
         if not branch:
-            print 'No best branch found!'
+            print('No best branch found!')
             return {}
 
         commits_hashes = list(reversed(commits_hashes))

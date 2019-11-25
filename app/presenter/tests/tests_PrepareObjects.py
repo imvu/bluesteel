@@ -152,8 +152,8 @@ class PrepareObjectsTestCase(TestCase):
         self.assertEqual('command-1', results[0]['command'])
         self.assertEqual(0, results[0]['status'])
         self.assertEqual('nop, no error', results[0]['error'])
-        self.assertEqual('No JSON object could be decoded\nthis is a plain text and it is not json!', results[0]['out'][0]['obj']['data'])
-        self.assertEqual('{"visual_type": "unknown", "data": "No JSON object could be decoded\\nthis is a plain text and it is not json!", "id": "error-0"}', results[0]['out'][0]['json'])
+        self.assertEqual('Expecting value: line 1 column 1 (char 0)\nthis is a plain text and it is not json!', results[0]['out'][0]['obj']['data'])
+        self.assertEqual('{"id": "error-0", "visual_type": "unknown", "data": "Expecting value: line 1 column 1 (char 0)\\nthis is a plain text and it is not json!"}', results[0]['out'][0]['json'])
 
 
     def test_prepare_bench_execution_returns_commands_with_substituted_text(self):
@@ -199,5 +199,5 @@ class PrepareObjectsTestCase(TestCase):
         self.assertEqual(0, results[0]['status'])
         self.assertEqual('no error', results[0]['error'])
         self.assertEqual([1, 2, 3, 4, 5], results[0]['out'][0]['obj']['data'])
-        self.assertEqual('{"visual_type": "vertical_bars", "data": [1, 2, 3, 4, 5], "id": "id1"}', results[0]['out'][0]['json'])
+        self.assertEqual('{"visual_type": "vertical_bars", "id": "id1", "data": [1, 2, 3, 4, 5]}', results[0]['out'][0]['json'])
 

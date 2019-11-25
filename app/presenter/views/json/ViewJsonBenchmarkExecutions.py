@@ -30,7 +30,7 @@ def check_benchmark_json_ids(report_out):
         bench_id = '{0}-{1}'.format(obj['id'], obj['visual_type'])
         ids[bench_id] += 1
 
-    for key, value in ids.iteritems():
+    for key, value in ids.items():
         del key
         if value > 1:
             return (False, ids)

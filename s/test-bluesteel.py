@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import subprocess
 import errno
@@ -33,14 +33,14 @@ def get_test_list():
     packs.append(get_packed_app_info(['app', 'presenter'],          'app/presenter',))
 
     test_list = []
-    test_list.append((['python'], ['s/internal/test-python.py']))
-    test_list.append((['hooks'], ['python', 's/internal/install-hooks.py']))
-    test_list.append((['pip'], ['python', 's/internal/test-pip-installed.py']))
-    test_list.append((['requirements'], ['python', 's/internal/test-pip-requirements.py']))
-    test_list.append((['database'], ['python', 's/internal/test-db.py']))
+    test_list.append((['python3'], ['s/internal/test-python.py']))
+    test_list.append((['hooks'], ['python3', 's/internal/install-hooks.py']))
+    test_list.append((['pip3'], ['python3', 's/internal/test-pip-installed.py']))
+    test_list.append((['requirements'], ['python3', 's/internal/test-pip-requirements.py']))
+    test_list.append((['database'], ['python3', 's/internal/test-db.py']))
 
     for pack in packs:
-        test_list.append((pack['tags'], ['python', 'manage.py', 'test', '{0}/tests/'.format(pack['path']), '--settings=bluesteel.settings.testing', '--failfast']))
+        test_list.append((pack['tags'], ['python3', 'manage.py', 'test', '{0}/tests/'.format(pack['path']), '--settings=bluesteel.settings.testing', '--failfast']))
 
     for pack in packs:
         test_list.append((['pylint'], ['pylint', '--rcfile=s/internal/pylint-config-file.py', '--generated-members=objects', '--msg-template={path}:{line}: [{msg_id}({symbol}), {obj}] {msg}', pack['path']]))
@@ -61,21 +61,21 @@ def main(args=sys.argv):
         if len(tag_filter) > 0 and (tag_filter not in test[0]):
             continue
 
-        name_test = '{0}'.format(' '.join(test[0])) 
+        name_test = '{0}'.format(' '.join(test[0]))
 
         try:
             result = subprocess.check_call(test[1], cwd=work_dir)
-        except subprocess.CalledProcessError, e:
-            print 'Tests {0}: {1}'.format(name_test, get_red_string('FAILED'))
+        except subprocess.CalledProcessError as e:
+            print('Tests {0}: {1}'.format(name_test, get_red_string('FAILED')))
             sys.exit(1)
             return
         if result != 0:
-            print 'Tests {0}: {1}'.format(name_test, get_red_string('FAILED'))
+            print('Tests {0}: {1}'.format(name_test, get_red_string('FAILED')))
             sys.exit(1)
             return
         else:
-            print 'Tests {0}: {1}'.format(name_test, get_green_string('OK'))
-    print 'All tests: ' + get_green_string('OK')
+            print('Tests {0}: {1}'.format(name_test, get_green_string('OK')))
+    print('All tests: ' + get_green_string('OK'))
     return
 
 if __name__ == '__main__':

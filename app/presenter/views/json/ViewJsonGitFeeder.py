@@ -93,7 +93,7 @@ def post_feed_reports(request, project_id):
         worker_entry = WorkerEntry.objects.filter(user=request.user).first()
 
         if worker_entry:
-            GitFeederController.purge_old_reports(worker_entry.id, worker_entry.max_feed_reports)
+            GitFeederController.purge_old_reports(int(worker_entry.id), int(worker_entry.max_feed_reports))
 
     return res.get_response(200, 'Reports added correctly', {})
 
@@ -110,10 +110,13 @@ def purge_all_feed_reports(request, worker_id):
 @transaction.atomic
 def purge_old_feed_reports(request, worker_id, keep_young_count):
     """ Purge old feed reports and keep young ones"""
+    w_id = int(worker_id)
+    ky_count = int(keep_young_count)
+
     if request.method != 'POST':
         return res.get_response(400, 'Only post allowed', {})
 
-    GitFeederController.purge_old_reports(worker_id, keep_young_count)
+    GitFeederController.purge_old_reports(w_id, ky_count)
     return res.get_response(200, 'Feed reports purged', {})
 
 @transaction.atomic

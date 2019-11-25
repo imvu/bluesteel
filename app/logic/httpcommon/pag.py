@@ -18,7 +18,7 @@ def get_pagination_indices(page, half_range, maximum_pages):
     pagination['prev'] = max(1, current_page - 1)
     pagination['current'] = current_page
     pagination['next'] = min(max_pages, current_page + 1)
-    pagination['page_indices'] = range(start_range, start_range + whole_range)
+    pagination['page_indices'] = list(range(start_range, start_range + whole_range))
     return pagination
 
 def get_pagination_urls(pagination, url):

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import subprocess
 import os
@@ -29,15 +29,15 @@ def main():
         subprocess.call(['apt-get', 'install', 'libjpeg8-dev'])
 
     elif platform.system() == 'Windows':
-        print '- This script needs fix for Windows platform'
-        print '- You need to add to the environment the path necessary to install Python module psycho2'
-        print '- See Darwin solution'
+        print('- This script needs fix for Windows platform')
+        print('- You need to add to the environment the path necessary to install Python module psycho2')
+        print('- See Darwin solution')
         sys.exit(1)
     else:
-        print '- Your platform is not recognized'
+        print('- Your platform is not recognized')
         sys.exit(1)
 
-    subprocess.call(['pip', 'install', '-r', 'third-party/requirements/pip-requirements.txt'])
+    subprocess.call(['pip3', 'install', '-r', 'third-party/requirements/pip-requirements.txt'])
 
 if __name__ == '__main__':
     main()

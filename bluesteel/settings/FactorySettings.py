@@ -29,7 +29,7 @@ def read_secret_file(file_path):
         obj = json.loads(content)
         return obj['secret_key']
 
-    print 'Secret key faile failed to open!!'
+    print('Secret key faile failed to open!!')
     return ''
 
 
