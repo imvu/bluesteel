@@ -99,6 +99,32 @@ SAVE_BENCHMARK_DEFINITION = {
                 {"type" : "number", "minimum" : 520, "maximum" : 520},
             ],
         },
+        'max_benchmark_date' : {
+            'type' : 'object',
+            'additionalProperties': False,
+            'required': [
+                'year',
+                'month',
+                'day',
+            ],
+            'properties' : {
+                'year' : {
+                    'type' : 'number',
+                    'minimum' : 1970,
+                    'maximum' : 2500,
+                },
+                'month' : {
+                    'type' : 'number',
+                    'minimum' : 1,
+                    'maximum' : 12,
+                },
+                'day' : {
+                    'type' : 'number',
+                    'minimum' : 1,
+                    'maximum' : 31,
+                },
+            }
+        },
         'work_passes' : {
             'type' : 'array',
             'items' : {

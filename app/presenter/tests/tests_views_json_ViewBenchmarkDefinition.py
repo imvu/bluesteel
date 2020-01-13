@@ -135,6 +135,10 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
         obj['active'] = True
         obj['max_fluctuation_percent'] = 28
         obj['max_weeks_old_notify'] = 8
+        obj['max_benchmark_date'] = {}
+        obj['max_benchmark_date']['year'] = 1982
+        obj['max_benchmark_date']['month'] = 3
+        obj['max_benchmark_date']['day'] = 28
         obj['command_list'] = []
         obj['command_list'].append('command-28')
         obj['command_list'].append('command-29')
@@ -192,6 +196,10 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
         obj['active'] = True
         obj['max_fluctuation_percent'] = 28
         obj['max_weeks_old_notify'] = 8
+        obj['max_benchmark_date'] = {}
+        obj['max_benchmark_date']['year'] = 1982
+        obj['max_benchmark_date']['month'] = 3
+        obj['max_benchmark_date']['day'] = 28
         obj['command_list'] = []
         obj['command_list'].append('command-28')
         obj['overrides'] = []
@@ -228,6 +236,10 @@ class BenchmarkDefinitionViewJsonTestCase(TestCase):
         obj['active'] = True
         obj['max_fluctuation_percent'] = 28
         obj['max_weeks_old_notify'] = 8
+        obj['max_benchmark_date'] = {}
+        obj['max_benchmark_date']['year'] = 1982
+        obj['max_benchmark_date']['month'] = 3
+        obj['max_benchmark_date']['day'] = 28
         obj['command_list'] = []
         obj['command_list'].append('command-28')
         obj['overrides'] = []

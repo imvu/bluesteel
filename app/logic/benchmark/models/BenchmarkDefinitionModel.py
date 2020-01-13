@@ -1,5 +1,6 @@
 """ BenchmarkDefinition model """
 
+import datetime
 from django.db import models
 from django.db.models import signals
 from django.dispatch.dispatcher import receiver
@@ -31,6 +32,15 @@ class BenchmarkDefinitionEntry(models.Model):
     revision = models.IntegerField(default=0)
     max_fluctuation_percent = models.IntegerField(default=0)
     max_weeks_old_notify = models.IntegerField(default=1)
+    max_benchmark_date = models.DateTimeField(default=datetime.datetime(
+        1970,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        tzinfo=datetime.timezone.utc))
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True, editable=False)
 
@@ -65,6 +75,10 @@ class BenchmarkDefinitionEntry(models.Model):
         obj['max_weeks_old_notify']['current_value'] = self.max_weeks_old_notify
         obj['max_weeks_old_notify']['current_name'] = ''
         obj['max_weeks_old_notify']['names'] = self.get_max_weeks_old_names_and_values()
+        obj['max_benchmark_date'] = {}
+        obj['max_benchmark_date']['year'] = self.max_benchmark_date.year
+        obj['max_benchmark_date']['month'] = self.max_benchmark_date.month
+        obj['max_benchmark_date']['day'] = self.max_benchmark_date.day
 
         for val in obj['max_weeks_old_notify']['names']:
             if val['current']:

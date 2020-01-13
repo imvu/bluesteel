@@ -3,12 +3,14 @@
 # Duplicate code
 # pylint: disable=R0801
 
+import datetime
 from django.db import transaction
 from app.presenter.views.helpers import ViewUrlGenerator
 from app.presenter.schemas import BenchmarkDefinitionSchemas
 from app.logic.benchmark.controllers.BenchmarkDefinitionController import BenchmarkDefinitionController
 from app.logic.benchmark.models.BenchmarkDefinitionWorkerPassModel import BenchmarkDefinitionWorkerPassEntry
 from app.logic.httpcommon import res, val
+
 
 @transaction.atomic
 def create_new_benchmark_definition(request):
@@ -70,6 +72,15 @@ def view_save_benchmark_definition(request, benchmark_definition_id):
         max_fluctuation_percent=val_resp_obj['max_fluctuation_percent'],
         overrides=val_resp_obj['overrides'],
         max_weeks_old_notify=val_resp_obj['max_weeks_old_notify'],
+        max_benchmark_date=datetime.datetime(
+            val_resp_obj['max_benchmark_date']['year'],
+            val_resp_obj['max_benchmark_date']['month'],
+            val_resp_obj['max_benchmark_date']['day'],
+            0,
+            0,
+            0,
+            0,
+            datetime.timezone.utc),
         work_passes=val_resp_obj['work_passes'],
     )
 

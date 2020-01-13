@@ -114,6 +114,10 @@ saveBenchmarkDefinition = function(idFormBenchmarkDefinition) {
     obj['command_list'] = [];
     obj['max_fluctuation_percent'] = '-1';
     obj['max_weeks_old_notify'] = '-1';
+    obj['max_benchmark_date'] = {};
+    obj['max_benchmark_date']['year'] = 1970;
+    obj['max_benchmark_date']['month'] = 1;
+    obj['max_benchmark_date']['day'] = 1;
     obj['overrides'] = [];
     obj['work_passes'] = [];
 

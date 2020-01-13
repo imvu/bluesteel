@@ -21,6 +21,7 @@ from app.logic.commandrepo.models.CommandSetModel import CommandSetEntry
 from app.logic.commandrepo.models.CommandGroupModel import CommandGroupEntry
 from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
 from app.logic.commandrepo.helper import TestCommandHelper
+import datetime
 
 class BenchmarkDefinitionControllerTestCase(TestCase):
 
@@ -86,6 +87,8 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
         self.assertEqual(0, CommandEntry.objects.all().count())
         self.assertEqual(0, CommandResultEntry.objects.all().count())
 
+        date_max = datetime.datetime(1982, 3, 28, 0, 0, tzinfo=datetime.timezone.utc)
+
         new_layout = BluesteelLayoutEntry.objects.create(name='default-name')
         project = BluesteelProjectController.create_default_project(new_layout, 'project', 0)
         definition = BenchmarkDefinitionController.create_default_benchmark_definition()
@@ -94,6 +97,7 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
         definition.max_fluctuation_percent = 28
         definition.revision = 3
         definition.max_weeks_old_notify = 2
+        definition.max_benchmark_date = date_max
         definition.save()
 
         BenchmarkFluctuationOverrideEntry.objects.create(definition=definition, result_id='id1', override_value=28, ignore_fluctuation=False)
@@ -125,6 +129,9 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
         self.assertEqual('default-name', definition.name)
         self.assertEqual(3, BenchmarkFluctuationOverrideEntry.objects.all().count())
         self.assertEqual(2, BenchmarkDefinitionWorkerPassEntry.objects.filter(definition=definition).count())
+        self.assertEqual(1982, definition.max_benchmark_date.year)
+        self.assertEqual(3, definition.max_benchmark_date.month)
+        self.assertEqual(28, definition.max_benchmark_date.day)
 
         new_definition = BenchmarkDefinitionController.duplicate_benchmark_definition(definition.id)
 
@@ -147,6 +154,9 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
         self.assertEqual(3, BenchmarkFluctuationOverrideEntry.objects.all().count())
         self.assertEqual(2, BenchmarkDefinitionWorkerPassEntry.objects.filter(definition=definition).count())
         self.assertEqual(2, BenchmarkDefinitionWorkerPassEntry.objects.filter(definition=new_definition).count())
+        self.assertEqual(1982, new_definition.max_benchmark_date.year)
+        self.assertEqual(3, new_definition.max_benchmark_date.month)
+        self.assertEqual(28, new_definition.max_benchmark_date.day)
 
     def test_save_benchmark_definition(self):
         self.assertEqual(0, CommandGroupEntry.objects.all().count())
@@ -170,6 +180,9 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
         self.assertEqual(1, definition.max_weeks_old_notify)
         self.assertEqual('default-name', definition.name)
         self.assertEqual(0, BenchmarkFluctuationOverrideEntry.objects.all().count())
+        self.assertEqual(1970, definition.max_benchmark_date.year)
+        self.assertEqual(1, definition.max_benchmark_date.month)
+        self.assertEqual(1, definition.max_benchmark_date.day)
 
         commands = []
         commands.append('command-28')
@@ -180,7 +193,9 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
         overrides.append({'result_id' : 'id1', 'override_value' : 28, 'ignore_fluctuation' : False})
         overrides.append({'result_id' : 'id2', 'override_value' : 29, 'ignore_fluctuation' : False})
 
-        definition = BenchmarkDefinitionController.save_benchmark_definition('new-name', definition.id, new_layout.id, project.id, BenchmarkDefinitionEntry.VERY_HIGH, True, commands, 28, overrides, 8, [])
+        date_max = datetime.datetime(1982, 3, 28, 0, 0, tzinfo=datetime.timezone.utc)
+
+        definition = BenchmarkDefinitionController.save_benchmark_definition('new-name', definition.id, new_layout.id, project.id, BenchmarkDefinitionEntry.VERY_HIGH, True, commands, 28, overrides, 8, date_max, [])
 
         self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='command-28').count())
         self.assertEqual(1, CommandEntry.objects.filter(command_set=definition.command_set, command='command-29').count())
@@ -192,6 +207,9 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
         self.assertEqual(8, definition.max_weeks_old_notify)
         self.assertEqual('new-name', definition.name)
         self.assertEqual(2, BenchmarkFluctuationOverrideEntry.objects.all().count())
+        self.assertEqual(1982, definition.max_benchmark_date.year)
+        self.assertEqual(3, definition.max_benchmark_date.month)
+        self.assertEqual(28, definition.max_benchmark_date.day)
 
     def test_save_same_benchmark_definition_does_not_increment_revision(self):
         self.assertEqual(0, CommandGroupEntry.objects.all().count())
@@ -219,6 +237,9 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
         self.assertEqual(1, definition.max_weeks_old_notify)
         self.assertEqual('default-name', definition.name)
         self.assertEqual(0, BenchmarkFluctuationOverrideEntry.objects.all().count())
+        self.assertEqual(1970, definition.max_benchmark_date.year)
+        self.assertEqual(1, definition.max_benchmark_date.month)
+        self.assertEqual(1, definition.max_benchmark_date.day)
 
         commands = self.get_default_commands()
 
@@ -226,7 +247,9 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
         overrides.append({'result_id' : 'id1', 'override_value' : 28, 'ignore_fluctuation' : False})
         overrides.append({'result_id' : 'id2', 'override_value' : 29, 'ignore_fluctuation' : False})
 
-        result = BenchmarkDefinitionController.save_benchmark_definition('default-name', definition.id, new_layout.id, project.id, BenchmarkDefinitionEntry.VERY_HIGH, True, commands, 0, overrides, 8, [])
+        date_max = datetime.datetime(1982, 3, 28, 0, 0, tzinfo=datetime.timezone.utc)
+
+        result = BenchmarkDefinitionController.save_benchmark_definition('default-name', definition.id, new_layout.id, project.id, BenchmarkDefinitionEntry.VERY_HIGH, True, commands, 0, overrides, 8, date_max, [])
         definition = BenchmarkDefinitionEntry.objects.all().first()
 
         self.assertEqual(definition, result)
@@ -240,6 +263,9 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
         self.assertEqual(8, definition.max_weeks_old_notify)
         self.assertEqual('default-name', definition.name)
         self.assertEqual(2, BenchmarkFluctuationOverrideEntry.objects.all().count())
+        self.assertEqual(1982, definition.max_benchmark_date.year)
+        self.assertEqual(3, definition.max_benchmark_date.month)
+        self.assertEqual(28, definition.max_benchmark_date.day)
 
     def test_save_benchmark_definition_does_not_delete_benchmarks_executions(self):
         user1 = User.objects.create_user('user1@test.com', 'user1@test.com', 'pass')
@@ -275,13 +301,15 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
         overrides.append({'result_id' : 'id1', 'override_value' : 28, 'ignore_fluctuation' : False})
         overrides.append({'result_id' : 'id2', 'override_value' : 29, 'ignore_fluctuation' : False})
 
+        date_max = datetime.datetime(1982, 3, 28, 0, 0, tzinfo=datetime.timezone.utc)
+
         self.assertEqual('BenchmarkDefinition1', benchmark_definition1.name)
         self.assertEqual(1, BenchmarkExecutionEntry.objects.all().count())
         self.assertEqual(benchmark_execution1, BenchmarkExecutionEntry.objects.all().first())
         self.assertEqual(0, CommandEntry.objects.filter(command_set=benchmark_definition1.command_set).count())
         self.assertEqual(0, BenchmarkFluctuationOverrideEntry.objects.all().count())
 
-        result = BenchmarkDefinitionController.save_benchmark_definition('BenchmarkDefinition1-1', benchmark_definition1.id, bluesteel_layout.id, bluesteel_project.id, BenchmarkDefinitionEntry.NORMAL, True, commands, 28, overrides, 0, [])
+        result = BenchmarkDefinitionController.save_benchmark_definition('BenchmarkDefinition1-1', benchmark_definition1.id, bluesteel_layout.id, bluesteel_project.id, BenchmarkDefinitionEntry.NORMAL, True, commands, 28, overrides, 0, date_max, [])
 
         self.assertEqual('BenchmarkDefinition1-1', result.name)
         self.assertEqual(1, BenchmarkExecutionEntry.objects.all().count())
@@ -331,13 +359,15 @@ class BenchmarkDefinitionControllerTestCase(TestCase):
         overrides.append({'result_id' : 'id1', 'override_value' : 28, 'ignore_fluctuation' : False})
         overrides.append({'result_id' : 'id2', 'override_value' : 29, 'ignore_fluctuation' : False})
 
+        date_max = datetime.datetime(1982, 3, 28, 0, 0, tzinfo=datetime.timezone.utc)
+
         self.assertEqual('BenchmarkDefinition1', benchmark_definition1.name)
         self.assertEqual(1, BenchmarkExecutionEntry.objects.all().count())
         self.assertEqual(benchmark_execution1, BenchmarkExecutionEntry.objects.all().first())
         self.assertEqual(0, CommandEntry.objects.filter(command_set=benchmark_definition1.command_set).count())
         self.assertEqual(0, BenchmarkFluctuationOverrideEntry.objects.all().count())
 
-        result = BenchmarkDefinitionController.save_benchmark_definition('BenchmarkDefinition1-1', benchmark_definition1.id, bluesteel_layout2.id, bluesteel_project2.id, BenchmarkDefinitionEntry.NORMAL, True, commands, 28, overrides, 0, [])
+        result = BenchmarkDefinitionController.save_benchmark_definition('BenchmarkDefinition1-1', benchmark_definition1.id, bluesteel_layout2.id, bluesteel_project2.id, BenchmarkDefinitionEntry.NORMAL, True, commands, 28, overrides, 0, date_max, [])
 
         self.assertEqual('BenchmarkDefinition1-1', result.name)
         self.assertEqual(0, BenchmarkExecutionEntry.objects.all().count())

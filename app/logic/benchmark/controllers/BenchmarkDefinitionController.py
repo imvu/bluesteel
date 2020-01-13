@@ -78,6 +78,7 @@ class BenchmarkDefinitionController():
             revision=0,
             max_fluctuation_percent=bench_def.max_fluctuation_percent,
             max_weeks_old_notify=bench_def.max_weeks_old_notify,
+            max_benchmark_date=bench_def.max_benchmark_date,
         )
 
         passes = BenchmarkDefinitionWorkerPassEntry.objects.filter(definition=bench_def)
@@ -121,6 +122,7 @@ class BenchmarkDefinitionController():
             max_fluctuation_percent,
             overrides,
             max_weeks_old_notify,
+            max_benchmark_date,
             work_passes):
         """ Save benchmark definition with the new data provided, returns None if error """
         benchmark_def_entry = BenchmarkDefinitionEntry.objects.filter(id=benchmark_definition_id).first()
@@ -148,6 +150,7 @@ class BenchmarkDefinitionController():
             benchmark_def_entry.name = name
             benchmark_def_entry.max_fluctuation_percent = max_fluctuation_percent
             benchmark_def_entry.max_weeks_old_notify = max_weeks_old_notify
+            benchmark_def_entry.max_benchmark_date = max_benchmark_date
             benchmark_def_entry.priority = priority
             benchmark_def_entry.active = active
             benchmark_def_entry.save()
@@ -183,6 +186,7 @@ class BenchmarkDefinitionController():
         benchmark_def_entry.revision = benchmark_def_entry.revision + 1
         benchmark_def_entry.max_fluctuation_percent = max_fluctuation_percent
         benchmark_def_entry.max_weeks_old_notify = max_weeks_old_notify
+        benchmark_def_entry.max_benchmark_date = max_benchmark_date
         benchmark_def_entry.save()
 
         return benchmark_def_entry
