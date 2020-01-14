@@ -58,6 +58,7 @@ class BenchmarkExecutionController():
                      .filter(
                          definition__worker_pass_definition__allowed=True,
                          definition__worker_pass_definition__worker=worker_entry)
+                     .filter(commit__author_date__gte=F('definition__max_benchmark_date'))
                      .filter(worker=worker_entry)
                      .filter(q_ready | q_invalidated | q_revision | q_in_progress)
                      .order_by('-commit__author_date', '-definition__priority')

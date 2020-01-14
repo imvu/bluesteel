@@ -273,6 +273,56 @@ class BenchmarkExecutionControllerTestCase(TestCase):
         self.assertEqual('0000200002000020000200002000020000200002', execution.commit.commit_hash)
         self.assertEqual('worker-name-1', execution.worker.name)
 
+
+    def test_executions_available_have_commit_author_date_greater_than_max_benchmark_date(self):
+        self.commit3.author_date = datetime.datetime(1982, 2, 28, 0, 0, 0, 0, datetime.timezone.utc)
+        self.commit3.save()
+        self.commit2.author_date = datetime.datetime(1982, 3, 28, 0, 0, 0, 0, datetime.timezone.utc)
+        self.commit2.save()
+        self.commit1.author_date = datetime.datetime(1982, 4, 28, 0, 0, 0, 0, datetime.timezone.utc)
+        self.commit1.save()
+
+        self.benchmark_definition1.max_benchmark_date = datetime.datetime(1982, 3, 27, 0, 0, 0, 0, datetime.timezone.utc)
+        self.benchmark_definition1.save()
+
+        exec_entries = BenchmarkExecutionEntry.objects.all()
+        for exec_entry in exec_entries:
+            exec_entries.delete()
+
+        self.assertEqual(0, BenchmarkExecutionEntry.objects.all().count())
+
+        self.benchmark_execution1 = BenchmarkExecutionEntry.objects.create(definition=self.benchmark_definition1, commit=self.commit1, worker=self.worker1, report=self.report1, invalidated=False, revision_target=28, status=BenchmarkExecutionEntry.READY)
+        self.benchmark_execution2 = BenchmarkExecutionEntry.objects.create(definition=self.benchmark_definition1, commit=self.commit2, worker=self.worker1, report=self.report2, invalidated=False, revision_target=28, status=BenchmarkExecutionEntry.READY)
+        self.benchmark_execution3 = BenchmarkExecutionEntry.objects.create(definition=self.benchmark_definition1, commit=self.commit3, worker=self.worker1, report=self.report3, invalidated=False, revision_target=28, status=BenchmarkExecutionEntry.READY)
+
+        self.assertEqual(3, BenchmarkExecutionEntry.objects.all().count())
+
+        execution = BenchmarkExecutionController.get_earliest_available_execution(self.user1)
+
+        self.assertNotEqual(None, execution)
+        self.assertEqual(BenchmarkExecutionEntry.IN_PROGRESS, execution.status)
+        self.assertEqual(False, execution.invalidated)
+        self.assertEqual(28, self.benchmark_definition1.revision)
+        self.assertEqual(28, execution.revision_target)
+        self.assertEqual('BenchmarkDefinition1', execution.definition.name)
+        self.assertEqual('0000100001000010000100001000010000100001', execution.commit.commit_hash)
+        self.assertEqual('worker-name-1', execution.worker.name)
+
+        execution = BenchmarkExecutionController.get_earliest_available_execution(self.user1)
+
+        self.assertNotEqual(None, execution)
+        self.assertEqual(BenchmarkExecutionEntry.IN_PROGRESS, execution.status)
+        self.assertEqual(False, execution.invalidated)
+        self.assertEqual(28, self.benchmark_definition1.revision)
+        self.assertEqual(28, execution.revision_target)
+        self.assertEqual('BenchmarkDefinition1', execution.definition.name)
+        self.assertEqual('0000200002000020000200002000020000200002', execution.commit.commit_hash)
+        self.assertEqual('worker-name-1', execution.worker.name)
+
+        execution = BenchmarkExecutionController.get_earliest_available_execution(self.user1)
+        self.assertEqual(None, execution)
+
+
     def test_third_execution_available_does_not_exist_after_all_taken(self):
         execution = BenchmarkExecutionController.get_earliest_available_execution(self.user1)
         self.assertNotEqual(None, execution)
