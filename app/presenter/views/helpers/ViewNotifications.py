@@ -55,7 +55,7 @@ def notify_benchmark_command_failure(bench_exec_id, bench_exec_receiver_email, b
     for index, com in enumerate(report['command_set']):
         indx = index + 1
         command = com['command'].strip()
-        if com['result']['status'] is not 0:
+        if com['result']['status'] != 0:
             content += '{0}.- Command: {1}\n'.format(indx, command)
             content += '             ^ Failed!\n'
             content += '        Result Status: {0}\n'.format(com['result']['status'])

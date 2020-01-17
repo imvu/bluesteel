@@ -1,16 +1,45 @@
 """ Git Fetcher code """
 
 # Disable warning for relative imports
-# pylint: disable=W0403
+# : disable=W0403
 
 import json
 import datetime
 import logging as log
-from app.logic.bluesteelworker.download.core.CommandExecutioner import CommandExecutioner
-from app.logic.bluesteelworker.download.core.ProjectFolderManager import ProjectFolderManager
 
 
-class GitFetcher(object):
+# This import system is because we want to use Worker as an script to be called directly, but also
+# we want that this script is called from the Django tests. I don't know how to make the right import
+# so I am going to try to import first in absolute paths for the tests, and if it fails we will import
+# on a relative way.
+
+# Absolute path for tests.
+try:
+    from app.logic.bluesteelworker.download.core.CommandExecutioner import CommandExecutioner
+except ImportError as imp_error:
+    pass
+
+try:
+    from app.logic.bluesteelworker.download.core.ProjectFolderManager import ProjectFolderManager
+except ImportError as imp_error:
+    pass
+
+
+# Relative path for Worker.
+try:
+    from CommandExecutioner import CommandExecutioner
+except ImportError as imp_error:
+    pass
+
+try:
+    from ProjectFolderManager import ProjectFolderManager
+except ImportError as imp_error:
+    pass
+
+
+
+
+class GitFetcher():
     """
     GitFetcher is able to gather information of a git repository and return all the data with an
     understandable structure.
@@ -73,7 +102,7 @@ class GitFetcher(object):
     def execute_steps(self, project_info, steps):
         """ Executes all the provided steps and fill the final data into the member variables """
         for step in steps:
-            log.info('Step: ' + step.__name__)
+            log.info('Step: %s', step.__name__)
             if not step(project_info):
                 self.feed_data['reports'] = self.report_stack
                 log.error('Step \'%s\' failed!', step.__name__)

@@ -4,7 +4,7 @@ from django.core.mail import send_mass_mail
 from django.utils import timezone
 from app.logic.mailing.models.StackedMailModel import StackedMailEntry
 
-class MailingController(object):
+class MailingController():
     """ Mailing Controller offers functions to send emails """
 
     @staticmethod

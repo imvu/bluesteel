@@ -8,6 +8,9 @@ from django.db.models import Q, F, Count
 from django.core.paginator import Paginator
 from django.utils import timezone
 from django.conf import settings
+import arrow
+import pytz
+
 from app.logic.benchmark.models.BenchmarkDefinitionModel import BenchmarkDefinitionEntry
 from app.logic.benchmark.models.BenchmarkExecutionModel import BenchmarkExecutionEntry
 from app.logic.bluesteel.models.BluesteelProjectModel import BluesteelProjectEntry
@@ -24,13 +27,12 @@ from app.logic.gitrepo.models.GitParentModel import GitParentEntry
 from app.logic.gitrepo.models.GitBranchTrailModel import GitBranchTrailEntry
 from app.logic.gitrepo.models.GitBranchMergeTargetModel import GitBranchMergeTargetEntry
 from app.logic.httpcommon import pag
-import arrow
-import pytz
+
 
 PAGINATION_HALF_RANGE = 2
 TTL_IN_PROGRESS = 3
 
-class BenchmarkExecutionController(object):
+class BenchmarkExecutionController():
     """ BenchmarkExecution controller with helper functions """
 
     @staticmethod
@@ -335,7 +337,7 @@ class BenchmarkExecutionController(object):
 
             result = command['result']
 
-            without_errors = without_errors and (int(result['status']) is 0)
+            without_errors = without_errors and (int(result['status']) == 0)
 
             start_time = arrow.get(result['start_time']).naive
             finish_time = arrow.get(result['finish_time']).naive

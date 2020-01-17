@@ -216,11 +216,11 @@ def save_worker(request, worker_id):
     worker = WorkerEntry.objects.filter(id=worker_id).first()
     if worker is None:
         return res.get_response(400, 'Worker not found', obj)
-    else:
-        worker.description = obj['description']
-        worker.git_feeder = obj['git_feeder']
-        worker.max_feed_reports = obj['max_feed_reports']
-        worker.save()
+
+    worker.description = obj['description']
+    worker.git_feeder = obj['git_feeder']
+    worker.max_feed_reports = obj['max_feed_reports']
+    worker.save()
 
     return res.get_response(200, 'Worker Saved!', {})
 
@@ -234,8 +234,8 @@ def delete_worker(request, worker_id):
     worker = WorkerEntry.objects.filter(id=worker_id).first()
     if worker is None:
         return res.get_response(400, 'Worker not found', {})
-    else:
-        worker.delete()
+
+    worker.delete()
 
     obj = {}
     obj['redirect'] = ViewUrlGenerator.get_worker_all_url(1)

@@ -1,6 +1,6 @@
 """ Page object file """
 
-class Page(object):
+class Page():
     """ Page object, it contains information about the pare we are refering, index, items per page, etc. """
 
     page_index = 0

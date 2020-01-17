@@ -10,7 +10,7 @@
 
 - `Layouts + Projects`: A *Layout* is a group of projects, and a *Project* is the information that BlueSteel will use to *clone*, *pull*, *identify* where the source code lives, and check the *state* of the project (Active or Inactive). We will need to setup a Layout and a Project if we want to use BlueSteel.
 
-- `Workers`: A *Worker* is a software downloaded from BlueSteel and capable of communicating back and forth with it. This worker will accomplish several tasks like: 
+- `Workers`: A *Worker* is a software downloaded from BlueSteel and capable of communicating back and forth with it. This worker will accomplish several tasks like:
 
     * Clone and/or pull an existing project into the worker´s host machine.
     * Setup the project´s source code state at the correct commit.
@@ -36,15 +36,14 @@
 
 ### Preparation ###
 
-- Install [Python 2.7.10](https://www.python.org/)
+- Install [Python 3.6.5](https://www.python.org/)
 - Install pip: `sudo easy_install pip`
-- Install virtualenv: `sudo pip install virtualenv`
 - Create a Bluesteel folder: `mkdir bluesteel-project`, `cd bluesteel-project`
-- Create virtual environment: `virtualenv --no-site-packages env`
+- Create virtual environment: `python3 -m venv env`
 - Activate environment: ` . env/bin/activate`
 
 ### Installation ###
- 
+
 - Create bluesteel project folder: `mkdir bluesteel`
 - Get the code: `git clone git://github.com:imvu/bluesteel.git bluesteel`
 - Install requisits: `cd bluesteel`, `s/install-bluesteel.py`
@@ -66,7 +65,7 @@
 - Execute command: `s/run-server.py` with parameter `--mode=production` and `--open=yes`
 - Open a browser and type the url: `localhost:8080`
 - See next step `How to edit things inside BlueSteel`
-- You can also specify `--port` if you want it to run on another port. 
+- You can also specify `--port` if you want it to run on another port.
 
 ### How to edit things inside BlueSteel ###
 
@@ -218,7 +217,7 @@ BlueSteel can understand 3 types of outputs now:
 - add that path to $PATH environment variable with: `PATH=$PATH:/Applications/Postgres.app/Contents/Versions/9.5/bin/`
 - (Linux only) install postgres development package: `sudo apt-get install libpq-dev python-dev`
 - Install psycopg2 with: `sudo pip install psycopg2==2.6.2`
-- Open a PostgreSQL shell. 
+- Open a PostgreSQL shell.
     * in macOS you can open the Postgres App shell through the icon.
     * in Linux you can execute:
         * `sudo su - postgres`

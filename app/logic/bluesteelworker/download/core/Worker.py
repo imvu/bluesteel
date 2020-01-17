@@ -1,7 +1,9 @@
+#!/usr/bin/env python3
+
 """ Worker code """
 
 # Disable warning for relative imports
-# pylint: disable=W0403
+# : disable=W0403
 
 #Disable error for too many statments
 # This code needs a refactor :)
@@ -20,7 +22,7 @@ import shutil
 # import pprint
 import zipfile
 from zipfile import ZipFile
-from StringIO import StringIO
+import io
 
 import GitFetcher
 import Request
@@ -98,8 +100,8 @@ def read_settings():
     settings_obj = {}
     try:
         settings_obj = json.loads(settings_file.read())
-    except ValueError, error:
-        print error
+    except ValueError as error:
+        print(error)
         settings_obj['tmp_path'] = ['tmp']
         settings_obj['entry_point'] = 'http://www.test.com/settings/not/available/'
     settings_file.close()
@@ -146,8 +148,8 @@ def process_get_or_create_worker(bootstrap_urls, host_info, session):
         return connection_info
 
     if resp['content']['status'] == 400:
-        print '- Creating Worker'
-        resp = session.post(bootstrap_urls['create_worker_url'], {}, json.dumps(host_info))
+        print('- Creating Worker')
+        resp = session.post(bootstrap_urls['create_worker_url'], {}, json.dumps(host_info).encode('utf-8'))
 
     if not resp['succeed']:
         connection_info['succeed'] = False
@@ -160,13 +162,13 @@ def process_get_or_create_worker(bootstrap_urls, host_info, session):
 
 def process_connect_worker(bootstrap_urls, worker_info, session):
     """ Make woerker login to BlueSteel """
-    print '- Login Worker'
+    print('- Login Worker')
 
     login_info = {}
     login_info['username'] = worker_info['uuid'][0:30]
     login_info['password'] = worker_info['uuid']
 
-    resp = session.post(bootstrap_urls['login_worker_url'], {}, json.dumps(login_info))
+    resp = session.post(bootstrap_urls['login_worker_url'], {}, json.dumps(login_info).encode('utf-8'))
 
     connection_info = {}
 
@@ -185,14 +187,14 @@ def extract_projects_from_layouts(bootstrap_urls, settings, session):
     process_info['succeed'] = True
     process_info['projects'] = []
 
-    print '- Getting layout list'
+    print('- Getting layout list')
     resp = session.get(bootstrap_urls['layouts_url'], {})
     if resp['succeed'] is False:
         process_info['succeed'] = False
         return process_info
 
     for layout_url in resp['content']['data']['layouts']:
-        print '- Get layout'
+        print('- Get layout')
         resp = session.get(layout_url, {})
         if resp['succeed'] is False:
             process_info['succeed'] = False
@@ -201,10 +203,10 @@ def extract_projects_from_layouts(bootstrap_urls, settings, session):
         layout = resp['content']['data']
 
         if not layout['active']:
-            print 'Layout not active!'
+            print('Layout not active!')
             continue
 
-        print '- Fragmenting layout'
+        print('- Fragmenting layout')
         project_fragments = fragment_layout_in_project_infos(layout, settings['tmp_path'])
 
         for project in project_fragments:
@@ -235,7 +237,7 @@ def process_update_worker_files(bootstrap_urls, settings, session):
     log.info('Downloading remote Worker files.')
     resp_f = session.get(bootstrap_urls['worker_download_url'], {})
     if resp_f['succeed'] and resp_f['type'] == 'application/zip':
-        zip_ext = ZipFile(StringIO(resp_f['content']))
+        zip_ext = ZipFile(io.StringIO(resp_f['content']))
         tmp_zip_folder = str(os.path.join(get_cwd(), os.sep.join(settings['tmp_path']), '..', 'worker_zip'))
         tmp_zip_folder = os.path.normpath(tmp_zip_folder)
 
@@ -266,7 +268,8 @@ def process_update_worker_files(bootstrap_urls, settings, session):
             shutil.copytree(os.path.join(tmp_zip_folder, 'core'), get_cwd())
             os.execv(sys.executable, [sys.executable] + sys.argv)
 
-    print resp_f
+    print(resp_f)
+    return {}
 
 def process_git_fetch_and_feed(bootstrap_urls, settings, session, feed):
     """ Fetch all layouts and feed them to BlueSteel """
@@ -299,7 +302,7 @@ def process_git_fetch_and_feed(bootstrap_urls, settings, session, feed):
             ret = fetcher.fetch_and_feed_git_project(project, known_commit_hashes)
             if not ret:
                 log.error('fetch_and_feed_git_project failed!')
-                print fetcher.feed_data['reports']
+                print(fetcher.feed_data['reports'])
                 process_info['succeed'] = False
                 return process_info
 
@@ -308,7 +311,7 @@ def process_git_fetch_and_feed(bootstrap_urls, settings, session, feed):
                 commits_json['feed_data'] = fetcher.feed_data['feed_data']
 
                 log.debug('Feeding git commits to url: %s', project['feed']['commits_url'])
-                resp = session.post(project['feed']['commits_url'], {}, json.dumps(commits_json))
+                resp = session.post(project['feed']['commits_url'], {}, json.dumps(commits_json).encode('utf-8'))
 
                 if not resp['succeed']:
                     log.error('Error while feeding project commits!')
@@ -320,7 +323,11 @@ def process_git_fetch_and_feed(bootstrap_urls, settings, session, feed):
                 delete_branches_json['branch_names'] = fetcher.branch_names['remove']
 
                 log.debug('Feeding branches to delete to url: %s', project['feed']['delete_branches_url'])
-                resp = session.post(project['feed']['delete_branches_url'], {}, json.dumps(delete_branches_json))
+                resp = session.post(
+                    project['feed']['delete_branches_url'],
+                    {},
+                    json.dumps(delete_branches_json).encode('utf-8')
+                )
 
                 if not resp['succeed']:
                     log.error('Error while feeding branches to delete!')
@@ -332,7 +339,7 @@ def process_git_fetch_and_feed(bootstrap_urls, settings, session, feed):
             reports_json['reports'] = fetcher.feed_data['reports']
 
             log.debug('Feeding reports to url: %s', project['feed']['reports_url'])
-            resp = session.post(project['feed']['reports_url'], {}, json.dumps(reports_json))
+            resp = session.post(project['feed']['reports_url'], {}, json.dumps(reports_json).encode('utf-8'))
 
             if not resp['succeed']:
                 log.error('Error while feeding reports!')
@@ -344,7 +351,7 @@ def process_git_fetch_and_feed(bootstrap_urls, settings, session, feed):
 
             if not ret:
                 log.error('fetch_only_git_project failed!')
-                print fetcher.feed_data['reports']
+                print(fetcher.feed_data['reports'])
                 process_info['succeed'] = False
                 return process_info
 
@@ -353,17 +360,17 @@ def process_git_fetch_and_feed(bootstrap_urls, settings, session, feed):
 
 def process_get_available_benchmark_execution(bootstrap_urls, session):
     """ Will access Bluesteel to acquire the next available benchmark execution """
-    print '- Getting benchmark execution'
+    print('- Getting benchmark execution')
 
-    resp = session.post(bootstrap_urls['acquire_benchmark_execution_url'], {}, '')
+    resp = session.post(bootstrap_urls['acquire_benchmark_execution_url'], {}, ''.encode('utf-8'))
     if resp['succeed'] is False:
-        print '    - process_get_available_benchmark_execution failed !!'
-        print '    - An error occurred:'
-        print '    out: ', resp['content']
+        print('    - process_get_available_benchmark_execution failed !!')
+        print('    - An error occurred:')
+        print('    out: ', resp['content'])
         return None
 
     if resp['content']['status'] != 200:
-        print '- Get available benchmark failed'
+        print('- Get available benchmark failed')
         return None
 
     data = resp['content']['data']
@@ -443,7 +450,7 @@ def process_feed_benchmark_execution_results(session, results, bench_exec):
     """ Takes the results of the executed commands and feed them to BlueSteel """
     results_to_feed = prepare_results_before_feed(results)
 
-    json_res = json.dumps(results_to_feed)
+    json_res = json.dumps(results_to_feed).encode('utf-8')
 
     resp = session.post(bench_exec['url']['save'], {}, json_res)
     return resp
@@ -473,9 +480,9 @@ def main():
         log.info('Connecting Worker.')
         con_info = process_connect_worker(bootstrap_urls, worker_info['worker'], session)
         if con_info['succeed'] is False:
-            print '+ process_connect_worker failed.'
-            print '- out: ', con_info['message']
-            print '+ waiting some time to retry.'
+            print('+ process_connect_worker failed.')
+            print('- out: ', con_info['message'])
+            print('+ waiting some time to retry.')
             time.sleep(RETRY_CONNECTION_TIME)
             continue
 
@@ -485,33 +492,33 @@ def main():
                 res = process_update_worker_files(bootstrap_urls, settings, session)
 
                 if not res['succeed']:
-                    print '+ process_update_worker_files failed.'
-                    print '- out: ', res['content']
-                    print '+ waiting {0} seconds to retry.'.format(RETRY_CONNECTION_TIME)
+                    print('+ process_update_worker_files failed.')
+                    print('- out: ', res['content'])
+                    print('+ waiting {0} seconds to retry.'.format(RETRY_CONNECTION_TIME))
                     time.sleep(RETRY_CONNECTION_TIME)
                     continue
 
             log.info('Connecting Worker.')
             con_info = process_connect_worker(bootstrap_urls, worker_info['worker'], session)
             if con_info['succeed'] is False:
-                print '+ process_connect_worker failed.'
-                print '- out: ', con_info['message']
-                print '+ waiting some time to retry.'
+                print('+ process_connect_worker failed.')
+                print('- out: ', con_info['message'])
+                print('+ waiting some time to retry.')
                 time.sleep(RETRY_CONNECTION_TIME)
                 continue
 
             log.info('Updating Worker activity.')
-            session.post(worker_info['worker']['url']['update_activity_point'], {}, '')
+            session.post(worker_info['worker']['url']['update_activity_point'], {}, ''.encode('utf-8'))
 
             log.info('Triggering notifications.')
-            session.post(bootstrap_urls['notifications_url'], {}, '')
+            session.post(bootstrap_urls['notifications_url'], {}, ''.encode('utf-8'))
 
             feeder = False
             resp = session.get(worker_info['worker']['url']['worker_info_full'], {})
             if resp['content']['status'] == 200:
                 feeder = resp['content']['data']['worker']['git_feeder']
 
-            print '+ fetch and feed git project.'
+            print('+ fetch and feed git project.')
             res = process_git_fetch_and_feed(
                 bootstrap_urls,
                 settings,
@@ -520,7 +527,7 @@ def main():
 
             if not res['succeed']:
                 log.error('Error while process_git_fetch_and_feed! Going to sleep for a while.')
-                print res
+                print(res)
                 time.sleep(FEED_ERROR_TIME)
 
             log.info('Getting available benchmarks.')

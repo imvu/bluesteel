@@ -18,7 +18,7 @@ from app.logic.commandrepo.models.CommandSetModel import CommandSetEntry
 from app.logic.httpcommon.Page import Page
 from app.logic.httpcommon import pag
 
-class BenchmarkDefinitionController(object):
+class BenchmarkDefinitionController():
     """ BenchmarkDefinition controller with helper functions """
 
     @staticmethod

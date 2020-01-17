@@ -44,6 +44,7 @@ class BluesteelLayoutEntry(models.Model):
         self.save()
 
     def check_active_state(self):
+        """ Checks if Layout entry is on active state """
         project_count = BluesteelProjectEntry.objects.filter(layout_id=self.id).count()
 
         if project_count == 0 or self.project_index_path >= project_count:

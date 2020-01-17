@@ -148,5 +148,5 @@ def get_benchmark_definition_confirm_delete(request, definition_id):
         data['menu'] = ViewPrepareObjects.prepare_menu_for_html([])
 
         return res.get_template_data(request, 'presenter/confirm.html', data)
-    else:
-        return res.get_only_get_allowed({})
+
+    return res.get_only_get_allowed({})

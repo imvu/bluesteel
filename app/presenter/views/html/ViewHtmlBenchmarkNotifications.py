@@ -1,11 +1,13 @@
 """ Presenter views, benchmark notifications page functions """
 
+from django.shortcuts import redirect
+
 from app.presenter.views.helpers import ViewUrlGenerator
 from app.presenter.views.helpers import ViewPrepareObjects
 from app.logic.benchmark.models.BenchmarkFluctuationWaiverModel import BenchmarkFluctuationWaiverEntry
 from app.logic.gitrepo.models.GitProjectModel import GitProjectEntry
 from app.logic.httpcommon import res
-from django.shortcuts import redirect
+
 
 DEFINITION_ITEMS_PER_PAGE = 12
 PAGINATION_HALF_RANGE = 2

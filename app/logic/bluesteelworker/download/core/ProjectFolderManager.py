@@ -3,7 +3,7 @@
 import os
 import shutil
 
-class ProjectFolderManager(object):
+class ProjectFolderManager():
     """ This code provides helpers to find project folders """
 
     @staticmethod
@@ -65,7 +65,7 @@ class ProjectFolderManager(object):
         obj['log'] = str(os.path.join(obj['project_name'], 'log'))
         obj['git_project_search_path'] = str(os.path.join(obj['project'], local_search_path))
 
-        if local_search_path == '.' or local_search_path == '':
+        if local_search_path in ('.', ''):
             obj['git_project_search_path'] = ProjectFolderManager.get_cwd_of_first_git_project_found_in(obj['project'])
 
         if obj['git_project_search_path'] is None:

@@ -15,11 +15,11 @@ def get_commit_ordered_by_worker(request, commit_id):
 
         ret = BenchmarkExecutionController.get_bench_execs_ordered_by_worker(commit_entry)
 
-        if ret['commit']['parent']['id'] != None:
+        if ret['commit']['parent']['id'] is not None:
             com_id = ret['commit']['parent']['id']
             ret['commit']['parent']['url'] = ViewUrlGenerator.get_commit_ordered_by_worker_url(com_id)
 
-        if ret['commit']['son']['id'] != None:
+        if ret['commit']['son']['id'] is not None:
             com_id = ret['commit']['son']['id']
             ret['commit']['son']['url'] = ViewUrlGenerator.get_commit_ordered_by_worker_url(com_id)
 
@@ -38,5 +38,5 @@ def get_commit_ordered_by_worker(request, commit_id):
         data['menu'] = ViewPrepareObjects.prepare_menu_for_html([])
 
         return res.get_template_data(request, 'presenter/commit_by_workers.html', data)
-    else:
-        return res.get_template_data(request, 'presenter/not_found.html', {})
+
+    return res.get_template_data(request, 'presenter/not_found.html', {})

@@ -125,8 +125,8 @@ def save_benchmark_execution(request, benchmark_execution_id):
             )
 
         return res.get_response(200, 'Benchmark Execution saved', {})
-    else:
-        return res.get_response(400, 'Only post allowed', {})
+
+    return res.get_response(400, 'Only post allowed', {})
 
 @transaction.atomic
 def invalidate_benchmark_execution(request, benchmark_execution_id):
@@ -140,8 +140,8 @@ def invalidate_benchmark_execution(request, benchmark_execution_id):
         bench_exec_entry.save()
 
         return res.get_response(200, 'Benchmark Execution invalidated', {})
-    else:
-        return res.get_response(400, 'Only post allowed', {})
+
+    return res.get_response(400, 'Only post allowed', {})
 
 
 def get_benchmark_executions_stacked_quick(request, project_id, branch_id, definition_id, worker_id):
@@ -192,5 +192,5 @@ def get_benchmark_executions_stacked_quick(request, project_id, branch_id, defin
         data['stacked_executions'] = execs
 
         return res.get_response(200, 'Benchmark Execution Stacked', data)
-    else:
-        return res.get_only_get_allowed({})
+
+    return res.get_only_get_allowed({})

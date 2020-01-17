@@ -1,25 +1,25 @@
 """ Request module """
 
 # Disable warning for relative imports
-# pylint: disable=W0403
+# : disable=W0403
 
 # Disable broad exception, I don't know now the exact exception of request.read()
 # pylint: disable=W0703
 
-import httplib
-import urllib2
-import cookielib
-import Cookie
+import urllib
+import http
+import http.cookiejar as cookielib
+import http.cookies as Cookie
 import json
 
 
-class Session(object):
+class Session():
     """An HTTP session"""
     def __init__(self):
         cookie_jar = cookielib.CookieJar()
-        self.opener = urllib2.build_opener(
-            urllib2.HTTPCookieProcessor(cookie_jar),
-            # urllib2.HTTPHandler(debuglevel=1)
+        self.opener = urllib.request.build_opener(
+            urllib.request.HTTPCookieProcessor(cookie_jar),
+            # urllib.HTTPHandler(debuglevel=1)
         )
         self.headers = {}
         self.headers['X-CSRFToken'] = ''
@@ -31,7 +31,7 @@ class Session(object):
             return
 
         cookie = Cookie.SimpleCookie(cookie_content)
-        if cookie.get('csrftoken') != None:
+        if cookie.get('csrftoken') is not None:
             self.headers['X-CSRFToken'] = cookie['csrftoken'].value
 
     def make_request(self, request):
@@ -40,15 +40,15 @@ class Session(object):
         res['type'] = 'unknown'
         try:
             response = self.opener.open(request)
-        except urllib2.HTTPError as error:
+        except urllib.error.HTTPError as error:
             res['content'] = error.read()
             res['cookie'] = ''
             res['succeed'] = False
-        except urllib2.URLError as error:
+        except urllib.error.URLError as error:
             res['content'] = str(error)
             res['cookie'] = ''
             res['succeed'] = False
-        except httplib.BadStatusLine as error:
+        except http.client.BadStatusLine as error:
             res['content'] = str(error)
             res['cookie'] = ''
             res['succeed'] = False
@@ -61,7 +61,7 @@ class Session(object):
         for key in self.headers:
             headers[key] = self.headers[key]
 
-        request = urllib2.Request(url=url, data=None, headers=headers)
+        request = urllib.request.Request(url=url, data=None, headers=headers)
         res = self.make_request(request)
         self.update_csrf_token(res['cookie'])
         return res
@@ -71,7 +71,7 @@ class Session(object):
         for key in self.headers:
             headers[key] = self.headers[key]
 
-        request = urllib2.Request(url=url, data=data, headers=headers)
+        request = urllib.request.Request(url=url, data=data, headers=headers)
         res = self.make_request(request)
         self.update_csrf_token(res['cookie'])
         return res
@@ -83,11 +83,11 @@ class Session(object):
         info = response.info()
 
         res['cookie'] = response.headers.get('Set-Cookie')
-        res['type'] = info.type
+        res['type'] = info.get_content_type()
         res['content'] = ''
         res['succeed'] = False
 
-        if info.maintype == 'text':
+        if info.get_content_maintype() == 'text':
             try:
                 data = json.loads(response.read())
             except Exception:
@@ -97,7 +97,7 @@ class Session(object):
             res['succeed'] = True
             return res
 
-        if info.type == 'application/zip':
+        if info.get_content_type() == 'application/zip':
             try:
                 data = response.read()
             except Exception:

@@ -5,7 +5,7 @@ from app.logic.commandrepo.models.CommandModel import CommandEntry
 from app.logic.commandrepo.models.CommandResultModel import CommandResultEntry
 from app.logic.commandrepo.models.CommandSetModel import CommandSetEntry
 
-class CommandController(object):
+class CommandController():
     """ Command Controller """
 
     @staticmethod

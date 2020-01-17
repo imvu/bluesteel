@@ -5,7 +5,7 @@ import subprocess
 import shutil
 import datetime
 
-class CommandExecutioner(object):
+class CommandExecutioner():
     """ This code helps us with executing a list of commands and return its outputs. """
 
     @staticmethod

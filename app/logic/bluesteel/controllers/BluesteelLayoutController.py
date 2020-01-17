@@ -8,7 +8,7 @@ from app.logic.httpcommon import pag
 
 PAGINATION_HALF_RANGE = 2
 
-class BluesteelLayoutController(object):
+class BluesteelLayoutController():
     """ BluesteelLayout controller with helper functions """
 
     @staticmethod

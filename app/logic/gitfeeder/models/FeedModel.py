@@ -45,7 +45,7 @@ def feed_entry_post_delete(sender, instance, **kwargs):
     if isinstance(instance, FeedEntry) and (sender == FeedEntry):
         signals.post_delete.disconnect(feed_entry_post_delete, sender=FeedEntry)
         try:
-            if instance.command_group and instance.command_group.id != None:
+            if instance.command_group and instance.command_group.id is not None:
                 instance.command_group.delete()
         except CommandGroupEntry.DoesNotExist:
             pass

@@ -52,7 +52,7 @@ def bluesteel_project_entry_post_delete(sender, instance, **kwargs):
     if isinstance(instance, BluesteelProjectEntry) and (sender == BluesteelProjectEntry):
         signals.post_delete.disconnect(bluesteel_project_entry_post_delete, sender=BluesteelProjectEntry)
         try:
-            if instance.command_group and instance.command_group.id != None:
+            if instance.command_group and instance.command_group.id is not None:
                 instance.command_group.delete()
         except CommandGroupEntry.DoesNotExist:
             pass

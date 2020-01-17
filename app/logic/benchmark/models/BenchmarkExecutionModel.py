@@ -107,7 +107,7 @@ def benchmark_exec_entry_post_delete(sender, instance, **kwargs):
     if isinstance(instance, BenchmarkExecutionEntry) and (sender == BenchmarkExecutionEntry):
         signals.post_delete.disconnect(benchmark_exec_entry_post_delete, sender=BenchmarkExecutionEntry)
         try:
-            if instance.report and instance.report.id != None:
+            if instance.report and instance.report.id is not None:
                 instance.report.delete()
         except CommandSetEntry.DoesNotExist:
             pass

@@ -3,7 +3,7 @@
 import os
 import hashlib
 
-class FileHasher(object):
+class FileHasher():
     """ This code helps us to hash files inside a folder. """
 
     @staticmethod

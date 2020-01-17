@@ -2,6 +2,9 @@
 
 from django.utils import timezone
 from django.conf import settings
+import arrow
+import pytz
+
 from app.logic.gitfeeder.models.FeedModel import FeedEntry
 from app.logic.gitrepo.controllers.GitController import GitController
 from app.logic.gitrepo.models.GitUserModel import GitUserEntry
@@ -16,10 +19,9 @@ from app.logic.commandrepo.models.CommandSetModel import CommandSetEntry
 from app.logic.commandrepo.models.CommandModel import CommandEntry
 from app.logic.commandrepo.models.CommandResultModel import CommandResultEntry
 from app.logic.bluesteelworker.models.WorkerModel import WorkerEntry
-import arrow
-import pytz
 
-class GitFeederController(object):
+
+class GitFeederController():
     """ GitFeeder Controller """
 
     @staticmethod
@@ -49,8 +51,9 @@ class GitFeederController(object):
             if commit['hash'] in unique_hash:
                 messages.append('Commit not unique {0}'.format(commit['hash']))
                 return (False, messages)
-            else:
-                unique_hash.add(commit['hash'])
+
+            unique_hash.add(commit['hash'])
+
         return (True, messages)
 
     @staticmethod

@@ -21,5 +21,5 @@ def update_branch_order_value(request, branch_id, project_id, order_value):
         GitController.sort_branch_with_branches(project_entry, branch_entry, order_value)
 
         return res.get_response(200, 'Branch order saved', {})
-    else:
-        return res.get_only_post_allowed({})
+
+    return res.get_only_post_allowed({})

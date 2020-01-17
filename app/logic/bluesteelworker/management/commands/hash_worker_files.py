@@ -6,6 +6,8 @@ from app.logic.bluesteelworker.models.WorkerFilesHashModel import WorkerFilesHas
 from app.logic.bluesteelworker.download.core.FileHasher import FileHasher
 
 class Command(BaseCommand):
+    """ Command to write update hash of worker files """
+
     args = ''
     help = 'Update the hash for all the worker files'
 

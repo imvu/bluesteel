@@ -80,5 +80,5 @@ def set_branch_merge_target(request, project_id):
         merge_target.save()
 
         return res.get_response(200, 'Target branch changed', val_resp_obj)
-    else:
-        return res.get_only_post_allowed({})
+
+    return res.get_only_post_allowed({})

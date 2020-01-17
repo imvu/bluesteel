@@ -9,7 +9,7 @@ from app.logic.gitrepo.models.GitProjectModel import GitProjectEntry
 from app.logic.gitrepo.models.GitUserModel import GitUserEntry
 from app.logic.gitrepo.models.GitCommitModel import GitCommitEntry
 
-class BenchmarkFluctuationController(object):
+class BenchmarkFluctuationController():
     """ Benchmark Fluctuation controller with helper functions """
 
     @staticmethod
@@ -274,6 +274,7 @@ class BenchmarkFluctuationController(object):
 
     @staticmethod
     def populate_fluctuation_waivers():
+        """ Populates Fluctuation Waivers for every git user """
         users = GitUserEntry.objects.all()
 
         for user in users:

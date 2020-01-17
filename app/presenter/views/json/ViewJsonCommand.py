@@ -23,5 +23,5 @@ def download_command_as_json(request, command_id):
 
         response['Content-Disposition'] = 'attachment; filename=Command-{0}.json'.format(command_id)
         return response
-    else:
-        return res.get_only_get_allowed({})
+
+    return res.get_only_get_allowed({})

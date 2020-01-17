@@ -12,7 +12,7 @@ from app.logic.gitrepo.models.GitBranchMergeTargetModel import GitBranchMergeTar
 
 PAGINATION_HALF_RANGE = 2
 
-class GitController(object):
+class GitController():
     """ Git Controller offers functions to modify the state of git models """
 
     @staticmethod
@@ -157,8 +157,9 @@ class GitController(object):
         for index, trail in enumerate(short_list):
             if trail.commit.commit_hash != long_list[index].commit.commit_hash:
                 break
-            else:
-                fork_point = trail.commit
+
+            fork_point = trail.commit
+
         return fork_point
 
     @staticmethod
@@ -181,9 +182,9 @@ class GitController(object):
             entry = GitParentEntry.objects.filter(project=project, parent__commit_hash=current_hash).first()
             if entry is None:
                 break
-            else:
-                current_hash = entry.son.commit_hash
-                hashes_children.append(current_hash)
+
+            current_hash = entry.son.commit_hash
+            hashes_children.append(current_hash)
 
         current_hash = commit_entry.commit_hash
         hashes_parents = []
@@ -192,9 +193,9 @@ class GitController(object):
             entry = GitParentEntry.objects.filter(project=project, son__commit_hash=current_hash).first()
             if entry is None:
                 break
-            else:
-                current_hash = entry.parent.commit_hash
-                hashes_parents.append(current_hash)
+
+            current_hash = entry.parent.commit_hash
+            hashes_parents.append(current_hash)
 
         return list(reversed(hashes_parents)) + [commit_entry.commit_hash] + hashes_children
 

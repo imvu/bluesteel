@@ -111,7 +111,7 @@ def benchmark_def_entry_post_delete(sender, instance, **kwargs):
     if isinstance(instance, BenchmarkDefinitionEntry) and (sender == BenchmarkDefinitionEntry):
         signals.post_delete.disconnect(benchmark_def_entry_post_delete, sender=BenchmarkDefinitionEntry)
         try:
-            if instance.command_set and instance.command_set.id != None:
+            if instance.command_set and instance.command_set.id is not None:
                 instance.command_set.delete()
         except CommandSetEntry.DoesNotExist:
             pass
