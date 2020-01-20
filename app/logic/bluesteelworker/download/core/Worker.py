@@ -237,7 +237,7 @@ def process_update_worker_files(bootstrap_urls, settings, session):
     log.info('Downloading remote Worker files.')
     resp_f = session.get(bootstrap_urls['worker_download_url'], {})
     if resp_f['succeed'] and resp_f['type'] == 'application/zip':
-        zip_ext = ZipFile(io.StringIO(resp_f['content']))
+        zip_ext = ZipFile(io.BytesIO(resp_f['content']))
         tmp_zip_folder = str(os.path.join(get_cwd(), os.sep.join(settings['tmp_path']), '..', 'worker_zip'))
         tmp_zip_folder = os.path.normpath(tmp_zip_folder)
 
