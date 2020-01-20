@@ -91,8 +91,8 @@ class BenchmarkExecutionEntry(models.Model):
             index = int(((len(sov) + 1) / 2) - 1)
             return float(sov[index])
 
-        index_lower = (len(sov) / 2) - 1
-        index_up = len(sov) / 2
+        index_lower = (int((len(sov) / 2))) - 1
+        index_up = int(len(sov) / 2)
 
         lower = sov[index_lower]
         upper = sov[index_up]

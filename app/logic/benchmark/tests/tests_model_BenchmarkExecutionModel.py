@@ -203,3 +203,35 @@ class BenchmarkExecutionEntryTestCase(TestCase):
         entry.delete()
         self.assertEqual(0, BenchmarkExecutionEntry.objects.filter(id=entry.id).count())
         self.assertEqual(0, CommandSetEntry.objects.filter(id=report.id).count())
+
+    def test_benchmark_execution_get_median_parell(self):
+
+        median1 = BenchmarkExecutionEntry.get_median([2, 3])
+        median2 = BenchmarkExecutionEntry.get_median([2, 2, 2, 3, 3, 3])
+        median3 = BenchmarkExecutionEntry.get_median([1, 2, 3, 3, 4, 5])
+        median4 = BenchmarkExecutionEntry.get_median([1, 3, 2, 5, 4, 3])
+
+        self.assertEqual(2.5, median1)
+        self.assertEqual(2.5, median2)
+        self.assertEqual(3.0, median3)
+        self.assertEqual(3.0, median4)
+
+    def test_benchmark_execution_get_median_senar(self):
+
+        median1 = BenchmarkExecutionEntry.get_median([2])
+        median2 = BenchmarkExecutionEntry.get_median([2, 2, 2, 3, 4, 4, 4])
+        median3 = BenchmarkExecutionEntry.get_median([1, 2, 3, 3, 4, 5, 5])
+        median4 = BenchmarkExecutionEntry.get_median([1.0, 3.0, 2.0, 5.0, 4.0, 4.0, 6.0])
+
+        self.assertEqual(2.0, median1)
+        self.assertEqual(3.0, median2)
+        self.assertEqual(3.0, median3)
+        self.assertEqual(4.0, median4)
+
+
+
+
+
+
+
+
