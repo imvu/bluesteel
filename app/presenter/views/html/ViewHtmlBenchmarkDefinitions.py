@@ -125,6 +125,8 @@ def get_benchmark_definition_edit(request, definition_id):
         names_and_sel.append(nas)
     obj['priority']['names'] = names_and_sel
 
+    print(obj['max_benchmark_date'])
+
 
     data['definition'] = obj
 

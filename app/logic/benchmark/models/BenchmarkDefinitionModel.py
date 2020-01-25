@@ -52,6 +52,11 @@ class BenchmarkDefinitionEntry(models.Model):
 
     def as_object(self):
         """ Returns Benchmark Definition as an object"""
+        month_names = [
+            'January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'
+        ]
+
         obj = {}
         obj['id'] = self.id
         obj['name'] = self.name
@@ -77,7 +82,9 @@ class BenchmarkDefinitionEntry(models.Model):
         obj['max_weeks_old_notify']['names'] = self.get_max_weeks_old_names_and_values()
         obj['max_benchmark_date'] = {}
         obj['max_benchmark_date']['year'] = self.max_benchmark_date.year
-        obj['max_benchmark_date']['month'] = self.max_benchmark_date.month
+        obj['max_benchmark_date']['month'] = {}
+        obj['max_benchmark_date']['month']['number'] = self.max_benchmark_date.month
+        obj['max_benchmark_date']['month']['name'] = month_names[self.max_benchmark_date.month - 1]
         obj['max_benchmark_date']['day'] = self.max_benchmark_date.day
 
         for val in obj['max_weeks_old_notify']['names']:

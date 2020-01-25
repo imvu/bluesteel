@@ -16,6 +16,7 @@ from app.logic.commandrepo.models.CommandSetModel import CommandSetEntry
 from app.logic.commandrepo.models.CommandModel import CommandEntry
 from app.logic.commandrepo.models.CommandResultModel import CommandResultEntry
 from datetime import timedelta
+import datetime
 import json
 
 class BenchmarkDefinitionEntryTestCase(TestCase):
@@ -51,6 +52,17 @@ class BenchmarkDefinitionEntryTestCase(TestCase):
         pass
 
     def test_benchmark_def_as_object(self):
+        self.benchmark_definition.max_benchmark_date = datetime.datetime(1982, 3, 28, 0, 0, tzinfo=datetime.timezone.utc)
+        self.benchmark_definition.save()
+
+        obj = self.benchmark_definition.as_object()
+
+        self.assertEqual(1982, obj['max_benchmark_date']['year'])
+        self.assertEqual(3, obj['max_benchmark_date']['month']['number'])
+        self.assertEqual('March', obj['max_benchmark_date']['month']['name'])
+        self.assertEqual(28, obj['max_benchmark_date']['day'])
+
+    def test_benchmark_def_as_object_with_max_benchmark_date(self):
         obj = self.benchmark_definition.as_object()
 
         self.assertEqual(self.benchmark_definition.id, obj['id'])
@@ -114,3 +126,4 @@ class BenchmarkDefinitionEntryTestCase(TestCase):
         self.assertFalse(names[14]['current'])
         self.assertFalse(names[15]['current'])
         self.assertFalse(names[16]['current'])
+

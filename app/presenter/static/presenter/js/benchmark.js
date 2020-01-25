@@ -152,6 +152,12 @@ saveBenchmarkDefinition = function(idFormBenchmarkDefinition) {
             wp['id'] = parseInt(element.id);
             wp['allowed'] = element.checked;
             obj['work_passes'].push(wp);
+        } else if (element.name.startsWith("max_benchmark_date_year")) {
+            obj['max_benchmark_date']['year'] = parseInt(element.value);
+        } else if (element.name.startsWith("max_benchmark_date_month")) {
+            obj['max_benchmark_date']['month'] = parseInt(element.value);
+        } else if (element.name.startsWith("max_benchmark_date_day")) {
+            obj['max_benchmark_date']['day'] = parseInt(element.value);
         }
     }
 
@@ -161,6 +167,8 @@ saveBenchmarkDefinition = function(idFormBenchmarkDefinition) {
 
         obj['overrides'].push(overrides[key]);
     }
+
+    console.log(obj);
 
     executeAndReload(form.action, JSON.stringify(obj));
 }
@@ -220,3 +228,101 @@ changeSelectProjectInfo = function(thisObj, url_editable, projectSelectTagId) {
     }
     xhr.send("");
 }
+
+
+isYearLeap = function(year) {
+    return ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0);
+}
+
+daysInMonth = function(year, month) {
+    var febDays = isYearLeap(year) ? 29 : 28;
+    var days = [31, febDays, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+    return days[month];
+}
+
+populateSelectYears = function(id_select_year, current_year, min_year, max_year) {
+    var sel_year = document.getElementById(id_select_year);
+
+    while(sel_year.hasChildNodes()) {
+        sel_year.removeChild(sel_year.firstChild);
+    }
+
+    var count = max_year - min_year;
+    var index = 0;
+
+    var c_year = parseInt(current_year);
+
+    for (var i = 0; i < count; i++) {
+        var ele = document.createElement('option');
+        var year = i + min_year;
+        ele.value = year;
+        ele.text = year;
+
+        if (year === c_year) {
+            index = i;
+        }
+
+        sel_year.appendChild(ele);
+    }
+
+    sel_year.options[index].selected = true;
+}
+
+populateSelectMonths = function(id_select_month, current_month) {
+    var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    var months_count = months.length;
+
+    var sel_month = document.getElementById(id_select_month);
+
+    while(sel_month.hasChildNodes()) {
+        sel_month.removeChild(sel_month.firstChild);
+    }
+
+    for (var i = 0; i < months_count; i++) {
+        var ele = document.createElement('option');
+        ele.value = i + 1;
+        ele.text = months[i];
+
+        sel_month.appendChild(ele);
+    }
+
+    sel_month.options[current_month - 1].selected = true;
+
+}
+
+populateSelectDays = function(id_select_day, year, month, current_slected_day) {
+    var sel_day = document.getElementById(id_select_day);
+    var days_count = daysInMonth(year, month);
+
+    while(sel_day.hasChildNodes()) {
+        sel_day.removeChild(sel_day.firstChild);
+    }
+
+    if (current_slected_day > days_count) {
+        current_slected_day = days_count;
+    }
+
+    for (var i = 0; i < days_count; i++) {
+        var ele = document.createElement('option');
+        ele.value = i + 1;
+        ele.text = i + 1;
+
+        sel_day.appendChild(ele);
+    }
+
+    sel_day.options[current_slected_day - 1].selected = true;
+}
+
+changeBenchmarkMaxDate = function(thisObj, id_select_year, id_select_month, id_select_day, change_year, change_month, change_day) {
+    var sel_year = document.getElementById(id_select_year);
+    var sel_month = document.getElementById(id_select_month);
+    var sel_day = document.getElementById(id_select_day);
+
+    if (change_year || change_month) {
+        populateSelectDays(id_select_day, sel_year.value, sel_month.value - 1, sel_day.value);
+    }
+}
+
+
+

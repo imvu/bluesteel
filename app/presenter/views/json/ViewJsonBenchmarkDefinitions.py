@@ -46,6 +46,7 @@ def view_duplicate_benchmark_definition(request, benchmark_definition_id):
 @transaction.atomic
 def view_save_benchmark_definition(request, benchmark_definition_id):
     """ Save benchmark definition properties """
+
     if request.method != 'POST':
         return res.get_only_post_allowed({})
 

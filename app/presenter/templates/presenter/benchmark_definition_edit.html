@@ -286,6 +286,54 @@
                 </div>
             </div>
 
+            <div class="middle_card edit_card card_padding_large card_medium">
+                <div class="grid grid-pad-20">
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="list_label">MAXIMUM BENCHMARK DATE</div>
+                    </div>
+                    <div class="grid-col-1-1 grid-cell-pad-2-10">
+                        <div class="normal">Older commits than this date will not be benchmarked.</div>
+                    </div>
+                    <div class="grid-col-1-8 grid-cell-pad-5-10">
+                    </div>
+                    <div class="grid-col-2-8 grid-cell-pad-5-10">
+                        <div class="container_input">
+                            <select     class="selection individual"
+                                        name="max_benchmark_date_year"
+                                        id="max_benchmark_date_year"
+                                        onchange="changeBenchmarkMaxDate(this, 'max_benchmark_date_year', 'max_benchmark_date_month', 'max_benchmark_date_day', true, false, false);"
+                            >
+                                <script>populateSelectYears('max_benchmark_date_year', "{{definition.max_benchmark_date.year}}", 1970, 2050);</script>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid-col-2-8 grid-cell-pad-5-10">
+                        <div class="container_input">
+                            <select     class="selection individual"
+                                        name="max_benchmark_date_month"
+                                        id="max_benchmark_date_month"
+                                        onchange="changeBenchmarkMaxDate(this, 'max_benchmark_date_year', 'max_benchmark_date_month', 'max_benchmark_date_day', false, true, false);"
+                            >
+                                <script>populateSelectMonths('max_benchmark_date_month', "{{definition.max_benchmark_date.month.number}}");</script>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid-col-2-8 grid-cell-pad-5-10">
+                        <div class="container_input">
+                            <select     class="selection individual"
+                                        name="max_benchmark_date_day"
+                                        id="max_benchmark_date_day"
+                                        onchange="changeBenchmarkMaxDate(this, 'max_benchmark_date_year', 'max_benchmark_date_month', 'max_benchmark_date_day', false, false, true);"
+                            >
+                                <script>populateSelectDays('max_benchmark_date_day', "{{definition.max_benchmark_date.year}}", "{{definition.max_benchmark_date.month.number}}", "{{definition.max_benchmark_date.day}}");</script>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid-col-1-8 grid-cell-pad-5-10">
+                    </div>
+                </div>
+            </div>
+
             <div class="lower_card edit_card card_padding_large card_medium">
                 <div class="grid grid-pad-2">
                     <div class="grid-col-1-2 grid-cell-pad-2-10 grid-cell-centered">
